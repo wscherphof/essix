@@ -1,0 +1,15 @@
+= doctype html
+html lang=en
+  head
+    meta charset=utf-8
+    title Login
+  body
+    form method=POST action=login
+      label for=uid {{Msg "User name"}}
+      input id=uid type=email name=uid placeholder=email@provider.com required= size=20
+      br
+      label for=pwd {{Msg "Password"}}
+      input id=pwd type=password name=pwd placeholder=******** required= size=20
+      br      
+      input type=submit value={{Msg "Log in"}}
+      input type=hidden name=return value={{.return}}

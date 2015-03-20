@@ -1,0 +1,7 @@
+= doctype html
+html lang=en
+  head
+    meta charset=utf-8
+    title Protected
+  body
+    p Hi {{.uid}}, thanks for logging in! Welcome to this protected content.

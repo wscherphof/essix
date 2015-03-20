@@ -1,0 +1,14 @@
+= doctype html
+html lang=en
+  head
+    meta charset=utf-8
+    title Ace example
+    link rel=icon href=/static/favicon.ico type=image/x-icon
+    link rel="shortcut icon" href=/static/favicon.ico type=image/x-icon
+    = css
+      h1 { color: blue; }
+  body
+    h1 Base Template : {{.Msg}}
+    #container.wrapper
+    = javascript
+      alert('{{.Msg}}');
