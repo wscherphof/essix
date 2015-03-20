@@ -10,6 +10,7 @@ import (
 
 func main () {
   DefineMessages()
+  InitSecure()
   router := httprouter.New()
 
   router.GET("/", T("base", "", map[string]string{
@@ -25,5 +26,5 @@ func main () {
   
   router.ServeFiles("/static/*filepath", http.Dir("./static"))
 
-  log.Fatal(http.ListenAndServe(":8080", handlers.CombinedLoggingHandler(os.Stdout, router)))
+  log.Fatal(http.ListenAndServe(":9090", handlers.CombinedLoggingHandler(os.Stdout, router)))
 }
