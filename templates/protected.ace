@@ -3,5 +3,7 @@ html lang=en
   head
     meta charset=utf-8
     title Protected
+    link rel=icon href=/static/favicon.ico type=image/x-icon
+    link rel="shortcut icon" href=/static/favicon.ico type=image/x-icon
   body
     p Hi {{.uid}}, thanks for logging in! Welcome to this protected content.
