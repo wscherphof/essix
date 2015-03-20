@@ -5,19 +5,16 @@ import (
   "time"
 )
 
-type SecureDB struct {}
-
-func (SecureDB) Fetch () secure.Config {
-  return secure.Config {
-    Secret: secure.Secret {
-      Key: "qwerty",
-      Time: time.Now(),
-    },
-    RedirectPath: "/login",
-    TimeOut: 15 * 60 * time.Second, 
-  }
-}
-
 func InitSecure () {
-  secure.Init (SecureDB {})
+  secure.Init (func () secure.Config {
+    // TODO: interact with a real DB ;-)
+    return secure.Config {
+      Secret: secure.Secret {
+        Key: "qwerty",
+        Time: time.Now(),
+      },
+      RedirectPath: "/login",
+      TimeOut: 15 * 60 * time.Second, 
+    }
+  })
 }
