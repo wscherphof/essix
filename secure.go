@@ -2,19 +2,30 @@ package main
 
 import (
   "github.com/wscherphof/secure"
-  "time"
+  r "github.com/dancannon/gorethink"
+  "log"
 )
 
 func InitSecure () {
-  secure.Init (func () secure.Config {
-    // TODO: interact with a real DB ;-)
-    return secure.Config {
-      Secret: secure.Secret {
-        Key: "qwerty",
-        Time: time.Now(),
-      },
-      RedirectPath: "/login",
-      TimeOut: 15 * 60 * time.Second, 
+  // TODO: store the session someplace higher
+  session, err := r.Connect(r.ConnectOpts{
+    Address:  "localhost:28015",
+    Database: "expeertise",
+  })
+  if err != nil {
+    log.Fatalln(err.Error())
+  }
+
+  secure.Init (func () *secure.Config {
+    rows, err := r.Table("secureConfig").Nth(0).Run(session)
+    if err != nil {
+      log.Fatalln(err.Error())
     }
+    var conf secure.Config
+    err = rows.One(&conf)
+    if err != nil {
+      log.Fatalln(err.Error())
+    }
+    return &conf
   })
 }
