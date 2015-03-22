@@ -26,6 +26,7 @@ func InitSecure () {
     if err != nil {
       log.Fatalln(err.Error())
     }
+    // TODO: updating the key using crypto/rand
     return &conf
   })
 }
