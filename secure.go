@@ -6,6 +6,30 @@ import (
   "log"
 )
 
+type SecureDB struct {
+  Session *r.Session
+}
+
+func (s SecureDB) Fetch () *secure.Config {
+  rows, err := r.Table("secureConfig").Nth(0).Run(s.Session)
+  if err != nil {
+    log.Fatalln(err.Error())
+  }
+  var config secure.Config
+  err = rows.One(&config)
+  if err != nil {
+    log.Fatalln(err.Error())
+  }
+  return &config
+}
+
+func (s SecureDB) Update (config *secure.Config) {
+  _, err := r.Table("secureConfig").Update(config).RunWrite(s.Session)
+  if err != nil {
+    log.Fatalln(err.Error())
+  }
+}
+
 func InitSecure () {
   // TODO: store the session someplace higher
   session, err := r.Connect(r.ConnectOpts{
@@ -15,18 +39,8 @@ func InitSecure () {
   if err != nil {
     log.Fatalln(err.Error())
   }
-
-  secure.Init (func () *secure.Config {
-    rows, err := r.Table("secureConfig").Nth(0).Run(session)
-    if err != nil {
-      log.Fatalln(err.Error())
-    }
-    var conf secure.Config
-    err = rows.One(&conf)
-    if err != nil {
-      log.Fatalln(err.Error())
-    }
-    // TODO: updating the key using crypto/rand
-    return &conf
-  })
+  secureDB := SecureDB {
+    Session: session,
+  }
+  secure.Init(&secureDB)
 }
