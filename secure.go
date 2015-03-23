@@ -6,41 +6,54 @@ import (
   "log"
 )
 
-type SecureDB struct {
-  Session *r.Session
-}
-
-func (s SecureDB) Fetch () *secure.Config {
-  rows, err := r.Table("secureConfig").Nth(0).Run(s.Session)
-  if err != nil {
-    log.Fatalln(err.Error())
-  }
-  var config secure.Config
-  err = rows.One(&config)
-  if err != nil {
-    log.Fatalln(err.Error())
-  }
-  return &config
-}
-
-func (s SecureDB) Update (config *secure.Config) {
-  _, err := r.Table("secureConfig").Update(config).RunWrite(s.Session)
-  if err != nil {
-    log.Fatalln(err.Error())
-  }
-}
-
 func InitSecure () {
+  secure.Init(newSecureDB())
+}
+
+type SecureDB struct {
+  session *r.Session
+  db string
+  table string
+}
+
+func newSecureDB () *SecureDB {
+  s := &SecureDB {
+    db: "expeertise",
+    table: "secureConfig",
+  }
   // TODO: store the session someplace higher
-  session, err := r.Connect(r.ConnectOpts{
+  if session, err := r.Connect(r.ConnectOpts {
     Address:  "localhost:28015",
-    Database: "expeertise",
-  })
-  if err != nil {
+    Database: s.db,
+  }); err == nil {
+    s.session = session
+  } else {
     log.Fatalln(err.Error())
   }
-  secureDB := SecureDB {
-    Session: session,
+  // Create the table if needed
+  if _, err := r.Table(s.table).Info().Run(s.session); err != nil {
+    if _, err := r.Db(s.db).TableCreate(s.table).Run(s.session); err != nil {
+      log.Fatalln(err.Error())
+    }
   }
-  secure.Init(&secureDB)
+  return s
+}
+
+func (s *SecureDB) Fetch () *secure.Config {
+  if rows, err := r.Table(s.table).Run(s.session); err == nil {
+    config := new(secure.Config)
+    if err := rows.One(config); err == nil {
+      return config
+    }
+  }
+  return nil
+}
+
+func (s *SecureDB) Upsert (config *secure.Config) {
+  if _, err := r.Table(s.table).Delete().RunWrite(s.session); err != nil {
+    log.Fatalln(err.Error())
+  }
+  if _, err := r.Table(s.table).Insert(config).RunWrite(s.session); err != nil {
+    log.Fatalln(err.Error())
+  }
 }
