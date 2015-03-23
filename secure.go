@@ -50,7 +50,7 @@ func (s *SecureDB) Fetch () *secure.Config {
 }
 
 func (s *SecureDB) Upsert (config *secure.Config) {
-  if _, err := r.Table(s.table).Delete().RunWrite(s.session); err != nil {
+  if _, err := r.Table(s.table).Delete().RunWrite(s.session); err == nil {
     if _, err := r.Table(s.table).Insert(config).RunWrite(s.session); err != nil {
       log.Fatalln(err.Error())
     }
