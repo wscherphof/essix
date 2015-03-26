@@ -21,4 +21,8 @@ func DefineMessages () {
   m("Log in")
   a("nl", "Inloggen")
   a("en", "Log in")
+
+  m("Log out")
+  a("nl", "Uitloggen")
+  a("en", "Log out")
 }

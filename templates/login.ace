@@ -6,7 +6,7 @@ html lang=en
     link rel=icon href=/static/favicon.ico type=image/x-icon
     link rel="shortcut icon" href=/static/favicon.ico type=image/x-icon
   body
-    form method=POST action=login
+    form method=POST action=/login
       label for=uid {{Msg "User name"}}
       input id=uid type=email name=uid placeholder=email@provider.com required= size=20
       br

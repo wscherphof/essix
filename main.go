@@ -20,8 +20,10 @@ func main () {
   
   // TODO: https
   
-  router.GET("/login", LoginForm)
-  router.POST("/login", Login)
+  router.GET("/login", LogInForm)
+  router.POST("/login", LogIn)
+
+  router.POST("/logout", LogOut)
 
   router.GET("/protected", Protected)
   
