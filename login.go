@@ -17,5 +17,4 @@ func Login (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
   // TODO: validate password, maybe fetch roles
   // pwd := r.FormValue("pwd")
   secure.LogIn(w, r, uid)
-  http.Redirect(w, r, r.FormValue("return"), 302)
 }

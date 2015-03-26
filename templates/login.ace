@@ -14,4 +14,3 @@ html lang=en
       input id=pwd type=password name=pwd placeholder=******** required= size=20
       br      
       input type=submit value={{Msg "Log in"}}
-      input type=hidden name=return value={{.return}}
