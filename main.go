@@ -6,6 +6,7 @@ import (
   "os"
   "github.com/julienschmidt/httprouter"
   "github.com/gorilla/handlers"
+  "github.com/gorilla/context"
 )
 
 func main () {
@@ -26,5 +27,5 @@ func main () {
   
   router.ServeFiles("/static/*filepath", http.Dir("./static"))
 
-  log.Fatal(http.ListenAndServe(":9090", handlers.CombinedLoggingHandler(os.Stdout, router)))
+  log.Fatal(http.ListenAndServe(":9090", context.ClearHandler(handlers.CombinedLoggingHandler(os.Stdout, router))))
 }
