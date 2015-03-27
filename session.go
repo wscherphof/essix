@@ -16,7 +16,7 @@ func LogIn (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
   // TODO: validate password, maybe fetch roles
   // pwd := r.FormValue("pwd")
   // log.Print("DEBUG: TLS ", r.TLS)
-  secure.LogIn(w, r, uid)
+  Error(w, r, ps, secure.LogIn(w, r, uid))
 }
 
 func LogOut (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {

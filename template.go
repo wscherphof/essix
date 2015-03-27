@@ -23,12 +23,12 @@ func T (base string, inner string, data map[string]string) func (http.ResponseWr
       },
     })
     if err != nil {
-        fmt.Println(err)
+        fmt.Println("ace.Load: ", err)
         return
     }
     err = tpl.Execute(w, data)
     if err != nil {
-        fmt.Println(err)
+        fmt.Println("tpl.Execute: ", err)
         return
     }
   }

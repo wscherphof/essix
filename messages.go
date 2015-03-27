@@ -2,6 +2,7 @@ package main
 
 import (
   "github.com/wscherphof/msg"
+  "github.com/wscherphof/secure"
 )
 
 func DefineMessages () {
@@ -21,6 +22,10 @@ func DefineMessages () {
   m("Log in")
   a("nl", "Inloggen")
   a("en", "Log in")
+
+  m(secure.ErrTokenNotSaved.Error())
+  a("nl", "Het lukt de webserver niet om de inlogsessie aan te maken :-(")
+  a("en", "The server is failing to create the log in session :-(")
 
   m("Log out")
   a("nl", "Uitloggen")
