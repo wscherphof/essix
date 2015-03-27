@@ -11,6 +11,9 @@ import (
 
 func T (base string, inner string, data map[string]string) func (http.ResponseWriter, *http.Request, httprouter.Params) {
   return func (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+    if data == nil {
+      data = map[string]string{}
+    }
     Msg, language := msg.Language(r.Header.Get("Accept-Language"))
     data["lang"] = language
     tpl, err := ace.Load(base, inner, &ace.Options{

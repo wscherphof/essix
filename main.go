@@ -14,8 +14,7 @@ func main () {
   InitSecure()
   router := httprouter.New()
 
-  router.GET("/", T("home", "", map[string]string{
-  }))
+  router.GET("/", T("home", "", nil))
   
   // TODO: https
   
