@@ -1,14 +1,12 @@
 = doctype html
-html lang=en
+html lang={{.lang}}
   head
     meta charset=utf-8
-    title Ace example
+    title Expeertise
     link rel=icon href=/static/favicon.ico type=image/x-icon
     link rel="shortcut icon" href=/static/favicon.ico type=image/x-icon
-    = css
-      h1 { color: blue; }
   body
-    h1 Base Template : {{.Msg}}
-    #container.wrapper
-    = javascript
-      alert('{{.Msg}}');
+    p
+      a href=/session {{Msg "Log in"}}
+    p
+      a href=/protected 007
