@@ -20,14 +20,17 @@ func main () {
   
   // TODO: https
   
-  router.GET("/login", LogInForm)
-  router.POST("/login", LogIn)
-
-  router.POST("/logout", LogOut)
+  router.GET("/session", LogInForm)
+  router.POST("/session", LogIn)
+  router.DELETE("/session", LogOut)
 
   router.GET("/protected", Protected)
   
   router.ServeFiles("/static/*filepath", http.Dir("./static"))
 
-  log.Fatal(http.ListenAndServe(":9090", context.ClearHandler(handlers.CombinedLoggingHandler(os.Stdout, router))))
+  log.Fatal(http.ListenAndServe(":9090", 
+  context.ClearHandler(
+  handlers.HTTPMethodOverrideHandler(
+  handlers.CombinedLoggingHandler(os.Stdout, 
+  router)))))
 }
