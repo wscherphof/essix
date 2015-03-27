@@ -6,7 +6,7 @@ html lang={{.lang}}
     link rel=icon href=/static/favicon.ico type=image/x-icon
     link rel="shortcut icon" href=/static/favicon.ico type=image/x-icon
   body
-    p Hi {{.uid}}, thanks for logging in! Welcome to this protected content.
+    = yield main
     form method=POST action=/session
       input type=hidden name=_method value=DELETE
       input type=submit value={{Msg "Log out"}}

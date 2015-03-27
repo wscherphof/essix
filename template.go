@@ -16,6 +16,9 @@ func T (base string, inner string, data map[string]string) func (http.ResponseWr
     }
     Msg, language := msg.Language(r.Header.Get("Accept-Language"))
     data["lang"] = language
+    if inner == "lang" {
+      inner = base + "-" + language
+    }
     tpl, err := ace.Load(base, inner, &ace.Options{
       BaseDir: "templates",
       FuncMap: template.FuncMap{

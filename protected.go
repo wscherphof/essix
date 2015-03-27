@@ -8,7 +8,7 @@ import (
 
 func Protected (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
   uid := secure.Authenticate(w, r)
-  T("protected", "", map[string]string{
+  T("protected", "lang", map[string]string{
     "uid": uid,
   })(w, r, ps)
 }
