@@ -34,4 +34,16 @@ func DefineMessages () {
   m("Protected")
   a("nl", "Beveiligd")
   a("en", "Protected")
+
+  m("Sign up")
+  a("nl", "Aanmelden")
+  a("en", "Sign up")
+
+  m("Repeat password")
+  a("nl", "Wachtwoord nogmaals")
+  a("en", "Repeat password")
+
+  m("Passwords not equal")
+  a("nl", "De wachtwoorden zijn niet hetzelfde")
+  a("en", "Passwords don't match")
 }

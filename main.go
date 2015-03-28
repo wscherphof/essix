@@ -21,6 +21,9 @@ func main () {
   router.GET("/session", LogInForm)
   router.POST("/session", LogIn)
   router.DELETE("/session", LogOut)
+  
+  router.GET("/account", SignUpForm)
+  router.POST("/account", SignUp)
 
   router.GET("/protected", Protected)
   
