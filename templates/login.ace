@@ -7,10 +7,8 @@ html lang={{.lang}}
     link rel="shortcut icon" href=/static/favicon.ico type=image/x-icon
   body
     form method=POST action=/session
-      label for=uid {{Msg "User name"}}
-      input id=uid type=email name=uid placeholder=email@provider.com required= size=20
-      br
-      label for=pwd {{Msg "Password"}}
-      input id=pwd type=password name=pwd placeholder=******** required= size=20
-      br      
+      label {{Msg "User name"}}
+        input id=uid type=email name=uid placeholder=email@provider.com required= size=20
+      label {{Msg "Password"}}
+        input id=pwd type=password name=pwd placeholder=******** required= size=20
       input type=submit value={{Msg "Log in"}}
