@@ -30,4 +30,8 @@ func DefineMessages () {
   m("Log out")
   a("nl", "Uitloggen")
   a("en", "Log out")
+
+  m("Protected")
+  a("nl", "Beveiligd")
+  a("en", "Protected")
 }
