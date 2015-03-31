@@ -1,0 +1,2 @@
+= content main
+  p Hoi {{ .uid }}, leuk dat je inlogt! Welkom bij deze beveiligde content.
