@@ -15,7 +15,7 @@ func Error (w http.ResponseWriter, r *http.Request, ps httprouter.Params, err er
     code = codes[0]
   }
   rec := httptest.NewRecorder()
-  T("error", "", map[string]string{
+  T("error", "", map[string]interface{}{
     "error": err.Error(),
   })(rec, r, ps)
   w.WriteHeader(code)

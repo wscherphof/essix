@@ -9,10 +9,10 @@ import (
   "github.com/wscherphof/msg"
 )
 
-func T (base string, inner string, data map[string]string) func (http.ResponseWriter, *http.Request, httprouter.Params) {
+func T (base string, inner string, data map[string]interface{}) func (http.ResponseWriter, *http.Request, httprouter.Params) {
   return func (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
     if data == nil {
-      data = map[string]string{}
+      data = map[string]interface{}{}
     }
     Msg, language := msg.Language(r.Header.Get("Accept-Language"))
     data["lang"] = language
