@@ -9,10 +9,11 @@ import (
   "github.com/gorilla/context"
 )
 
+var db = InitDB("localhost:28015", "expeertise")
+
 func main () {
   DefineMessages()
-  db := InitDB("localhost:28015", "expeertise")
-  InitSecure(db)
+  InitSecure()
   router := httprouter.New()
 
   router.GET("/", T("home", "", nil))

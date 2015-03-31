@@ -10,17 +10,22 @@ type Database struct{
   Session *r.Session
 }
 
-func InitDB (address, database string) *Database {
-  db := Database{
+func InitDB (address, database string) (ret *Database) {
+  ret = &Database{
     Name: database,
   }
   var err error
-  db.Session, err = r.Connect(r.ConnectOpts {
+  ret.Session, err = r.Connect(r.ConnectOpts {
     Address:  address,
     Database: database,
   })
   if err != nil {
     log.Fatalln(err.Error())
   }
-  return &db
+  return
+}
+
+func (d *Database) Insert (table string, record interface{}) (err error) {
+  _, err = r.Table(table).Insert(record).RunWrite(d.Session)
+  return
 }

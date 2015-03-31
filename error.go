@@ -4,6 +4,7 @@ import (
   "net/http"
   "github.com/julienschmidt/httprouter"
   "net/http/httptest"
+  "log"
 )
 
 func Error (w http.ResponseWriter, r *http.Request, ps httprouter.Params, err error, codes ...int) {
@@ -20,4 +21,5 @@ func Error (w http.ResponseWriter, r *http.Request, ps httprouter.Params, err er
   })(rec, r, ps)
   w.WriteHeader(code)
   w.Write(rec.Body.Bytes())
+  log.Panicln("ERROR: ", err.Error())
 }
