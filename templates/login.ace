@@ -9,6 +9,8 @@ html lang={{.lang}}
     form method=POST action=/session
       label {{Msg "Email"}}*
         input id=uid type=email name=uid placeholder=email@provider.com required= size=20
+      br
       label {{Msg "Password"}}*
         input id=pwd type=password name=pwd placeholder=******** required= size=20
+      br
       input type=submit value={{Msg "Log in"}}

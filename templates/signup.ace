@@ -9,10 +9,13 @@ html lang={{.lang}}
     form method=POST action=/account onsubmit="return validate(this)"
       label {{Msg "Email"}}*
         input id=uid type=email name=uid placeholder=email@provider.com required= size=20
+      br
       label {{Msg "Password"}}*
         input id=pwd1 type=password name=pwd1 placeholder=******** required= size=20
+      br
       label {{Msg "Repeat password"}}*
         input id=pwd2 type=password name=pwd2 placeholder=******** required= size=20
+      br
       label {{Msg "Country"}}*
         select id=country name=country required=
           {{$ownCountry := .lang}}
@@ -23,12 +26,16 @@ html lang={{.lang}}
               option value={{.Code}} {{.Name}}
             {{end}}
           {{end}}
+      br
       label {{Msg "Postcode"}}*
         input id=postcode type=text name=postcode placeholder="1200 JC" required= size=20
+      br
       label {{Msg "First name"}}
         input id=firstname type=text name=firstname placeholder=John size=20
+      br
       label {{Msg "Last name"}}
         input id=lastname type=text name=lastname placeholder=Doe size=20
+      br
       input type=submit value={{Msg "Sign up"}}
     = javascript
       function validate (form) {
