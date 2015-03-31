@@ -8,7 +8,9 @@ import (
 )
 
 func SignUpForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-  T("signup", "", nil)(w, r, ps)
+  T("signup", "", map[string]interface{}{
+    "Countries": Countries,
+  })(w, r, ps)
 }
 
 func SignUp (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {

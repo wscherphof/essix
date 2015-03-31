@@ -11,9 +11,9 @@ func DefineMessages () {
   a("nl", "")
   a("en", "")
 
-  m("User name")
-  a("nl", "Gebruikersnaam")
-  a("en", "User name")
+  m("Email")
+  a("nl", "E-mailadres")
+  a("en", "Email address")
 
   m("Password")
   a("nl", "Wachtwoord")
@@ -46,4 +46,20 @@ func DefineMessages () {
   m("Passwords not equal")
   a("nl", "De wachtwoorden zijn niet hetzelfde")
   a("en", "Passwords don't match")
+
+  m("Country")
+  a("nl", "Land")
+  a("en", "Country")
+
+  m("Postcode")
+  a("nl", "Postcode")
+  a("en", "Postal code")
+
+  m("First name")
+  a("nl", "Voornaam")
+  a("en", "First name")
+
+  m("Last name")
+  a("nl", "Achterrnaam")
+  a("en", "Last name")
 }
