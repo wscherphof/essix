@@ -12,21 +12,22 @@ type Country struct {
   Code string
 }
 
-var Countries = make([]Country, 250)
+var _countries []Country
 
-func LoadCountries () {
-  var (
-    data []byte
-    err error
-  )
-  if data, err = ioutil.ReadFile("./countries.json"); err == nil {
-    if err = json.Unmarshal(data, &Countries); err == nil {
-      for i, v := range Countries {
-        Countries[i].Code = strings.ToLower(v.Code)
-      }
+func Countries () *[]Country {
+  if _countries == nil {
+    _countries = make([]Country, 250)
+    data, err := ioutil.ReadFile("./countries.json")
+    if err != nil {
+      log.Panicln("ERROR: ", err.Error())
+    }
+    err = json.Unmarshal(data, &_countries)
+    if err != nil {
+      log.Panicln("ERROR: ", err.Error())
+    }
+    for i, v := range _countries {
+      _countries[i].Code = strings.ToLower(v.Code)
     }
   }
-  if err != nil {
-    log.Print("ERROR: ", err.Error())
-  }
+  return &_countries
 }

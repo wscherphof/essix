@@ -31,10 +31,6 @@ func DefineMessages () {
   a("nl", "Uitloggen")
   a("en", "Log out")
 
-  m("Protected")
-  a("nl", "Beveiligd")
-  a("en", "Protected")
-
   m("Sign up")
   a("nl", "Aanmelden")
   a("en", "Sign up")

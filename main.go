@@ -11,8 +11,8 @@ import (
 
 func main () {
   DefineMessages()
-  LoadCountries()
-  InitSecure()
+  db := InitDB("localhost:28015", "expeertise")
+  InitSecure(db)
   router := httprouter.New()
 
   router.GET("/", T("home", "", nil))

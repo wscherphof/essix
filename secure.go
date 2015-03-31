@@ -6,34 +6,24 @@ import (
   "log"
 )
 
-func InitSecure () {
-  secure.Init(newSecureDB())
+func InitSecure (db *Database) {
+  secure.Init(newSecureDB(db))
 }
 
 type SecureDB struct {
-  session *r.Session
-  db string
   table string
+  session *r.Session
 }
 
-func newSecureDB () *SecureDB {
+func newSecureDB (db *Database) *SecureDB {
   s := &SecureDB {
-    db: "expeertise",
     table: "secureConfig",
-  }
-  // TODO: store the session someplace higher
-  if session, err := r.Connect(r.ConnectOpts {
-    Address:  "localhost:28015",
-    Database: s.db,
-  }); err == nil {
-    s.session = session
-  } else {
-    log.Fatalln(err.Error())
+    session: db.Session,
   }
   // Create the table if needed
   if _, err := r.Table(s.table).Info().Run(s.session); err != nil {
-    if _, err := r.Db(s.db).TableCreate(s.table).Run(s.session); err != nil {
-      log.Fatalln(err.Error())
+    if _, err := r.Db(db.Name).TableCreate(s.table).Run(s.session); err != nil {
+      log.Panicln("ERROR: ", err.Error())
     }
   }
   return s
@@ -52,7 +42,7 @@ func (s *SecureDB) Fetch () *secure.Config {
 func (s *SecureDB) Upsert (config *secure.Config) {
   if _, err := r.Table(s.table).Delete().RunWrite(s.session); err == nil {
     if _, err := r.Table(s.table).Insert(config).RunWrite(s.session); err != nil {
-      log.Fatalln(err.Error())
+      log.Panicln("ERROR: ", err.Error())
     }
   }
 }
