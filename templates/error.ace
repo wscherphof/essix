@@ -1,9 +1,9 @@
 = doctype html
-html lang={{.lang}}
+html lang={{ .lang }}
   head
     meta charset=utf-8
     title Expeertise
     link rel=icon href=/static/favicon.ico type=image/x-icon
     link rel="shortcut icon" href=/static/favicon.ico type=image/x-icon
   body
-    p {{Msg .error}}
+    p {{ Msg .error }}

@@ -1,2 +1,2 @@
 = content main
-  p Hi {{.uid}}, thanks for logging in! Welcome to this protected content.
+  p Hi {{ .uid }}, thanks for logging in! Welcome to this protected content.

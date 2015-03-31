@@ -1,5 +1,5 @@
 = doctype html
-html lang={{.lang}}
+html lang={{ .lang }}
   head
     meta charset=utf-8
     title Expeertise
@@ -7,10 +7,10 @@ html lang={{.lang}}
     link rel="shortcut icon" href=/static/favicon.ico type=image/x-icon
   body
     form method=POST action=/session
-      label {{Msg "Email"}}*
+      label {{ Msg "Email" }}*
         input id=uid type=email name=uid placeholder=email@provider.com required= size=20
       br
-      label {{Msg "Password"}}*
+      label {{ Msg "Password" }}*
         input id=pwd type=password name=pwd placeholder=******** required= size=20
       br
-      input type=submit value={{Msg "Log in"}}
+      input type=submit value={{ Msg "Log in" }}
