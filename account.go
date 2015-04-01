@@ -64,7 +64,7 @@ func SignUp (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
   } else if res, err := db.Insert(PWD_TABLE, pwd); err != nil {
     Error(w, r, ps, err)
   } else if len(res.GeneratedKeys) != 1 {
-    Error(w, r, ps, errors.New("Failed saving password"))
+    Error(w, r, ps, errors.New("Unexpected error"))
   } else if account, err := NewAccount(r, res.GeneratedKeys[0]); err != nil {
     Error(w, r, ps, err)
   } else if res, err := db.Insert(ACCOUNT_TABLE, account); err != nil {
@@ -74,7 +74,7 @@ func SignUp (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
     // Can't tell why this isn't returned in err :-(
     db.Delete(PWD_TABLE, account.PWD)
     if res.FirstError[0:9] == "Duplicate" {
-      Error(w, r, ps, errors.New("Duplicate primary key"), http.StatusConflict)
+      Error(w, r, ps, errors.New("Email address taken"), http.StatusConflict)
     } else {
       Error(w, r, ps, errors.New("Unexpected error"))
     }

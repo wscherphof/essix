@@ -56,6 +56,14 @@ func DefineMessages () {
   a("en", "First name")
 
   m("Last name")
-  a("nl", "Achterrnaam")
+  a("nl", "Achternaam")
   a("en", "Last name")
+
+  m("Email address taken")
+  a("nl", "Dit e-mailadres is al in gebruik voor een betsaand account")
+  a("en", "This email address is already in use for an existing account")
+
+  m("Unexpected error")
+  a("nl", "Er heeft zich een onverwachte foutsituatie voorgedaan :-(")
+  a("en", "An unexpected error occurred :-(")
 }
