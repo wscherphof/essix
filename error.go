@@ -21,5 +21,7 @@ func Error (w http.ResponseWriter, r *http.Request, ps httprouter.Params, err er
   })(rec, r, ps)
   w.WriteHeader(code)
   w.Write(rec.Body.Bytes())
-  log.Println("ERROR:", err.Error(), "- Path:", r.URL.Path)
+  if code >= 500 {
+    log.Println("ERROR:", err.Error(), "- Path:", r.URL.Path)
+  }
 }
