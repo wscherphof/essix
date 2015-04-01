@@ -26,5 +26,13 @@ func InitDB (address, database string) (ret *Database) {
 }
 
 func (d *Database) Insert (table string, record interface{}) (r.WriteResponse, error) {
-  return r.Table(table).Insert(record).RunWrite(d.Session)
+  opts := r.InsertOpts{
+    Conflict: "error",
+    ReturnChanges: false,
+  }
+  return r.Table(table).Insert(record, opts).RunWrite(d.Session)
+}
+
+func (d *Database) Delete (table, key string) (r.WriteResponse, error) {
+  return r.Table(table).Get(key).Delete().RunWrite(d.Session)
 }
