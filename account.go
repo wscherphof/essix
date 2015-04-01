@@ -13,7 +13,24 @@ func SignUpForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
   })(w, r, ps)
 }
 
-type Account struct{
+const PWD_TABLE = "pwd"
+type PWD struct {
+  Value string
+}
+
+func NewPWD (pwd1, pwd2 string) (pwd PWD, err error) {
+  if pwd1 != pwd2 {
+    err = errors.New("Passwords not equal")
+  } else {
+    pwd = PWD{
+      Value: pwd1,
+    }
+  }
+  return
+}
+
+const ACCOUNT_TABLE = "account"
+type Account struct {
   Created time.Time
   UID string
   PWD string
@@ -23,24 +40,29 @@ type Account struct{
   LastName string
 }
 
-const ACCOUNT_TABLE = "account"
-
 func SignUp (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-  // uid := r.FormValue("uid")
-  pwd1 := r.FormValue("pwd1")
-  pwd2 := r.FormValue("pwd2")
-  if pwd1 != pwd2 {
-    Error(w, r, ps, errors.New("Passwords not equal"))
+  if pwd, err := NewPWD(r.FormValue("pwd1"), r.FormValue("pwd2")); err != nil {
+    Error(w, r, ps, err)
+  } else if res, err := db.Insert(PWD_TABLE, pwd); err != nil {
+    Error(w, r, ps, err)
+  } else if len(res.GeneratedKeys) != 1 {
+    Error(w, r, ps, errors.New("Failed saving password"))
+  } else {
+    // TODO: further validation, unique key on UID, password hashing, confirmation email, ...
+    record := Account{
+      Created: time.Now(),
+      UID: r.FormValue("uid"),
+      PWD: res.GeneratedKeys[0],
+      Country: r.FormValue("country"),
+      Postcode: r.FormValue("postcode"),
+      FirstName: r.FormValue("firstname"),
+      LastName: r.FormValue("lastname"),
+    }
+    if _, err := db.Insert(ACCOUNT_TABLE, record); err != nil {
+      Error(w, r, ps, err)
+    } else {
+      w.WriteHeader(http.StatusOK)
+      w.Write([]byte("account created"))
+    }
   }
-  // TODO: further validation, unique key on UID, password hashing, ...
-  record := Account{
-    Created: time.Now(),
-    UID: r.FormValue("uid"),
-    PWD: pwd1,
-    Country: r.FormValue("country"),
-    Postcode: r.FormValue("postcode"),
-    FirstName: r.FormValue("firstname"),
-    LastName: r.FormValue("lastname"),
-  }
-  Error(w, r, ps, db.Insert(ACCOUNT_TABLE, record))
 }
