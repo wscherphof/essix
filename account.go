@@ -4,6 +4,7 @@ import (
   "net/http"
   "errors"
   "github.com/julienschmidt/httprouter"
+  "time"
 )
 
 func SignUpForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
@@ -13,6 +14,7 @@ func SignUpForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 }
 
 type Account struct{
+  Created time.Time
   UID string
   PWD string
   Country string
@@ -32,6 +34,7 @@ func SignUp (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
   }
   // TODO: further validation, unique key on UID, password hashing, ...
   record := Account{
+    Created: time.Now(),
     UID: r.FormValue("uid"),
     PWD: pwd1,
     Country: r.FormValue("country"),
