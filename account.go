@@ -23,7 +23,7 @@ type Account struct{
   LastName string
 }
 
-const accountTable = "account"
+const ACCOUNT_TABLE = "account"
 
 func SignUp (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
   // uid := r.FormValue("uid")
@@ -42,5 +42,5 @@ func SignUp (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
     FirstName: r.FormValue("firstname"),
     LastName: r.FormValue("lastname"),
   }
-  Error(w, r, ps, db.Insert(accountTable, record))
+  Error(w, r, ps, db.Insert(ACCOUNT_TABLE, record))
 }
