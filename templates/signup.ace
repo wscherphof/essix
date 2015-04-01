@@ -1,5 +1,5 @@
 = doctype html
-html lang={{ .lang }}
+html lang={{ .lang.Main }}
   head
     meta charset=utf-8
     title Expeertise
@@ -18,9 +18,10 @@ html lang={{ .lang }}
       br
       label {{ Msg "Country" }}*
         select id=country name=country required=
-          {{ $ownCountry := .lang }}
+          {{ $mainLang := .lang.Main }}
+          {{ $subLang := .lang.Sub }}
           {{ range .Countries }}
-            {{ if eq .Code $ownCountry }}
+            {{ if or (eq .Code $mainLang) (eq .Code $subLang) }}
               option value={{ .Code }} selected= {{ .Name }}
             {{ else }}
               option value={{ .Code }} {{ .Name }}
