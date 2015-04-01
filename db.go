@@ -25,7 +25,6 @@ func InitDB (address, database string) (ret *Database) {
   return
 }
 
-func (d *Database) Insert (table string, record interface{}) (err error) {
-  _, err = r.Table(table).Insert(record).RunWrite(d.Session)
-  return
+func (d *Database) Insert (table string, record interface{}) (r.WriteResponse, error) {
+  return r.Table(table).Insert(record).RunWrite(d.Session)
 }
