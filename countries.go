@@ -19,11 +19,11 @@ func Countries () *[]Country {
     _countries = make([]Country, 250)
     data, err := ioutil.ReadFile("./countries.json")
     if err != nil {
-      log.Panicln("ERROR: ", err.Error())
+      log.Panicln("ERROR:", err.Error())
     }
     err = json.Unmarshal(data, &_countries)
     if err != nil {
-      log.Panicln("ERROR: ", err.Error())
+      log.Panicln("ERROR:", err.Error())
     }
     for i, v := range _countries {
       _countries[i].Code = strings.ToLower(v.Code)

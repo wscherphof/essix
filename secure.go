@@ -19,7 +19,7 @@ func newSecureDB () *SecureDB {
   // Create the table if needed
   if _, err := r.Table(tableName).Info().Run(db.Session); err != nil {
     if _, err := r.Db(db.Name).TableCreate(tableName).Run(db.Session); err != nil {
-      log.Panicln("ERROR: ", err.Error())
+      log.Panicln("ERROR:", err.Error())
     }
   }
   return &SecureDB {
@@ -40,7 +40,7 @@ func (s *SecureDB) Fetch () *secure.Config {
 func (s *SecureDB) Upsert (config *secure.Config) {
   if _, err := s.Table.Delete().RunWrite(db.Session); err == nil {
     if _, err := s.Table.Insert(config).RunWrite(db.Session); err != nil {
-      log.Panicln("ERROR: ", err.Error())
+      log.Panicln("ERROR:", err.Error())
     }
   }
 }
