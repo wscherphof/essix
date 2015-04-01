@@ -72,13 +72,12 @@ func SignUp (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
     Error(w, r, ps, err)
   } else if res.Errors > 0 {
     // Can't tell why this isn't returned in err :-(
-    if res.FirstError[0:9] == "Duplicate" {
-      err = errors.New("Duplicate primary key")
-    } else {
-      err = errors.New("Unexpected error")
-    }
     db.Delete(PWD_TABLE, account.PWD)
-    Error(w, r, ps, err)
+    if res.FirstError[0:9] == "Duplicate" {
+      Error(w, r, ps, errors.New("Duplicate primary key"), http.StatusConflict)
+    } else {
+      Error(w, r, ps, errors.New("Unexpected error"))
+    }
   } else {
     // TODO: confirmation email, formatted response, ...
     w.WriteHeader(http.StatusOK)
