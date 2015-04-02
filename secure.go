@@ -2,6 +2,7 @@ package main
 
 import (
   "github.com/wscherphof/secure"
+  "github.com/wscherphof/expeertise/db"
   r "github.com/dancannon/gorethink"
   "log"
 )
@@ -18,7 +19,7 @@ func newSecureDB () *SecureDB {
   const tableName = "secureConfig"
   // Create the table if needed
   if _, err := r.Table(tableName).Info().Run(db.Session); err != nil {
-    if _, err := r.Db(db.Name).TableCreate(tableName).Run(db.Session); err != nil {
+    if _, err := r.Db(db.Database).TableCreate(tableName).Run(db.Session); err != nil {
       log.Panicln("ERROR:", err.Error())
     }
   }

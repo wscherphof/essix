@@ -7,11 +7,11 @@ import (
   "github.com/julienschmidt/httprouter"
   "github.com/gorilla/handlers"
   "github.com/gorilla/context"
+  "github.com/wscherphof/expeertise/db"
 )
 
-var db = InitDB("localhost:28015", "expeertise")
-
 func main () {
+  db.Init("localhost:28015", "expeertise")
   DefineMessages()
   InitSecure()
   router := httprouter.New()
