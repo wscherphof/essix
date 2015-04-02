@@ -36,3 +36,10 @@ func (d *Database) Insert (table string, record interface{}) (r.WriteResponse, e
 func (d *Database) Delete (table, key string) (r.WriteResponse, error) {
   return r.Table(table).Get(key).Delete().RunWrite(d.Session)
 }
+
+func (d *Database) Get (table, key string) (result interface{}, err error) {
+  if cursor, err := r.Table(table).Get(key).Run(d.Session); err == nil {
+    cursor.One(&result)
+  }
+  return
+}

@@ -5,6 +5,7 @@ import (
   "errors"
   "github.com/julienschmidt/httprouter"
   "time"
+  "strings"
 )
 
 func SignUpForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
@@ -18,9 +19,8 @@ type PWD struct {
   Value string
 }
 
-func NewPWD (r *http.Request) (pwd PWD, err error) {
+func NewPWD (pwd1, pwd2 string) (pwd PWD, err error) {
   // TODO: further validation, password hashing, ...
-  pwd1, pwd2 := r.FormValue("pwd1"), r.FormValue("pwd2")
   if pwd1 == "" {
     err = errors.New("Password empty")
   } else if pwd1 != pwd2 {
@@ -44,43 +44,45 @@ type Account struct {
   LastName string
 }
 
-func NewAccount (r *http.Request, pwd string) (account Account, err error) {
-  // TODO: further validation, ...
-  account = Account{
-    Created: time.Now(),
-    UID: r.FormValue("uid"),
-    PWD: pwd,
-    Country: r.FormValue("country"),
-    Postcode: r.FormValue("postcode"),
-    FirstName: r.FormValue("firstname"),
-    LastName: r.FormValue("lastname"),
+var ErrEmailTaken = errors.New("Email address taken")
+
+func NewAccount (r *http.Request) (account Account, err error) {
+  uid := strings.ToLower(r.FormValue("uid"))
+  if got, _ := db.Get(ACCOUNT_TABLE, uid); got != nil {
+    err = ErrEmailTaken
+  } else if pwd, e := NewPWD(r.FormValue("pwd1"), r.FormValue("pwd2")); e != nil {
+    err = e
+  } else if res, e := db.Insert(PWD_TABLE, pwd); e != nil {
+    err = e
+  } else if len(res.GeneratedKeys) != 1 {
+    err = errors.New("Unexpected error")
+  } else {
+    account = Account{
+      Created: time.Now(),
+      UID: uid,
+      PWD: res.GeneratedKeys[0],
+      Country: r.FormValue("country"),
+      Postcode: strings.ToUpper(r.FormValue("postcode")),
+      FirstName: r.FormValue("firstname"),
+      LastName: r.FormValue("lastname"),
+    }
+    if _, err = db.Insert(ACCOUNT_TABLE, account); err != nil {
+      db.Delete(PWD_TABLE, account.PWD)
+    }
   }
   return
 }
 
 func SignUp (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-  if pwd, err := NewPWD(r); err != nil {
-    Error(w, r, ps, err)
-  } else if res, err := db.Insert(PWD_TABLE, pwd); err != nil {
-    Error(w, r, ps, err)
-  } else if len(res.GeneratedKeys) != 1 {
-    Error(w, r, ps, errors.New("Unexpected error"))
-  } else if account, err := NewAccount(r, res.GeneratedKeys[0]); err != nil {
-    Error(w, r, ps, err)
-  } else if res, err := db.Insert(ACCOUNT_TABLE, account); err != nil {
-    db.Delete(PWD_TABLE, account.PWD)
-    Error(w, r, ps, err)
-  } else if res.Errors > 0 {
-    // Can't tell why this isn't returned in err :-(
-    db.Delete(PWD_TABLE, account.PWD)
-    if res.FirstError[0:9] == "Duplicate" {
-      Error(w, r, ps, errors.New("Email address taken"), http.StatusConflict)
+  if account, err := NewAccount(r); err != nil {
+    if err == ErrEmailTaken {
+      Error(w, r, ps, err, http.StatusConflict)
     } else {
-      Error(w, r, ps, errors.New("Unexpected error"))
+      Error(w, r, ps, err)
     }
   } else {
     // TODO: confirmation email, formatted response, ...
     w.WriteHeader(http.StatusOK)
-    w.Write([]byte("account created"))
+    w.Write([]byte("account created: " + account.UID))
   }
 }
