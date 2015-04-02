@@ -44,14 +44,12 @@ type Account struct {
   LastName string
 }
 
-var ErrEmailTaken = errors.New("Email address taken")
-
-func NewAccount (r *http.Request) (account Account, err error) {
-  uid := strings.ToLower(r.FormValue("uid"))
+func NewAccount (val func (string) (string)) (account Account, err error, conflict bool) {
+  uid := strings.ToLower(val("uid"))
   if got, _ := db.Get(ACCOUNT_TABLE, uid); got != nil {
-    err = ErrEmailTaken
-  } else if pwd, e := NewPWD(r.FormValue("pwd1"), r.FormValue("pwd2")); e != nil {
-    err = e
+    err, conflict = errors.New("Email address taken"), true
+  } else if pwd, e := NewPWD(val("pwd1"), val("pwd2")); e != nil {
+    err, conflict = e, true
   } else if res, e := db.Insert(PWD_TABLE, pwd); e != nil {
     err = e
   } else if len(res.GeneratedKeys) != 1 {
@@ -61,10 +59,10 @@ func NewAccount (r *http.Request) (account Account, err error) {
       Created: time.Now(),
       UID: uid,
       PWD: res.GeneratedKeys[0],
-      Country: r.FormValue("country"),
-      Postcode: strings.ToUpper(r.FormValue("postcode")),
-      FirstName: r.FormValue("firstname"),
-      LastName: r.FormValue("lastname"),
+      Country: val("country"),
+      Postcode: strings.ToUpper(val("postcode")),
+      FirstName: val("firstname"),
+      LastName: val("lastname"),
     }
     if _, err = db.Insert(ACCOUNT_TABLE, account); err != nil {
       db.Delete(PWD_TABLE, account.PWD)
@@ -74,8 +72,8 @@ func NewAccount (r *http.Request) (account Account, err error) {
 }
 
 func SignUp (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-  if account, err := NewAccount(r); err != nil {
-    if err == ErrEmailTaken {
+  if account, err, conflict := NewAccount(r.FormValue); err != nil {
+    if conflict {
       Error(w, r, ps, err, http.StatusConflict)
     } else {
       Error(w, r, ps, err)
