@@ -12,24 +12,24 @@ func InitSecure () {
 }
 
 type SecureDB struct {
-  Table r.Term
+  Table string
 }
 
 func newSecureDB () *SecureDB {
-  const tableName = "secureConfig"
+  const table = "secureConfig"
   // Create the table if needed
-  if _, err := r.Table(tableName).Info().Run(db.Session); err != nil {
-    if _, err := r.Db(db.Database).TableCreate(tableName).Run(db.Session); err != nil {
+  if _, err := r.Table(table).Info().Run(db.Session); err != nil {
+    if _, err := r.Db(db.Database).TableCreate(table).Run(db.Session); err != nil {
       log.Panicln("ERROR:", err.Error())
     }
   }
   return &SecureDB {
-    Table: r.Table(tableName),
+    Table: table,
   }
 }
 
 func (s *SecureDB) Fetch () *secure.Config {
-  if rows, err := s.Table.Run(db.Session); err == nil {
+  if rows, err := r.Table(s.Table).Run(db.Session); err == nil {
     config := new(secure.Config)
     if err := rows.One(config); err == nil {
       return config
@@ -39,8 +39,8 @@ func (s *SecureDB) Fetch () *secure.Config {
 }
 
 func (s *SecureDB) Upsert (config *secure.Config) {
-  if _, err := s.Table.Delete().RunWrite(db.Session); err == nil {
-    if _, err := s.Table.Insert(config).RunWrite(db.Session); err != nil {
+  if _, err := r.Table(s.Table).Delete().RunWrite(db.Session); err == nil {
+    if _, err := r.Table(s.Table).Insert(config).RunWrite(db.Session); err != nil {
       log.Panicln("ERROR:", err.Error())
     }
   }
