@@ -1,4 +1,4 @@
-package main
+package data
 
 import (
   "encoding/json"
@@ -17,7 +17,7 @@ var _countries []Country
 func Countries () *[]Country {
   if _countries == nil {
     _countries = make([]Country, 250)
-    data, err := ioutil.ReadFile("./countries.json")
+    data, err := ioutil.ReadFile("./data/countries.json")
     if err != nil {
       log.Panicln("ERROR:", err.Error())
     }

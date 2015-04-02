@@ -3,12 +3,13 @@ package main
 import (
   "net/http"
   "github.com/julienschmidt/httprouter"
+  "github.com/wscherphof/expeertise/data"
   "github.com/wscherphof/expeertise/model"
 )
 
 func SignUpForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
   T("signup", "", map[string]interface{}{
-    "Countries": Countries(),
+    "Countries": data.Countries(),
   })(w, r, ps)
 }
 
