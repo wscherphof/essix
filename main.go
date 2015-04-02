@@ -8,12 +8,13 @@ import (
   "github.com/gorilla/handlers"
   "github.com/gorilla/context"
   "github.com/wscherphof/expeertise/db"
+  "github.com/wscherphof/expeertise/secure"
 )
 
 func main () {
   db.Init("localhost:28015", "expeertise")
+  secure.Init()
   DefineMessages()
-  InitSecure()
   router := httprouter.New()
 
   router.GET("/", T("home", "", nil))
