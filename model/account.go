@@ -12,14 +12,14 @@ type PWD struct {
   Value string
 }
 
-func NewPWD (pwd1, pwd2 string) (pwd PWD, err error) {
+func NewPWD (pwd1, pwd2 string) (pwd *PWD, err error) {
   // TODO: further validation, password hashing, ...
   if pwd1 == "" {
     err = errors.New("Password empty")
   } else if pwd1 != pwd2 {
     err = errors.New("Passwords not equal")
   } else {
-    pwd = PWD{
+    pwd = &PWD{
       Value: pwd1,
     }
   }
@@ -37,7 +37,7 @@ type Account struct {
   LastName string
 }
 
-func NewAccount (val func (string) (string)) (account Account, err error, conflict bool) {
+func NewAccount (val func (string) (string)) (account *Account, err error, conflict bool) {
   uid := strings.ToLower(val("uid"))
   if e, found := db.Get(ACCOUNT_TABLE, uid, new(Account)); e != nil {
     err = e
@@ -50,7 +50,7 @@ func NewAccount (val func (string) (string)) (account Account, err error, confli
   } else if len(res.GeneratedKeys) != 1 {
     err = errors.New("Unexpected error")
   } else {
-    account = Account{
+    account = &Account{
       Created: time.Now(),
       UID: uid,
       PWD: res.GeneratedKeys[0],
@@ -61,6 +61,7 @@ func NewAccount (val func (string) (string)) (account Account, err error, confli
     }
     if _, err = db.Insert(ACCOUNT_TABLE, account); err != nil {
       db.Delete(PWD_TABLE, account.PWD)
+      account = nil
     }
   }
   return
