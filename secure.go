@@ -28,14 +28,11 @@ func newSecureDB () *SecureDB {
   }
 }
 
-func (s *SecureDB) Fetch () *secure.Config {
-  if rows, err := r.Table(s.Table).Run(db.Session); err == nil {
-    config := new(secure.Config)
-    if err := rows.One(config); err == nil {
-      return config
-    }
+func (s *SecureDB) Fetch () (config *secure.Config) {
+  if err, _ := db.One(s.Table, config); err != nil {
+    log.Println("ERROR: SecureDB.Fetch() failed with:", err.Error())
   }
-  return nil
+  return
 }
 
 func (s *SecureDB) Upsert (config *secure.Config) {

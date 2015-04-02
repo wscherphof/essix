@@ -32,9 +32,20 @@ func Delete (table, key string) (r.WriteResponse, error) {
   return r.Table(table).Get(key).Delete().RunWrite(Session)
 }
 
-func Get (table, key string) (result interface{}, err error) {
-  if cursor, err := r.Table(table).Get(key).Run(Session); err == nil {
-    cursor.One(&result)
+func Get (table, key string, result interface{}) (err error, found bool) {
+  if cursor, e := r.Table(table).Get(key).Run(Session); e != nil {
+    err = e
+  } else if e = cursor.One(result); e == nil {
+    found = true
+  }
+  return
+}
+
+func One (table string, result interface{}) (err error, found bool) {
+  if cursor, e := r.Table(table).Run(Session); e != nil {
+    err = e
+  } else if e = cursor.One(result); e == nil {
+    found = true
   }
   return
 }

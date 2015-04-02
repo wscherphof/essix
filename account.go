@@ -47,7 +47,9 @@ type Account struct {
 
 func NewAccount (val func (string) (string)) (account Account, err error, conflict bool) {
   uid := strings.ToLower(val("uid"))
-  if got, _ := db.Get(ACCOUNT_TABLE, uid); got != nil {
+  if e, found := db.Get(ACCOUNT_TABLE, uid, new(Account)); e != nil {
+    err = e
+  } else if found {
     err, conflict = errors.New("Email address taken"), true
   } else if pwd, e := NewPWD(val("pwd1"), val("pwd2")); e != nil {
     err, conflict = e, true
