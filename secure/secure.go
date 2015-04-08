@@ -32,8 +32,6 @@ func (s *secureDB) Fetch () (config *secure.Config) {
     log.Println("ERROR: SecureDB.Fetch() failed with:", err.Error())
   } else if found {
     config = conf    
-  } else {
-    config = nil
   }
   return
 }
