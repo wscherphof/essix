@@ -21,7 +21,8 @@ func T (base string, inner string, data map[string]interface{}) func (http.Respo
     }
     tpl, err := ace.Load(base, inner, &ace.Options{
       BaseDir: "templates",
-      // TODO: move Msg to data to prevent cache hit of other language
+      // TODO: make lang a parameter to Msg, to prevent cache hit of other language
+      // TODO: create test to verify rendering different languages
       FuncMap: template.FuncMap{
         "Msg": Msg,
       },
