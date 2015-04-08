@@ -37,6 +37,8 @@ func Get (table, key string, result interface{}) (err error, found bool) {
     err = e
   } else if e = cursor.One(result); e == nil {
     found = true
+  } else if e != r.ErrEmptyResult {
+    err = e
   }
   return
 }
@@ -46,6 +48,8 @@ func One (table string, result interface{}) (err error, found bool) {
     err = e
   } else if e = cursor.One(result); e == nil {
     found = true
+  } else if e != r.ErrEmptyResult {
+    err = e
   }
   return
 }
