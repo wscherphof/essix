@@ -21,15 +21,19 @@ func Init (address, database string) {
 }
 
 func Insert (table string, record interface{}) (r.WriteResponse, error) {
-  opts := r.InsertOpts{
-    Conflict: "error",
-    ReturnChanges: false,
-  }
-  return r.Table(table).Insert(record, opts).RunWrite(Session)
+  return r.Table(table).Insert(record).RunWrite(Session)
 }
 
 func Delete (table, key string) (r.WriteResponse, error) {
   return r.Table(table).Get(key).Delete().RunWrite(Session)
+}
+
+func Truncate (table string) (r.WriteResponse, error) {
+  return r.Table(table).Delete().RunWrite(Session)
+}
+
+func TableCreate (table string) (*r.Cursor, error) {
+  return r.Db(Database).TableCreate(table).Run(Session)
 }
 
 func Get (table, key string, result interface{}) (err error, found bool) {

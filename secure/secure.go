@@ -3,19 +3,13 @@ package secure
 import (
   "github.com/wscherphof/secure"
   "github.com/wscherphof/expeertise/db"
-  // TODO: ditch r dependency
-  r "github.com/dancannon/gorethink"
   "log"
 )
 
 func Init () {
   const table = "secureConfig"
-  // TODO: db.TableCreate
-  // Create the table if needed
-  if _, err := r.Table(table).Info().Run(db.Session); err != nil {
-    if _, err := r.Db(db.Database).TableCreate(table).Run(db.Session); err != nil {
-      log.Panicln("ERROR:", err.Error())
-    }
+  if cursor, _ := db.TableCreate(table); cursor != nil {
+    log.Println("INFO: SecureDB.Init() table created:", table)
   }
   secure.Init(&secureDB{
     table: table,
@@ -37,10 +31,9 @@ func (s *secureDB) Fetch () (config *secure.Config) {
 }
 
 func (s *secureDB) Upsert (config *secure.Config) {
-  // TODO: db.Delete, db.Insert
-  if _, err := r.Table(s.table).Delete().RunWrite(db.Session); err == nil {
-    if _, err := r.Table(s.table).Insert(config).RunWrite(db.Session); err != nil {
-      log.Panicln("ERROR:", err.Error())
-    }
+  if _, err := db.Truncate(s.table); err != nil {
+    log.Panicln("ERROR:", err.Error())
+  } else if _, err := db.Insert(s.table, config); err != nil {
+    log.Panicln("ERROR:", err.Error())
   }
 }
