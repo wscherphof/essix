@@ -1,7 +1,7 @@
 package main
 
 import (
-  "fmt"
+  "log"
   "net/http"
   "html/template"
   "github.com/yossi/ace"
@@ -22,19 +22,14 @@ func T (base string, inner string, data map[string]interface{}) func (http.Respo
   }
   return func (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
     language := msg.Language(r.Header.Get("Accept-Language"))
+    data["lang"] = language
     if inner == "lang" {
       inner = base + "-" + language.Main
     }
-    tpl, err := ace.Load(base, inner, aceOptions)
-    if err != nil {
-      fmt.Println("ace.Load: ", err)
-      return
-    }
-    data["lang"] = language
-    err = tpl.Execute(w, data)
-    if err != nil {
-      fmt.Println("tpl.Execute: ", err)
-      return
+    if tpl, err := ace.Load(base, inner, aceOptions); err != nil {
+      log.Panicln("ERROR: ace.Load:", err)
+    } else if err := tpl.Execute(w, data); err != nil {
+      log.Panicln("ERROR: tpl.Execute:", err)
     }
   }
 }
