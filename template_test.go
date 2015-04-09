@@ -13,28 +13,28 @@ type template_test_input struct{
   want string
 }
 
-func TestLanguage(t *testing.T) {
-  template_test_run(t, "template_test_language", []template_test_input{
+func TestLanguage (t *testing.T) {
+  template_test_run(t, "template_test_language", "", []template_test_input{
     template_test_input{accept_language: "nl-nl", want: "nl"},
     template_test_input{accept_language: "en-gb", want: "en"},
   })
 }
 
-func TestMsg(t *testing.T) {
+func TestMsg (t *testing.T) {
   var m, a = msg.Init()
   m("hello")
   a("nl", "hallo")
   a("en", "hello")
   // TODO: add cases for full and sub languages
-  template_test_run(t, "template_test_msg", []template_test_input{
+  template_test_run(t, "template_test_msg", "", []template_test_input{
     template_test_input{accept_language: "nl-nl", want: "hallo"},
     template_test_input{accept_language: "en-gb", want: "hello"},
   })
 }
 
-func template_test_run(t *testing.T, template string, inputs []template_test_input) {
+func template_test_run (t *testing.T, base, inner string, inputs []template_test_input) {
   ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-    T(template, "", nil)(w, r, nil)
+    T(base, inner, nil)(w, r, nil)
   }))
   defer ts.Close()
   client := &http.Client{}
@@ -55,7 +55,7 @@ func template_test_run(t *testing.T, template string, inputs []template_test_inp
     }
     got := string(content)
     if got != input.want {
-      t.Error("template:", template, "input:", input, "got:", got)
+      t.Error("template:", base, inner, "input:", input, "got:", got)
     }
   }
 }
