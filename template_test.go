@@ -25,6 +25,7 @@ func TestMsg(t *testing.T) {
   m("hello")
   a("nl", "hallo")
   a("en", "hello")
+  // TODO: add cases for full and sub languages
   template_test_run(t, "template_test_msg", []template_test_input{
     template_test_input{accept_language: "nl-nl", want: "hallo"},
     template_test_input{accept_language: "en-gb", want: "hello"},
