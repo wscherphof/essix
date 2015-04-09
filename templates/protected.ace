@@ -9,4 +9,4 @@ html lang={{ .lang.Main }}
     = yield main
     form method=POST action=/session
       input type=hidden name=_method value=DELETE
-      input type=submit value={{ Msg "Log out" }}
+      input type=submit value={{ Msg .lang "Log out" }}
