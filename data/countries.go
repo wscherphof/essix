@@ -18,9 +18,9 @@ func Countries () *[]Country {
   if len(_countries) == 0 {
     _countries = make([]Country, 250)
     if data, err := ioutil.ReadFile("./data/countries.json"); err != nil {
-      log.Panicln("ERROR:", err.Error())
+      log.Panicln("ERROR:", err)
     } else if err := json.Unmarshal(data, &_countries); err != nil {
-      log.Panicln("ERROR:", err.Error())
+      log.Panicln("ERROR:", err)
     }
     // Lowercase all the codes!
     for i, v := range _countries {

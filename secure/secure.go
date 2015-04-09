@@ -23,7 +23,7 @@ type secureDB struct {
 func (s *secureDB) Fetch () (config *secure.Config) {
   conf := new(secure.Config)
   if err, found := db.One(s.table, conf); err != nil {
-    log.Println("ERROR: SecureDB.Fetch() failed with:", err.Error())
+    log.Println("ERROR: SecureDB.Fetch() failed with:", err)
   } else if found {
     config = conf    
   }
@@ -32,8 +32,8 @@ func (s *secureDB) Fetch () (config *secure.Config) {
 
 func (s *secureDB) Upsert (config *secure.Config) {
   if _, err := db.Truncate(s.table); err != nil {
-    log.Panicln("ERROR:", err.Error())
+    log.Panicln("ERROR:", err)
   } else if _, err := db.Insert(s.table, config); err != nil {
-    log.Panicln("ERROR:", err.Error())
+    log.Panicln("ERROR:", err)
   }
 }
