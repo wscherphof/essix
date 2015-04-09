@@ -8,7 +8,6 @@ import (
   "github.com/wscherphof/msg"
 )
 
-var m, a = msg.Init()
 type template_test_input struct{
   accept_language string
   want string
@@ -22,6 +21,7 @@ func TestLanguage(t *testing.T) {
 }
 
 func TestMsg(t *testing.T) {
+  var m, a = msg.Init()
   m("hello")
   a("nl", "hallo")
   a("en", "hello")
