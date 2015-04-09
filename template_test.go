@@ -3,7 +3,6 @@ package main
 import (
   "net/http"
   "net/http/httptest"
-  "log"
   "testing"
   "io/ioutil"
   "github.com/wscherphof/msg"
@@ -40,22 +39,22 @@ func template_test_run(t *testing.T, template string, inputs []template_test_inp
   client := &http.Client{}
   req, err := http.NewRequest("GET", ts.URL, nil)
   if err != nil {
-    log.Fatal(err)
+    t.Fatal(err)
   }
-  for _, v := range inputs {
-    req.Header.Set("Accept-Language", v.accept_language)
+  for _, input := range inputs {
+    req.Header.Set("Accept-Language", input.accept_language)
     res, err := client.Do(req)
     if err != nil {
-      log.Fatal(err)
+      t.Fatal(err)
     }
     content, err := ioutil.ReadAll(res.Body)
     res.Body.Close()
     if err != nil {
-      log.Fatal(err)
+      t.Fatal(err)
     }
     got := string(content)
-    if got != v.want {
-      t.Error("accept_language:", v.accept_language, "want:", v.want, "got:", got)
+    if got != input.want {
+      t.Error("template:", template, "input:", input, "got:", got)
     }
   }
 }
