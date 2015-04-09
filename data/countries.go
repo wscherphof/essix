@@ -15,16 +15,14 @@ type Country struct {
 var _countries []Country
 
 func Countries () *[]Country {
-  if _countries == nil {
+  if len(_countries) == 0 {
     _countries = make([]Country, 250)
-    data, err := ioutil.ReadFile("./data/countries.json")
-    if err != nil {
+    if data, err := ioutil.ReadFile("./data/countries.json"); err != nil {
+      log.Panicln("ERROR:", err.Error())
+    } else if err := json.Unmarshal(data, &_countries); err != nil {
       log.Panicln("ERROR:", err.Error())
     }
-    err = json.Unmarshal(data, &_countries)
-    if err != nil {
-      log.Panicln("ERROR:", err.Error())
-    }
+    // Lowercase all the codes!
     for i, v := range _countries {
       _countries[i].Code = strings.ToLower(v.Code)
     }

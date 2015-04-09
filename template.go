@@ -16,11 +16,11 @@ var aceOptions = &ace.Options{ // var, no const, since the compiler says this li
   },
 }
 
-func T (base string, inner string, data map[string]interface{}) func (http.ResponseWriter, *http.Request, httprouter.Params) {
+func T (base string, inner string, data map[string]interface{}) func(http.ResponseWriter, *http.Request, httprouter.Params) {
   if data == nil {
     data = map[string]interface{}{}
   }
-  return func (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+  return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
     language := msg.Language(r.Header.Get("Accept-Language"))
     data["lang"] = language
     if inner == "lang" {
