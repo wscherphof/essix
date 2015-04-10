@@ -6,23 +6,20 @@ import (
   "log"
 )
 
+const SECURE_CONFIG_TABLE = "secureConfig"
+
 func Init () {
-  const table = "secureConfig"
-  if cursor, _ := db.TableCreate(table); cursor != nil {
-    log.Println("INFO: SecureDB.Init() table created:", table)
+  if cursor, _ := db.TableCreate(SECURE_CONFIG_TABLE); cursor != nil {
+    log.Println("INFO: SecureDB.Init() table created:", SECURE_CONFIG_TABLE)
   }
-  secure.Init(&secureDB{
-    table: table,
-  })
+  secure.Init(&secureDB{})
 }
 
-type secureDB struct {
-  table string
-}
+type secureDB struct {}
 
 func (s *secureDB) Fetch () (config *secure.Config) {
   conf := new(secure.Config)
-  if err, found := db.One(s.table, conf); err != nil {
+  if err, found := db.One(SECURE_CONFIG_TABLE, conf); err != nil {
     log.Println("ERROR: SecureDB.Fetch() failed with:", err)
   } else if found {
     config = conf    
@@ -31,9 +28,9 @@ func (s *secureDB) Fetch () (config *secure.Config) {
 }
 
 func (s *secureDB) Upsert (config *secure.Config) {
-  if _, err := db.Truncate(s.table); err != nil {
+  if _, err := db.Truncate(SECURE_CONFIG_TABLE); err != nil {
     log.Panicln("ERROR:", err)
-  } else if _, err := db.Insert(s.table, config); err != nil {
+  } else if _, err := db.Insert(SECURE_CONFIG_TABLE, config); err != nil {
     log.Panicln("ERROR:", err)
   }
 }
