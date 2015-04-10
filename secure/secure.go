@@ -12,7 +12,7 @@ func Init () {
   if cursor, _ := db.TableCreate(SECURE_CONFIG_TABLE); cursor != nil {
     log.Println("INFO: SecureDB.Init() table created:", SECURE_CONFIG_TABLE)
   }
-  secure.Init(&secureDB{})
+  secure.Init(new(secureDB))
 }
 
 type secureDB struct {}
