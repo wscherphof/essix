@@ -5,39 +5,45 @@ import (
   "log"
 )
 
-var Database string
-var Session *r.Session
+var (
+  db string
+  s *r.Session
+)
 
 func Init (address, database string) {
-  Database = database
-  if s, err := r.Connect(r.ConnectOpts{
+  db = database
+  if session, err := r.Connect(r.ConnectOpts{
     Address:  address,
     Database: database,
   }); err != nil {
     log.Fatalln(err.Error())
   } else {
-    Session = s
+    s = session
   }
 }
 
 func Insert (table string, record interface{}) (r.WriteResponse, error) {
-  return r.Table(table).Insert(record).RunWrite(Session)
+  return r.Table(table).Insert(record).RunWrite(s)
 }
 
 func Delete (table, key string) (r.WriteResponse, error) {
-  return r.Table(table).Get(key).Delete().RunWrite(Session)
+  return r.Table(table).Get(key).Delete().RunWrite(s)
 }
 
 func Truncate (table string) (r.WriteResponse, error) {
-  return r.Table(table).Delete().RunWrite(Session)
+  return r.Table(table).Delete().RunWrite(s)
 }
 
-func TableCreate (table string) (*r.Cursor, error) {
-  return r.Db(Database).TableCreate(table).Run(Session)
+func NewTableCreateOpts () r.TableCreateOpts {
+  return r.TableCreateOpts{}
+}
+
+func TableCreate (table string, opts ...r.TableCreateOpts) (*r.Cursor, error) {
+  return r.Db(db).TableCreate(table, opts...).Run(s)
 }
 
 func Get (table, key string, result interface{}) (err error, found bool) {
-  if cursor, e := r.Table(table).Get(key).Run(Session); e != nil {
+  if cursor, e := r.Table(table).Get(key).Run(s); e != nil {
     err = e
   } else if e = cursor.One(result); e == nil {
     found = true
@@ -48,7 +54,7 @@ func Get (table, key string, result interface{}) (err error, found bool) {
 }
 
 func One (table string, result interface{}) (err error, found bool) {
-  if cursor, e := r.Table(table).Run(Session); e != nil {
+  if cursor, e := r.Table(table).Run(s); e != nil {
     err = e
   } else if e = cursor.One(result); e == nil {
     found = true
