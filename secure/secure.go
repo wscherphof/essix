@@ -9,6 +9,7 @@ import (
 const SECURE_CONFIG_TABLE = "secureConfig"
 
 func Init () {
+  DefineMessages()
   if cursor, _ := db.TableCreate(SECURE_CONFIG_TABLE); cursor != nil {
     log.Println("INFO: SecureDB.Init() table created:", SECURE_CONFIG_TABLE)
   }

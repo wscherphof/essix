@@ -2,7 +2,6 @@ package main
 
 import (
   "github.com/wscherphof/msg"
-  "github.com/wscherphof/secure"
 )
 
 func DefineMessages () {
@@ -22,10 +21,6 @@ func DefineMessages () {
   m("Log in")
   a("nl", "Inloggen")
   a("en", "Log in")
-
-  m(secure.ErrTokenNotSaved.Error())
-  a("nl", "Het lukt de webserver niet om de inlogsessie aan te maken :-(")
-  a("en", "The server is failing to create the log in session :-(")
 
   m("Log out")
   a("nl", "Uitloggen")
@@ -58,12 +53,4 @@ func DefineMessages () {
   m("Last name")
   a("nl", "Achternaam")
   a("en", "Last name")
-
-  m("Email address taken")
-  a("nl", "Dit e-mailadres wordt al gebruikt voor een bestaand account")
-  a("en", "This email address is already used for an existing account")
-
-  m("Unexpected error")
-  a("nl", "Er heeft zich een onverwachte foutsituatie voorgedaan :-(")
-  a("en", "An unexpected error occurred :-(")
 }

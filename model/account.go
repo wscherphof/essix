@@ -9,6 +9,13 @@ import (
   "log"
 )
 
+var (
+  ErrInvalidCredentials = errors.New("Unknown email address or incorrect password")
+  ErrPasswordEmpty = errors.New("Password empty")
+  ErrPasswordsNotEqual = errors.New("Passwords not equal")
+  ErrEmailTaken = errors.New("Email address taken")
+)
+
 const ACCOUNT_TABLE = "account"
 
 func InitAccount () {
@@ -26,9 +33,9 @@ type Password struct {
 
 func NewPassword (pwd1, pwd2 string) (pwd *Password, err error) {
   if pwd1 == "" {
-    err = errors.New("Password empty")
+    err = ErrPasswordEmpty
   } else if pwd1 != pwd2 {
-    err = errors.New("Passwords not equal")
+    err = ErrPasswordsNotEqual
   } else if hash, e := bcrypt.GenerateFromPassword([]byte(pwd1), bcrypt.DefaultCost); err != nil {
     err = e
   } else {
@@ -55,7 +62,7 @@ func NewAccount (val func (string) (string)) (account *Account, err error, confl
   if e, found := db.Get(ACCOUNT_TABLE, uid, new(Account)); e != nil {
     err = e
   } else if found {
-    err, conflict = errors.New("Email address taken"), true
+    err, conflict = ErrEmailTaken, true
   } else if pwd, e := NewPassword(val("pwd1"), val("pwd2")); e != nil {
     err, conflict = e, true
   } else {
@@ -74,8 +81,6 @@ func NewAccount (val func (string) (string)) (account *Account, err error, confl
   }
   return
 }
-
-var ErrInvalidCredentials = errors.New("Unknown email address or incorrect password")
 
 func GetAccount (uid, pwd string) (account *Account, err error) {
   acc := new(Account)
