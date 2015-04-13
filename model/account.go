@@ -84,7 +84,7 @@ func NewAccount (val func (string) (string)) (account *Account, err error, confl
 
 func GetAccount (uid, pwd string) (account *Account, err error) {
   acc := new(Account)
-  if e, found := db.Get(ACCOUNT_TABLE, uid, acc); e != nil {
+  if e, found := db.Get(ACCOUNT_TABLE, strings.ToLower(uid), acc); e != nil {
     err = e
   } else if !(found) {
     err = ErrInvalidCredentials
