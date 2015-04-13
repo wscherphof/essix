@@ -19,9 +19,12 @@ func InitAccount () {
   }
 }
 
-type Password []byte
+type Password struct {
+ Created time.Time
+ Value []byte
+}
 
-func NewPassword (pwd1, pwd2 string) (pwd Password, err error) {
+func NewPassword (pwd1, pwd2 string) (pwd *Password, err error) {
   if pwd1 == "" {
     err = errors.New("Password empty")
   } else if pwd1 != pwd2 {
@@ -29,7 +32,10 @@ func NewPassword (pwd1, pwd2 string) (pwd Password, err error) {
   } else if hash, e := bcrypt.GenerateFromPassword([]byte(pwd1), bcrypt.DefaultCost); err != nil {
     err = e
   } else {
-    pwd = hash
+    pwd = &Password{
+      Created: time.Now(),
+      Value: hash,
+    }
   }
   return
 }
@@ -56,7 +62,7 @@ func NewAccount (val func (string) (string)) (account *Account, err error, confl
     account = &Account{
       Created: time.Now(),
       UID: uid,
-      PWD: pwd,
+      PWD: *pwd,
       Country: val("country"),
       Postcode: strings.ToUpper(val("postcode")),
       FirstName: val("firstname"),
