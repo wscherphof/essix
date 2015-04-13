@@ -74,3 +74,20 @@ func NewAccount (val func (string) (string)) (account *Account, err error, confl
   }
   return
 }
+
+var ErrInvalidCredentials = errors.New("Unknown email address or incorrect password")
+
+func GetAccount (uid, pwd string) (account *Account, err error) {
+  acc := new(Account)
+  if e, found := db.Get(ACCOUNT_TABLE, uid, acc); e != nil {
+    err = e
+  } else if !(found) {
+    err = ErrInvalidCredentials
+  } else if e := bcrypt.CompareHashAndPassword(acc.PWD.Value, []byte(pwd)); e != nil {
+    err = ErrInvalidCredentials
+  } else {
+    account = acc
+  }
+  return
+}
+
