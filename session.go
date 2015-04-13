@@ -19,7 +19,7 @@ func LogIn (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
   if account, err := model.GetAccount(uid, pwd); err != nil {
     Error(w, r, ps, err)
   } else {
-    Error(w, r, ps, secure.LogIn(w, r, account.UID))
+    Error(w, r, ps, secure.LogIn(w, r, account))
   }
 }
 

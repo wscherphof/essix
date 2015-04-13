@@ -95,4 +95,3 @@ func GetAccount (uid, pwd string) (account *Account, err error) {
   }
   return
 }
-
