@@ -7,9 +7,8 @@ import (
 )
 
 func Protected (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-  if account := secure.Authenticate(w, r); account != nil {
-    T("protected", "lang", map[string]interface{}{
-      "uid": account.UID,
-    })(w, r, ps)
-  }
+  account := secure.Authenticate(w, r); if account == nil {return}
+  T("protected", "lang", map[string]interface{}{
+    "uid": account.UID,
+  })(w, r, ps)
 }
