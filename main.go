@@ -12,6 +12,21 @@ import (
   "github.com/wscherphof/expeertise/model"
 )
 
+const authenticationKey int = 0
+
+func Authenticate (handle httprouter.Handle) (httprouter.Handle) {
+  return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+    if account := secure.Authenticate(w, r); account != nil {
+      context.Set(r, authenticationKey, account)
+      handle(w, r, ps)
+    }
+  }
+}
+
+func Authentication (r *http.Request) *model.Account {
+  return context.Get(r, authenticationKey).(*model.Account)
+}
+
 func main () {
   db.Init("localhost:28015", "expeertise")
   secure.Init()
@@ -30,7 +45,7 @@ func main () {
   router.GET("/account", SignUpForm)
   router.POST("/account", SignUp)
 
-  router.GET("/protected", Protected)
+  router.GET("/protected", Authenticate(Protected))
   
   router.ServeFiles("/static/*filepath", http.Dir("./static"))
 
