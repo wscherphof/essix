@@ -1,7 +1,6 @@
 package secure
 
 import (
-  "net/http"
   "github.com/wscherphof/secure"
   "github.com/wscherphof/expeertise/db"
   "github.com/wscherphof/expeertise/model"
@@ -16,15 +15,6 @@ func Init () {
     log.Println("INFO: SecureDB.Init() table created:", SECURE_CONFIG_TABLE)
   }
   secure.Init(model.Account{}, &secureDB{})
-}
-
-// Utility interface conversion wrapper
-func Authenticate (w http.ResponseWriter, r *http.Request) (account *model.Account) {
-  if auth := secure.Authenticate(w, r); auth != nil {
-    acc := auth.(model.Account)
-    account = &acc
-  }
-  return
 }
 
 type secureDB struct {}

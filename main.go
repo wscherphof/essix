@@ -12,20 +12,7 @@ import (
   "github.com/wscherphof/expeertise/model"
 )
 
-const authenticationKey int = 0
-
-func Authenticate (handle httprouter.Handle) (httprouter.Handle) {
-  return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-    if account := secure.Authenticate(w, r); account != nil {
-      context.Set(r, authenticationKey, account)
-      handle(w, r, ps)
-    }
-  }
-}
-
-func Authentication (r *http.Request) *model.Account {
-  return context.Get(r, authenticationKey).(*model.Account)
-}
+var Authenticate, Authentication = secure.Authenticate, secure.Authentication
 
 func main () {
   db.Init("localhost:28015", "expeertise")
