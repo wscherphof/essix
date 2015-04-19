@@ -9,6 +9,7 @@ import (
 )
 
 func LogInForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+  // TODO: captcha
   T("login", "", nil)(w, r, ps)
 }
 

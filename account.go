@@ -8,6 +8,7 @@ import (
 )
 
 func SignUpForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+  // TODO: captcha
   T("signup", "", map[string]interface{}{
     "Countries": data.Countries(),
   })(w, r, ps)
