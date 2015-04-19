@@ -31,8 +31,8 @@ func (s *secureDB) Fetch () (config *secure.Config) {
 
 func (s *secureDB) Upsert (config *secure.Config) {
   if _, err := db.Truncate(SECURE_CONFIG_TABLE); err != nil {
-    log.Panicln("ERROR:", err)
+    log.Panicln("ERROR: SecureDB.Fetch():", err)
   } else if _, err := db.Insert(SECURE_CONFIG_TABLE, config); err != nil {
-    log.Panicln("ERROR:", err)
+    log.Panicln("ERROR: SecureDB.Fetch():", err)
   }
 }
