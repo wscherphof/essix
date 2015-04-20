@@ -8,12 +8,14 @@ import (
   "github.com/gorilla/handlers"
   "github.com/gorilla/context"
   "github.com/wscherphof/expeertise/db"
+  "github.com/wscherphof/expeertise/config"
   "github.com/wscherphof/expeertise/secure"
   "github.com/wscherphof/expeertise/model"
 )
 
 func main () {
   db.Init("localhost:28015", "expeertise")
+  config.Init()
   secure.Init()
   model.Init()
   DefineMessages()
