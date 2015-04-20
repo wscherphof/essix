@@ -63,3 +63,7 @@ func One (table string, result interface{}) (err error, found bool) {
   }
   return
 }
+
+func All (table string) (cursor *r.Cursor, err error) {
+  return r.Table(table).Run(s)
+}
