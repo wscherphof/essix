@@ -18,7 +18,7 @@ type emailConfig struct{
 
 type emailConfigStore struct{
   Key string
-  Value emailConfig
+  Value *emailConfig
 }
 
 var (
@@ -40,7 +40,7 @@ func Init () {
       log.Println("DEBUG: email.Init() stored a blank email config in DB as a template to fill manually")
     }
   } else {
-    conf = &store.Value
+    conf = store.Value
     auth = smtp.PlainAuth("", conf.EmailAddress, conf.PWD, conf.SmtpServer)
     inited = true
   }
