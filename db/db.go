@@ -22,8 +22,12 @@ func Init (address, database string) {
   }
 }
 
-func Insert (table string, record interface{}) (r.WriteResponse, error) {
-  return r.Table(table).Insert(record).RunWrite(s)
+func NewInsertOpts () r.InsertOpts {
+  return r.InsertOpts{}
+}
+
+func Insert (table string, record interface{}, opts ...r.InsertOpts) (r.WriteResponse, error) {
+  return r.Table(table).Insert(record, opts...).RunWrite(s)
 }
 
 func Delete (table, key string) (r.WriteResponse, error) {

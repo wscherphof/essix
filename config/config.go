@@ -26,6 +26,8 @@ func Get (key string, result interface{}) (err error) {
 }
 
 func Set (record interface{}) (err error) {
-  _, err = db.Insert(CONFIG_TABLE, record)
+  opts := db.NewInsertOpts()
+  opts.Conflict = "update"
+  _, err = db.Insert(CONFIG_TABLE, record, opts)
   return
 }
