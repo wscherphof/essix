@@ -6,6 +6,7 @@ import (
   "github.com/wscherphof/expeertise/data"
   "github.com/wscherphof/expeertise/model/account"
   "github.com/wscherphof/expeertise/email"
+  "github.com/wscherphof/msg"
 )
 
 func SignUpForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
@@ -23,14 +24,15 @@ func SignUp (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
       Error(w, r, ps, err)
     }
   } else {
-    // TODO: formatted email
-    subject := "Activate your account"
+    subject := msg.Msg(msg.Language(r.Header.Get("Accept-Language")), "Activate account")
     scheme := "http"
     if r.TLS != nil {
       scheme = "https"
     }
-    link := scheme + "://" + r.Host + r.URL.Path + "/" + account.UID + "/activate?code=" + account.ActivationCode
-    body := "Goto the following page to activate your account: " + link
+    body := TS("activate_email", "lang", map[string]interface{}{
+      "link": scheme + "://" + r.Host + r.URL.Path + "/" + account.UID + "/activate?code=" + account.ActivationCode,
+      "name": account.Name(),
+    })(r)
     if err := email.Send(subject, body, account.UID); err != nil {
       Error(w, r, ps, err)
     // TODO: formatted response

@@ -60,6 +60,34 @@ type Account struct {
   ActivationCode string
 }
 
+func (a *Account) FullName () (name string) {
+  name = ""
+  if len(a.FirstName) > 0 {
+    name = a.FirstName
+  }
+  if len(a.LastName) > 0 {
+    if len(name) > 0 {
+      name = name + " "
+    }
+    name = name + a.LastName
+  }
+  if len(name) == 0 {
+    name = a.UID
+  }
+  return
+}
+
+func (a *Account) Name () (name string) {
+  if len(a.FirstName) > 0 {
+    name = a.FirstName
+  } else if len(a.LastName) > 0 {
+    name = a.LastName
+  } else {
+    name = a.UID
+  }
+  return
+}
+
 func (a *Account) save () (err error) {
   if ! a.dirty {
     // noop

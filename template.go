@@ -43,9 +43,9 @@ func T (base string, inner string, data map[string]interface{}) httprouter.Handl
 }
 
 func TS (base string, inner string, data map[string]interface{}) (func(*http.Request)(string)) {
-  var b *bytes.Buffer
+  var b bytes.Buffer
   return func(r *http.Request) (string) {
-    t(base, inner, data)(b, r)
+    t(base, inner, data)(&b, r)
     return string(b.Bytes())
   }
 }
