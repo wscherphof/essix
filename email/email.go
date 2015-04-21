@@ -58,8 +58,11 @@ func Send (subject, message string, recipients ...string) (err error) {
   return
 }
 
+var mime string = "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n"
+
 func send (subject, message string, recipients ...string) (error) {
-  msg := []byte("Subject: " + subject + "\n" + message)
+  msg := "Subject: " + subject + "\n" + mime + message
+  // log.Println("DEBUG: email.send() msg:", msg)
   endpoint := conf.SmtpServer + ":" + conf.PortNumber
-  return smtp.SendMail(endpoint, auth, conf.EmailAddress, recipients, msg)
+  return smtp.SendMail(endpoint, auth, conf.EmailAddress, recipients, []byte(msg))
 }

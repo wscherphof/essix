@@ -31,6 +31,8 @@ func main () {
   
   router.GET("/account", SignUpForm)
   router.POST("/account", SignUp)
+  router.GET("/account/:uid/activate", ActivateForm)
+  router.PUT("/account/activation", Activate)
 
   router.GET("/protected", secure.Authenticate(Protected))
   

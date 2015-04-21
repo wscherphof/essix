@@ -1,6 +1,9 @@
 package model
 
+import (
+  "github.com/wscherphof/expeertise/model/account"
+)
+
 func Init () {
-  DefineMessages()
-  InitAccount()
+  account.Init()
 }

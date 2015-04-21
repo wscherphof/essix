@@ -7,11 +7,10 @@ import (
 )
 
 const CONFIG_TABLE string = "config"
+const CONFIG_PK string = "Key"
 
 func Init () {
-  opts := db.NewTableCreateOpts()
-  opts.PrimaryKey = "Key"
-  if cursor, _ := db.TableCreate(CONFIG_TABLE, opts); cursor != nil {
+  if cursor, _ := db.TableCreatePK(CONFIG_TABLE, CONFIG_PK); cursor != nil {
     log.Println("INFO: table created:", CONFIG_TABLE)
   }
 }
@@ -26,8 +25,6 @@ func Get (key string, result interface{}) (err error) {
 }
 
 func Set (record interface{}) (err error) {
-  opts := db.NewInsertOpts()
-  opts.Conflict = "update"
-  _, err = db.Insert(CONFIG_TABLE, record, opts)
+  _, err = db.InsertUpdate(CONFIG_TABLE, record)
   return
 }

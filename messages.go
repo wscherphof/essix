@@ -53,4 +53,16 @@ func DefineMessages () {
   m("Last name")
   a("nl", "Achternaam")
   a("en", "Last name")
+
+  m("Activate account")
+  a("nl", "Je account activeren")
+  a("en", "Activate your account")
+
+  m("Activation code")
+  a("nl", "Activeringscode")
+  a("en", "Activation code")
+
+  m("Activate")
+  a("nl", "Activeren")
+  a("en", "Activate")
 }

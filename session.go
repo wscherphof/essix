@@ -4,7 +4,7 @@ import (
   "net/http"
   "github.com/julienschmidt/httprouter"
   "github.com/wscherphof/secure"
-  "github.com/wscherphof/expeertise/model"
+  "github.com/wscherphof/expeertise/model/account"
   // "log"
 )
 
@@ -17,8 +17,12 @@ func LogIn (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
   // TODO: maybe fetch roles
   // log.Print("DEBUG: TLS ", r.TLS)
   uid, pwd := r.FormValue("uid"), r.FormValue("pwd")
-  if account, err := model.GetAccount(uid, pwd); err != nil {
-    Error(w, r, ps, err)
+  if account, err, conflict := account.Get(uid, pwd); err != nil {
+    if conflict {
+      Error(w, r, ps, err, http.StatusConflict)
+    } else {
+      Error(w, r, ps, err)
+    }
   } else {
     Error(w, r, ps, secure.LogIn(w, r, account))
   }
