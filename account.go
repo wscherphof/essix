@@ -26,7 +26,7 @@ func SignUp (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
     // TODO: formatted email, activation link & function, formatted response, ...
     if err := email.Send("Test email from Go!", "This is the email body.", account.UID); err != nil {
       Error(w, r, ps, err)
-    } else if err == email.ErrNotSentImmideately {
+    } else if err == email.ErrNotSentImmediately {
       // 
     } else {
       w.WriteHeader(http.StatusOK)

@@ -22,7 +22,7 @@ type emailConfigStore struct{
 }
 
 var (
-  ErrNotSentImmideately = errors.New("Message could not be sent immediately; it's queued to get sent shortly")
+  ErrNotSentImmediately = errors.New("Message could not be sent immediately; it's queued to get sent shortly")
   conf *emailConfig
   auth smtp.Auth
   inited bool = false
@@ -50,7 +50,7 @@ func Init () {
 func Send (subject, message string, recipients ...string) (err error) {
   Init()
   if e := send(subject, message, recipients...); e != nil {
-    err = ErrNotSentImmideately
+    err = ErrNotSentImmediately
     if e := enQueue(subject, message, recipients...); e != nil {
       err = e
     }
