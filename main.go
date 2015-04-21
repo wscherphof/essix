@@ -21,20 +21,20 @@ func main () {
   DefineMessages()
   router := httprouter.New()
 
-  router.GET("/", T("home", "", nil))
+  router.GET    ("/", T("home", "", nil))
   
   // TODO: https
   
-  router.GET("/session", LogInForm)
-  router.POST("/session", LogIn)
-  router.DELETE("/session", LogOut)
+  router.GET    ("/account", SignUpForm)
+  router.POST   ("/account", SignUp)
+  router.GET    ("/account/:uid/activate", ActivateForm)
+  router.PUT    ("/account/activation", Activate)
   
-  router.GET("/account", SignUpForm)
-  router.POST("/account", SignUp)
-  router.GET("/account/:uid/activate", ActivateForm)
-  router.PUT("/account/activation", Activate)
+  router.GET    ("/session", LogInForm)
+  router.POST   ("/session", LogIn)
+  router.DELETE ("/session", LogOut)
 
-  router.GET("/protected", secure.Authenticate(Protected))
+  router.GET    ("/protected", secure.Authenticate(Protected))
   
   router.ServeFiles("/static/*filepath", http.Dir("./static"))
 
