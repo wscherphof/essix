@@ -11,7 +11,7 @@ import (
   "io"
 )
 
-func options (r *http.Request) (*ace.Options) {
+func aceOptions (r *http.Request) (*ace.Options) {
   return &ace.Options{
     BaseDir: "templates",
     FuncMap: template.FuncMap{
@@ -30,7 +30,7 @@ func t (base string, inner string, data map[string]interface{}) (func(io.Writer,
     if inner == "lang" {
       inner = base + "-" + lang.Main
     }
-    if tpl, err := ace.Load(base, inner, options(r)); err != nil {
+    if tpl, err := ace.Load(base, inner, aceOptions(r)); err != nil {
       log.Panicln("ERROR: ace.Load:", err)
     } else if err := tpl.Execute(w, data); err != nil {
       log.Panicln("ERROR: tpl.Execute:", err)
