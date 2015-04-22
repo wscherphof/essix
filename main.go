@@ -11,6 +11,7 @@ import (
   "github.com/wscherphof/expeertise/config"
   "github.com/wscherphof/expeertise/secure"
   "github.com/wscherphof/expeertise/model"
+  "github.com/wscherphof/expeertise/util"
 )
 
 func main () {
@@ -21,19 +22,19 @@ func main () {
   DefineMessages()
   router := httprouter.New()
 
-  router.GET    ("/", T("home", "", nil))
+  router.GET    ("/", util.Template("home", "", nil))
   
   // TODO: https
   
-  router.GET    ("/account", SignUpForm)
-  router.POST   ("/account", SignUp)
-  router.GET    ("/account/activation/:uid", ActivateForm)
-  router.GET    ("/account/activation", ActivateForm)
-  router.PUT    ("/account/activation", Activate)
+  router.GET    ("/account", secure.SignUpForm)
+  router.POST   ("/account", secure.SignUp)
+  router.GET    ("/account/activation/:uid", secure.ActivateForm)
+  router.GET    ("/account/activation", secure.ActivateForm)
+  router.PUT    ("/account/activation", secure.Activate)
   
-  router.GET    ("/session", LogInForm)
-  router.POST   ("/session", LogIn)
-  router.DELETE ("/session", LogOut)
+  router.GET    ("/session", secure.LogInForm)
+  router.POST   ("/session", secure.LogIn)
+  router.DELETE ("/session", secure.LogOut)
 
   router.GET    ("/protected", secure.Authenticate(Protected))
   

@@ -1,17 +1,18 @@
-package main
+package secure
 
 import (
   "net/http"
   "github.com/julienschmidt/httprouter"
+  "github.com/wscherphof/msg"
+  "github.com/wscherphof/expeertise/util"
   "github.com/wscherphof/expeertise/data"
   "github.com/wscherphof/expeertise/model/account"
   "github.com/wscherphof/expeertise/email"
-  "github.com/wscherphof/msg"
 )
 
 func SignUpForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
   // TODO: captcha
-  T("signup", "", map[string]interface{}{
+  util.Template("signup", "", map[string]interface{}{
     "Countries": data.Countries(),
   })(w, r, ps)
 }
@@ -22,7 +23,7 @@ func activationEmail (r *http.Request, account *account.Account) (error) {
   if r.TLS != nil {
     scheme = "https"
   }
-  body := TB("activate_email", "lang", map[string]interface{}{
+  body := util.BTemplate("activate_email", "lang", map[string]interface{}{
     "link": scheme + "://" + r.Host + r.URL.Path + "/activation/" + account.UID + "?code=" + account.ActivationCode,
     "name": account.Name(),
   })(r)
@@ -32,12 +33,12 @@ func activationEmail (r *http.Request, account *account.Account) (error) {
 func SignUp (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
   if account, err, conflict := account.New(r.FormValue); err != nil {
     if conflict {
-      Error(w, r, ps, err, http.StatusConflict)
+      util.Error(w, r, ps, err, http.StatusConflict)
     } else {
-      Error(w, r, ps, err)
+      util.Error(w, r, ps, err)
     }
   } else if err := activationEmail(r, account); err != nil && err != email.ErrNotSentImmediately {
-    Error(w, r, ps, err)
+    util.Error(w, r, ps, err)
   // TODO: formatted response
   } else if err == email.ErrNotSentImmediately {
   } else {
@@ -47,7 +48,7 @@ func SignUp (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 }
 
 func ActivateForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-  T("activate", "", map[string]interface{}{
+  util.Template("activate", "", map[string]interface{}{
     "uid": ps.ByName("uid"),
     "code": r.URL.Query().Get("code"),
   })(w, r, ps)
@@ -56,9 +57,9 @@ func ActivateForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 func Activate (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
   if account, err, conflict := account.Activate(r.FormValue("uid"), r.FormValue("code")); err != nil {
     if conflict {
-      Error(w, r, ps, err, http.StatusConflict)
+      util.Error(w, r, ps, err, http.StatusConflict)
     } else {
-      Error(w, r, ps, err)
+      util.Error(w, r, ps, err)
     }
   } else {
     // TODO: formatted response

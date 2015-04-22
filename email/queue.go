@@ -58,7 +58,7 @@ func processQueue () {
 }
 
 func processJob (job *emailJob) {
-  if e := send(job.Subject, job.Message, job.Recipients...); e == nil {
+  if err := send(job.Subject, job.Message, job.Recipients...); err == nil {
     deQueue(job)
   }
 }

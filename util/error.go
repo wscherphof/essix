@@ -1,9 +1,9 @@
-package main
+package util
 
 import (
+  "log"
   "net/http"
   "github.com/julienschmidt/httprouter"
-  "log"
 )
 
 func Error (w http.ResponseWriter, r *http.Request, ps httprouter.Params, err error, codes ...int) {
@@ -14,7 +14,7 @@ func Error (w http.ResponseWriter, r *http.Request, ps httprouter.Params, err er
   if len(codes) > 0 {
     code = codes[0]
   }
-  render := TB("error", "", map[string]interface{}{
+  render := BTemplate("error", "", map[string]interface{}{
     "error": err.Error(),
   })(r)
   w.WriteHeader(code)

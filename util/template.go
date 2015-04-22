@@ -1,4 +1,4 @@
-package main
+package util
 
 import (
   "log"
@@ -38,13 +38,13 @@ func t (base string, inner string, data map[string]interface{}) (func(io.Writer,
   }
 }
 
-func T (base string, inner string, data map[string]interface{}) httprouter.Handle {
+func Template (base string, inner string, data map[string]interface{}) httprouter.Handle {
   return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
     t(base, inner, data)(w, r)
   }
 }
 
-func TB (base string, inner string, data map[string]interface{}) (func(*http.Request)([]byte)) {
+func BTemplate (base string, inner string, data map[string]interface{}) (func(*http.Request)([]byte)) {
   var b bytes.Buffer
   return func(r *http.Request) ([]byte) {
     t(base, inner, data)(&b, r)

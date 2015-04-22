@@ -2,8 +2,6 @@ package util
 
 import (
   "encoding/base64"
-  "crypto/rand"
-  "io"
 )
 
 func URLEncode (value []byte) []byte {
@@ -19,12 +17,4 @@ func URLDecode (value []byte) ([]byte, error) {
     return nil, err
   }
   return decoded[:b], nil
-}
-
-func Random (length int) []byte {
-  k := make([]byte, length)
-  if _, err := io.ReadFull(rand.Reader, k); err != nil {
-    return nil
-  }
-  return k
 }

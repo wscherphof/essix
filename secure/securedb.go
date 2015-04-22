@@ -3,14 +3,8 @@ package secure
 import (
   "github.com/wscherphof/secure"
   "github.com/wscherphof/expeertise/config"
-  "github.com/wscherphof/expeertise/model/account"
   "log"
 )
-
-func Init () {
-  DefineMessages()
-  secure.Init(account.Account{}, &secureDB{})
-}
 
 type secureDB struct {}
 
