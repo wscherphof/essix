@@ -7,16 +7,16 @@ html lang={{ .lang.Main }}
     link rel="shortcut icon" href=/static/favicon.ico type=image/x-icon
   body
     form method=POST action=/account onsubmit="return validate(this)"
-      label {{ Msg .lang "Email" }}*
-        input id=uid type=email name=uid placeholder=email@provider.com required= size=20
+      label {{ Msg "Email" }}*
+        input id=uid type=email name=uid placeholder=email@provider.com required= size=35
       br
-      label {{ Msg .lang "Password" }}*
-        input id=pwd1 type=password name=pwd1 placeholder=******** required= size=20
+      label {{ Msg "Password" }}*
+        input id=pwd1 type=password name=pwd1 placeholder=******** required= size=35
       br
-      label {{ Msg .lang "Repeat password" }}*
-        input id=pwd2 type=password name=pwd2 placeholder=******** required= size=20
+      label {{ Msg "Repeat password" }}*
+        input id=pwd2 type=password name=pwd2 placeholder=******** required= size=35
       br
-      label {{ Msg .lang "Country" }}*
+      label {{ Msg "Country" }}*
         select id=country name=country required=
           {{ $mainLang := .lang.Main }}
           {{ $subLang := .lang.Sub }}
@@ -28,20 +28,20 @@ html lang={{ .lang.Main }}
             {{ end }}
           {{ end }}
       br
-      label {{ Msg .lang "Postcode" }}*
-        input id=postcode type=text name=postcode placeholder="1200 JC" required= size=20
+      label {{ Msg "Postcode" }}*
+        input id=postcode type=text name=postcode placeholder="1200 JC" required= size=35
       br
-      label {{ Msg .lang "First name" }}
-        input id=firstname type=text name=firstname placeholder=John size=20
+      label {{ Msg "First name" }}
+        input id=firstname type=text name=firstname placeholder=John size=35
       br
-      label {{ Msg .lang "Last name" }}
-        input id=lastname type=text name=lastname placeholder=Doe size=20
+      label {{ Msg "Last name" }}
+        input id=lastname type=text name=lastname placeholder=Doe size=35
       br
-      input type=submit value={{ Msg .lang "Sign up" }}
+      input type=submit value={{ Msg "Sign up" }}
     = javascript
       function validate (form) {
         if (form['pwd1'].value !== form['pwd2'].value) {
-          alert('{{ Msg .lang "Passwords not equal" }}')
+          alert('{{ Msg "Passwords not equal" }}')
           form['pwd2'].value = '';
           form['pwd1'].value = '';
           form['pwd1'].focus();

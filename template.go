@@ -11,11 +11,13 @@ import (
   "io"
 )
 
-var aceOptions = &ace.Options{ // var, no const, since the compiler says this literal isn't a constant
-  BaseDir: "templates",
-  FuncMap: template.FuncMap{
-    "Msg": msg.Msg,
-  },
+func options (r *http.Request) (*ace.Options) {
+  return &ace.Options{
+    BaseDir: "templates",
+    FuncMap: template.FuncMap{
+      "Msg": msg.Msg(r),
+    },
+  }
 }
 
 func t (base string, inner string, data map[string]interface{}) (func(io.Writer, *http.Request)) {
@@ -23,12 +25,12 @@ func t (base string, inner string, data map[string]interface{}) (func(io.Writer,
     data = map[string]interface{}{}
   }
   return func(w io.Writer, r *http.Request) {
-    language := msg.Language(r.Header.Get("Accept-Language"))
-    data["lang"] = language
+    lang := msg.Language(r)
+    data["lang"] = lang
     if inner == "lang" {
-      inner = base + "-" + language.Main
+      inner = base + "-" + lang.Main
     }
-    if tpl, err := ace.Load(base, inner, aceOptions); err != nil {
+    if tpl, err := ace.Load(base, inner, options(r)); err != nil {
       log.Panicln("ERROR: ace.Load:", err)
     } else if err := tpl.Execute(w, data); err != nil {
       log.Panicln("ERROR: tpl.Execute:", err)

@@ -24,7 +24,7 @@ func SignUp (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
       Error(w, r, ps, err)
     }
   } else {
-    subject := msg.Msg(msg.Language(r.Header.Get("Accept-Language")), "Activate account")
+    subject := msg.Msg(r)("Activate account")
     scheme := "http"
     if r.TLS != nil {
       scheme = "https"

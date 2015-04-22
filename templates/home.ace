@@ -7,8 +7,8 @@ html lang={{ .lang.Main }}
     link rel="shortcut icon" href=/static/favicon.ico type=image/x-icon
   body
     p
-      a href=/account {{ Msg .lang "Sign up" }}
+      a href=/account {{ Msg "Sign up" }}
     p
-      a href=/session {{ Msg .lang "Log in" }}
+      a href=/session {{ Msg "Log in" }}
     p
       a href=/protected 007

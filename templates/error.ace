@@ -6,4 +6,4 @@ html lang={{ .lang.Main }}
     link rel=icon href=/static/favicon.ico type=image/x-icon
     link rel="shortcut icon" href=/static/favicon.ico type=image/x-icon
   body
-    p {{ Msg .lang .error }}
+    p {{ Msg .error }}

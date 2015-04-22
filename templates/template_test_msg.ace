@@ -1,1 +1,1 @@
-{{ Msg .lang "hello" }}
+{{ Msg "hello" }}
