@@ -23,7 +23,7 @@ func activationEmail (r *http.Request, account *account.Account) (error) {
     scheme = "https"
   }
   body := TB("activate_email", "lang", map[string]interface{}{
-    "link": scheme + "://" + r.Host + r.URL.Path + "/" + account.UID + "/activate?code=" + account.ActivationCode,
+    "link": scheme + "://" + r.Host + r.URL.Path + "/activation/" + account.UID + "?code=" + account.ActivationCode,
     "name": account.Name(),
   })(r)
   return email.Send(subject, string(body), account.UID)

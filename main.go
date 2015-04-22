@@ -27,7 +27,8 @@ func main () {
   
   router.GET    ("/account", SignUpForm)
   router.POST   ("/account", SignUp)
-  router.GET    ("/account/:uid/activate", ActivateForm)
+  router.GET    ("/account/activation/:uid", ActivateForm)
+  router.GET    ("/account/activation", ActivateForm)
   router.PUT    ("/account/activation", Activate)
   
   router.GET    ("/session", LogInForm)
