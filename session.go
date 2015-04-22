@@ -14,18 +14,17 @@ func LogInForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 }
 
 func LogIn (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-  // TODO: maybe fetch roles
-  // log.Print("DEBUG: TLS ", r.TLS)
-  uid, pwd := r.FormValue("uid"), r.FormValue("pwd")
-  if account, err, conflict := account.Get(uid, pwd); err != nil {
+  if account, err, conflict := account.Get(r.FormValue("uid"), r.FormValue("pwd")); err != nil {
     if conflict {
       Error(w, r, ps, err, http.StatusConflict)
     } else {
       Error(w, r, ps, err)
     }
-  } else {
-    Error(w, r, ps, secure.LogIn(w, r, account))
+  } else if err := secure.LogIn(w, r, account); err != nil {
+    Error(w, r, ps, err)
   }
+  // Won't see this on successful secure.LogIn, but doesn't do any harm
+  w.Write(TB("login_error-tail", "", nil)(r))
 }
 
 func LogOut (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {

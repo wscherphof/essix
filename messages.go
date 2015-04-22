@@ -10,6 +10,10 @@ func DefineMessages () {
   a("nl", "")
   a("en", "")
 
+  m("Take me home")
+  a("nl", "Naar de startpagina")
+  a("en", "To the home page")
+
   m("Email")
   a("nl", "E-mailadres")
   a("en", "Email address")
@@ -27,7 +31,7 @@ func DefineMessages () {
   a("en", "Log out")
 
   m("Sign up")
-  a("nl", "Aanmelden")
+  a("nl", "Een account aanmaken")
   a("en", "Sign up")
 
   m("Repeat password")
@@ -61,6 +65,10 @@ func DefineMessages () {
   m("Activation code")
   a("nl", "Activeringscode")
   a("en", "Activation code")
+
+  m("Activation code source")
+  a("nl", "De activeringscode is je per e-mail toegestuurd")
+  a("en", "The activation code was sent to you by email")
 
   m("Activate")
   a("nl", "Activeren")
