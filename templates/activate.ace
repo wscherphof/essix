@@ -16,7 +16,9 @@ html lang={{ .lang.Main }}
         input id=code type=text name=code value={{ .code }} placeholder=zc-968YEX3VYu_YmdA7ynBp_d2cydmR1MRRqmglh1R0= required= size=35
       br
       input type=submit value={{ Msg "Activate" }}
-      br
-      {{ Msg "Activation code source" }}
-      br
-      a href=/account/activationcode/{{ .uid }} {{ Msg "Resend activation code" }}
+      {{ if eq .code "" }}
+      p
+        {{ Msg "Activation code source" }}
+        br
+        a href=/account/activationcode/{{ .uid }} {{ Msg "Resend activation code" }}
+      {{ end }}
