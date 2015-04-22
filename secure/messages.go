@@ -19,4 +19,8 @@ func DefineMessages () {
   m("Activate successful")
   a("nl", "Bedankt voor het activeren van je account bij Expeertise! Je registratie is compleet; je kan nu inloggen.")
   a("en", "Thanks for activating your account with Expeertise! Your registration is complete; you are now able to log in.")
+
+  m("Resend activation code")
+  a("nl", "Stuur me de activeringscode opnieuw")
+  a("en", "Resend me the activation code")
 }

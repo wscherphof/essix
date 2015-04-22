@@ -12,6 +12,6 @@ html lang={{ .lang.Main }}
         {{ Msg "Signup successful" }}
         {{ Msg .remark }}
     p
-      a href=/account/activation {{ Msg "Activate account" }}
+      a href=/account/activation/{{ .uid }} {{ Msg "Activate account" }}
     p
       a href=/ {{ Msg "Take me home" }}

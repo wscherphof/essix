@@ -31,6 +31,10 @@ func main () {
   router.GET    ("/account/activation/:uid", secure.ActivateForm)
   router.GET    ("/account/activation", secure.ActivateForm)
   router.PUT    ("/account/activation", secure.Activate)
+  router.GET    ("/account/activationcode/:uid", secure.ActivationCodeForm)
+  router.GET    ("/account/activationcode/", secure.ActivationCodeForm)
+  router.GET    ("/account/activationcode", secure.ActivationCodeForm)
+  router.POST   ("/account/activationcode", secure.ActivationCode)
   
   router.GET    ("/session", secure.LogInForm)
   router.POST   ("/session", secure.LogIn)

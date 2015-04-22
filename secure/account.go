@@ -46,14 +46,14 @@ func SignUp (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
     util.Error(w, r, ps, err)
   }
   if acc == nil {
-    w.Write(util.BTemplate("activate_error-tail", "", nil)(r))
+    w.Write(util.BTemplate("signup_error-tail", "", nil)(r))
   } else {
     data := map[string]interface{}{
+      "uid": acc.UID,
       "name": acc.Name(),
       "remark": "",
     }
     if err == email.ErrNotSentImmediately {
-      // TODO: fix why it can't find that message
       data["remark"] = email.ErrNotSentImmediately.Error()
     }
     util.Template("signup_success", "", data)(w, r, ps)
@@ -76,9 +76,21 @@ func Activate (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
     }
     w.Write(util.BTemplate("activate_error-tail", "", nil)(r))
   } else {
-    // TODO: add "resend activation code"
     util.Template("activate_success", "", map[string]interface{}{
       "name": account.Name(),
     })(w, r, ps)
   }
+}
+
+func ActivationCodeForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+  util.Template("activate_resend", "", map[string]interface{}{
+    // TODO: try if we can do ps.ByName() from the ace template..
+    "uid": ps.ByName("uid"),
+  })(w, r, ps)
+}
+
+func ActivationCode (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+  // TODO
+  // probably need to introduce model/account.GetActivationCode(uid) for this,
+  // since Get() requires the password..
 }

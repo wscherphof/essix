@@ -45,6 +45,7 @@ func Init () {
     inited = true
   }
   initQueue()
+  DefineMessages()
 }
 
 func Send (subject, message string, recipients ...string) (err error) {
