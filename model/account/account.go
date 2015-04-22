@@ -90,9 +90,16 @@ func (a *Account) Name () (name string) {
 
 func (a *Account) save () (err error) {
   if ! a.dirty {
-    // noop
   } else if _, err = db.InsertUpdate(ACCOUNT_TABLE, a); err == nil {
     a.dirty = false
+  }
+  return
+}
+
+func (a Account) saveNew () (account *Account, err error) {
+  a.dirty = true
+  if err = (&a).save(); err == nil {
+    account = &a
   }
   return
 }
@@ -103,7 +110,6 @@ func (a *Account) isActive () (bool) {
 
 func (a *Account) activate (code string) (err error) {
   if a.isActive() {
-    // noop
   } else if code != a.ActivationCode {
     err = ErrInvalidCredentials
   } else {
@@ -114,8 +120,7 @@ func (a *Account) activate (code string) (err error) {
 }
 
 func New (val func (string) (string)) (account *Account, err error, conflict bool) {
-  uid := strings.ToLower(val("uid"))
-  existing := new(Account)
+  uid, existing := strings.ToLower(val("uid")), new(Account)
   if e, found := db.Get(ACCOUNT_TABLE, uid, existing); e != nil {
     err = e
   } else if found && existing.isActive() {
@@ -123,8 +128,7 @@ func New (val func (string) (string)) (account *Account, err error, conflict boo
   } else if pwd, e := newPassword(val("pwd1"), val("pwd2")); e != nil {
     err, conflict = e, true
   } else {
-    account = &Account{
-      dirty: true,
+    account, err = Account{
       Created: time.Now(),
       UID: uid,
       PWD: pwd,
@@ -133,10 +137,7 @@ func New (val func (string) (string)) (account *Account, err error, conflict boo
       FirstName: val("firstname"),
       LastName: val("lastname"),
       ActivationCode: string(util.URLEncode(util.Random(32))),
-    }
-    if err = account.save(); err != nil {
-      account = nil
-    }
+    }.saveNew()
   }
   return
 }
