@@ -16,6 +16,19 @@ func SignUpForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
   })(w, r, ps)
 }
 
+func activationEmail (r *http.Request, account *account.Account) (error) {
+  subject := msg.Msg(r)("Activate account")
+  scheme := "http"
+  if r.TLS != nil {
+    scheme = "https"
+  }
+  body := TB("activate_email", "lang", map[string]interface{}{
+    "link": scheme + "://" + r.Host + r.URL.Path + "/" + account.UID + "/activate?code=" + account.ActivationCode,
+    "name": account.Name(),
+  })(r)
+  return email.Send(subject, string(body), account.UID)
+}
+
 func SignUp (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
   if account, err, conflict := account.New(r.FormValue); err != nil {
     if conflict {
@@ -23,24 +36,13 @@ func SignUp (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
     } else {
       Error(w, r, ps, err)
     }
+  } else if err := activationEmail(r, account); err != nil && err != email.ErrNotSentImmediately {
+    Error(w, r, ps, err)
+  // TODO: formatted response
+  } else if err == email.ErrNotSentImmediately {
   } else {
-    subject := msg.Msg(r)("Activate account")
-    scheme := "http"
-    if r.TLS != nil {
-      scheme = "https"
-    }
-    body := TB("activate_email", "lang", map[string]interface{}{
-      "link": scheme + "://" + r.Host + r.URL.Path + "/" + account.UID + "/activate?code=" + account.ActivationCode,
-      "name": account.Name(),
-    })(r)
-    if err := email.Send(subject, string(body), account.UID); err != nil {
-      Error(w, r, ps, err)
-    // TODO: formatted response
-    } else if err == email.ErrNotSentImmediately {
-    } else {
-      w.WriteHeader(http.StatusCreated)
-      w.Write([]byte("account created: " + account.UID))
-    }
+    w.WriteHeader(http.StatusCreated)
+    w.Write([]byte("account created: " + account.UID))
   }
 }
 
