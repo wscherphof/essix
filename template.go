@@ -44,10 +44,10 @@ func T (base string, inner string, data map[string]interface{}) httprouter.Handl
   }
 }
 
-func TS (base string, inner string, data map[string]interface{}) (func(*http.Request)(string)) {
+func TB (base string, inner string, data map[string]interface{}) (func(*http.Request)([]byte)) {
   var b bytes.Buffer
-  return func(r *http.Request) (string) {
+  return func(r *http.Request) ([]byte) {
     t(base, inner, data)(&b, r)
-    return string(b.Bytes())
+    return b.Bytes()
   }
 }

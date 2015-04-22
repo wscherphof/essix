@@ -29,11 +29,11 @@ func SignUp (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
     if r.TLS != nil {
       scheme = "https"
     }
-    body := TS("activate_email", "lang", map[string]interface{}{
+    body := TB("activate_email", "lang", map[string]interface{}{
       "link": scheme + "://" + r.Host + r.URL.Path + "/" + account.UID + "/activate?code=" + account.ActivationCode,
       "name": account.Name(),
     })(r)
-    if err := email.Send(subject, body, account.UID); err != nil {
+    if err := email.Send(subject, string(body), account.UID); err != nil {
       Error(w, r, ps, err)
     // TODO: formatted response
     } else if err == email.ErrNotSentImmediately {
