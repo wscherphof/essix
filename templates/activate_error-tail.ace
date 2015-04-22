@@ -1,0 +1,4 @@
+p
+  a href=/account//activate {{ Msg "Activate account" }}
+p
+  a href=/ {{ Msg "Take me home" }}

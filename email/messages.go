@@ -8,6 +8,6 @@ func DefineMessages () {
   var m, a = msg.Init()
 
   m(ErrNotSentImmediately.Error())
-  a("nl", "Het e-mailbericht kon niet meteen worden verzonden; het wordt zo snel mogelijk alsnog verzonden")
-  a("en", "The email message could not be sent immediately; it's queued to get sent shortly")
+  a("nl", "We konden het e-mailbericht niet direct verzenden, maar je zou het spoedig alsnog moeten ontvangen.")
+  a("en", "We couldn't send the email message immediately, but you should receive it shortly")
 }

@@ -1,0 +1,4 @@
+p
+  a href=/account {{ Msg "Sign up" }}
+p
+  a href=/ {{ Msg "Take me home" }}

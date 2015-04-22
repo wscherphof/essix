@@ -6,9 +6,14 @@ import (
 
 func DefineMessages () {
   var m, a = msg.Init()
+
   m("")
   a("nl", "")
   a("en", "")
+
+  m("Hi")
+  a("nl", "Hoi")
+  a("en", "Hi")
 
   m("Take me home")
   a("nl", "Naar de startpagina")

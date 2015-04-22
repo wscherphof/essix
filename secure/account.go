@@ -31,19 +31,32 @@ func activationEmail (r *http.Request, account *account.Account) (error) {
 }
 
 func SignUp (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-  if account, err, conflict := account.New(r.FormValue); err != nil {
+  var (
+    acc *account.Account
+    err error
+    conflict bool
+  ) 
+  if acc, err, conflict = account.New(r.FormValue); err != nil {
     if conflict {
       util.Error(w, r, ps, err, http.StatusConflict)
     } else {
       util.Error(w, r, ps, err)
     }
-  } else if err := activationEmail(r, account); err != nil && err != email.ErrNotSentImmediately {
+  } else if err = activationEmail(r, acc); err != nil && err != email.ErrNotSentImmediately {
     util.Error(w, r, ps, err)
-  // TODO: formatted response
-  } else if err == email.ErrNotSentImmediately {
+  }
+  if acc == nil {
+    w.Write(util.BTemplate("activate_error-tail", "", nil)(r))
   } else {
-    w.WriteHeader(http.StatusCreated)
-    w.Write([]byte("account created: " + account.UID))
+    data := map[string]interface{}{
+      "name": acc.Name(),
+      "remark": "",
+    }
+    if err == email.ErrNotSentImmediately {
+      // TODO: fix why it can't find that message
+      data["remark"] = email.ErrNotSentImmediately.Error()
+    }
+    util.Template("signup_success", "", data)(w, r, ps)
   }
 }
 
@@ -61,9 +74,11 @@ func Activate (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
     } else {
       util.Error(w, r, ps, err)
     }
+    w.Write(util.BTemplate("activate_error-tail", "", nil)(r))
   } else {
-    // TODO: formatted response
-    w.WriteHeader(http.StatusOK)
-    w.Write([]byte("account activated: " + account.UID))
+    // TODO: add "resend activation code"
+    util.Template("activate_success", "", map[string]interface{}{
+      "name": account.Name(),
+    })(w, r, ps)
   }
 }
