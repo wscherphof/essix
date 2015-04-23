@@ -24,7 +24,7 @@ func activationEmail (r *http.Request, account *account.Account) (error) {
     scheme = "https"
   }
   body := util.BTemplate("activate_email", "lang", map[string]interface{}{
-    "link": scheme + "://" + r.Host + r.URL.Path + "/activation/" + account.UID + "?code=" + account.ActivationCode,
+    "link": scheme + "://" + r.Host + "/account/activation/" + account.UID + "?code=" + account.ActivationCode,
     "name": account.Name(),
   })(r)
   return email.Send(subject, string(body), account.UID)
@@ -84,13 +84,27 @@ func Activate (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 
 func ActivationCodeForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
   util.Template("activate_resend", "", map[string]interface{}{
-    // TODO: try if we can do ps.ByName() from the ace template..
     "uid": ps.ByName("uid"),
   })(w, r, ps)
 }
 
 func ActivationCode (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-  // TODO
-  // probably need to introduce model/account.GetActivationCode(uid) for this,
-  // since Get() requires the password..
+  if acc, err, conflict := account.GetInsecure(r.FormValue("uid")); err != nil {
+    if conflict {
+      util.Error(w, r, ps, err, http.StatusConflict)
+    } else {
+      util.Error(w, r, ps, err)
+    }
+    // TODO
+    // w.Write(util.BTemplate("activate_error-tail", "", nil)(r))
+  } else if acc.IsActive() {
+      util.Error(w, r, ps, account.ErrAlreadyActivated, http.StatusConflict)
+  } else if err := activationEmail(r, acc); err != nil && err != email.ErrNotSentImmediately {
+    util.Error(w, r, ps, err)
+  } else {
+    // TODO
+    // util.Template("activate_success", "", map[string]interface{}{
+    //   "name": acc.Name(),
+    // })(w, r, ps)
+  }
 }

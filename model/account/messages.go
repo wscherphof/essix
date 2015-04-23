@@ -26,4 +26,8 @@ func DefineMessages () {
   m(ErrNotActivated.Error())
   a("nl", "Dit account moet eerst nog geactiveerd worden voordat je ermee kan inloggen")
   a("en", "This account still needs to be activated before it can be used to log in with")
+
+  m(ErrAlreadyActivated.Error())
+  a("nl", "Dit account is al geactiveerd")
+  a("en", "This account is already activated")
 }

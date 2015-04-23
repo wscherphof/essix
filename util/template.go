@@ -40,6 +40,7 @@ func t (base string, inner string, data map[string]interface{}) (func(io.Writer,
 
 func Template (base string, inner string, data map[string]interface{}) httprouter.Handle {
   return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+    // TODO: try if we can do ps.ByName() from the ace template..
     t(base, inner, data)(w, r)
   }
 }

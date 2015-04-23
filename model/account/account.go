@@ -16,6 +16,7 @@ var (
   ErrPasswordsNotEqual = errors.New("Passwords not equal")
   ErrEmailTaken = errors.New("Email address taken")
   ErrNotActivated = errors.New("Account hasn't been activated yet")
+  ErrAlreadyActivated = errors.New("Account is already activated")
 )
 
 const ACCOUNT_TABLE = "account"
@@ -104,12 +105,13 @@ func (a Account) saveNew () (account *Account, err error) {
   return
 }
 
-func (a *Account) isActive () (bool) {
+func (a *Account) IsActive () (bool) {
   return len(a.ActivationCode) == 0
 }
 
 func (a *Account) activate (code string) (err error) {
-  if a.isActive() {
+  if a.IsActive() {
+    err = ErrAlreadyActivated
   } else if code != a.ActivationCode {
     err = ErrInvalidCredentials
   } else {
@@ -123,7 +125,7 @@ func New (val func (string) (string)) (account *Account, err error, conflict boo
   uid, existing := strings.ToLower(val("uid")), new(Account)
   if e, found := db.Get(ACCOUNT_TABLE, uid, existing); e != nil {
     err = e
-  } else if found && existing.isActive() {
+  } else if found && existing.IsActive() {
     err, conflict = ErrEmailTaken, true
   } else if pwd, e := newPassword(val("pwd1"), val("pwd2")); e != nil {
     err, conflict = e, true
@@ -170,7 +172,7 @@ func Activate (uid string, code string) (account *Account, err error, conflict b
 func Get (uid, pwd string) (account *Account, err error, conflict bool) {
   if acc, e, c := get(uid); e != nil {
     err, conflict = e, c
-  } else if ! acc.isActive() {
+  } else if ! acc.IsActive() {
     err, conflict = ErrNotActivated, true
   } else if e := bcrypt.CompareHashAndPassword(acc.PWD.Value, []byte(pwd)); e != nil {
     err, conflict = ErrInvalidCredentials, true
@@ -178,4 +180,8 @@ func Get (uid, pwd string) (account *Account, err error, conflict bool) {
     account = acc
   }
   return
+}
+
+func GetInsecure (uid string) (account *Account, err error, conflict bool) {
+  return get (uid)
 }
