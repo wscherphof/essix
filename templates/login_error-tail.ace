@@ -1,8 +1,8 @@
 p
+  a href=/session {{ Msg "Try again" }}
+p
   a href=/account {{ Msg "Sign up" }}
 p
   a href=/account/activation {{ Msg "Activate account" }}
-p
-  a href=/session {{ Msg "Log in" }}
 p
   a href=/ {{ Msg "Take me home" }}
