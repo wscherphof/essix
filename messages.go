@@ -18,4 +18,8 @@ func DefineMessages () {
   m("Take me home")
   a("nl", "Naar de startpagina")
   a("en", "To the home page")
+
+  m("Try again")
+  a("nl", "Opnieuw proberen")
+  a("en", "Try again")
 }
