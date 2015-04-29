@@ -96,7 +96,7 @@ func ActivationCode (w http.ResponseWriter, r *http.Request, ps httprouter.Param
       util.Error(w, r, ps, err)
     }
     w.Write(util.BTemplate("activate_resend_error-tail", "", map[string]interface{}{
-      "uid": ps.ByName("uid"),
+      "uid": r.FormValue("uid"),
     })(r))
   } else if acc.IsActive() {
       util.Error(w, r, ps, account.ErrAlreadyActivated, http.StatusConflict)
