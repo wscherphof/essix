@@ -17,6 +17,8 @@ var (
   ErrEmailTaken = errors.New("Email address taken")
   ErrNotActivated = errors.New("Account hasn't been activated yet")
   ErrAlreadyActivated = errors.New("Account is already activated")
+  ErrPasswordCodeUnset = errors.New("PasswordCode is nil")
+  ErrPasswordCodeIncorrect = errors.New("Password code given is incorrect")
 )
 
 const ACCOUNT_TABLE = "account"
@@ -49,6 +51,11 @@ func newPassword (pwd1, pwd2 string) (pwd *password, err error) {
   return
 }
 
+type passwordCode struct {
+ Created time.Time
+ Value string
+}
+
 type Account struct {
   dirty bool
   Created time.Time
@@ -59,6 +66,7 @@ type Account struct {
   FirstName string
   LastName string
   ActivationCode string
+  PasswordCode *passwordCode
 }
 
 func (a *Account) FullName () (name string) {
@@ -121,6 +129,33 @@ func (a *Account) activate (code string) (err error) {
   return
 }
 
+func (a *Account) CreatePasswordCode () (error) {
+  a.PasswordCode = &passwordCode{
+    Created: time.Now(),
+    Value: code(),
+  }
+  a.dirty = true
+  return a.save()
+}
+
+func (a *Account) ChangePassword (code, pwd1, pwd2 string) (err error, conflict bool) {
+  if code != a.PasswordCode.Value {
+    err, conflict = ErrPasswordCodeIncorrect, true
+  } else if pwd, e := newPassword(pwd1, pwd2); e != nil {
+    err, conflict = e, true
+  } else {
+    a.dirty = true
+    a.PasswordCode = nil
+    a.PWD = pwd
+    err = a.save()
+  }
+  return
+}
+
+func code () string {
+  return string(util.URLEncode(util.Random(32)))
+}
+
 func New (val func (string) (string)) (account *Account, err error, conflict bool) {
   uid, existing := strings.ToLower(val("uid")), new(Account)
   if e, found := db.Get(ACCOUNT_TABLE, uid, existing); e != nil {
@@ -138,7 +173,7 @@ func New (val func (string) (string)) (account *Account, err error, conflict boo
       Postcode: strings.ToUpper(val("postcode")),
       FirstName: val("firstname"),
       LastName: val("lastname"),
-      ActivationCode: string(util.URLEncode(util.Random(32))),
+      ActivationCode: code(),
     }.saveNew()
   }
   return
@@ -177,6 +212,7 @@ func Get (uid, pwd string) (account *Account, err error, conflict bool) {
   } else if e := bcrypt.CompareHashAndPassword(acc.PWD.Value, []byte(pwd)); e != nil {
     err, conflict = ErrInvalidCredentials, true
   } else {
+    pwd = ""
     account = acc
   }
   return
@@ -184,4 +220,12 @@ func Get (uid, pwd string) (account *Account, err error, conflict bool) {
 
 func GetInsecure (uid string) (account *Account, err error, conflict bool) {
   return get (uid)
+}
+
+func ClearPasswordCode (uid string) {
+  if acc, _, _ := get(uid); acc != nil {
+    acc.PasswordCode = nil
+    acc.dirty = true
+    acc.save()
+  }
 }

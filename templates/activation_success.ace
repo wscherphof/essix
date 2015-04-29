@@ -8,9 +8,8 @@ html lang={{ .lang.Main }}
   body
     p..
       {{ Msg "Hi" }} {{ .name }},
-      {{ Msg "Signup successful" }}
-      {{ Msg .remark }}
+      {{ Msg "Activate successful" }}
     p
-      a href=/account/activation/{{ .uid }} {{ Msg "activation subject" }}
+      a href=/session {{ Msg "Log in" }}
     p
       a href=/ {{ Msg "Take me home" }}

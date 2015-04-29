@@ -12,22 +12,6 @@ func DefineMessages () {
   a("nl", "Het lukt de webserver niet om de inlogsessie aan te maken :-(")
   a("en", "The server is failing to create the log in session :-(")
 
-  m("Signup successful")
-  a("nl", "Bedankt voor het aanmelden bij Expeertise! Voordat je kan inloggen moet je account nog geactiveerd worden; we hebben je een e-mail gestuurd met de activatiecode.")
-  a("en", "Thanks for signing up with Expeertise! Before you can log in, your account needs to be activated; we've sent you an email containing the activation code.")
-
-  m("Activate successful")
-  a("nl", "Bedankt voor het activeren van je account bij Expeertise! Je registratie is compleet; je kan nu inloggen.")
-  a("en", "Thanks for activating your account with Expeertise! Your registration is complete; you are now able to log in.")
-
-  m("Resend activation code")
-  a("nl", "Stuur me de activeringscode opnieuw")
-  a("en", "Resend me the activation code")
-
-  m("Resend successful")
-  a("nl", "Dank voor je aanvraag. Controleer je e-mail voor de activatiecode.")
-  a("en", "Thanks for your request. Check your email for the activation code.")
-
   m("Email")
   a("nl", "E-mailadres")
   a("en", "Email address")
@@ -72,7 +56,11 @@ func DefineMessages () {
   a("nl", "Achternaam")
   a("en", "Last name")
 
-  m("Activate account")
+  m("Signup successful")
+  a("nl", "Bedankt voor het aanmelden bij Expeertise! Voordat je kan inloggen moet je account nog geactiveerd worden; we hebben je een e-mail gestuurd met de activatiecode.")
+  a("en", "Thanks for signing up with Expeertise! Before you can log in, your account needs to be activated; we've sent you an email containing the activation code.")
+
+  m("activation subject")
   a("nl", "Je account activeren")
   a("en", "Activate your account")
 
@@ -84,11 +72,43 @@ func DefineMessages () {
   a("nl", "De activeringscode is je per e-mail toegestuurd")
   a("en", "The activation code was sent to you by email")
 
-  m("Activate")
-  a("nl", "Activeren")
-  a("en", "Activate")
+  m("Resend activation code")
+  a("nl", "Stuur me de activeringscode opnieuw")
+  a("en", "Resend me the activation code")
 
-  m("Try again")
-  a("nl", "Opnieuw proberen")
-  a("en", "Try again")
+  m("Activate successful")
+  a("nl", "Bedankt voor het activeren van je account bij Expeertise! Je registratie is compleet; je kan nu inloggen.")
+  a("en", "Thanks for activating your account with Expeertise! Your registration is complete; you are now able to log in.")
+
+  m("Resend successful")
+  a("nl", "Dank voor je aanvraag. Controleer je e-mail voor de activatiecode.")
+  a("en", "Thanks for your request. Check your email for the activation code.")
+
+  m("password subject")
+  a("nl", "Mijn wachtwoord opnieuw instellen")
+  a("en", "Reset my password")
+
+  m("Forgot password")
+  a("nl", "Wachtwoord kwijt?")
+  a("en", "Lost your password?")
+
+  m("Passwordcode successful")
+  a("nl", "Dank voor je aanvraag. Controleer je e-mail voor verdere instructies.")
+  a("en", "Thanks for your request. Check your email for further instructions.")
+
+  m("Passwordcode cancelled")
+  a("nl", "Opnieuw instellen van het wachtwoord is geannuleerd.")
+  a("en", "Password reset is cancelled.")
+
+  m("Create new password")
+  a("nl", "Maak een nieuw wachtwoord aan")
+  a("en", "Create a new password")
+
+  m(ErrPasswordCodeTimedOut.Error())
+  a("nl", "De geldigheidstermijn van de aanvraag voor het opnieuw instellen van het wachtwoord is verstreken")
+  a("en", "The request for a password reset is expired")
+
+  m("Change password successful")
+  a("nl", "Je nieuwe wachtwoord is nu actief.")
+  a("en", "Your new password is activated.")
 }

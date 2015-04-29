@@ -29,15 +29,23 @@ func main () {
   router.GET    ("/account", secure.SignUpForm)
   router.POST   ("/account", secure.SignUp)
 
-  router.GET    ("/account/activation/:uid", secure.ActivateForm)
-  router.GET    ("/account/activation/",     secure.ActivateForm)
   router.GET    ("/account/activation",      secure.ActivateForm)
+  router.GET    ("/account/activation/",     secure.ActivateForm)
+  router.GET    ("/account/activation/:uid", secure.ActivateForm)
   router.PUT    ("/account/activation",      secure.Activate)
   
-  router.GET    ("/account/activationcode/:uid", secure.ActivationCodeForm)
-  router.GET    ("/account/activationcode/",     secure.ActivationCodeForm)
   router.GET    ("/account/activationcode",      secure.ActivationCodeForm)
+  router.GET    ("/account/activationcode/",     secure.ActivationCodeForm)
+  router.GET    ("/account/activationcode/:uid", secure.ActivationCodeForm)
   router.POST   ("/account/activationcode",      secure.ActivationCode)
+  
+  router.GET    ("/account/passwordcode",      secure.PasswordCodeForm)
+  router.GET    ("/account/passwordcode/",     secure.PasswordCodeForm)
+  router.GET    ("/account/passwordcode/:uid", secure.PasswordCodeForm)
+  router.POST   ("/account/passwordcode",      secure.PasswordCode)
+  
+  router.GET    ("/account/password/:uid", secure.PasswordForm)
+  router.PUT    ("/account/password",      secure.ChangePassword)
   
   router.GET    ("/session", secure.LogInForm)
   router.POST   ("/session", secure.LogIn)

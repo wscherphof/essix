@@ -30,4 +30,12 @@ func DefineMessages () {
   m(ErrAlreadyActivated.Error())
   a("nl", "Dit account is al geactiveerd")
   a("en", "This account is already activated")
+
+  m(ErrPasswordCodeUnset.Error())
+  a("nl", "Voor dit account is geen aanvraag bekend voor het opnieuw instellen van het wachtwoord")
+  a("en", "This account has no pending request for a password reset")
+
+  m(ErrPasswordCodeIncorrect.Error())
+  a("nl", "Ongeldige aanvraag")
+  a("en", "Invalid request")
 }

@@ -6,7 +6,7 @@ html lang={{ .lang.Main }}
     link rel=icon href=/static/favicon.ico type=image/x-icon
     link rel="shortcut icon" href=/static/favicon.ico type=image/x-icon
   body
-    {{ Msg "Activate account" }}
+    p {{ Msg "activation subject" }}
     form method=POST action=/account/activation
       input type=hidden name=_method value=PUT
       label {{ Msg "Email" }}*
@@ -15,10 +15,9 @@ html lang={{ .lang.Main }}
       label {{ Msg "Activation code" }}*
         input id=code type=text name=code value={{ .code }} placeholder=zc-968YEX3VYu_YmdA7ynBp_d2cydmR1MRRqmglh1R0= required= size=35
       br
-      input type=submit value={{ Msg "Activate" }}
-      {{ if eq .code "" }}
-      p
-        {{ Msg "Activation code source" }}
-        br
-        a href=/account/activationcode/{{ .uid }} {{ Msg "Resend activation code" }}
-      {{ end }}
+      input type=submit
+    {{ if eq .code "" }}
+    p..
+      {{ Msg "Activation code source" }}
+      a href=/account/activationcode/{{ .uid }} {{ Msg "Resend activation code" }}
+    {{ end }}

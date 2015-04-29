@@ -3,11 +3,13 @@ package secure
 import (
   "net/http"
   "github.com/julienschmidt/httprouter"
-  "github.com/wscherphof/msg"
   "github.com/wscherphof/expeertise/util"
   "github.com/wscherphof/expeertise/data"
   "github.com/wscherphof/expeertise/model/account"
+  // TODO: get rid of the email dependency for the ErrNotSentImmediately remark
   "github.com/wscherphof/expeertise/email"
+  "time"
+  "errors"
 )
 
 func SignUpForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
@@ -15,19 +17,6 @@ func SignUpForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
   util.Template("signup", "", map[string]interface{}{
     "Countries": data.Countries(),
   })(w, r, ps)
-}
-
-func activationEmail (r *http.Request, account *account.Account) (error) {
-  subject := msg.Msg(r)("Activate account")
-  scheme := "http"
-  if r.TLS != nil {
-    scheme = "https"
-  }
-  body := util.BTemplate("activate_email", "lang", map[string]interface{}{
-    "link": scheme + "://" + r.Host + "/account/activation/" + account.UID + "?code=" + account.ActivationCode,
-    "name": account.Name(),
-  })(r)
-  return email.Send(subject, string(body), account.UID)
 }
 
 func SignUp (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
@@ -61,7 +50,7 @@ func SignUp (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 }
 
 func ActivateForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-  util.Template("activate", "", map[string]interface{}{
+  util.Template("activation", "", map[string]interface{}{
     "uid": ps.ByName("uid"),
     "code": r.URL.Query().Get("code"),
   })(w, r, ps)
@@ -74,38 +63,51 @@ func Activate (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
     } else {
       util.Error(w, r, ps, err)
     }
-    w.Write(util.BTemplate("activate_error-tail", "", nil)(r))
+    w.Write(util.BTemplate("activation_error-tail", "", nil)(r))
   } else {
-    util.Template("activate_success", "", map[string]interface{}{
+    util.Template("activation_success", "", map[string]interface{}{
       "name": account.Name(),
     })(w, r, ps)
   }
 }
 
-func ActivationCodeForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-  util.Template("activate_resend", "", map[string]interface{}{
-    "uid": ps.ByName("uid"),
-  })(w, r, ps)
+const PWD_CODE_TIMEOUT time.Duration = 1 * time.Hour
+var ErrPasswordCodeTimedOut = errors.New("Password code has timed out")
+
+func PasswordForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+  uid, code := ps.ByName("uid"), r.FormValue("code")
+  if len(code) == 0 {
+    account.ClearPasswordCode(uid)
+    util.Template("passwordcode_cancelled", "", nil)(w, r, ps)
+  } else {
+    util.Template("password", "", map[string]interface{}{
+      "uid": uid,
+      "code": code,
+    })(w, r, ps)
+  }
 }
 
-func ActivationCode (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func ChangePassword (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
   if acc, err, conflict := account.GetInsecure(r.FormValue("uid")); err != nil {
     if conflict {
       util.Error(w, r, ps, err, http.StatusConflict)
     } else {
       util.Error(w, r, ps, err)
     }
-    w.Write(util.BTemplate("activate_resend_error-tail", "", map[string]interface{}{
-      "uid": r.FormValue("uid"),
-    })(r))
-  } else if acc.IsActive() {
-      util.Error(w, r, ps, account.ErrAlreadyActivated, http.StatusConflict)
-  } else if err := activationEmail(r, acc); err != nil && err != email.ErrNotSentImmediately {
-    util.Error(w, r, ps, err)
-  } else {
-    util.Template("activate_resend_success", "", map[string]interface{}{
-      "name": acc.Name(),
+  } else if acc.PasswordCode == nil {
+    util.Error(w, r, ps, account.ErrPasswordCodeUnset, http.StatusConflict)
+  } else if time.Since(acc.PasswordCode.Created) > PWD_CODE_TIMEOUT {
+    util.Error(w, r, ps, ErrPasswordCodeTimedOut, http.StatusConflict)
+    w.Write(util.BTemplate("passwordcode_error-tail", "", map[string]interface{}{
       "uid": acc.UID,
-    })(w, r, ps)
+    })(r))
+  } else if err, conflict := acc.ChangePassword(r.FormValue("code"), r.FormValue("pwd1"), r.FormValue("pwd2")); err != nil {
+    if conflict {
+      util.Error(w, r, ps, err, http.StatusConflict)
+    } else {
+      util.Error(w, r, ps, err)
+    }
+  } else {
+    util.Template("password_success", "", nil)(w, r, ps)
   }
 }

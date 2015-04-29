@@ -6,6 +6,7 @@ html lang={{ .lang.Main }}
     link rel=icon href=/static/favicon.ico type=image/x-icon
     link rel="shortcut icon" href=/static/favicon.ico type=image/x-icon
   body
+    p {{ Msg "Log in" }}
     form method=POST action=/session
       label {{ Msg "Email" }}*
         input id=uid type=email name=uid placeholder=email@provider.com required= size=35
@@ -13,4 +14,9 @@ html lang={{ .lang.Main }}
       label {{ Msg "Password" }}*
         input id=pwd type=password name=pwd placeholder=******** required= size=35
       br
-      input type=submit value={{ Msg "Log in" }}
+      input type=submit
+    p
+      a href=/account/passwordcode/{{ .uid }} {{ Msg "Forgot password" }}
+      span &nbsp;
+      a href=/account {{ Msg "Sign up" }}
+
