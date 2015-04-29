@@ -95,16 +95,17 @@ func ActivationCode (w http.ResponseWriter, r *http.Request, ps httprouter.Param
     } else {
       util.Error(w, r, ps, err)
     }
-    // TODO
-    // w.Write(util.BTemplate("activate_error-tail", "", nil)(r))
+    w.Write(util.BTemplate("activate_resend_error-tail", "", map[string]interface{}{
+      "uid": ps.ByName("uid"),
+    })(r))
   } else if acc.IsActive() {
       util.Error(w, r, ps, account.ErrAlreadyActivated, http.StatusConflict)
   } else if err := activationEmail(r, acc); err != nil && err != email.ErrNotSentImmediately {
     util.Error(w, r, ps, err)
   } else {
-    // TODO
-    // util.Template("activate_success", "", map[string]interface{}{
-    //   "name": acc.Name(),
-    // })(w, r, ps)
+    util.Template("activate_resend_success", "", map[string]interface{}{
+      "name": acc.Name(),
+      "uid": acc.UID,
+    })(w, r, ps)
   }
 }

@@ -1,0 +1,4 @@
+p
+  a href=/account/activationcode/{{ .uid }} {{ Msg "Try again" }}
+p
+  a href=/ {{ Msg "Take me home" }}

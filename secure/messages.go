@@ -24,6 +24,10 @@ func DefineMessages () {
   a("nl", "Stuur me de activeringscode opnieuw")
   a("en", "Resend me the activation code")
 
+  m("Resend successful")
+  a("nl", "Dank voor je aanvraag. Controleer je e-mail voor de activatiecode.")
+  a("en", "Thanks for your request. Check your email for the activation code.")
+
   m("Email")
   a("nl", "E-mailadres")
   a("en", "Email address")
@@ -83,4 +87,8 @@ func DefineMessages () {
   m("Activate")
   a("nl", "Activeren")
   a("en", "Activate")
+
+  m("Try again")
+  a("nl", "Opnieuw proberen")
+  a("en", "Try again")
 }
