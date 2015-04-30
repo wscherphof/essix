@@ -3,6 +3,6 @@ p
 p
   a href=/account {{ Msg "Sign up" }}
 p
-  a href=/account/activation {{ Msg "Activate account" }}
+  a href=/account/activation {{ Msg "activation subject" }}
 p
   a href=/ {{ Msg "Take me home" }}
