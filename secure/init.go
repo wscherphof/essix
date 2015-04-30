@@ -14,7 +14,7 @@ func Init () {
   secure.Init(account.Account{}, &secureDB{})
 }
 
-func sendEmail (r *http.Request, acc *account.Account, resource, code string) (err error, remark string) {
+func sendEmail (r *http.Request, acc *account.Account, resource, code, extra string) (err error, remark string) {
   subject := msg.Msg(r)(resource + " subject")
   scheme := "http"
   if r.TLS != nil {
@@ -23,9 +23,10 @@ func sendEmail (r *http.Request, acc *account.Account, resource, code string) (e
   path := scheme + "://" + r.Host + "/account/" + resource + "/" + acc.UID
   // TODO: format links as "buttons" instead of URLs
   body := util.BTemplate(resource + "_email", "lang", map[string]interface{}{
-    "action": path + "?code=" + code,
+    "action": path + "?code=" + code + "&extra=" + string(util.URLEncode([]byte(extra))),
     "cancel": path,
     "name": acc.Name(),
+    "extra": extra,
   })(r)
   if e := email.Send(subject, string(body), acc.UID); e != nil {
     if e == email.ErrNotSentImmediately {

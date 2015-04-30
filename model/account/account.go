@@ -52,7 +52,7 @@ func newPassword (pwd1, pwd2 string) (pwd *password, err error) {
 }
 
 type passwordCode struct {
- Created time.Time
+ Expires time.Time
  Value string
 }
 
@@ -129,9 +129,9 @@ func (a *Account) activate (code string) (err error) {
   return
 }
 
-func (a *Account) CreatePasswordCode () (error) {
+func (a *Account) CreatePasswordCode (timeout time.Duration) (error) {
   a.PasswordCode = &passwordCode{
-    Created: time.Now(),
+    Expires: time.Now().Add(timeout),
     Value: code(),
   }
   a.dirty = true

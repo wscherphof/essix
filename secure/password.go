@@ -5,6 +5,7 @@ import (
   "github.com/julienschmidt/httprouter"
   "github.com/wscherphof/expeertise/util"
   "github.com/wscherphof/expeertise/model/account"
+  "github.com/wscherphof/msg"
   "time"
   "errors"
 )
@@ -13,8 +14,8 @@ const PWD_CODE_TIMEOUT time.Duration = 1 * time.Hour
 var ErrPasswordCodeTimedOut = errors.New("Password code has timed out")
 
 func passwordEmail (r *http.Request, acc *account.Account) (error, string) {
-  // TODO: indicate Expires-time
-  return sendEmail (r, acc, "password", acc.PasswordCode.Value)
+  format := msg.Msg(r)("Time format")
+  return sendEmail (r, acc, "password", acc.PasswordCode.Value, acc.PasswordCode.Expires.Format(format))
 }
 
 func PasswordCodeForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
@@ -29,7 +30,7 @@ func PasswordCode (w http.ResponseWriter, r *http.Request, ps httprouter.Params)
     handle(err, conflict, "passwordcode", map[string]interface{}{
       "uid": r.FormValue("uid"),
     })
-  } else if err := acc.CreatePasswordCode(); err != nil {
+  } else if err := acc.CreatePasswordCode(PWD_CODE_TIMEOUT); err != nil {
     handle(err, false, "", nil)
   } else if err, remark := passwordEmail(r, acc); err != nil {
     handle(err, false, "", nil)
@@ -42,7 +43,8 @@ func PasswordCode (w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 }
 
 func PasswordForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-  uid, code := ps.ByName("uid"), r.FormValue("code")
+  uid, code, extra := ps.ByName("uid"), r.FormValue("code"), r.FormValue("extra")
+  expires, _ := util.URLDecode([]byte(extra))
   if len(code) == 0 {
     account.ClearPasswordCode(uid)
     util.Template("passwordcode_cancelled", "", nil)(w, r, ps)
@@ -50,6 +52,7 @@ func PasswordForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params)
     util.Template("password", "", map[string]interface{}{
       "uid": uid,
       "code": code,
+      "expires": string(expires),
     })(w, r, ps)
   }
 }
@@ -60,7 +63,7 @@ func ChangePassword (w http.ResponseWriter, r *http.Request, ps httprouter.Param
     handle(err, conflict, "", nil)
   } else if acc.PasswordCode == nil {
     handle(account.ErrPasswordCodeUnset, true, "", nil)
-  } else if time.Since(acc.PasswordCode.Created) > PWD_CODE_TIMEOUT {
+  } else if time.Now().After(acc.PasswordCode.Expires) {
     handle(ErrPasswordCodeTimedOut, true, "passwordcode", map[string]interface{}{
       "uid": acc.UID,
     })

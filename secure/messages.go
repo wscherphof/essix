@@ -111,4 +111,12 @@ func DefineMessages () {
   m("Change password successful")
   a("nl", "Je nieuwe wachtwoord is nu actief.")
   a("en", "Your new password is activated.")
+
+  m("Time format")
+  a("nl", "2-1-2006, 15.04 u. (MST)")
+  a("en", "1/2/2006 at 3:04pm (MST)")
+
+  m("Expires")
+  a("nl", "Geldig tot")
+  a("en", "Expires")
 }
