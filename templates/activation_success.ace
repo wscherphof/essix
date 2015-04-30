@@ -9,6 +9,7 @@ html lang={{ .lang.Main }}
     p..
       {{ Msg "Hi" }} {{ .name }},
       {{ Msg "Activate successful" }}
+      {{ Msg .remark }}
     p
       a href=/session {{ Msg "Log in" }}
     p

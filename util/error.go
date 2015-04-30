@@ -23,3 +23,16 @@ func Error (w http.ResponseWriter, r *http.Request, ps httprouter.Params, err er
     log.Println("ERROR:", err, "- Path:", r.URL.Path)
   }
 }
+
+func Handle (w http.ResponseWriter, r *http.Request, ps httprouter.Params) func(error, bool, string, map[string]interface{}) {
+  return func(err error, conflict bool, tail string, data map[string]interface{}) {
+    if conflict {
+      Error(w, r, ps, err, http.StatusConflict)
+    } else {
+      Error(w, r, ps, err)
+    }
+    if len(tail) > 0 {
+      w.Write(BTemplate(tail + "_error-tail", "", data)(r))
+    }
+  }
+}
