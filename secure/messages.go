@@ -93,8 +93,8 @@ func DefineMessages () {
   a("en", "Lost your password?")
 
   m("Passwordcode successful")
-  a("nl", "Dank voor je aanvraag. Controleer je e-mail voor verdere instructies.")
-  a("en", "Thanks for your request. Check your email for further instructions.")
+  a("nl", "Dank voor je aanvraag om je wachtwoord opnieuw in te stellen. Controleer je e-mail s.v.p. voor verdere instructies.")
+  a("en", "Thanks for your request to reset your password. Please check your email for further instructions.")
 
   m("Passwordcode cancelled")
   a("nl", "Opnieuw instellen van het wachtwoord is geannuleerd.")
