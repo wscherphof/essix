@@ -50,6 +50,11 @@ func main () {
   router.GET    ("/session", secure.LogInForm)
   router.POST   ("/session", secure.LogIn)
   router.DELETE ("/session", secure.LogOut)
+  
+  // TODO:
+  // router.GET    ("/account/instance/:uid", secure.Authenticate(secure.View))
+  // router.PUT    ("/account/instance/:uid", secure.Authenticate(secure.Edit))
+  // router.DELETE ("/account/instance/:uid", secure.Authenticate(secure.Terminate))
 
   router.GET    ("/protected", secure.Authenticate(Protected))
   
