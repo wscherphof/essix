@@ -11,7 +11,6 @@ import (
 
 func LogInForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
   // TODO: captcha
-  // TODO: forgot password
   util.Template("login", "", nil)(w, r, ps)
 }
 
