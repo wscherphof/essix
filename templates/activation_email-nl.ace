@@ -1,12 +1,17 @@
 = content main
+  p Hoi {{ .name }},
   p..
-    Hoi {{ .name }},
     Bedankt voor het aanmelden bij Expeertise!
-    (Als je ons niet kent en je niet hebt aangemeld, dan sorry en beschouw dit bericht alsjeblieft als niet gelezen)
+    (Als je ons niet kent en je niet hebt aangemeld, dan sorry en beschouw dit bericht alsjeblieft als niet verzonden)
     Om te kunnen inloggen moet je nog één ding doen: je account activeren.
-    Ga daarvoor naar deze pagina: {{ .action }}
-    We hopen je gauw te zien!
+  p 
+    a href={{ .action }} Klik op deze link voor de activeringspagina
+    |  - we hopen je gauw te zien!
   p..
     Dank,
     Met vriendelijke groet,
     Expeertise
+  p
+    small..
+      Als de link niet werkt, plak dan onderstaande URL in de adresbalk van je webbrowser:
+      {{ .action }}

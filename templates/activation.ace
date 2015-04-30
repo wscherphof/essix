@@ -17,7 +17,7 @@ html lang={{ .lang.Main }}
       br
       input type=submit
     {{ if eq .code "" }}
-    p..
-      {{ Msg "Activation code source" }}
+    p {{ Msg "Activation code source" }}
+      br
       a href=/account/activationcode/{{ .uid }} {{ Msg "Resend activation code" }}
     {{ end }}

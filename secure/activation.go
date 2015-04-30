@@ -14,7 +14,7 @@ func activationEmail (r *http.Request, acc *account.Account) (error, string) {
 func ActivateForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
   util.Template("activation", "", map[string]interface{}{
     "uid": ps.ByName("uid"),
-    "code": r.URL.Query().Get("code"),
+    "code": r.FormValue("code"),
   })(w, r, ps)
 }
 

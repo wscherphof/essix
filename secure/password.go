@@ -25,11 +25,12 @@ func PasswordCodeForm (w http.ResponseWriter, r *http.Request, ps httprouter.Par
 }
 
 func PasswordCode (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+  uid := r.FormValue("uid")
   handle := util.Handle(w, r, ps)
-  if acc, err, conflict := account.GetInsecure(r.FormValue("uid")); err != nil {
-    handle(err, conflict, "passwordcode", map[string]interface{}{
-      "uid": r.FormValue("uid"),
-    })
+  if acc, err, conflict := account.GetInsecure(uid); err != nil {
+    handle(err, conflict, "passwordcode", map[string]interface{}{"uid": uid})
+  } else if ! acc.IsActive() {
+    handle(account.ErrNotActivated, true, "activation_resend", map[string]interface{}{"uid": uid})
   } else if err := acc.CreatePasswordCode(PWD_CODE_TIMEOUT); err != nil {
     handle(err, false, "", nil)
   } else if err, remark := passwordEmail(r, acc); err != nil {
@@ -64,9 +65,7 @@ func ChangePassword (w http.ResponseWriter, r *http.Request, ps httprouter.Param
   } else if acc.PasswordCode == nil {
     handle(account.ErrPasswordCodeUnset, true, "", nil)
   } else if time.Now().After(acc.PasswordCode.Expires) {
-    handle(ErrPasswordCodeTimedOut, true, "passwordcode", map[string]interface{}{
-      "uid": acc.UID,
-    })
+    handle(ErrPasswordCodeTimedOut, true, "passwordcode", map[string]interface{}{"uid": acc.UID})
   } else if err, conflict := acc.ChangePassword(r.FormValue("code"), r.FormValue("pwd1"), r.FormValue("pwd2")); err != nil {
     handle(err, conflict, "", nil)
   } else {

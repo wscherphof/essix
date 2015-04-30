@@ -1,10 +1,15 @@
 = content main
+  p Hi {{ .name }},
   p..
-    Hi {{ .name }},
     Thank you for signing up with Expeertise!
     (If you don't know us, and you didn't sign up, then please accept our apologies, and regard this message as unsent)
     To enable logging in with us, there's one thing you should do now: activate your account.
-    Please follow this link to the activation page: {{ .action }}
-    We hope to see you soon!
+  p 
+    a href={{ .action }} Please follow this link to the activation page
+    |  - we hope to see you soon!
   p Cheers,
   p Expeertise
+  p
+    small..
+      If the link doesn't function, please paste the link below in your web browser's address bar:
+      {{ .action }}
