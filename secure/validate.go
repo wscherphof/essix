@@ -5,8 +5,6 @@ import (
   "log"
 )
 
-// TODO: replace with secure.Update(acc)
-
 func validate (itf interface{}) valid bool {
   if itf != nil {
     src := itf.(account.Account)

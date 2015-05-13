@@ -14,9 +14,6 @@ func Init () {
   secure.Init(account.Account{}, &secureDB{}, validator)
 }
 
-// TODO: func updateCookie (acc *account.Account) {secure.update(acc)}
-// and ditch the validator
-
 func sendEmail (r *http.Request, acc *account.Account, resource, code, extra string) (err error, remark string) {
   subject := msg.Msg(r)(resource + " subject")
   scheme := "http"
