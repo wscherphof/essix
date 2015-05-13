@@ -69,6 +69,7 @@ func ChangePassword (w http.ResponseWriter, r *http.Request, ps httprouter.Param
   } else if err, conflict := acc.ChangePassword(r.FormValue("code"), r.FormValue("pwd1"), r.FormValue("pwd2")); err != nil {
     handle(err, conflict, "", nil)
   } else {
+    // TODO: updateCookie(acc)
     util.Template("password_success", "", nil)(w, r, ps)
   }
 }
