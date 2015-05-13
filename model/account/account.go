@@ -59,6 +59,7 @@ type passwordCode struct {
 type Account struct {
   dirty bool
   Created time.Time
+  Modified time.Time
   UID string
   PWD *password
   Country string
@@ -98,9 +99,11 @@ func (a *Account) Name () (name string) {
 }
 
 func (a *Account) save () (err error) {
-  if ! a.dirty {
-  } else if _, err = db.InsertUpdate(ACCOUNT_TABLE, a); err == nil {
-    a.dirty = false
+  if a.dirty {
+    a.Modified = time.Now()
+    if _, err = db.InsertUpdate(ACCOUNT_TABLE, a); err == nil {
+      a.dirty = false
+    }
   }
   return
 }
@@ -167,6 +170,7 @@ func New (val func (string) (string)) (account *Account, err error, conflict boo
   } else {
     account, err = Account{
       Created: time.Now(),
+      Modified: time.Now(),
       UID: uid,
       PWD: pwd,
       Country: val("country"),
