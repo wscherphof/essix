@@ -11,7 +11,14 @@ import (
 
 func Init () {
   DefineMessages()
-  secure.Init(account.Account{}, &secureDB{}, validate)
+  secure.Init(account.Account{}, &secureDB{}, func (src interface{}) (dest interface{}, valid bool) {
+    if src != nil {
+      acc := src.(account.Account)
+      valid = acc.Refresh()
+      dest = acc
+    }
+    return
+  })
 }
 
 func sendEmail (r *http.Request, acc *account.Account, resource, code, extra string) (err error, remark string) {
