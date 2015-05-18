@@ -6,7 +6,6 @@ import (
   "github.com/wscherphof/secure"
   "github.com/wscherphof/expeertise/util"
   "github.com/wscherphof/expeertise/model/account"
-  // "log"
 )
 
 func LogInForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
