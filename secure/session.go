@@ -21,7 +21,7 @@ func LogIn (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
     } else {
       util.Error(w, r, ps, err)
     }
-  } else if err := secure.LogIn(w, r, account); err != nil {
+  } else if err := secure.LogIn(w, r, account, true); err != nil {
     util.Error(w, r, ps, err)
   }
   // Won't see this on successful secure.LogIn, but doesn't do any harm
