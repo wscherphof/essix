@@ -59,7 +59,6 @@ type passwordCode struct {
 type Account struct {
   dirty bool
   Created time.Time
-  Modified time.Time
   UID string
   PWD *password
   Country string
@@ -100,7 +99,6 @@ func (a *Account) Name () (name string) {
 
 func (a *Account) save () (err error) {
   if a.dirty {
-    a.Modified = time.Now()
     if _, err = db.InsertUpdate(ACCOUNT_TABLE, a); err == nil {
       a.dirty = false
     }
@@ -155,6 +153,14 @@ func (a *Account) ChangePassword (code, pwd1, pwd2 string) (err error, conflict 
   return
 }
 
+func (a *Account) Refresh () (current bool) {
+  if saved, e, _ := get(a.UID); e == nil {
+    current = a.PWD.Created.Equal(saved.PWD.Created)
+    *a = *saved
+  }
+  return
+}
+
 func code () string {
   return string(util.URLEncode(util.Random(32)))
 }
@@ -170,7 +176,6 @@ func New (val func (string) (string)) (account *Account, err error, conflict boo
   } else {
     account, err = Account{
       Created: time.Now(),
-      Modified: time.Now(),
       UID: uid,
       PWD: pwd,
       Country: val("country"),

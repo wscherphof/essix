@@ -10,6 +10,6 @@ import (
 func Protected (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
   account := secure.Authentication(r)
   util.Template("protected", "lang", map[string]interface{}{
-    "uid": account.UID,
+    "name": account.Name(),
   })(w, r, ps)
 }
