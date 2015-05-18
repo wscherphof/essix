@@ -29,5 +29,5 @@ func LogIn (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 }
 
 func LogOut (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-  secure.LogOut(w, r)
+  secure.LogOut(w, r, true)
 }

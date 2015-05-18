@@ -22,4 +22,8 @@ func DefineMessages () {
   m("Try again")
   a("nl", "Opnieuw proberen")
   a("en", "Try again")
+
+  m("Time format")
+  a("nl", "2-1-2006, 15.04 u. (MST)")
+  a("en", "1/2/2006 at 3:04pm (MST)")
 }

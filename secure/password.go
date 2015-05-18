@@ -3,6 +3,7 @@ package secure
 import (
   "net/http"
   "github.com/julienschmidt/httprouter"
+  "github.com/wscherphof/secure"
   "github.com/wscherphof/expeertise/util"
   "github.com/wscherphof/expeertise/model/account"
   "github.com/wscherphof/msg"
@@ -69,6 +70,7 @@ func ChangePassword (w http.ResponseWriter, r *http.Request, ps httprouter.Param
   } else if err, conflict := acc.ChangePassword(r.FormValue("code"), r.FormValue("pwd1"), r.FormValue("pwd2")); err != nil {
     handle(err, conflict, "", nil)
   } else {
+    secure.LogOut(w, r, false)
     util.Template("password_success", "", nil)(w, r, ps)
   }
 }
