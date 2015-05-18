@@ -15,17 +15,12 @@ func LogInForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 }
 
 func LogIn (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+  handle := util.Handle(w, r, ps)
   if account, err, conflict := account.Get(r.FormValue("uid"), r.FormValue("pwd")); err != nil {
-    if conflict {
-      util.Error(w, r, ps, err, http.StatusConflict)
-    } else {
-      util.Error(w, r, ps, err)
-    }
+    handle(err, conflict, "login", nil)
   } else if err := secure.LogIn(w, r, account, true); err != nil {
-    util.Error(w, r, ps, err)
+    handle(err, false, "login", nil)
   }
-  // Won't see this on successful secure.LogIn, but doesn't do any harm
-  w.Write(util.BTemplate("login_error-tail", "", nil)(r))
 }
 
 func LogOut (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
