@@ -11,6 +11,7 @@ import (
   "github.com/wscherphof/expeertise/config"
   "github.com/wscherphof/expeertise/secure"
   "github.com/wscherphof/expeertise/model"
+  "github.com/wscherphof/expeertise/captcha"
   "github.com/wscherphof/expeertise/util"
 )
 
@@ -19,6 +20,7 @@ func main () {
   config.Init()
   secure.Init()
   model.Init()
+  captcha.Init()
   DefineMessages()
   router := httprouter.New()
 
@@ -58,6 +60,7 @@ func main () {
 
   router.GET    ("/protected", secure.Authenticate(Protected))
   
+  router.Handler("GET", "/captcha/*filepath", captcha.Server)
   router.ServeFiles("/static/*filepath", http.Dir("./static"))
 
   log.Fatal(http.ListenAndServe(":9090", 
