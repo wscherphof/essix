@@ -4,15 +4,18 @@ import (
   "github.com/dchest/captcha"
   "github.com/wscherphof/expeertise/db"
   "log"
+  "time"
 )
 
 const CAPTCHA_TABLE string = "captcha"
+const TIMEOUT time.Duration = 15 * time.Minute
 
 var Server = captcha.Server(captcha.StdWidth, captcha.StdHeight)
 
 type captchaType struct{
   ID string `gorethink:"id,omitempty"`
   Digits []byte
+  Created int64
 }
 
 type store struct{}
@@ -21,6 +24,7 @@ func (s *store) Set (id string, digits []byte) {
   if _, err := db.Insert(CAPTCHA_TABLE, &captchaType{
     ID: id,
     Digits: digits,
+    Created: time.Now().Unix(),
   }); err != nil {
     log.Println("ERROR: Insert failed in table " + CAPTCHA_TABLE + ":", err)
   }
@@ -38,9 +42,23 @@ func (s *store) Get (id string, clear bool) (digits []byte) {
   return
 }
 
+func prune (limit int64) {
+  // TODO
+}
+
 func Init () {
   if cursor, _ := db.TableCreate(CAPTCHA_TABLE); cursor != nil {
     log.Println("INFO: table created:", CAPTCHA_TABLE)
+    if _, err := db.IndexCreate(CAPTCHA_TABLE, "Created"); err == nil {
+      log.Println("INFO: index created:", CAPTCHA_TABLE)
+    }
   }
   captcha.SetCustomStore(new(store))
+  go func() {
+    for {
+      limit := time.Now().Unix()
+      time.Sleep(TIMEOUT)
+      prune(limit)
+    }
+  }()
 }

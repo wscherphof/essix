@@ -68,6 +68,10 @@ func TableCreatePK (table, pk string) (*r.Cursor, error) {
   })
 }
 
+func IndexCreate (table, field string) (*r.Cursor, error) {
+  return r.Table(table).IndexCreate(field).Run(s)
+}
+
 func Get (table, key string, result interface{}) (err error, found bool) {
   if cursor, e := r.Table(table).Get(key).Run(s); e != nil {
     err = e
