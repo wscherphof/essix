@@ -49,7 +49,9 @@ func prune (limit int64) {
 func Init () {
   if cursor, _ := db.TableCreate(CAPTCHA_TABLE); cursor != nil {
     log.Println("INFO: table created:", CAPTCHA_TABLE)
-    if _, err := db.IndexCreate(CAPTCHA_TABLE, "Created"); err == nil {
+    if _, err := db.IndexCreate(CAPTCHA_TABLE, "Created"); err != nil {
+      log.Println("ERROR: failed to create index:", CAPTCHA_TABLE, err.Error())
+    } else {
       log.Println("INFO: index created:", CAPTCHA_TABLE)
     }
   }
