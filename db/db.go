@@ -72,6 +72,33 @@ func IndexCreate (table, field string) (*r.Cursor, error) {
   return r.Table(table).IndexCreate(field).Run(s)
 }
 
+func Between (table, index string, low, high interface{}, includeLeft, includeRight bool) (r.Term) {
+  optArgs := r.BetweenOpts{
+    LeftBound: "closed",
+    RightBound: "closed",
+  }
+  if len(index) > 0 {
+    optArgs.Index = index
+  }
+  if includeLeft {
+    optArgs.LeftBound = "open"
+  }
+  if includeRight {
+    optArgs.RightBound = "open"
+  }
+  if low == nil {
+    low = r.MinVal
+  }
+  if high == nil {
+    low = r.MaxVal
+  }
+  return r.Table(table).Between(low, high, optArgs)
+}
+
+func DeleteTerm (term r.Term) (r.WriteResponse, error) {
+  return term.Delete().RunWrite(s)
+}
+
 func Get (table, key string, result interface{}) (err error, found bool) {
   if cursor, e := r.Table(table).Get(key).Run(s); e != nil {
     err = e
