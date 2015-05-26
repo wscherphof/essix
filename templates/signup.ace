@@ -38,12 +38,7 @@ html lang={{ .lang.Main }}
       label {{ Msg "Last name" }}
         input id=lastname type=text name=lastname placeholder=Doe size=35
       br
-      label {{ Msg "Captcha" }}*
-        input id=captchaSolution type=text name=captchaSolution placeholder=975431 required= size=35
-        input type=hidden name=captchaId value={{ .CaptchaId }}
-        br
-        img id=captchaImg src="/captcha/{{ .CaptchaId }}.png" alt={{ Msg "Captcha image" }}
-      br
+      = include includes/captcha .
       input type=submit
     = javascript
       function validate (form) {
