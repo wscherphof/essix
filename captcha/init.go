@@ -46,7 +46,7 @@ func Init () {
   if cursor, _ := db.TableCreate(CAPTCHA_TABLE); cursor != nil {
     log.Println("INFO: table created:", CAPTCHA_TABLE)
     if _, err := db.IndexCreate(CAPTCHA_TABLE, "Created"); err != nil {
-      log.Println("ERROR: failed to create index:", CAPTCHA_TABLE, err.Error())
+      log.Println("ERROR: failed to create index:", CAPTCHA_TABLE, err)
     } else {
       log.Println("INFO: index created:", CAPTCHA_TABLE)
     }
@@ -57,7 +57,7 @@ func Init () {
       limit := time.Now().Unix()
       time.Sleep(TIMEOUT)
       if _, err := db.DeleteTerm(db.Between(CAPTCHA_TABLE, "Created", nil, limit, true, true)); err != nil {
-        log.Println("WARNING: captcha prune failed:", err.Error())
+        log.Println("WARNING: captcha prune failed:", err)
       }
     }
   }()
