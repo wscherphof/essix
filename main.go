@@ -15,6 +15,8 @@ import (
   "github.com/wscherphof/expeertise/util"
 )
 
+const HTTPS_PORT string = "10443"
+
 func main () {
   db.Init("localhost:28015", "expeertise")
   config.Init()
@@ -63,7 +65,7 @@ func main () {
   router.Handler("GET", "/captcha/*filepath", captcha.Server)
   router.ServeFiles("/static/*filepath", http.Dir("./static"))
 
-  log.Fatal(http.ListenAndServe(":9090", 
+  log.Fatal(http.ListenAndServeTLS(":" + HTTPS_PORT, "cert.pem", "key.pem",
   context.ClearHandler(
   handlers.HTTPMethodOverrideHandler(
   handlers.CombinedLoggingHandler(os.Stdout, 
