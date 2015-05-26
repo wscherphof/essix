@@ -10,8 +10,6 @@ import (
 const CAPTCHA_TABLE string = "captcha"
 const TIMEOUT time.Duration = 15 * time.Minute
 
-var Server = captcha.Server(captcha.StdWidth, captcha.StdHeight)
-
 type captchaType struct{
   ID string `gorethink:"id"`
   Digits []byte
@@ -42,6 +40,8 @@ func (s *store) Get (id string, clear bool) (digits []byte) {
   return
 }
 
+var Server = captcha.Server(captcha.StdWidth, captcha.StdHeight)
+
 func Init () {
   if cursor, _ := db.TableCreate(CAPTCHA_TABLE); cursor != nil {
     log.Println("INFO: table created:", CAPTCHA_TABLE)
@@ -52,6 +52,7 @@ func Init () {
     }
   }
   captcha.SetCustomStore(new(store))
+  DefineMessages()
   go func() {
     for {
       limit := time.Now().Unix()
