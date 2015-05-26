@@ -19,13 +19,16 @@ type captchaType struct{
 type store struct{}
 
 func (s *store) Set (id string, digits []byte) {
-  if _, err := db.Insert(CAPTCHA_TABLE, &captchaType{
-    ID: id,
-    Digits: digits,
-    Created: time.Now().Unix(),
-  }); err != nil {
-    log.Println("ERROR: Insert failed in table " + CAPTCHA_TABLE + ":", err)
-  }
+  // Wonder if this will ever prove just a bit too tricky
+  go func() {
+    if _, err := db.Insert(CAPTCHA_TABLE, &captchaType{
+      ID: id,
+      Digits: digits,
+      Created: time.Now().Unix(),
+    }); err != nil {
+      log.Println("ERROR: Insert failed in table " + CAPTCHA_TABLE + ":", err)
+    }
+  }()
 }
 
 func (s *store) Get (id string, clear bool) (digits []byte) {
