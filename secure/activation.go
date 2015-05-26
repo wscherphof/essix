@@ -5,6 +5,7 @@ import (
   "github.com/julienschmidt/httprouter"
   "github.com/wscherphof/expeertise/util"
   "github.com/wscherphof/expeertise/model/account"
+  "github.com/dchest/captcha"
 )
 
 func activationEmail (r *http.Request, acc *account.Account) (error, string) {
@@ -32,12 +33,15 @@ func Activate (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 func ActivationCodeForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
   util.Template("activation_resend", "", map[string]interface{}{
     "uid": ps.ByName("uid"),
+    "CaptchaId": captcha.New(),
   })(w, r, ps)
 }
 
 func ActivationCode (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
   handle := util.Handle(w, r, ps)
-  if acc, err, conflict := account.GetInsecure(r.FormValue("uid")); err != nil {
+  if !captcha.VerifyString(r.FormValue("captchaId"), r.FormValue("captchaSolution")) {
+    handle(captcha.ErrNotFound, true, "activation_resend", nil)
+  } else if acc, err, conflict := account.GetInsecure(r.FormValue("uid")); err != nil {
     handle(err, conflict, "activation_resend", map[string]interface{}{
       "uid": r.FormValue("uid"),
     })
