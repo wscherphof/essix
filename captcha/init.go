@@ -13,7 +13,7 @@ const TIMEOUT time.Duration = 15 * time.Minute
 var Server = captcha.Server(captcha.StdWidth, captcha.StdHeight)
 
 type captchaType struct{
-  ID string `gorethink:"id,omitempty"`
+  ID string `gorethink:"id"`
   Digits []byte
   Created int64
 }
@@ -42,10 +42,6 @@ func (s *store) Get (id string, clear bool) (digits []byte) {
   return
 }
 
-func prune (limit int64) {
-  // TODO
-}
-
 func Init () {
   if cursor, _ := db.TableCreate(CAPTCHA_TABLE); cursor != nil {
     log.Println("INFO: table created:", CAPTCHA_TABLE)
@@ -60,7 +56,9 @@ func Init () {
     for {
       limit := time.Now().Unix()
       time.Sleep(TIMEOUT)
-      prune(limit)
+      if _, err := db.DeleteTerm(db.Between(CAPTCHA_TABLE, "Created", nil, limit, true, true)); err != nil {
+        log.Println("WARNING: captcha prune failed:", err.Error())
+      }
     }
   }()
 }
