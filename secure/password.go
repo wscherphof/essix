@@ -7,6 +7,7 @@ import (
   "github.com/wscherphof/expeertise/util"
   "github.com/wscherphof/expeertise/model/account"
   "github.com/wscherphof/msg"
+  "github.com/dchest/captcha"
   "time"
   "errors"
 )
@@ -22,13 +23,16 @@ func passwordEmail (r *http.Request, acc *account.Account) (error, string) {
 func PasswordCodeForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
   util.Template("passwordcode", "", map[string]interface{}{
     "uid": ps.ByName("uid"),
+    "CaptchaId": captcha.New(),
   })(w, r, ps)
 }
 
 func PasswordCode (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
   uid := r.FormValue("uid")
   handle := util.Handle(w, r, ps)
-  if acc, err, conflict := account.GetInsecure(uid); err != nil {
+  if !captcha.VerifyString(r.FormValue("captchaId"), r.FormValue("captchaSolution")) {
+    handle(captcha.ErrNotFound, true, "passwordcode", nil)
+  } else if acc, err, conflict := account.GetInsecure(uid); err != nil {
     handle(err, conflict, "passwordcode", map[string]interface{}{"uid": uid})
   } else if ! acc.IsActive() {
     handle(account.ErrNotActivated, true, "activation_resend", map[string]interface{}{"uid": uid})
