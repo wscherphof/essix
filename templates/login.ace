@@ -14,6 +14,7 @@ html lang={{ .lang.Main }}
       label {{ Msg "Password" }}*
         input id=pwd type=password name=pwd placeholder=******** required= size=35
       br
+      = include includes/captcha .
       input type=submit
     p
       a href=/account/passwordcode/{{ .uid }} {{ Msg "Forgot password" }}

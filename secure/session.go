@@ -6,16 +6,21 @@ import (
   "github.com/wscherphof/secure"
   "github.com/wscherphof/expeertise/util"
   "github.com/wscherphof/expeertise/model/account"
+  "github.com/dchest/captcha"
 )
 
 func LogInForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
   // TODO: captcha
-  util.Template("login", "", nil)(w, r, ps)
+  util.Template("login", "", map[string]interface{}{
+    "CaptchaId": captcha.New(),
+  })(w, r, ps)
 }
 
 func LogIn (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
   handle := util.Handle(w, r, ps)
-  if account, err, conflict := account.Get(r.FormValue("uid"), r.FormValue("pwd")); err != nil {
+  if !captcha.VerifyString(r.FormValue("captchaId"), r.FormValue("captchaSolution")) {
+    handle(captcha.ErrNotFound, true, "login", nil)
+  } else if account, err, conflict := account.Get(r.FormValue("uid"), r.FormValue("pwd")); err != nil {
     handle(err, conflict, "login", nil)
   } else if err := secure.LogIn(w, r, account, true); err != nil {
     handle(err, false, "login", nil)
