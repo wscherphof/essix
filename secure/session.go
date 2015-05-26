@@ -10,7 +10,6 @@ import (
 )
 
 func LogInForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-  // TODO: captcha
   util.Template("login", "", map[string]interface{}{
     "CaptchaId": captcha.New(),
   })(w, r, ps)
