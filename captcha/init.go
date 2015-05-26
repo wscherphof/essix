@@ -8,8 +8,6 @@ import (
 )
 
 const CAPTCHA_TABLE string = "captcha"
-const CAPTCHA_BUF int = 100
-const CAPTCHA_TRIES int = 3
 const TIMEOUT time.Duration = 15 * time.Minute
 
 type captchaType struct{
@@ -20,40 +18,24 @@ type captchaType struct{
 
 type store struct{}
 
-var captchaChannel chan *captchaType
-
-func setHandler () {
-  for item := range captchaChannel {
-    if _, err := db.Insert(CAPTCHA_TABLE, item); err != nil {
-      log.Println("ERROR: Insert failed in table " + CAPTCHA_TABLE + ":", err)
-    }
-  }
-}
-
 func (s *store) Set (id string, digits []byte) {
-  // Wonder if this will ever prove just a bit too tricky
-  captchaChannel <- &captchaType{
+  if _, err := db.Insert(CAPTCHA_TABLE, &captchaType{
     ID: id,
     Digits: digits,
     Created: time.Now().Unix(),
+  }); err != nil {
+    log.Println("ERROR: Insert failed in table " + CAPTCHA_TABLE + ":", err)
   }
 }
 
 func (s *store) Get (id string, clear bool) (digits []byte) {
   c := new(captchaType)
-  for try := 0; try < CAPTCHA_TRIES; try++ {
-    if err, found := db.Get(CAPTCHA_TABLE, id, c); err != nil {
-      log.Println("ERROR: Get failed in table " + CAPTCHA_TABLE + ":", err)
-    } else if ! found {
-      log.Println("ERROR: Not found in table " + CAPTCHA_TABLE + ":", id)
-    } else {
-      digits = c.Digits
-      break
-    }
-    time.Sleep(time.Duration(try + 1) * time.Second)
-  }
-  if len(digits) == 0 {
-    log.Println("DEBUG: GET FAILED!!!")
+  if err, found := db.Get(CAPTCHA_TABLE, id, c); err != nil {
+    log.Println("ERROR: Get failed in table " + CAPTCHA_TABLE + ":", err)
+  } else if ! found {
+    log.Println("ERROR: Not found in table " + CAPTCHA_TABLE + ":", id)
+  } else {
+    digits = c.Digits
   }
   return
 }
@@ -70,8 +52,6 @@ func Init () {
       log.Println("INFO: index created:", CAPTCHA_TABLE)
     }
   }
-  captchaChannel = make(chan *captchaType, CAPTCHA_BUF)
-  go setHandler()
   captcha.SetCustomStore(new(store))
   go func() {
     for {
