@@ -1,6 +1,7 @@
 label {{ Msg "Captcha" }}*
   br
   img id=captchaImg src="/captcha/{{ .CaptchaId }}.png" alt={{ Msg "Captcha image" }}
+  / TODO: add audio
   input id=captchaSolution type=number name=captchaSolution placeholder=975431 required= size=35
   input type=hidden name=captchaId value={{ .CaptchaId }}
 br
