@@ -8,6 +8,10 @@ import (
 func DefineMessages () {
   var m, a = msg.Init()
 
+  m(secure.ErrNoTLS.Error())
+  a("nl", "Voor inloggen is een vercijferde verbinding (https) vereist")
+  a("en", "Logging in requires an encrypted connection (https)")
+
   m(secure.ErrTokenNotSaved.Error())
   a("nl", "Het lukt de webserver niet om de inlogsessie aan te maken :-(")
   a("en", "The server is failing to create the log in session :-(")
