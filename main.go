@@ -71,13 +71,15 @@ func main () {
     http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
       http.Redirect(w, r, "https://" + HOST + HTTPS_PORT + r.URL.Path, http.StatusMovedPermanently)
     })
-    log.Fatal(http.ListenAndServe(HTTP_PORT, nil))
+    log.Fatal(http.ListenAndServe(HTTP_PORT,
+      handlers.CombinedLoggingHandler(os.Stdout,
+    http.DefaultServeMux)))
   }()
 
   log.Fatal(http.ListenAndServeTLS(HTTPS_PORT, "cert.pem", "key.pem",
-  context.ClearHandler(
-  handlers.HTTPMethodOverrideHandler(
-  handlers.CombinedLoggingHandler(os.Stdout, 
+    context.ClearHandler(
+    handlers.HTTPMethodOverrideHandler(
+    handlers.CombinedLoggingHandler(os.Stdout, 
   router)))))
 
 }
