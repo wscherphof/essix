@@ -30,8 +30,6 @@ func main () {
 
   router.GET    ("/", util.Template("home", "", nil))
   
-  // TODO: https
-  
   router.GET    ("/account", secure.SignUpForm)
   router.POST   ("/account", secure.SignUp)
 
