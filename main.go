@@ -77,6 +77,7 @@ func main () {
   }()
 
   log.Fatal(http.ListenAndServeTLS(HTTPS_PORT, "cert.pem", "key.pem",
+    // TODO: debug util.Error to satisfy handlers.CompressHandler
     context.ClearHandler(
     handlers.HTTPMethodOverrideHandler(
     handlers.CombinedLoggingHandler(os.Stdout, 
