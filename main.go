@@ -79,8 +79,7 @@ func main () {
   log.Fatal(http.ListenAndServeTLS(HTTPS_PORT, "cert.pem", "key.pem",
     context.ClearHandler(
     handlers.HTTPMethodOverrideHandler(
-    handlers.CompressHandler(
     handlers.CombinedLoggingHandler(os.Stdout, 
-  router))))))
+  router)))))
 
 }
