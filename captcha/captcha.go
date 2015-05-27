@@ -33,7 +33,7 @@ func (s *store) Get (id string, clear bool) (digits []byte) {
   if err, found := db.Get(CAPTCHA_TABLE, id, c); err != nil {
     log.Println("ERROR: Get failed in table " + CAPTCHA_TABLE + ":", err)
   } else if ! found {
-    log.Println("ERROR: Not found in table " + CAPTCHA_TABLE + ":", id)
+    log.Println("INFO: Not found in table " + CAPTCHA_TABLE + ":", id)
   } else {
     digits = c.Digits
   }

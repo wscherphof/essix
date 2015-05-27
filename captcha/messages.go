@@ -17,6 +17,6 @@ func DefineMessages () {
   a("en", "Image of captcha code")
 
   m(captcha.ErrNotFound.Error())
-  a("nl", "De 'captcha' code ontbreekt of is onjuist")
-  a("en", "The 'captcha' code is missing or incorrect")
+  a("nl", "De 'captcha' code ontbreekt of is onjuist of verlopen")
+  a("en", "The 'captcha' code is missing or incorrect or expired")
 }
