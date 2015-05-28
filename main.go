@@ -15,12 +15,17 @@ import (
   "github.com/wscherphof/expeertise/util"
 )
 
-const HOST string = "localhost"
-const HTTP_PORT string = ":9090"
-const HTTPS_PORT string = ":10443"
+const (
+  HTTP_HOST  string = "localhost"
+  HTTP_PORT  string = ":9090"
+  HTTPS_PORT string = ":10443"
+  DB_HOST string = "localhost"
+  DB_PORT string = ":28015"
+  DB_NAME string = "expeertise"
+)
 
 func main () {
-  db.Init("localhost:28015", "expeertise")
+  db.Init(DB_HOST + DB_PORT, DB_NAME)
   config.Init()
   secure.Init()
   model.Init()
@@ -68,14 +73,14 @@ func main () {
 
   go func(){
     http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-      http.Redirect(w, r, "https://" + HOST + HTTPS_PORT + r.URL.Path, http.StatusMovedPermanently)
+      http.Redirect(w, r, "https://" + HTTP_HOST + HTTPS_PORT + r.URL.Path, http.StatusMovedPermanently)
     })
-    log.Fatal(http.ListenAndServe(HTTP_PORT,
+    log.Fatal(http.ListenAndServe(HTTP_HOST + HTTP_PORT,
       handlers.CombinedLoggingHandler(os.Stdout,
     http.DefaultServeMux)))
   }()
 
-  log.Fatal(http.ListenAndServeTLS(HTTPS_PORT, "cert.pem", "key.pem",
+  log.Fatal(http.ListenAndServeTLS(HTTP_HOST + HTTPS_PORT, "cert.pem", "key.pem",
     handlers.CombinedLoggingHandler(os.Stdout, 
     handlers.HTTPMethodOverrideHandler(
     handlers.CompressHandler(
