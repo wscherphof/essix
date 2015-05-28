@@ -57,11 +57,11 @@ func main () {
   router.GET    ("/account/password/:uid", secure.PasswordForm)
   router.PUT    ("/account/password",      secure.ChangePassword)
 
-  // TODO: change email address
-  
   router.GET    ("/session", secure.LogInForm)
   router.POST   ("/session", secure.LogIn)
   router.DELETE ("/session", secure.LogOut)
+
+  // TODO: change email address (only when logged in, but still w/ a link to the new address)
   
   // TODO:
   // router.GET    ("/account/instance/:uid", secure.Authenticate(secure.View))
