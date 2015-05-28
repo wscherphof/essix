@@ -56,6 +56,8 @@ func main () {
   
   router.GET    ("/account/password/:uid", secure.PasswordForm)
   router.PUT    ("/account/password",      secure.ChangePassword)
+
+  // TODO: change email address
   
   router.GET    ("/session", secure.LogInForm)
   router.POST   ("/session", secure.LogIn)
