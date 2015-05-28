@@ -30,6 +30,7 @@ func main () {
 
   router.GET    ("/", util.Template("home", "", nil))
   
+  // TODO: sign up w/ just email & pwd; then on first login, ask further details
   router.GET    ("/account", secure.SignUpForm)
   router.POST   ("/account", secure.SignUp)
 
