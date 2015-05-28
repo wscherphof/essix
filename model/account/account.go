@@ -162,7 +162,7 @@ func (a *Account) Refresh () (current bool) {
 }
 
 func code () string {
-  return string(util.URLEncode(util.Random(32)))
+  return string(util.URLEncode(util.Random()))
 }
 
 func New (val func (string) (string)) (account *Account, err error, conflict bool) {
