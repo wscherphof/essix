@@ -16,12 +16,12 @@ import (
 )
 
 const (
-  HTTP_HOST  string = "localhost"
-  HTTP_PORT  string = ":9090"
-  HTTPS_PORT string = ":10443"
-  DB_HOST string = "localhost"
-  DB_PORT string = ":28015"
-  DB_NAME string = "expeertise"
+  HTTP_HOST  = "localhost"
+  HTTP_PORT  = ":9090"
+  HTTPS_PORT = ":10443"
+  DB_HOST    = "localhost"
+  DB_PORT    = ":28015"
+  DB_NAME    = "expeertise"
 )
 
 func main () {
