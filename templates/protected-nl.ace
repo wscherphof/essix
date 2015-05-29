@@ -1,2 +1,0 @@
-= content main
-  p Hoi {{ .name }}, leuk dat je inlogt! Welkom bij deze beveiligde content.

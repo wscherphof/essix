@@ -64,8 +64,6 @@ func main () {
   router.POST   ("/session", secure.LogIn)
   router.DELETE ("/session", secure.LogOut)
   
-  router.GET    ("/protected", secure.SecureHandle(Protected))
-  
   router.Handler("GET", "/captcha/*filepath", captcha.Server)
   router.ServeFiles("/static/*filepath", http.Dir("./static"))
 
