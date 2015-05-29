@@ -39,7 +39,7 @@ func main () {
   // TODO: change email address (only when logged in, but still w/ an email to the new address)
   router.GET    ("/account", secure.AccountForm)
   router.POST   ("/account", secure.SignUp)
-  router.PUT    ("/account", secure.Authenticated(secure.UpdateAccount))
+  router.PUT    ("/account", secure.SecureHandle(secure.UpdateAccount))
   // TODO: router.DELETE ("/account", secure.Authenticate(secure.TerminateAccount))
 
   router.GET    ("/account/activation",      secure.ActivateForm)
@@ -64,7 +64,7 @@ func main () {
   router.POST   ("/session", secure.LogIn)
   router.DELETE ("/session", secure.LogOut)
   
-  router.GET    ("/protected", secure.Authenticated(Protected))
+  router.GET    ("/protected", secure.SecureHandle(Protected))
   
   router.Handler("GET", "/captcha/*filepath", captcha.Server)
   router.ServeFiles("/static/*filepath", http.Dir("./static"))

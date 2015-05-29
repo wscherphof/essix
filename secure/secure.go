@@ -3,15 +3,15 @@ package secure
 import (
   "net/http"
   "github.com/wscherphof/secure"
-  "github.com/wscherphof/secure/httprouter/middleware"
+  "github.com/wscherphof/secure/middleware"
   "github.com/wscherphof/expeertise/model/account"
 )
 
 
 var (
-  Authenticated         = middleware.Authenticated
-  AuthenticationHandler = middleware.AuthenticationHandler
   UpdateAuthentication  = secure.UpdateAuthentication
+  SecureHandle          = middleware.SecureHandle
+  AuthenticationHandler = middleware.AuthenticationHandler
 )
 
 func Authentication (r *http.Request) (ret *account.Account) {
