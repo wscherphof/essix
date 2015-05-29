@@ -36,8 +36,11 @@ func main () {
   router.GET    ("/", util.Template("home", "", nil))
   
   // TODO: sign up w/ just email & pwd; then on first login, ask further details
-  router.GET    ("/account", secure.SignUpForm)
+  router.GET    ("/account", secure.IfAuthenticate(secure.AccountForm))
   router.POST   ("/account", secure.SignUp)
+  // TODO:
+  // router.PUT    ("/account", secure.Authenticate(secure.UpdateAccount))
+  // router.DELETE ("/account", secure.Authenticate(secure.TerminateAccount))
 
   router.GET    ("/account/activation",      secure.ActivateForm)
   router.GET    ("/account/activation/",     secure.ActivateForm)
@@ -63,11 +66,6 @@ func main () {
 
   // TODO: change email address (only when logged in, but still w/ a link to the new address)
   
-  // TODO:
-  // router.GET    ("/account/instance/:uid", secure.Authenticate(secure.View))
-  // router.PUT    ("/account/instance/:uid", secure.Authenticate(secure.Edit))
-  // router.DELETE ("/account/instance/:uid", secure.Authenticate(secure.Terminate))
-
   router.GET    ("/protected", secure.Authenticate(Protected))
   
   router.Handler("GET", "/captcha/*filepath", captcha.Server)

@@ -119,4 +119,8 @@ func DefineMessages () {
   m("Expires")
   a("nl", "Geldig tot")
   a("en", "Expires")
+
+  m("Edit account")
+  a("nl", "Accountgegevens bewerken")
+  a("en", "Edit account details")
 }

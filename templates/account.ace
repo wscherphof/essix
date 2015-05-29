@@ -1,0 +1,37 @@
+= doctype html
+html lang={{ .lang.Main }}
+  head
+    meta charset=utf-8
+    title Expeertise
+    link rel=icon href=/static/favicon.ico type=image/x-icon
+    link rel="shortcut icon" href=/static/favicon.ico type=image/x-icon
+  body
+    p {{ Msg "Edit account" }}
+    form method=POST action=/account/{{ .Account.UID }}
+      input type=hidden name=_method value=PUT
+      label {{ Msg "Email" }}: {{ .Account.UID }}
+      br
+      label {{ Msg "Country" }}*
+        select id=country name=country required=
+          {{ $setCountry := .Account.Country }}
+          {{ $mainLang := .lang.Main }}
+          {{ $subLang := .lang.Sub }}
+          {{ range .Countries }}
+            {{ if or (eq .Code $setCountry) (eq .Code $mainLang) (eq .Code $subLang) }}
+              option value={{ .Code }} selected= {{ .Name }}
+            {{ else }}
+              option value={{ .Code }} {{ .Name }}
+            {{ end }}
+          {{ end }}
+      br
+      label {{ Msg "Postcode" }}*
+        input id=postcode type=text name=postcode value={{ .Account.Postcode }} placeholder="1200 JC" required= size=35
+      br
+      label {{ Msg "First name" }}
+        input id=firstname type=text name=firstname value={{ .Account.FirstName }} placeholder=John size=35
+      br
+      label {{ Msg "Last name" }}
+        input id=lastname type=text name=lastname value={{ .Account.LastName }} placeholder=Doe size=35
+      br
+      input type=reset
+      input type=submit

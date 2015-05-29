@@ -106,10 +106,10 @@ func (a *Account) save () (err error) {
   return
 }
 
-func (a Account) saveNew () (account *Account, err error) {
+func (a *Account) Save () (account *Account, err error) {
   a.dirty = true
-  if err = (&a).save(); err == nil {
-    account = &a
+  if err = a.save(); err == nil {
+    account = a
   }
   return
 }
@@ -174,7 +174,7 @@ func New (val func (string) (string)) (account *Account, err error, conflict boo
   } else if pwd, e := newPassword(val("pwd1"), val("pwd2")); e != nil {
     err, conflict = e, true
   } else {
-    account, err = Account{
+    account, err = (&Account{
       Created: time.Now(),
       UID: uid,
       PWD: pwd,
@@ -183,7 +183,7 @@ func New (val func (string) (string)) (account *Account, err error, conflict boo
       FirstName: val("firstname"),
       LastName: val("lastname"),
       ActivationCode: code(),
-    }.saveNew()
+    }).Save()
   }
   return
 }

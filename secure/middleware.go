@@ -8,7 +8,12 @@ import (
 
 var Authenticate = middleware.Authenticate
 
-func Authentication (r *http.Request) (*account.Account) {
-  auth := middleware.Authentication(r).(account.Account)
-  return &auth
+var IfAuthenticate = middleware.IfAuthenticate
+
+func Authentication (r *http.Request) (ret *account.Account) {
+  if auth := middleware.Authentication(r); auth != nil {
+    acc := auth.(account.Account)
+    ret = &acc
+  }
+  return
 }

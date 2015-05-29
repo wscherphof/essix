@@ -9,6 +9,22 @@ import (
   "github.com/dchest/captcha"
 )
 
+func AccountForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+  if account := Authentication(r); account != nil {
+    UpdateAccountForm(w, r, ps)
+  } else {
+    SignUpForm(w, r, ps)
+  }
+}
+
+func UpdateAccountForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+  account := Authentication(r)
+  // TODO
+  util.Template("protected", "lang", map[string]interface{}{
+    "name": account.Name(),
+  })(w, r, ps)
+}
+
 func SignUpForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
   util.Template("signup", "", map[string]interface{}{
     "Countries": data.Countries(),
