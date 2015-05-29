@@ -28,7 +28,7 @@ func DefineMessages () {
   a("en", "1/2/2006 at 3:04pm (MST)")
 
   m("Last modified")
-  a("nl", "Bijgewerkt op")
+  a("nl", "Laatste wijziging")
   a("en", "Last modified")
 
   m("Save changes")
