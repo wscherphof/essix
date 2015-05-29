@@ -26,4 +26,12 @@ func DefineMessages () {
   m("Time format")
   a("nl", "2-1-2006, 15.04 u. (MST)")
   a("en", "1/2/2006 at 3:04pm (MST)")
+
+  m("Last modified")
+  a("nl", "Bijgewerkt op")
+  a("en", "Last modified")
+
+  m("Save changes")
+  a("nl", "Wijzigingen opslaan")
+  a("en", "Save changes")
 }

@@ -9,7 +9,7 @@ html lang={{ .lang.Main }}
     p
       {{ Msg "Edit account" }}
       br
-      small {{ Msg "Last Modified" }}: {{ .Account.Modified }}
+      small {{ Msg "Last modified" }}: {{ .Account.Modified.Format (Msg "Time format") }}
     form method=POST action=/account
       input type=hidden name=_method value=PUT
       label {{ Msg "Email" }}: {{ .Account.UID }}
@@ -37,4 +37,4 @@ html lang={{ .lang.Main }}
         input id=lastname type=text name=lastname value={{ .Account.LastName }} placeholder=Doe size=35
       br
       input type=reset
-      input type=submit
+      input type=submit value={{ Msg "Save changes" }}
