@@ -6,6 +6,8 @@ import (
   "github.com/wscherphof/secure/httprouter/middleware"
 )
 
+var UpdateAuthentication = middleware.UpdateAuthentication
+
 var Authenticate = middleware.Authenticate
 
 var IfAuthenticate = middleware.IfAuthenticate

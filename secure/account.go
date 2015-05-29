@@ -32,10 +32,10 @@ func UpdateAccount (w http.ResponseWriter, r *http.Request, ps httprouter.Params
   account.FirstName = r.FormValue("firstname")
   account.LastName  = r.FormValue("lastname")
   handle := util.Handle(w, r, ps)
-  if _, err := account.Save(); err != nil {
+  if savedAccount, err := account.Save(); err != nil {
     handle(err, false, "", nil)
   } else {
-    // TODO: update account details in autorisation token
+    UpdateAuthentication(w, r, savedAccount)
     http.Redirect(w, r, r.URL.Path, http.StatusSeeOther)
   }
 }
