@@ -7,7 +7,7 @@ html lang={{ .lang.Main }}
     link rel="shortcut icon" href=/static/favicon.ico type=image/x-icon
   body
     p {{ Msg "Edit account" }}
-    form method=POST action=/account/{{ .Account.UID }}
+    form method=POST action=/account
       input type=hidden name=_method value=PUT
       label {{ Msg "Email" }}: {{ .Account.UID }}
       br

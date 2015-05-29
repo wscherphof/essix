@@ -19,10 +19,16 @@ func AccountForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) 
 
 func UpdateAccountForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
   account := Authentication(r)
-  // TODO
-  util.Template("protected", "lang", map[string]interface{}{
-    "name": account.Name(),
+  util.Template("account", "", map[string]interface{}{
+    "Account": account,
+    "Countries": data.Countries(),
   })(w, r, ps)
+}
+
+func UpdateAccount (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+  // TODO
+  // account := Authentication(r)
+  // handle := util.Handle(w, r, ps)
 }
 
 func SignUpForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {

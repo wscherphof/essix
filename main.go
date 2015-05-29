@@ -36,11 +36,11 @@ func main () {
   router.GET    ("/", util.Template("home", "", nil))
   
   // TODO: sign up w/ just email & pwd; then on first login, ask further details
+  // TODO: change email address (only when logged in, but still w/ an email to the new address)
   router.GET    ("/account", secure.IfAuthenticate(secure.AccountForm))
   router.POST   ("/account", secure.SignUp)
-  // TODO:
-  // router.PUT    ("/account", secure.Authenticate(secure.UpdateAccount))
-  // router.DELETE ("/account", secure.Authenticate(secure.TerminateAccount))
+  router.PUT    ("/account", secure.Authenticate(secure.UpdateAccount))
+  // TODO: router.DELETE ("/account", secure.Authenticate(secure.TerminateAccount))
 
   router.GET    ("/account/activation",      secure.ActivateForm)
   router.GET    ("/account/activation/",     secure.ActivateForm)
@@ -63,8 +63,6 @@ func main () {
   router.GET    ("/session", secure.LogInForm)
   router.POST   ("/session", secure.LogIn)
   router.DELETE ("/session", secure.LogOut)
-
-  // TODO: change email address (only when logged in, but still w/ a link to the new address)
   
   router.GET    ("/protected", secure.Authenticate(Protected))
   
