@@ -33,6 +33,7 @@ func main () {
   DefineMessages()
   router := httprouter.New()
 
+  // TODO: differentiate whether logged in
   router.GET    ("/", util.Template("home", "", nil))
   
   // TODO: sign up w/ just email & pwd; then on first login, ask further details
