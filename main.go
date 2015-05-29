@@ -37,9 +37,9 @@ func main () {
   
   // TODO: sign up w/ just email & pwd; then on first login, ask further details
   // TODO: change email address (only when logged in, but still w/ an email to the new address)
-  router.GET    ("/account", secure.IfAuthenticate(secure.AccountForm))
+  router.GET    ("/account", secure.AccountForm)
   router.POST   ("/account", secure.SignUp)
-  router.PUT    ("/account", secure.Authenticate(secure.UpdateAccount))
+  router.PUT    ("/account", secure.Authenticated(secure.UpdateAccount))
   // TODO: router.DELETE ("/account", secure.Authenticate(secure.TerminateAccount))
 
   router.GET    ("/account/activation",      secure.ActivateForm)
@@ -64,7 +64,7 @@ func main () {
   router.POST   ("/session", secure.LogIn)
   router.DELETE ("/session", secure.LogOut)
   
-  router.GET    ("/protected", secure.Authenticate(Protected))
+  router.GET    ("/protected", secure.Authenticated(Protected))
   
   router.Handler("GET", "/captcha/*filepath", captcha.Server)
   router.ServeFiles("/static/*filepath", http.Dir("./static"))
@@ -79,9 +79,10 @@ func main () {
   }()
 
   log.Fatal(http.ListenAndServeTLS(HTTP_HOST + HTTPS_PORT, "cert.pem", "key.pem",
-    handlers.CombinedLoggingHandler(os.Stdout, 
+    context.ClearHandler(
+    secure.AuthenticationHandler(
     handlers.HTTPMethodOverrideHandler(
     handlers.CompressHandler(
-    context.ClearHandler(
-  router))))))
+    handlers.CombinedLoggingHandler(os.Stdout, 
+  router)))))))
 }

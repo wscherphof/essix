@@ -7,11 +7,12 @@ import (
   "github.com/wscherphof/expeertise/model/account"
 )
 
-var UpdateAuthentication = secure.UpdateAuthentication
 
-var Authenticate = middleware.Authenticate
-
-var IfAuthenticate = middleware.IfAuthenticate
+var (
+  Authenticated         = middleware.Authenticated
+  AuthenticationHandler = middleware.AuthenticationHandler
+  UpdateAuthentication  = secure.UpdateAuthentication
+)
 
 func Authentication (r *http.Request) (ret *account.Account) {
   if auth := middleware.Authentication(r); auth != nil {
