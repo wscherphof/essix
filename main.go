@@ -43,6 +43,10 @@ func main () {
   router.PUT    ("/account", secure.SecureHandle(secure.UpdateAccount))
   // TODO: router.DELETE ("/account", secure.Authenticate(secure.TerminateAccount))
 
+  router.GET    ("/session", secure.LogInForm)
+  router.POST   ("/session", secure.LogIn)
+  router.DELETE ("/session", secure.LogOut)
+
   router.GET    ("/account/activation",      secure.ActivateForm)
   router.GET    ("/account/activation/",     secure.ActivateForm)
   router.GET    ("/account/activation/:uid", secure.ActivateForm)
@@ -60,10 +64,6 @@ func main () {
   
   router.GET    ("/account/password/:uid", secure.PasswordForm)
   router.PUT    ("/account/password",      secure.ChangePassword)
-
-  router.GET    ("/session", secure.LogInForm)
-  router.POST   ("/session", secure.LogIn)
-  router.DELETE ("/session", secure.LogOut)
   
   router.Handler("GET", "/captcha/*filepath", captcha.Server)
   router.ServeFiles("/static/*filepath", http.Dir("./static"))
