@@ -10,7 +10,7 @@ import (
 )
 
 func AccountForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-  if account := Authentication(r); account != nil {
+  if acc := Authentication(r); acc != nil {
     UpdateAccountForm(w, r, ps)
   } else {
     SignUpForm(w, r, ps)
@@ -18,24 +18,24 @@ func AccountForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) 
 }
 
 func UpdateAccountForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-  account := Authentication(r)
+  acc := Authentication(r)
   util.Template("account", "", map[string]interface{}{
-    "Account": account,
+    "Account": acc,
     "Countries": data.Countries(),
   })(w, r, ps)
 }
 
 func UpdateAccount (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-  account := Authentication(r)
-  account.Country   = r.FormValue("country")
-  account.Postcode  = r.FormValue("postcode")
-  account.FirstName = r.FormValue("firstname")
-  account.LastName  = r.FormValue("lastname")
+  acc := Authentication(r)
+  acc.Country   = r.FormValue("country")
+  acc.Postcode  = r.FormValue("postcode")
+  acc.FirstName = r.FormValue("firstname")
+  acc.LastName  = r.FormValue("lastname")
   handle := util.Handle(w, r, ps)
-  if savedAccount, err := account.Save(); err != nil {
+  if err := acc.Save(); err != nil {
     handle(err, false, "", nil)
   } else {
-    UpdateAuthentication(w, r, savedAccount)
+    UpdateAuthentication(w, r, acc)
     http.Redirect(w, r, r.URL.Path, http.StatusSeeOther)
   }
 }
@@ -51,6 +51,7 @@ func SignUp (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
   handle := util.Handle(w, r, ps)
   if !captcha.VerifyString(r.FormValue("captchaId"), r.FormValue("captchaSolution")) {
     handle(captcha.ErrNotFound, true, "signup", nil)
+  // TODO: &account.Account{...}.Create(pwd1, pwd2)
   } else if acc, err, conflict := account.New(r.FormValue); err != nil {
     handle(err, conflict, "signup", nil)
   } else if err, remark := activationEmail(r, acc); err != nil {

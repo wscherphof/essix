@@ -108,12 +108,9 @@ func (a *Account) save () (err error) {
   return
 }
 
-func (a *Account) Save () (account *Account, err error) {
+func (a *Account) Save () (err error) {
   a.dirty = true
-  if err = a.save(); err == nil {
-    account = a
-  }
-  return
+  return a.save()
 }
 
 func (a *Account) IsActive () (bool) {
@@ -167,6 +164,7 @@ func code () string {
   return string(util.URLEncode(util.Random()))
 }
 
+// TODO: (*account)Create(pwd1, pwd2)
 func New (val func (string) (string)) (account *Account, err error, conflict bool) {
   uid, existing := strings.ToLower(val("uid")), new(Account)
   if e, found := db.Get(ACCOUNT_TABLE, uid, existing); e != nil {
@@ -176,7 +174,7 @@ func New (val func (string) (string)) (account *Account, err error, conflict boo
   } else if pwd, e := newPassword(val("pwd1"), val("pwd2")); e != nil {
     err, conflict = e, true
   } else {
-    account, err = (&Account{
+    acc := &Account{
       Created: time.Now(),
       Modified: time.Now(),
       UID: uid,
@@ -186,7 +184,10 @@ func New (val func (string) (string)) (account *Account, err error, conflict boo
       FirstName: val("firstname"),
       LastName: val("lastname"),
       ActivationCode: code(),
-    }).Save()
+    }
+    if err = acc.Save(); err == nil {
+      account = acc
+    }
   }
   return
 }
