@@ -26,9 +26,18 @@ func UpdateAccountForm (w http.ResponseWriter, r *http.Request, ps httprouter.Pa
 }
 
 func UpdateAccount (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-  // TODO
-  // account := Authentication(r)
-  // handle := util.Handle(w, r, ps)
+  account := Authentication(r)
+  account.Country   = r.FormValue("country")
+  account.Postcode  = r.FormValue("postcode")
+  account.FirstName = r.FormValue("firstname")
+  account.LastName  = r.FormValue("lastname")
+  handle := util.Handle(w, r, ps)
+  if _, err := account.Save(); err != nil {
+    handle(err, false, "", nil)
+  } else {
+    // TODO: update account details in autorisation token
+    http.Redirect(w, r, r.URL.Path, http.StatusSeeOther)
+  }
 }
 
 func SignUpForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
