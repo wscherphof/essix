@@ -6,6 +6,7 @@ import (
   "github.com/julienschmidt/httprouter"
 )
 
+// TODO: rename to Catch(Error)
 func Handle (w http.ResponseWriter, r *http.Request, ps httprouter.Params) func(error, bool, string, map[string]interface{}) {
   return func(err error, conflict bool, tail string, data map[string]interface{}) {
     if err == nil {

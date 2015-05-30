@@ -24,6 +24,60 @@ const (
   DB_NAME    = "expeertise"
 )
 
+type Error struct{
+  Error error
+  Conflict bool
+  Tail string
+  Data map[string]interface{}
+}
+
+type ErrorHandle func(http.ResponseWriter, *http.Request, httprouter.Params)(*Error)
+
+func ErrorHandleFunc (f ErrorHandle) (handle httprouter.Handle) {
+  return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+    if err := f(w, r, ps); err != nil {
+      code := http.StatusInternalServerError
+      if err.Conflict {
+        code = http.StatusConflict
+      }
+      // Set the Content-Type to prevent CompressHandler from doing so after our WriteHeader()
+      w.Header().Set("Content-Type", "text/html; charset=utf-8")
+      w.WriteHeader(code)
+      util.Template("error", "", map[string]interface{}{
+        "error": err.Error.Error(),
+      })(w, r, ps)
+      if len(err.Tail) > 0 {
+        util.Template(err.Tail + "_error-tail", "", err.Data)(w, r, ps)
+      }
+      if code >= 500 {
+        log.Println("ERROR:", err.Error, "- Path:", r.URL.Path)
+      }
+    }
+  }
+}
+
+var router = httprouter.New()
+
+func errorHandle (method, pattern string, handle ErrorHandle) {
+  router.Handle(method, pattern, ErrorHandleFunc(handle))
+}
+
+func GET (pattern string, handle ErrorHandle) {
+  errorHandle("GET", pattern, handle)
+}
+
+func PUT (pattern string, handle ErrorHandle) {
+  errorHandle("PUT", pattern, handle)
+}
+
+func POST (pattern string, handle ErrorHandle) {
+  errorHandle("POST", pattern, handle)
+}
+
+func DELETE (pattern string, handle ErrorHandle) {
+  errorHandle("DELETE", pattern, handle)
+}
+
 func main () {
   db.Init(DB_HOST + DB_PORT, DB_NAME)
   config.Init()
@@ -31,7 +85,6 @@ func main () {
   model.Init()
   captcha.Init()
   DefineMessages()
-  router := httprouter.New()
 
   // TODO: differentiate whether logged in
   router.GET    ("/", util.Template("home", "", nil))
