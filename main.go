@@ -44,6 +44,7 @@ func main () {
   router.PUT    ("/account", secure.SecureHandle(secure.UpdateAccount))
   // TODO: router.DELETE ("/account", secure.Authenticate(secure.TerminateAccount))
 
+  // TODO: router
   router.Router.GET    ("/session", secure.LogInForm)
   router.Router.POST   ("/session", secure.LogIn)
   router.Router.DELETE ("/session", secure.LogOut)
