@@ -12,7 +12,7 @@ import (
   "github.com/wscherphof/expeertise/secure"
   "github.com/wscherphof/expeertise/model"
   "github.com/wscherphof/expeertise/captcha"
-  "github.com/wscherphof/expeertise/util"
+  "github.com/wscherphof/expeertise/util2"
 )
 
 const (
@@ -24,59 +24,15 @@ const (
   DB_NAME    = "expeertise"
 )
 
-type Error struct{
-  Error error
-  Conflict bool
-  Tail string
-  Data map[string]interface{}
-}
-
-type ErrorHandle func(http.ResponseWriter, *http.Request, httprouter.Params)(*Error)
-
-func ErrorHandleFunc (f ErrorHandle) (handle httprouter.Handle) {
-  return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-    if err := f(w, r, ps); err != nil {
-      code := http.StatusInternalServerError
-      if err.Conflict {
-        code = http.StatusConflict
-      }
-      // Set the Content-Type to prevent CompressHandler from doing so after our WriteHeader()
-      w.Header().Set("Content-Type", "text/html; charset=utf-8")
-      w.WriteHeader(code)
-      util.Template("error", "", map[string]interface{}{
-        "error": err.Error.Error(),
-      })(w, r, ps)
-      if len(err.Tail) > 0 {
-        util.Template(err.Tail + "_error-tail", "", err.Data)(w, r, ps)
-      }
-      if code >= 500 {
-        log.Println("ERROR:", err.Error, "- Path:", r.URL.Path)
-      }
-    }
-  }
-}
-
 var router = httprouter.New()
 
-func errorHandle (method, pattern string, handle ErrorHandle) {
-  router.Handle(method, pattern, ErrorHandleFunc(handle))
+func errorHandle (method, pattern string, handle util2.ErrorHandle) {
+  router.Handle(method, pattern, util2.ErrorHandleFunc(handle))
 }
-
-func GET (pattern string, handle ErrorHandle) {
-  errorHandle("GET", pattern, handle)
-}
-
-func PUT (pattern string, handle ErrorHandle) {
-  errorHandle("PUT", pattern, handle)
-}
-
-func POST (pattern string, handle ErrorHandle) {
-  errorHandle("POST", pattern, handle)
-}
-
-func DELETE (pattern string, handle ErrorHandle) {
-  errorHandle("DELETE", pattern, handle)
-}
+func GET    (pattern string, handle util2.ErrorHandle) {errorHandle("GET",    pattern, handle)}
+func PUT    (pattern string, handle util2.ErrorHandle) {errorHandle("PUT",    pattern, handle)}
+func POST   (pattern string, handle util2.ErrorHandle) {errorHandle("POST",   pattern, handle)}
+func DELETE (pattern string, handle util2.ErrorHandle) {errorHandle("DELETE", pattern, handle)}
 
 func main () {
   db.Init(DB_HOST + DB_PORT, DB_NAME)
@@ -87,13 +43,13 @@ func main () {
   DefineMessages()
 
   // TODO: differentiate whether logged in
-  router.GET    ("/", util.Template("home", "", nil))
+  GET    ("/", util2.Template("home", "", nil))
   
   // TODO: sign up w/ just email & pwd; then on first login, ask further details
   // TODO: change email address (only when logged in, but still w/ an email to the new address)
   router.GET    ("/account", secure.AccountForm)
-  router.POST   ("/account", secure.SignUp)
-  router.PUT    ("/account", secure.SecureHandle(secure.UpdateAccount))
+  POST   ("/account", secure.SignUp)
+  PUT    ("/account", secure.SecureHandle(secure.UpdateAccount))
   // TODO: router.DELETE ("/account", secure.Authenticate(secure.TerminateAccount))
 
   router.GET    ("/session", secure.LogInForm)
