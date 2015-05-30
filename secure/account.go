@@ -3,27 +3,19 @@ package secure
 import (
   "net/http"
   "github.com/julienschmidt/httprouter"
-  "github.com/wscherphof/expeertise/util"
   "github.com/wscherphof/expeertise/util2"
   "github.com/wscherphof/expeertise/model/account"
   "github.com/wscherphof/expeertise/data"
   "github.com/dchest/captcha"
 )
 
-func AccountForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-  if acc := Authentication(r); acc != nil {
-    UpdateAccountForm(w, r, ps)
-  } else {
-    SignUpForm(w, r, ps)
-  }
-}
-
-func UpdateAccountForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func UpdateAccountForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *util2.Error) {
   acc := Authentication(r)
-  util.Template("account", "", map[string]interface{}{
+  util2.Template("account", "", map[string]interface{}{
     "Account": acc,
     "Countries": data.Countries(),
   })(w, r, ps)
+  return
 }
 
 func UpdateAccount (w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *util2.Error) {
@@ -41,11 +33,12 @@ func UpdateAccount (w http.ResponseWriter, r *http.Request, ps httprouter.Params
   return
 }
 
-func SignUpForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-  util.Template("signup", "", map[string]interface{}{
+func SignUpForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *util2.Error) {
+  util2.Template("signup", "", map[string]interface{}{
     "Countries": data.Countries(),
     "CaptchaId": captcha.New(),
   })(w, r, ps)
+  return
 }
 
 func SignUp (w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *util2.Error) {

@@ -39,7 +39,7 @@ func main () {
   
   // TODO: sign up w/ just email & pwd; then on first login, ask further details
   // TODO: change email address (only when logged in, but still w/ an email to the new address)
-  router.Router.GET    ("/account", secure.AccountForm)
+  router.GET    ("/account", secure.IfSecureHandle(secure.UpdateAccountForm, secure.SignUpForm))
   router.POST   ("/account", secure.SignUp)
   router.PUT    ("/account", secure.SecureHandle(secure.UpdateAccount))
   // TODO: router.DELETE ("/account", secure.Authenticate(secure.TerminateAccount))
