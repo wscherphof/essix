@@ -7,13 +7,13 @@ import (
 
 var Router = httprouter.New()
 
-func Handle (method, pattern string, handle util2.ErrorHandle) {
-  Router.Handle(method, pattern, util2.ErrorHandleFunc(handle))
+func Handle (method, path string, handle util2.ErrorHandle) {
+  Router.Handle(method, path, util2.ErrorHandleFunc(handle))
 }
-func GET     (pattern string, handle util2.ErrorHandle) {Handle("GET",     pattern, handle)}
-func PUT     (pattern string, handle util2.ErrorHandle) {Handle("PUT",     pattern, handle)}
-func POST    (pattern string, handle util2.ErrorHandle) {Handle("POST",    pattern, handle)}
-func DELETE  (pattern string, handle util2.ErrorHandle) {Handle("DELETE",  pattern, handle)}
-func PATCH   (pattern string, handle util2.ErrorHandle) {Handle("PATCH",   pattern, handle)}
-func OPTIONS (pattern string, handle util2.ErrorHandle) {Handle("OPTIONS", pattern, handle)}
-func HEAD    (pattern string, handle util2.ErrorHandle) {Handle("HEAD",    pattern, handle)}
+func GET     (path string, handle util2.ErrorHandle) {Handle("GET",     path, handle)}
+func PUT     (path string, handle util2.ErrorHandle) {Handle("PUT",     path, handle)}
+func POST    (path string, handle util2.ErrorHandle) {Handle("POST",    path, handle)}
+func DELETE  (path string, handle util2.ErrorHandle) {Handle("DELETE",  path, handle)}
+func PATCH   (path string, handle util2.ErrorHandle) {Handle("PATCH",   path, handle)}
+func OPTIONS (path string, handle util2.ErrorHandle) {Handle("OPTIONS", path, handle)}
+func HEAD    (path string, handle util2.ErrorHandle) {Handle("HEAD",    path, handle)}
