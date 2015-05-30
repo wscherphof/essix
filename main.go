@@ -16,6 +16,7 @@ import (
 )
 
 const (
+  // TODO: flags/envvars
   HTTP_HOST  = "localhost"
   HTTP_PORT  = ":9090"
   HTTPS_PORT = ":10443"
@@ -25,6 +26,7 @@ const (
 )
 
 func main () {
+  // TODO: init()
   db.Init(DB_HOST + DB_PORT, DB_NAME)
   config.Init()
   secure.Init()
