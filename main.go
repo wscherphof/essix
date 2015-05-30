@@ -4,9 +4,9 @@ import (
   "net/http"
   "log"
   "os"
-  "github.com/julienschmidt/httprouter"
   "github.com/gorilla/handlers"
   "github.com/gorilla/context"
+  "github.com/wscherphof/expeertise/router"
   "github.com/wscherphof/expeertise/db"
   "github.com/wscherphof/expeertise/config"
   "github.com/wscherphof/expeertise/secure"
@@ -24,16 +24,6 @@ const (
   DB_NAME    = "expeertise"
 )
 
-var router = httprouter.New()
-
-func errorHandle (method, pattern string, handle util2.ErrorHandle) {
-  router.Handle(method, pattern, util2.ErrorHandleFunc(handle))
-}
-func GET    (pattern string, handle util2.ErrorHandle) {errorHandle("GET",    pattern, handle)}
-func PUT    (pattern string, handle util2.ErrorHandle) {errorHandle("PUT",    pattern, handle)}
-func POST   (pattern string, handle util2.ErrorHandle) {errorHandle("POST",   pattern, handle)}
-func DELETE (pattern string, handle util2.ErrorHandle) {errorHandle("DELETE", pattern, handle)}
-
 func main () {
   db.Init(DB_HOST + DB_PORT, DB_NAME)
   config.Init()
@@ -43,39 +33,39 @@ func main () {
   DefineMessages()
 
   // TODO: differentiate whether logged in
-  GET    ("/", util2.Template("home", "", nil))
+  router.GET    ("/", util2.Template("home", "", nil))
   
   // TODO: sign up w/ just email & pwd; then on first login, ask further details
   // TODO: change email address (only when logged in, but still w/ an email to the new address)
-  router.GET    ("/account", secure.AccountForm)
-  POST   ("/account", secure.SignUp)
-  PUT    ("/account", secure.SecureHandle(secure.UpdateAccount))
+  router.Router.GET    ("/account", secure.AccountForm)
+  router.POST   ("/account", secure.SignUp)
+  router.PUT    ("/account", secure.SecureHandle(secure.UpdateAccount))
   // TODO: router.DELETE ("/account", secure.Authenticate(secure.TerminateAccount))
 
-  router.GET    ("/session", secure.LogInForm)
-  router.POST   ("/session", secure.LogIn)
-  router.DELETE ("/session", secure.LogOut)
+  router.Router.GET    ("/session", secure.LogInForm)
+  router.Router.POST   ("/session", secure.LogIn)
+  router.Router.DELETE ("/session", secure.LogOut)
 
-  router.GET    ("/account/activation",      secure.ActivateForm)
-  router.GET    ("/account/activation/",     secure.ActivateForm)
-  router.GET    ("/account/activation/:uid", secure.ActivateForm)
-  router.PUT    ("/account/activation",      secure.Activate)
+  router.Router.GET    ("/account/activation",      secure.ActivateForm)
+  router.Router.GET    ("/account/activation/",     secure.ActivateForm)
+  router.Router.GET    ("/account/activation/:uid", secure.ActivateForm)
+  router.Router.PUT    ("/account/activation",      secure.Activate)
   
-  router.GET    ("/account/activationcode",      secure.ActivationCodeForm)
-  router.GET    ("/account/activationcode/",     secure.ActivationCodeForm)
-  router.GET    ("/account/activationcode/:uid", secure.ActivationCodeForm)
-  router.POST   ("/account/activationcode",      secure.ActivationCode)
+  router.Router.GET    ("/account/activationcode",      secure.ActivationCodeForm)
+  router.Router.GET    ("/account/activationcode/",     secure.ActivationCodeForm)
+  router.Router.GET    ("/account/activationcode/:uid", secure.ActivationCodeForm)
+  router.Router.POST   ("/account/activationcode",      secure.ActivationCode)
   
-  router.GET    ("/account/passwordcode",      secure.PasswordCodeForm)
-  router.GET    ("/account/passwordcode/",     secure.PasswordCodeForm)
-  router.GET    ("/account/passwordcode/:uid", secure.PasswordCodeForm)
-  router.POST   ("/account/passwordcode",      secure.PasswordCode)
+  router.Router.GET    ("/account/passwordcode",      secure.PasswordCodeForm)
+  router.Router.GET    ("/account/passwordcode/",     secure.PasswordCodeForm)
+  router.Router.GET    ("/account/passwordcode/:uid", secure.PasswordCodeForm)
+  router.Router.POST   ("/account/passwordcode",      secure.PasswordCode)
   
-  router.GET    ("/account/password/:uid", secure.PasswordForm)
-  router.PUT    ("/account/password",      secure.ChangePassword)
+  router.Router.GET    ("/account/password/:uid", secure.PasswordForm)
+  router.Router.PUT    ("/account/password",      secure.ChangePassword)
   
-  router.Handler("GET", "/captcha/*filepath", captcha.Server)
-  router.ServeFiles("/static/*filepath", http.Dir("./static"))
+  router.Router.Handler("GET", "/captcha/*filepath", captcha.Server)
+  router.Router.ServeFiles("/static/*filepath", http.Dir("./static"))
 
   go func(){
     http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -92,5 +82,5 @@ func main () {
     handlers.HTTPMethodOverrideHandler(
     handlers.CompressHandler(
     handlers.CombinedLoggingHandler(os.Stdout, 
-  router)))))))
+  router.Router)))))))
 }
