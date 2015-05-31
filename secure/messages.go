@@ -6,7 +6,7 @@ import (
 )
 
 func init () {
-  var m, a = msg.Init()
+  var m, a = msg.Definition()
 
   m(secure.ErrNoTLS.Error())
   a("nl", "Voor inloggen is een vercijferde verbinding (https) vereist")

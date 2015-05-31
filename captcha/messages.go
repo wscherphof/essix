@@ -6,7 +6,7 @@ import (
 )
 
 func init () {
-  var m, a = msg.Init()
+  var m, a = msg.Definition()
 
   m("Captcha")
   a("nl", "Typ de code zoals hieronder afgebeeld")

@@ -5,7 +5,7 @@ import (
 )
 
 func init () {
-  var m, a = msg.Init()
+  var m, a = msg.Definition()
 
   m(ErrNotSentImmediately.Error())
   a("nl", "We konden het e-mailbericht niet direct verzenden, maar je zou het spoedig alsnog moeten ontvangen.")
