@@ -21,6 +21,7 @@ const (
 
 func main () {
   // TODO: differentiate whether logged in
+  // router.GET    ("/", secure.IfSecureHandle(util2.Template("home", "home-loggedin", nil), util2.Template("home", "home-loggedout", nil)))
   router.GET    ("/", util2.Template("home", "", nil))
   
   // TODO: sign up w/ just email & pwd; then on first login, ask further details

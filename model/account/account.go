@@ -97,6 +97,7 @@ func (a *Account) Name () (name string) {
   return
 }
 
+// TODO: ditch dirty
 func (a *Account) save () (err error) {
   if a.dirty {
     a.Modified = time.Now()
