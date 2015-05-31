@@ -25,7 +25,7 @@ func init () {
     log.Fatalln("ERROR:", err)
   } else {
     s = session
-    log.Println("INFO: db connected to", DB_NAME, "@", address)
+    log.Println("INFO: DB connected to", DB_NAME, "@", address)
   }
 }
 

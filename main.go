@@ -57,15 +57,19 @@ func main () {
   router.Router.ServeFiles("/static/*filepath", http.Dir("./static"))
 
   go func(){
+    address := HTTP_HOST + HTTP_PORT
     http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-      http.Redirect(w, r, "https://" + HTTP_HOST + HTTPS_PORT + r.URL.Path, http.StatusMovedPermanently)
+      http.Redirect(w, r, "https://" + address + r.URL.Path, http.StatusMovedPermanently)
     })
-    log.Fatal(http.ListenAndServe(HTTP_HOST + HTTP_PORT,
+    log.Println("INFO: HTTP  server @", address)
+    log.Fatal(http.ListenAndServe(address,
       handlers.CombinedLoggingHandler(os.Stdout,
     http.DefaultServeMux)))
   }()
 
-  log.Fatal(http.ListenAndServeTLS(HTTP_HOST + HTTPS_PORT, "cert.pem", "key.pem",
+  address := HTTP_HOST + HTTPS_PORT
+  log.Println("INFO: HTTPS server @", address)
+  log.Fatal(http.ListenAndServeTLS(address, "cert.pem", "key.pem",
     context.ClearHandler(
     secure.AuthenticationHandler(
     handlers.HTTPMethodOverrideHandler(
