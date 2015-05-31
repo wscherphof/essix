@@ -5,7 +5,7 @@ import (
   "github.com/dchest/captcha"
 )
 
-func DefineMessages () {
+func init () {
   var m, a = msg.Init()
 
   m("Captcha")

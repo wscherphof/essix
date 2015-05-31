@@ -20,9 +20,6 @@ const (
 )
 
 func main () {
-  // TODO: init() in messages.go?
-  DefineMessages()
-
   // TODO: differentiate whether logged in
   router.GET    ("/", util2.Template("home", "", nil))
   

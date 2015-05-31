@@ -25,11 +25,9 @@ var (
   ErrNotSentImmediately = errors.New("Message could not be sent immediately; it's queued to get sent shortly")
   conf *emailConfig
   auth smtp.Auth
-  inited bool = false
 )
 
-func Init () {
-  if inited {return}
+func init () {
   store := new(emailConfigStore)
   if err := config.Get(EMAIL_KEY, store); err != nil {
     log.Println("DEBUG: email.Init() Get error:", err)
@@ -42,14 +40,11 @@ func Init () {
   } else {
     conf = store.Value
     auth = smtp.PlainAuth("", conf.EmailAddress, conf.PWD, conf.SmtpServer)
-    inited = true
   }
   initQueue()
-  DefineMessages()
 }
 
 func Send (subject, message string, recipients ...string) (err error) {
-  Init()
   if e := send(subject, message, recipients...); e != nil {
     err = ErrNotSentImmediately
     if e := enQueue(subject, message, recipients...); e != nil {

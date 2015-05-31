@@ -5,7 +5,7 @@ import (
   "github.com/wscherphof/secure"
 )
 
-func DefineMessages () {
+func init () {
   var m, a = msg.Init()
 
   m(secure.ErrNoTLS.Error())

@@ -4,7 +4,7 @@ import (
   "github.com/wscherphof/msg"
 )
 
-func DefineMessages () {
+func init () {
   var m, a = msg.Init()
 
   m("")

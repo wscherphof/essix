@@ -24,7 +24,6 @@ var (
 const ACCOUNT_TABLE = "account"
 
 func init () {
-  DefineMessages()
   if cursor, _ := db.TableCreatePK(ACCOUNT_TABLE, "UID"); cursor != nil {
     log.Println("INFO: table created:", ACCOUNT_TABLE)
   }

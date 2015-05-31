@@ -17,6 +17,7 @@ type emailJob struct{
   Recipients []string
 }
 
+// TODO: init()?
 func initQueue () {
   if cursor, _ := db.TableCreate(QUEUE_TABLE); cursor != nil {
     log.Println("INFO: table created:", QUEUE_TABLE)
