@@ -48,11 +48,11 @@ func Authentication (r *http.Request) (ret *account.Account) {
 }
 
 func init () {
-  secure.Init(account.Account{}, &secureDB{}, func (src interface{}) (dest interface{}, valid bool) {
+  secure.Configure(account.Account{}, &secureDB{}, func(src interface{}) (dst interface{}, valid bool) {
     if src != nil {
       acc := src.(account.Account)
       valid = acc.Refresh()
-      dest = acc
+      dst = acc
     }
     return
   })
