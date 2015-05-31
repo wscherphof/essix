@@ -7,6 +7,7 @@ import (
   "github.com/wscherphof/expeertise/model/account"
   "github.com/wscherphof/expeertise/data"
   "github.com/dchest/captcha"
+  "strings"
 )
 
 func UpdateAccountForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *util2.Error) {
@@ -21,7 +22,7 @@ func UpdateAccountForm (w http.ResponseWriter, r *http.Request, ps httprouter.Pa
 func UpdateAccount (w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *util2.Error) {
   acc := Authentication(r)
   acc.Country   = r.FormValue("country")
-  acc.Postcode  = r.FormValue("postcode")
+  acc.Postcode  = strings.ToUpper(r.FormValue("postcode"))
   acc.FirstName = r.FormValue("firstname")
   acc.LastName  = r.FormValue("lastname")
   if e := acc.Save(); e != nil {
@@ -33,6 +34,7 @@ func UpdateAccount (w http.ResponseWriter, r *http.Request, ps httprouter.Params
   return
 }
 
+// TODO: sign up w/ just email & pwd; then on first login, ask further details
 func SignUpForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *util2.Error) {
   util2.Template("signup", "", map[string]interface{}{
     "Countries": data.Countries(),

@@ -15,6 +15,7 @@ func LogInForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
   })(w, r, ps)
 }
 
+// TODO: sign up w/ just email & pwd; then on first login, ask further details
 func LogIn (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
   handle := util.Handle(w, r, ps)
   if !captcha.VerifyString(r.FormValue("captchaId"), r.FormValue("captchaSolution")) {

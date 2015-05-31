@@ -163,12 +163,12 @@ func code () string {
   return string(util.URLEncode(util.Random()))
 }
 
-// TODO: (*account)Create(pwd1, pwd2)
-func New (val func (string) (string)) (account *Account, err error, conflict bool) {
-  uid, existing := strings.ToLower(val("uid")), new(Account)
-  if e, found := db.Get(ACCOUNT_TABLE, uid, existing); e != nil {
+// TODO: New(uid, pwd1, pwd2)
+func New(val func (string) (string)) (account *Account, err error, conflict bool) {
+  uid := strings.ToLower(val("uid"))
+  if e, found := db.Get(ACCOUNT_TABLE, uid, new(Account)); e != nil {
     err = e
-  } else if found && existing.IsActive() {
+  } else if found {
     err, conflict = ErrEmailTaken, true
   } else if pwd, e := newPassword(val("pwd1"), val("pwd2")); e != nil {
     err, conflict = e, true
