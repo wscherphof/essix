@@ -2,17 +2,14 @@ package main
 
 import (
   "net/http"
-  "log"
-  "os"
   "github.com/gorilla/handlers"
   "github.com/gorilla/context"
   "github.com/wscherphof/expeertise/router"
-  "github.com/wscherphof/expeertise/db"
-  "github.com/wscherphof/expeertise/config"
   "github.com/wscherphof/expeertise/secure"
-  "github.com/wscherphof/expeertise/model"
   "github.com/wscherphof/expeertise/captcha"
   "github.com/wscherphof/expeertise/util2"
+  "log"
+  "os"
 )
 
 const (
@@ -20,18 +17,10 @@ const (
   HTTP_HOST  = "localhost"
   HTTP_PORT  = ":9090"
   HTTPS_PORT = ":10443"
-  DB_HOST    = "localhost"
-  DB_PORT    = ":28015"
-  DB_NAME    = "expeertise"
 )
 
 func main () {
-  // TODO: init()
-  db.Init(DB_HOST + DB_PORT, DB_NAME)
-  config.Init()
-  secure.Init()
-  model.Init()
-  captcha.Init()
+  // TODO: init() in messages.go?
   DefineMessages()
 
   // TODO: differentiate whether logged in

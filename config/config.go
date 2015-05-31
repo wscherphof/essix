@@ -9,7 +9,7 @@ import (
 const CONFIG_TABLE = "config"
 const CONFIG_PK = "Key"
 
-func Init () {
+func init () {
   if cursor, _ := db.TableCreatePK(CONFIG_TABLE, CONFIG_PK); cursor != nil {
     log.Println("INFO: table created:", CONFIG_TABLE)
   }

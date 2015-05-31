@@ -6,19 +6,26 @@ import (
 )
 
 var (
-  db string
   s *r.Session
 )
 
-func Init (address, database string) {
-  db = database
+const (
+  // TODO: flags/envvars
+  DB_HOST = "localhost"
+  DB_PORT = ":28015"
+  DB_NAME = "expeertise"
+)
+
+func init () {
+  address := DB_HOST + DB_PORT
   if session, err := r.Connect(r.ConnectOpts{
     Address:  address,
-    Database: database,
+    Database: DB_NAME,
   }); err != nil {
-    log.Fatalln(err.Error())
+    log.Fatalln("ERROR:", err)
   } else {
     s = session
+    log.Println("INFO: db connected to", DB_NAME, "@", address)
   }
 }
 
@@ -55,7 +62,7 @@ func Truncate (table string) (r.WriteResponse, error) {
 }
 
 func tableCreate (table string, opts ...r.TableCreateOpts) (*r.Cursor, error) {
-  return r.Db(db).TableCreate(table, opts...).Run(s)
+  return r.Db(DB_NAME).TableCreate(table, opts...).Run(s)
 }
 
 func TableCreate (table string) (*r.Cursor, error) {

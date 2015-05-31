@@ -47,7 +47,7 @@ func Authentication (r *http.Request) (ret *account.Account) {
   return
 }
 
-func Init () {
+func init () {
   DefineMessages()
   secure.Init(account.Account{}, &secureDB{}, func (src interface{}) (dest interface{}, valid bool) {
     if src != nil {

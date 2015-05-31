@@ -42,7 +42,7 @@ func (s *store) Get (id string, clear bool) (digits []byte) {
 
 var Server = captcha.Server(captcha.StdWidth, captcha.StdHeight)
 
-func Init () {
+func init () {
   DefineMessages()
   if cursor, _ := db.TableCreate(CAPTCHA_TABLE); cursor != nil {
     log.Println("INFO: table created:", CAPTCHA_TABLE)
