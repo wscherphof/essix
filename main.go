@@ -24,34 +24,6 @@ func main () {
     util.Template("home", "home_loggedin", nil),
     util.Template("home", "home_loggedout", nil)))
   
-  // TODO: change email address (only when logged in, but still w/ an email to the new address)
-  router.GET    ("/account", secure.IfSecureHandle(secure.UpdateAccountForm, secure.SignUpForm))
-  router.POST   ("/account", secure.SignUp)
-  router.PUT    ("/account", secure.SecureHandle(secure.UpdateAccount))
-  // TODO: router.DELETE ("/account", secure.Authenticate(secure.TerminateAccount))
-
-  router.GET    ("/session", secure.LogInForm)
-  router.POST   ("/session", secure.LogIn)
-  router.DELETE ("/session", secure.LogOut)
-
-  router.GET    ("/account/activation",      secure.ActivateForm)
-  router.GET    ("/account/activation/",     secure.ActivateForm)
-  router.GET    ("/account/activation/:uid", secure.ActivateForm)
-  router.PUT    ("/account/activation",      secure.Activate)
-  
-  router.GET    ("/account/activationcode",      secure.ActivationCodeForm)
-  router.GET    ("/account/activationcode/",     secure.ActivationCodeForm)
-  router.GET    ("/account/activationcode/:uid", secure.ActivationCodeForm)
-  router.POST   ("/account/activationcode",      secure.ActivationCode)
-  
-  router.GET    ("/account/passwordcode",      secure.PasswordCodeForm)
-  router.GET    ("/account/passwordcode/",     secure.PasswordCodeForm)
-  router.GET    ("/account/passwordcode/:uid", secure.PasswordCodeForm)
-  router.POST   ("/account/passwordcode",      secure.PasswordCode)
-  
-  router.GET    ("/account/password/:uid", secure.PasswordForm)
-  router.PUT    ("/account/password",      secure.ChangePassword)
-  
   router.Router.Handler("GET", "/captcha/*filepath", captcha.Server)
   router.Router.ServeFiles("/static/*filepath", http.Dir("./static"))
 
