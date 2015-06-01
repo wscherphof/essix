@@ -17,27 +17,6 @@ html lang={{ .lang.Main }}
       label {{ Msg "Repeat password" }}*
         input id=pwd2 type=password name=pwd2 placeholder=******** required= size=35
       br
-      label {{ Msg "Country" }}*
-        select id=country name=country required=
-          {{ $mainLang := .lang.Main }}
-          {{ $subLang := .lang.Sub }}
-          {{ range .Countries }}
-            {{ if or (eq .Code $mainLang) (eq .Code $subLang) }}
-              option value={{ .Code }} selected= {{ .Name }}
-            {{ else }}
-              option value={{ .Code }} {{ .Name }}
-            {{ end }}
-          {{ end }}
-      br
-      label {{ Msg "Postcode" }}*
-        input id=postcode type=text name=postcode placeholder="1200 JC" required= size=35
-      br
-      label {{ Msg "First name" }}
-        input id=firstname type=text name=firstname placeholder=John size=35
-      br
-      label {{ Msg "Last name" }}
-        input id=lastname type=text name=lastname placeholder=Doe size=35
-      br
       = include includes/captcha .
       input type=submit
     = javascript

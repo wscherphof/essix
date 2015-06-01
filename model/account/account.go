@@ -96,6 +96,16 @@ func (a *Account) Name () (name string) {
   return
 }
 
+func (a *Account) Complete () (complete bool) {
+  if true &&
+  len(a.Country) > 0 &&
+  len(a.Postcode) > 0 &&
+  true {
+    complete = true
+  }
+  return
+}
+
 func (a *Account) Save () (err error) {
   a.Modified = time.Now()
   _, err = db.InsertUpdate(ACCOUNT_TABLE, a)
@@ -162,7 +172,6 @@ func New(val func (string) (string)) (account *Account, err error, conflict bool
   } else {
     acc := &Account{
       Created: time.Now(),
-      Modified: time.Now(),
       UID: uid,
       PWD: pwd,
       Country: val("country"),

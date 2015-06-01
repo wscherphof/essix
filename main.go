@@ -31,11 +31,11 @@ func main () {
   router.PUT    ("/account", secure.SecureHandle(secure.UpdateAccount))
   // TODO: router.DELETE ("/account", secure.Authenticate(secure.TerminateAccount))
 
-  // TODO: router
-  router.Router.GET    ("/session", secure.LogInForm)
-  router.Router.POST   ("/session", secure.LogIn)
-  router.Router.DELETE ("/session", secure.LogOut)
+  router.GET    ("/session", secure.LogInForm)
+  router.POST   ("/session", secure.LogIn)
+  router.DELETE ("/session", secure.LogOut)
 
+  // TODO: router
   router.Router.GET    ("/account/activation",      secure.ActivateForm)
   router.Router.GET    ("/account/activation/",     secure.ActivateForm)
   router.Router.GET    ("/account/activation/:uid", secure.ActivateForm)

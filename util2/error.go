@@ -13,6 +13,14 @@ type Error struct{
   Data map[string]interface{}
 }
 
+func NewError (e error, tail ...string) (err *Error) {
+  err = &Error{Error: e}
+  if len(tail) > 0 {
+    err.Tail = tail[0]
+  }
+  return
+}
+
 type ErrorHandle func(http.ResponseWriter, *http.Request, httprouter.Params)(*Error)
 
 func ErrorHandleFunc (f ErrorHandle) (handle httprouter.Handle) {

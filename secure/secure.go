@@ -10,10 +10,15 @@ import (
 )
 
 
-var (
-  UpdateAuthentication  = secure.UpdateAuthentication
-  AuthenticationHandler = middleware.AuthenticationHandler
-)
+var AuthenticationHandler = middleware.AuthenticationHandler
+
+func Authentication (r *http.Request) (ret *account.Account) {
+  if auth := middleware.Authentication(r); auth != nil {
+    acc := auth.(account.Account)
+    ret = &acc
+  }
+  return
+}
 
 func SecureHandle (handle util2.ErrorHandle) (util2.ErrorHandle) {
   return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *util2.Error) {
@@ -37,14 +42,6 @@ func IfSecureHandle (authenticated util2.ErrorHandle, unauthenticated util2.Erro
     }
     return
   }
-}
-
-func Authentication (r *http.Request) (ret *account.Account) {
-  if auth := middleware.Authentication(r); auth != nil {
-    acc := auth.(account.Account)
-    ret = &acc
-  }
-  return
 }
 
 func init () {
