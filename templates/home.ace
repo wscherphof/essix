@@ -7,6 +7,6 @@ html lang={{ .lang.Main }}
     link rel="shortcut icon" href=/static/favicon.ico type=image/x-icon
   body
     p
-      a href=/account {{ Msg "Sign up" }}
+      = yield account
     p
-      a href=/session {{ Msg "Log in" }}
+      = yield session

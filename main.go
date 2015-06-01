@@ -20,9 +20,9 @@ const (
 )
 
 func main () {
-  // TODO: differentiate whether logged in
-  // router.GET    ("/", secure.IfSecureHandle(util2.Template("home", "home-loggedin", nil), util2.Template("home", "home-loggedout", nil)))
-  router.GET    ("/", util2.Template("home", "", nil))
+  router.GET    ("/", secure.IfSecureHandle(
+    util2.Template("home", "home-loggedin", nil),
+    util2.Template("home", "home-loggedout", nil)))
   
   // TODO: sign up w/ just email & pwd; then on first login, ask further details
   // TODO: change email address (only when logged in, but still w/ an email to the new address)
