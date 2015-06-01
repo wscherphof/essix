@@ -22,8 +22,7 @@ func Authentication (r *http.Request) (ret *account.Account) {
 
 func SecureHandle (handle util2.ErrorHandle) (util2.ErrorHandle) {
   return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *util2.Error) {
-    if authentication := secure.Authentication(w, r); authentication != nil {
-      middleware.SetAuthentication(r, authentication)
+    if Authentication(r) != nil {
       err = handle(w, r, ps)
     } else {
       secure.Challenge(w, r)
@@ -34,8 +33,7 @@ func SecureHandle (handle util2.ErrorHandle) (util2.ErrorHandle) {
 
 func IfSecureHandle (authenticated util2.ErrorHandle, unauthenticated util2.ErrorHandle) (util2.ErrorHandle) {
   return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *util2.Error) {
-    if authentication := secure.Authentication(w, r); authentication != nil {
-      middleware.SetAuthentication(r, authentication)
+    if Authentication(r) != nil {
       err = authenticated(w, r, ps)
     } else {
       err = unauthenticated(w, r, ps)

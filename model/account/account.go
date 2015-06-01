@@ -19,6 +19,7 @@ var (
   ErrAlreadyActivated = errors.New("Account is already activated")
   ErrPasswordCodeUnset = errors.New("PasswordCode is nil")
   ErrPasswordCodeIncorrect = errors.New("Password code given is incorrect")
+  ErrValidationFailed = errors.New("Field values are missing or incorrect")
 )
 
 const ACCOUNT_TABLE = "account"
@@ -96,12 +97,12 @@ func (a *Account) Name () (name string) {
   return
 }
 
-func (a *Account) Complete () (complete bool) {
-  if true &&
-  len(a.Country) > 0 &&
-  len(a.Postcode) > 0 &&
-  true {
-    complete = true
+func (a *Account) ValidateFields() (err error) {
+  if false ||
+  len(a.Country) == 0 ||
+  len(a.Postcode) == 0 ||
+  false {
+    err = ErrValidationFailed
   }
   return
 }
@@ -150,7 +151,7 @@ func (a *Account) ChangePassword (code, pwd1, pwd2 string) (err error, conflict 
 
 func (a *Account) Refresh () (current bool) {
   if saved, e, _ := get(a.UID); e == nil {
-    current = a.PWD.Created.Equal(saved.PWD.Created)
+    current = a.PWD.Created.Equal(saved.PWD.Created) && (a.ValidateFields() == nil)
     *a = *saved
   }
   return

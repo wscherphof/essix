@@ -4,7 +4,6 @@ import (
   "net/http"
   "github.com/julienschmidt/httprouter"
   "github.com/wscherphof/secure"
-  "github.com/wscherphof/secure/middleware"
   "github.com/wscherphof/expeertise/util2"
   "github.com/wscherphof/expeertise/model/account"
   "github.com/dchest/captcha"
@@ -23,11 +22,13 @@ func LogIn(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *u
   } else if acc, e, conflict := account.Get(r.FormValue("uid"), r.FormValue("pwd")); err != nil {
     err = util2.NewError(e, "login")
     err.Conflict = conflict
-  } else if e := secure.LogIn(w, r, acc, acc.Complete()); err != nil {
-    err = util2.NewError(e, "login")
-  } else if !acc.Complete() {
-    middleware.SetAuthentication(r, *acc)
-    err = UpdateAccountForm(w, r, ps)
+  } else {
+    complete := (acc.ValidateFields() == nil)
+    if e := secure.LogIn(w, r, acc, complete); err != nil {
+      err = util2.NewError(e, "login")
+    } else if !complete {
+      http.Redirect(w, r, "/account", http.StatusSeeOther)
+    }
   }
   return
 }

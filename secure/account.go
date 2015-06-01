@@ -21,20 +21,20 @@ func UpdateAccountForm(w http.ResponseWriter, r *http.Request, ps httprouter.Par
 
 func UpdateAccount(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *util2.Error) {
   acc := Authentication(r)
-  redirectPath := r.URL.Path
-  if !acc.Complete() {
-    redirectPath = "/"
-    secure.LogOut(w, r, false)
-  }
+  initial := (acc.ValidateFields() != nil)
   acc.Country   = r.FormValue("country")
   acc.Postcode  = strings.ToUpper(r.FormValue("postcode"))
   acc.FirstName = r.FormValue("firstname")
   acc.LastName  = r.FormValue("lastname")
-  if e := acc.Save(); e != nil {
+  if e := acc.ValidateFields(); e != nil {
     err = util2.NewError(e)
-  } else if acc.Complete() {
-    secure.LogIn(w, r, acc, false)
-    http.Redirect(w, r, redirectPath, http.StatusSeeOther)
+    err.Conflict = true
+  } else if e := acc.Save(); e != nil {
+    err = util2.NewError(e)
+  } else if initial {
+    secure.LogIn(w, r, acc, true)
+  } else {
+    http.Redirect(w, r, r.URL.Path, http.StatusSeeOther)
   }
   return
 }
