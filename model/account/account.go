@@ -56,7 +56,6 @@ type passwordCode struct {
 }
 
 type Account struct {
-  dirty bool
   Created time.Time
   Modified time.Time
   UID string
@@ -97,20 +96,10 @@ func (a *Account) Name () (name string) {
   return
 }
 
-// TODO: ditch dirty
-func (a *Account) save () (err error) {
-  if a.dirty {
-    a.Modified = time.Now()
-    if _, err = db.InsertUpdate(ACCOUNT_TABLE, a); err == nil {
-      a.dirty = false
-    }
-  }
-  return
-}
-
 func (a *Account) Save () (err error) {
-  a.dirty = true
-  return a.save()
+  a.Modified = time.Now()
+  _, err = db.InsertUpdate(ACCOUNT_TABLE, a)
+  return
 }
 
 func (a *Account) IsActive () (bool) {
@@ -123,7 +112,6 @@ func (a *Account) activate (code string) (err error) {
   } else if code != a.ActivationCode {
     err = ErrInvalidCredentials
   } else {
-    a.dirty = true
     a.ActivationCode = ""
   }
   return
@@ -134,8 +122,7 @@ func (a *Account) CreatePasswordCode (timeout time.Duration) (error) {
     Expires: time.Now().Add(timeout),
     Value: code(),
   }
-  a.dirty = true
-  return a.save()
+  return a.Save()
 }
 
 func (a *Account) ChangePassword (code, pwd1, pwd2 string) (err error, conflict bool) {
@@ -144,10 +131,9 @@ func (a *Account) ChangePassword (code, pwd1, pwd2 string) (err error, conflict 
   } else if pwd, e := newPassword(pwd1, pwd2); e != nil {
     err, conflict = e, true
   } else {
-    a.dirty = true
     a.PasswordCode = nil
     a.PWD = pwd
-    err = a.save()
+    err = a.Save()
   }
   return
 }
@@ -209,7 +195,7 @@ func Activate (uid string, code string) (account *Account, err error, conflict b
     err, conflict = e, c
   } else if e := acc.activate(code); e != nil {
     err, conflict = e, true
-  } else if e := acc.save(); e != nil {
+  } else if e := acc.Save(); e != nil {
     err = e
   } else {
     account = acc
@@ -238,7 +224,6 @@ func GetInsecure (uid string) (account *Account, err error, conflict bool) {
 func ClearPasswordCode (uid string) {
   if acc, _, _ := get(uid); acc != nil {
     acc.PasswordCode = nil
-    acc.dirty = true
-    acc.save()
+    acc.Save()
   }
 }
