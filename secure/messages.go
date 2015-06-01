@@ -121,6 +121,14 @@ func init () {
   a("en", "Expires")
 
   m("Edit account")
-  a("nl", "Accountgegevens bewerken")
-  a("en", "Edit account details")
+  a("nl", "Mijn account")
+  a("en", "My account details")
+
+  m("Complete account")
+  a("nl", "We hebben nog een paar laatste gegevens van je nodig")
+  a("en", "Please provide the following concluding details")
+
+  m("Star is required")
+  a("nl", "Alleen de velden met een * zijn verplicht")
+  a("en", "Only the fields with a * are required")
 }

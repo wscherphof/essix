@@ -161,24 +161,19 @@ func code () string {
   return string(util.URLEncode(util.Random()))
 }
 
-// TODO: New(uid, pwd1, pwd2)
-func New(val func (string) (string)) (account *Account, err error, conflict bool) {
-  uid := strings.ToLower(val("uid"))
+func New(uid, pwd1, pwd2 string) (account *Account, err error, conflict bool) {
+  uid = strings.ToLower(uid)
   if e, found := db.Get(ACCOUNT_TABLE, uid, new(Account)); e != nil {
     err = e
   } else if found {
     err, conflict = ErrEmailTaken, true
-  } else if pwd, e := newPassword(val("pwd1"), val("pwd2")); e != nil {
+  } else if pwd, e := newPassword(pwd1, pwd2); e != nil {
     err, conflict = e, true
   } else {
     acc := &Account{
       Created: time.Now(),
       UID: uid,
       PWD: pwd,
-      Country: val("country"),
-      Postcode: strings.ToUpper(val("postcode")),
-      FirstName: val("firstname"),
-      LastName: val("lastname"),
       ActivationCode: code(),
     }
     if err = acc.Save(); err == nil {

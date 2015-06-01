@@ -6,10 +6,18 @@ html lang={{ .lang.Main }}
     link rel=icon href=/static/favicon.ico type=image/x-icon
     link rel="shortcut icon" href=/static/favicon.ico type=image/x-icon
   body
-    p
-      {{ Msg "Edit account" }}
-      br
-      small {{ Msg "Last modified" }}: {{ .Account.Modified.Format (Msg "Time format") }}
+    {{ if .Initial }}
+      p {{ Msg "Hi" }} {{ .Account.Name }}{{ "," }}
+      p
+        {{ Msg "Complete account" }}
+        br
+        small {{ Msg "Star is required" }}
+    {{ else }}
+      p
+        {{ Msg "Edit account" }}
+        br
+        small {{ Msg "Last modified" }}: {{ .Account.Modified.Format (Msg "Time format") }}
+    {{ end }}
     form method=POST action=/account
       input type=hidden name=_method value=PUT
       label {{ Msg "Email" }}: {{ .Account.UID }}

@@ -16,6 +16,7 @@ func UpdateAccountForm(w http.ResponseWriter, r *http.Request, ps httprouter.Par
   return util2.Template("account", "", map[string]interface{}{
     "Account": acc,
     "Countries": data.Countries(),
+    "Initial" : (acc.ValidateFields() != nil),
   })(w, r, ps)
 }
 
@@ -50,8 +51,7 @@ func SignUp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *
   if !captcha.VerifyString(r.FormValue("captchaId"), r.FormValue("captchaSolution")) {
     err = util2.NewError(captcha.ErrNotFound, "signup")
     err.Conflict = true
-  // TODO: &account.Account{...}.Create(pwd1, pwd2)
-  } else if acc, e, conflict := account.New(r.FormValue); e != nil {
+  } else if acc, e, conflict := account.New(r.FormValue("uid"), r.FormValue("pwd1"), r.FormValue("pwd2")); e != nil {
     err = util2.NewError(e, "signup")
     err.Conflict = conflict
   } else if e, remark := activationEmail(r, acc); e != nil {
