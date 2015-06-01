@@ -3,7 +3,7 @@ package secure
 import (
   "net/http"
   "github.com/julienschmidt/httprouter"
-  "github.com/wscherphof/expeertise/util"
+  "github.com/wscherphof/expeertise/router"
   "github.com/wscherphof/expeertise/model/account"
   "github.com/dchest/captcha"
 )
@@ -12,49 +12,49 @@ func activationEmail(r *http.Request, acc *account.Account) (error, string) {
   return sendEmail(r, acc, "activation", acc.ActivationCode, "")
 }
 
-func ActivateForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *util.Error) {
-  return util.Template("activation", "", map[string]interface{}{
+func ActivateForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
+  return router.Template("activation", "", map[string]interface{}{
     "UID": ps.ByName("uid"),
     "Code": r.FormValue("code"),
   })(w, r, ps)
 }
 
-func Activate(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *util.Error) {
+func Activate(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
   if acc, e, conflict := account.Activate(r.FormValue("uid"), r.FormValue("code")); e != nil {
-    err = util.NewError(e, "activation")
+    err = router.NewError(e, "activation")
     err.Conflict = conflict
   } else {
-    util.Template("activation_success", "", map[string]interface{}{
+    router.Template("activation_success", "", map[string]interface{}{
       "Name": acc.Name(),
     })(w, r, ps)
   }
   return
 }
 
-func ActivationCodeForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *util.Error) {
-  return util.Template("activation_resend", "", map[string]interface{}{
+func ActivationCodeForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
+  return router.Template("activation_resend", "", map[string]interface{}{
     "UID": ps.ByName("uid"),
     "CaptchaId": captcha.New(),
   })(w, r, ps)
 }
 
-func ActivationCode(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *util.Error) {
+func ActivationCode(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
   if !captcha.VerifyString(r.FormValue("captchaId"), r.FormValue("captchaSolution")) {
-    err = util.NewError(captcha.ErrNotFound, "activation_resend")
+    err = router.NewError(captcha.ErrNotFound, "activation_resend")
     err.Conflict = true
   } else if acc, e, conflict := account.GetInsecure(r.FormValue("uid")); e != nil {
-    err = util.NewError(e, "activation_resend")
+    err = router.NewError(e, "activation_resend")
     err.Conflict = conflict
     err.Data = map[string]interface{}{
       "UID": r.FormValue("uid"),
     }
   } else if acc.IsActive() {
-    err = util.NewError(account.ErrAlreadyActivated)
+    err = router.NewError(account.ErrAlreadyActivated)
     err.Conflict = true
   } else if e, remark := activationEmail(r, acc); e != nil {
-    err = util.NewError(e)
+    err = router.NewError(e)
   } else {
-    util.Template("activation_resend_success", "", map[string]interface{}{
+    router.Template("activation_resend_success", "", map[string]interface{}{
       "Name": acc.Name(),
       "UID": acc.UID,
       "Remark": remark,

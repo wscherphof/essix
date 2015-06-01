@@ -9,7 +9,7 @@ import (
 
 var Router = httprouter.New()
 
-type ErrorHandle func(http.ResponseWriter, *http.Request, httprouter.Params)(*util.Error)
+type ErrorHandle func(http.ResponseWriter, *http.Request, httprouter.Params)(*Error)
 
 func ErrorHandleFunc(errorHandle ErrorHandle) (handle httprouter.Handle) {
   return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
@@ -21,11 +21,11 @@ func ErrorHandleFunc(errorHandle ErrorHandle) (handle httprouter.Handle) {
       // Set the Content-Type to prevent CompressHandler from doing so after our WriteHeader()
       w.Header().Set("Content-Type", "text/html; charset=utf-8")
       w.WriteHeader(code)
-      util.Template("error", "", map[string]interface{}{
+      Template("error", "", map[string]interface{}{
         "Error": err.Error,
       })(w, r, ps)
       if len(err.Tail) > 0 {
-        util.Template(err.Tail + "_error-tail", "", err.Data)(w, r, ps)
+        Template(err.Tail + "_error-tail", "", err.Data)(w, r, ps)
       }
       if code >= 500 {
         log.Println("ERROR:", err.Error, "- Path:", r.URL.Path)
@@ -44,3 +44,11 @@ func DELETE  (path string, handle ErrorHandle) {Handle("DELETE",  path, handle)}
 func PATCH   (path string, handle ErrorHandle) {Handle("PATCH",   path, handle)}
 func OPTIONS (path string, handle ErrorHandle) {Handle("OPTIONS", path, handle)}
 func HEAD    (path string, handle ErrorHandle) {Handle("HEAD",    path, handle)}
+
+func Template(base string, inner string, data map[string]interface{}) ErrorHandle {
+  return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params)(err *Error) {
+    // TODO: try if we can do ps.ByName() from the ace template..
+    util.Template(base, inner, data)(w, r)
+    return
+  }
+}

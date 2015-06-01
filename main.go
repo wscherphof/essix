@@ -7,7 +7,6 @@ import (
   "github.com/wscherphof/expeertise/router"
   "github.com/wscherphof/expeertise/secure"
   "github.com/wscherphof/expeertise/captcha"
-  "github.com/wscherphof/expeertise/util"
   "log"
   "os"
 )
@@ -21,8 +20,8 @@ const (
 
 func main () {
   router.GET    ("/", secure.IfSecureHandle(
-    util.Template("home", "home_loggedin", nil),
-    util.Template("home", "home_loggedout", nil)))
+    router.Template("home", "home_loggedin", nil),
+    router.Template("home", "home_loggedout", nil)))
   
   router.Router.Handler("GET", "/captcha/*filepath", captcha.Server)
   router.Router.ServeFiles("/static/*filepath", http.Dir("./static"))

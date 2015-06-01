@@ -4,23 +4,23 @@ import (
   "net/http"
   "github.com/julienschmidt/httprouter"
   "github.com/wscherphof/secure"
-  "github.com/wscherphof/expeertise/util"
+  "github.com/wscherphof/expeertise/router"
   "github.com/wscherphof/expeertise/model/account"
   "github.com/wscherphof/expeertise/data"
   "github.com/dchest/captcha"
   "strings"
 )
 
-func UpdateAccountForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *util.Error) {
+func UpdateAccountForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
   acc := Authentication(r)
-  return util.Template("account", "", map[string]interface{}{
+  return router.Template("account", "", map[string]interface{}{
     "Account": acc,
     "Countries": data.Countries(),
     "Initial" : (acc.ValidateFields() != nil),
   })(w, r, ps)
 }
 
-func UpdateAccount(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *util.Error) {
+func UpdateAccount(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
   acc := Authentication(r)
   initial := (acc.ValidateFields() != nil)
   acc.Country   = r.FormValue("country")
@@ -28,10 +28,10 @@ func UpdateAccount(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
   acc.FirstName = r.FormValue("firstname")
   acc.LastName  = r.FormValue("lastname")
   if e := acc.ValidateFields(); e != nil {
-    err = util.NewError(e)
+    err = router.NewError(e)
     err.Conflict = true
   } else if e := acc.Save(); e != nil {
-    err = util.NewError(e)
+    err = router.NewError(e)
   } else if initial {
     secure.LogIn(w, r, acc, true)
   } else {
@@ -41,24 +41,24 @@ func UpdateAccount(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
   return
 }
 
-func SignUpForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *util.Error) {
-  return util.Template("signup", "", map[string]interface{}{
+func SignUpForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
+  return router.Template("signup", "", map[string]interface{}{
     "Countries": data.Countries(),
     "CaptchaId": captcha.New(),
   })(w, r, ps)
 }
 
-func SignUp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *util.Error) {
+func SignUp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
   if !captcha.VerifyString(r.FormValue("captchaId"), r.FormValue("captchaSolution")) {
-    err = util.NewError(captcha.ErrNotFound, "signup")
+    err = router.NewError(captcha.ErrNotFound, "signup")
     err.Conflict = true
   } else if acc, e, conflict := account.New(r.FormValue("uid"), r.FormValue("pwd1"), r.FormValue("pwd2")); e != nil {
-    err = util.NewError(e, "signup")
+    err = router.NewError(e, "signup")
     err.Conflict = conflict
   } else if e, remark := activationEmail(r, acc); e != nil {
-    err = util.NewError(e, "signup")
+    err = router.NewError(e, "signup")
   } else {
-    util.Template("signup_success", "", map[string]interface{}{
+    router.Template("signup_success", "", map[string]interface{}{
       "uid": acc.UID,
       "name": acc.Name(),
       "remark": remark,

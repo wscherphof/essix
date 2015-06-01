@@ -5,13 +5,12 @@ import (
   "net/http"
   "html/template"
   "github.com/yossi/ace"
-  "github.com/julienschmidt/httprouter"
   "github.com/wscherphof/msg"
   "bytes"
   "io"
 )
 
-func aceOptions (r *http.Request) (*ace.Options) {
+func aceOptions(r *http.Request) (*ace.Options) {
   return &ace.Options{
     BaseDir: "templates",
     FuncMap: template.FuncMap{
@@ -20,7 +19,7 @@ func aceOptions (r *http.Request) (*ace.Options) {
   }
 }
 
-func t (base string, inner string, data map[string]interface{}) (func(io.Writer, *http.Request)) {
+func Template(base string, inner string, data map[string]interface{}) (func(io.Writer, *http.Request)) {
   if data == nil {
     data = map[string]interface{}{}
   }
@@ -38,18 +37,10 @@ func t (base string, inner string, data map[string]interface{}) (func(io.Writer,
   }
 } 
 
-func Template (base string, inner string, data map[string]interface{}) func(http.ResponseWriter, *http.Request, httprouter.Params)(*Error) {
-  return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *Error) {
-    // TODO: try if we can do ps.ByName() from the ace template..
-    t(base, inner, data)(w, r)
-    return
-  }
-}
-
-func BTemplate (base string, inner string, data map[string]interface{}) (func(*http.Request)([]byte)) {
+func BTemplate(base string, inner string, data map[string]interface{}) (func(*http.Request)([]byte)) {
   var b bytes.Buffer
   return func(r *http.Request) ([]byte) {
-    t(base, inner, data)(&b, r)
+    Template(base, inner, data)(&b, r)
     return b.Bytes()
   }
 }
