@@ -35,6 +35,7 @@ func UpdateAccount(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
   } else if initial {
     secure.LogIn(w, r, acc, true)
   } else {
+    secure.LogIn(w, r, acc, false)
     http.Redirect(w, r, r.URL.Path, http.StatusSeeOther)
   }
   return
