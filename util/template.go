@@ -38,7 +38,7 @@ func t (base string, inner string, data map[string]interface{}) (func(io.Writer,
   }
 } 
 
-func Template (base string, inner string, data map[string]interface{}) ErrorHandle {
+func Template (base string, inner string, data map[string]interface{}) func(http.ResponseWriter, *http.Request, httprouter.Params)(*Error) {
   return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *Error) {
     // TODO: try if we can do ps.ByName() from the ace template..
     t(base, inner, data)(w, r)

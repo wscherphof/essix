@@ -1,19 +1,46 @@
 package router
 
 import (
+  "net/http"
   "github.com/julienschmidt/httprouter"
   "github.com/wscherphof/expeertise/util"
+  "log"
 )
 
 var Router = httprouter.New()
 
-func Handle (method, path string, handle util.ErrorHandle) {
-  Router.Handle(method, path, util.ErrorHandleFunc(handle))
+type ErrorHandle func(http.ResponseWriter, *http.Request, httprouter.Params)(*util.Error)
+
+func ErrorHandleFunc(errorHandle ErrorHandle) (handle httprouter.Handle) {
+  return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+    if err := errorHandle(w, r, ps); err != nil {
+      code := http.StatusInternalServerError
+      if err.Conflict {
+        code = http.StatusConflict
+      }
+      // Set the Content-Type to prevent CompressHandler from doing so after our WriteHeader()
+      w.Header().Set("Content-Type", "text/html; charset=utf-8")
+      w.WriteHeader(code)
+      util.Template("error", "", map[string]interface{}{
+        "Error": err.Error,
+      })(w, r, ps)
+      if len(err.Tail) > 0 {
+        util.Template(err.Tail + "_error-tail", "", err.Data)(w, r, ps)
+      }
+      if code >= 500 {
+        log.Println("ERROR:", err.Error, "- Path:", r.URL.Path)
+      }
+    }
+  }
 }
-func GET     (path string, handle util.ErrorHandle) {Handle("GET",     path, handle)}
-func PUT     (path string, handle util.ErrorHandle) {Handle("PUT",     path, handle)}
-func POST    (path string, handle util.ErrorHandle) {Handle("POST",    path, handle)}
-func DELETE  (path string, handle util.ErrorHandle) {Handle("DELETE",  path, handle)}
-func PATCH   (path string, handle util.ErrorHandle) {Handle("PATCH",   path, handle)}
-func OPTIONS (path string, handle util.ErrorHandle) {Handle("OPTIONS", path, handle)}
-func HEAD    (path string, handle util.ErrorHandle) {Handle("HEAD",    path, handle)}
+
+func Handle(method, path string, handle ErrorHandle) {
+  Router.Handle(method, path, ErrorHandleFunc(handle))
+}
+func GET     (path string, handle ErrorHandle) {Handle("GET",     path, handle)}
+func PUT     (path string, handle ErrorHandle) {Handle("PUT",     path, handle)}
+func POST    (path string, handle ErrorHandle) {Handle("POST",    path, handle)}
+func DELETE  (path string, handle ErrorHandle) {Handle("DELETE",  path, handle)}
+func PATCH   (path string, handle ErrorHandle) {Handle("PATCH",   path, handle)}
+func OPTIONS (path string, handle ErrorHandle) {Handle("OPTIONS", path, handle)}
+func HEAD    (path string, handle ErrorHandle) {Handle("HEAD",    path, handle)}
