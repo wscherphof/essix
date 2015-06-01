@@ -44,14 +44,13 @@ func main () {
   router.GET    ("/account/activationcode/:uid", secure.ActivationCodeForm)
   router.POST   ("/account/activationcode",      secure.ActivationCode)
   
-  // TODO: router
-  router.Router.GET    ("/account/passwordcode",      secure.PasswordCodeForm)
-  router.Router.GET    ("/account/passwordcode/",     secure.PasswordCodeForm)
-  router.Router.GET    ("/account/passwordcode/:uid", secure.PasswordCodeForm)
-  router.Router.POST   ("/account/passwordcode",      secure.PasswordCode)
+  router.GET    ("/account/passwordcode",      secure.PasswordCodeForm)
+  router.GET    ("/account/passwordcode/",     secure.PasswordCodeForm)
+  router.GET    ("/account/passwordcode/:uid", secure.PasswordCodeForm)
+  router.POST   ("/account/passwordcode",      secure.PasswordCode)
   
-  router.Router.GET    ("/account/password/:uid", secure.PasswordForm)
-  router.Router.PUT    ("/account/password",      secure.ChangePassword)
+  router.GET    ("/account/password/:uid", secure.PasswordForm)
+  router.PUT    ("/account/password",      secure.ChangePassword)
   
   router.Router.Handler("GET", "/captcha/*filepath", captcha.Server)
   router.Router.ServeFiles("/static/*filepath", http.Dir("./static"))

@@ -5,6 +5,7 @@ import (
   "github.com/julienschmidt/httprouter"
   "github.com/wscherphof/secure"
   "github.com/wscherphof/expeertise/util"
+  "github.com/wscherphof/expeertise/util2"
   "github.com/wscherphof/expeertise/model/account"
   "github.com/wscherphof/msg"
   "github.com/dchest/captcha"
@@ -12,69 +13,86 @@ import (
   "errors"
 )
 
-const PWD_CODE_TIMEOUT time.Duration = 1 * time.Hour
+const PWD_CODE_TIMEOUT = 1 * time.Hour
 var ErrPasswordCodeTimedOut = errors.New("Password code has timed out")
 
-func passwordEmail (r *http.Request, acc *account.Account) (error, string) {
+func passwordEmail(r *http.Request, acc *account.Account) (error, string) {
   format := msg.Msg(r)("Time format")
-  return sendEmail (r, acc, "password", acc.PasswordCode.Value, acc.PasswordCode.Expires.Format(format))
+  return sendEmail(r, acc, "password", acc.PasswordCode.Value, acc.PasswordCode.Expires.Format(format))
 }
 
-func PasswordCodeForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-  util.Template("passwordcode", "", map[string]interface{}{
+func PasswordCodeForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *util2.Error) {
+  return util2.Template("passwordcode", "", map[string]interface{}{
     "uid": ps.ByName("uid"),
     "CaptchaId": captcha.New(),
   })(w, r, ps)
 }
 
-func PasswordCode (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func PasswordCode(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *util2.Error) {
   uid := r.FormValue("uid")
-  handle := util.Handle(w, r, ps)
   if !captcha.VerifyString(r.FormValue("captchaId"), r.FormValue("captchaSolution")) {
-    handle(captcha.ErrNotFound, true, "passwordcode", nil)
-  } else if acc, err, conflict := account.GetInsecure(uid); err != nil {
-    handle(err, conflict, "passwordcode", map[string]interface{}{"uid": uid})
+    err = util2.NewError(captcha.ErrNotFound, "passwordcode")
+    err.Conflict = true
+  } else if acc, e, conflict := account.GetInsecure(uid); e != nil {
+    err = util2.NewError(e, "passwordcode")
+    err.Conflict = conflict
+    err.Data = map[string]interface{}{
+      "UID": uid,
+    }
   } else if ! acc.IsActive() {
-    handle(account.ErrNotActivated, true, "activation_resend", map[string]interface{}{"uid": uid})
-  } else if err := acc.CreatePasswordCode(PWD_CODE_TIMEOUT); err != nil {
-    handle(err, false, "", nil)
-  } else if err, remark := passwordEmail(r, acc); err != nil {
-    handle(err, false, "", nil)
+    err = util2.NewError(account.ErrNotActivated, "activation_resend")
+    err.Conflict = true
+    err.Data = map[string]interface{}{
+      "UID": uid,
+    }
+  } else if e := acc.CreatePasswordCode(PWD_CODE_TIMEOUT); e != nil {
+    err = util2.NewError(e)
+  } else if e, remark := passwordEmail(r, acc); e != nil {
+    err = util2.NewError(e)
   } else {
-    util.Template("passwordcode_success", "", map[string]interface{}{
-      "name": acc.Name(),
-      "remark": remark,
+    util2.Template("passwordcode_success", "", map[string]interface{}{
+      "Name": acc.Name(),
+      "Remark": remark,
     })(w, r, ps)
   }
+  return
 }
 
-func PasswordForm (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func PasswordForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *util2.Error) {
   uid, code, extra := ps.ByName("uid"), r.FormValue("code"), r.FormValue("extra")
   expires, _ := util.URLDecode([]byte(extra))
   if len(code) == 0 {
     account.ClearPasswordCode(uid)
-    util.Template("passwordcode_cancelled", "", nil)(w, r, ps)
+    util2.Template("passwordcode_cancelled", "", nil)(w, r, ps)
   } else {
-    util.Template("password", "", map[string]interface{}{
-      "uid": uid,
-      "code": code,
-      "expires": string(expires),
+    util2.Template("password", "", map[string]interface{}{
+      "UID": uid,
+      "Code": code,
+      "Expires": string(expires),
     })(w, r, ps)
   }
+  return
 }
 
-func ChangePassword (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-  handle := util.Handle(w, r, ps)
-  if acc, err, conflict := account.GetInsecure(r.FormValue("uid")); err != nil {
-    handle(err, conflict, "", nil)
+func ChangePassword(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *util2.Error) {
+  if acc, e, conflict := account.GetInsecure(r.FormValue("uid")); e != nil {
+    err = util2.NewError(e)
+    err.Conflict = conflict
   } else if acc.PasswordCode == nil {
-    handle(account.ErrPasswordCodeUnset, true, "", nil)
+    err = util2.NewError(account.ErrPasswordCodeUnset)
+    err.Conflict = true
   } else if time.Now().After(acc.PasswordCode.Expires) {
-    handle(ErrPasswordCodeTimedOut, true, "passwordcode", map[string]interface{}{"uid": acc.UID})
-  } else if err, conflict := acc.ChangePassword(r.FormValue("code"), r.FormValue("pwd1"), r.FormValue("pwd2")); err != nil {
-    handle(err, conflict, "", nil)
+    err = util2.NewError(ErrPasswordCodeTimedOut, "passwordcode")
+    err.Conflict = true
+    err.Data = map[string]interface{}{
+      "UID": acc.UID,
+    }
+  } else if e, conflict := acc.ChangePassword(r.FormValue("code"), r.FormValue("pwd1"), r.FormValue("pwd2")); err != nil {
+    err = util2.NewError(e)
+    err.Conflict = conflict
   } else {
     secure.LogOut(w, r, false)
-    util.Template("password_success", "", nil)(w, r, ps)
+    util2.Template("password_success", "", nil)(w, r, ps)
   }
+  return
 }
