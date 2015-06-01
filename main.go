@@ -21,8 +21,8 @@ const (
 
 func main () {
   router.GET    ("/", secure.IfSecureHandle(
-    util.Template("home", "home-loggedin", nil),
-    util.Template("home", "home-loggedout", nil)))
+    util.Template("home", "home_loggedin", nil),
+    util.Template("home", "home_loggedout", nil)))
   
   // TODO: change email address (only when logged in, but still w/ an email to the new address)
   router.GET    ("/account", secure.IfSecureHandle(secure.UpdateAccountForm, secure.SignUpForm))
