@@ -5,7 +5,7 @@ import (
   "github.com/wscherphof/secure"
   "github.com/wscherphof/secure/middleware"
   "github.com/wscherphof/expeertise/model/account"
-  "github.com/wscherphof/expeertise/util2"
+  "github.com/wscherphof/expeertise/util"
   "github.com/julienschmidt/httprouter"
 )
 
@@ -20,8 +20,8 @@ func Authentication (r *http.Request) (ret *account.Account) {
   return
 }
 
-func SecureHandle (handle util2.ErrorHandle) (util2.ErrorHandle) {
-  return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *util2.Error) {
+func SecureHandle (handle util.ErrorHandle) (util.ErrorHandle) {
+  return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *util.Error) {
     if Authentication(r) != nil {
       err = handle(w, r, ps)
     } else {
@@ -31,8 +31,8 @@ func SecureHandle (handle util2.ErrorHandle) (util2.ErrorHandle) {
   }
 }
 
-func IfSecureHandle (authenticated util2.ErrorHandle, unauthenticated util2.ErrorHandle) (util2.ErrorHandle) {
-  return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *util2.Error) {
+func IfSecureHandle (authenticated util.ErrorHandle, unauthenticated util.ErrorHandle) (util.ErrorHandle) {
+  return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *util.Error) {
     if Authentication(r) != nil {
       err = authenticated(w, r, ps)
     } else {

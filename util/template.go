@@ -36,12 +36,13 @@ func t (base string, inner string, data map[string]interface{}) (func(io.Writer,
       log.Panicln("ERROR: tpl.Execute:", err)
     }
   }
-}
+} 
 
-func Template (base string, inner string, data map[string]interface{}) httprouter.Handle {
-  return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func Template (base string, inner string, data map[string]interface{}) ErrorHandle {
+  return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *Error) {
     // TODO: try if we can do ps.ByName() from the ace template..
     t(base, inner, data)(w, r)
+    return
   }
 }
 

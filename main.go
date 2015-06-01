@@ -7,7 +7,7 @@ import (
   "github.com/wscherphof/expeertise/router"
   "github.com/wscherphof/expeertise/secure"
   "github.com/wscherphof/expeertise/captcha"
-  "github.com/wscherphof/expeertise/util2"
+  "github.com/wscherphof/expeertise/util"
   "log"
   "os"
 )
@@ -21,8 +21,8 @@ const (
 
 func main () {
   router.GET    ("/", secure.IfSecureHandle(
-    util2.Template("home", "home-loggedin", nil),
-    util2.Template("home", "home-loggedout", nil)))
+    util.Template("home", "home-loggedin", nil),
+    util.Template("home", "home-loggedout", nil)))
   
   // TODO: change email address (only when logged in, but still w/ an email to the new address)
   router.GET    ("/account", secure.IfSecureHandle(secure.UpdateAccountForm, secure.SignUpForm))
