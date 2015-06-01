@@ -24,7 +24,6 @@ func main () {
     util2.Template("home", "home-loggedin", nil),
     util2.Template("home", "home-loggedout", nil)))
   
-  // TODO: sign up w/ just email & pwd; then on first login, ask further details
   // TODO: change email address (only when logged in, but still w/ an email to the new address)
   router.GET    ("/account", secure.IfSecureHandle(secure.UpdateAccountForm, secure.SignUpForm))
   router.POST   ("/account", secure.SignUp)
