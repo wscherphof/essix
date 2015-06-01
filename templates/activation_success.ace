@@ -6,7 +6,7 @@ html lang={{ .lang.Main }}
     link rel=icon href=/static/favicon.ico type=image/x-icon
     link rel="shortcut icon" href=/static/favicon.ico type=image/x-icon
   body
-    p {{ Msg "Hi" }} {{ .name }},
+    p {{ Msg "Hi" }} {{ .Name }},
     p {{ Msg "Activate successful" }}
     p
       a href=/session {{ Msg "Log in" }}

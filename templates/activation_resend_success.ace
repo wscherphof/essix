@@ -6,11 +6,11 @@ html lang={{ .lang.Main }}
     link rel=icon href=/static/favicon.ico type=image/x-icon
     link rel="shortcut icon" href=/static/favicon.ico type=image/x-icon
   body
-    p {{ Msg "Hi" }} {{ .name }},
+    p {{ Msg "Hi" }} {{ .Name }},
     p..
       {{ Msg "Resend successful" }}
-      {{ Msg .remark }}
+      {{ Msg .Remark }}
     p
-      a href=/account/activation/{{ .uid }} {{ Msg "activation subject" }}
+      a href=/account/activation/{{ .UID }} {{ Msg "activation subject" }}
     p
       a href=/ {{ Msg "Take me home" }}

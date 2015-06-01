@@ -34,17 +34,17 @@ func main () {
   router.POST   ("/session", secure.LogIn)
   router.DELETE ("/session", secure.LogOut)
 
+  router.GET    ("/account/activation",      secure.ActivateForm)
+  router.GET    ("/account/activation/",     secure.ActivateForm)
+  router.GET    ("/account/activation/:uid", secure.ActivateForm)
+  router.PUT    ("/account/activation",      secure.Activate)
+  
+  router.GET    ("/account/activationcode",      secure.ActivationCodeForm)
+  router.GET    ("/account/activationcode/",     secure.ActivationCodeForm)
+  router.GET    ("/account/activationcode/:uid", secure.ActivationCodeForm)
+  router.POST   ("/account/activationcode",      secure.ActivationCode)
+  
   // TODO: router
-  router.Router.GET    ("/account/activation",      secure.ActivateForm)
-  router.Router.GET    ("/account/activation/",     secure.ActivateForm)
-  router.Router.GET    ("/account/activation/:uid", secure.ActivateForm)
-  router.Router.PUT    ("/account/activation",      secure.Activate)
-  
-  router.Router.GET    ("/account/activationcode",      secure.ActivationCodeForm)
-  router.Router.GET    ("/account/activationcode/",     secure.ActivationCodeForm)
-  router.Router.GET    ("/account/activationcode/:uid", secure.ActivationCodeForm)
-  router.Router.POST   ("/account/activationcode",      secure.ActivationCode)
-  
   router.Router.GET    ("/account/passwordcode",      secure.PasswordCodeForm)
   router.Router.GET    ("/account/passwordcode/",     secure.PasswordCodeForm)
   router.Router.GET    ("/account/passwordcode/:uid", secure.PasswordCodeForm)
