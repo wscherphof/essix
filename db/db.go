@@ -2,30 +2,26 @@ package db
 
 import (
 	r "github.com/dancannon/gorethink"
+	"github.com/wscherphof/expeertise/env"
 	"log"
 )
 
 var (
-	s *r.Session
-)
-
-const (
-	// TODO: flags/envvars
-	DB_HOST = "localhost"
-	DB_PORT = ":28015"
-	DB_NAME = "expeertise"
+	s      *r.Session
+	dbname string
 )
 
 func init() {
-	address := DB_HOST + DB_PORT
+	address := env.Get("DB_HOST") + env.Get("DB_PORT")
+	dbname = env.Get("DB_NAME")
 	if session, err := r.Connect(r.ConnectOpts{
 		Address:  address,
-		Database: DB_NAME,
+		Database: dbname,
 	}); err != nil {
 		log.Fatalln("ERROR:", err)
 	} else {
 		s = session
-		log.Println("INFO: DB connected to", DB_NAME, "@", address)
+		log.Println("INFO: DB connected to", dbname, "@", address)
 	}
 }
 
@@ -62,7 +58,7 @@ func Truncate(table string) (r.WriteResponse, error) {
 }
 
 func tableCreate(table string, opts ...r.TableCreateOpts) (*r.Cursor, error) {
-	return r.Db(DB_NAME).TableCreate(table, opts...).Run(s)
+	return r.Db(dbname).TableCreate(table, opts...).Run(s)
 }
 
 func TableCreate(table string) (*r.Cursor, error) {
