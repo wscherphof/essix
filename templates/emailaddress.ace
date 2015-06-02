@@ -7,7 +7,7 @@ html lang={{ .lang.Main }}
     link rel="shortcut icon" href=/static/favicon.ico type=image/x-icon
   body
     p {{ Msg "Change email address" }}
-    p {{ Msg "Want replace" }} {{ .Account.UID }} {{ Msg "Replace with" }} {{ .Account.NewUID }}
+    p {{ Msg "Want replace" }} "{{ .Account.UID }}" {{ Msg "Replace with" }} "{{ .Account.NewUID }}"
     form method=POST action=/account/emailaddress
       input type=hidden name=_method value=PUT
       input type=hidden name=code value={{ .Account.EmailAddressCode }}
