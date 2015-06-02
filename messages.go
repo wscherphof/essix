@@ -34,4 +34,20 @@ func init () {
   m("Save changes")
   a("nl", "Wijzigingen opslaan")
   a("en", "Save changes")
+
+  m("Current")
+  a("nl", "Huidig")
+  a("en", "Current")
+
+  m("New")
+  a("nl", "Nieuw")
+  a("en", "New")
+
+  m("change")
+  a("nl", "wijzigen")
+  a("en", "change")
+
+  m("Confirm")
+  a("nl", "Bevestigen")
+  a("en", "Confirm")
 }

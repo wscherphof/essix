@@ -21,6 +21,10 @@ html lang={{ .lang.Main }}
     form method=POST action=/account
       input type=hidden name=_method value=PUT
       label {{ Msg "Email" }}: {{ .Account.UID }}
+      {{ if not .Initial }}
+        {{ " - " }}
+        a href=/account/emailaddresscode {{ Msg "change" }}
+      {{ end }}
       br
       label {{ Msg "Country" }}*
         select id=country name=country required=

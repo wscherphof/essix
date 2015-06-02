@@ -20,6 +20,8 @@ var (
   ErrPasswordCodeUnset = errors.New("PasswordCode is nil")
   ErrPasswordCodeIncorrect = errors.New("Password code given is incorrect")
   ErrValidationFailed = errors.New("Field values are missing or incorrect")
+  ErrEmailAddressCodeUnset = errors.New("Email address code is empty")
+  ErrEmailAddressCodeIncorrect = errors.New("Email address code given is incorrect")
 )
 
 const ACCOUNT_TABLE = "account"
@@ -67,6 +69,8 @@ type Account struct {
   LastName string
   ActivationCode string
   PasswordCode *passwordCode
+  EmailAddressCode string
+  NewUID string
 }
 
 func (a *Account) FullName () (name string) {
@@ -128,7 +132,7 @@ func (a *Account) activate (code string) (err error) {
   return
 }
 
-func (a *Account) CreatePasswordCode (timeout time.Duration) (error) {
+func (a *Account) CreatePasswordCode(timeout time.Duration) (error) {
   a.PasswordCode = &passwordCode{
     Expires: time.Now().Add(timeout),
     Value: code(),
@@ -136,7 +140,16 @@ func (a *Account) CreatePasswordCode (timeout time.Duration) (error) {
   return a.Save()
 }
 
-func (a *Account) ChangePassword (code, pwd1, pwd2 string) (err error, conflict bool) {
+func ClearPasswordCode(uid, code string) {
+  if acc, _, _ := get(uid); acc != nil {
+    if acc.PasswordCode.Value == code {
+      acc.PasswordCode = nil
+      acc.Save()
+    }
+  }
+}
+
+func (a *Account) ChangePassword(code, pwd1, pwd2 string) (err error, conflict bool) {
   if code != a.PasswordCode.Value {
     err, conflict = ErrPasswordCodeIncorrect, true
   } else if pwd, e := newPassword(pwd1, pwd2); e != nil {
@@ -145,6 +158,31 @@ func (a *Account) ChangePassword (code, pwd1, pwd2 string) (err error, conflict 
     a.PasswordCode = nil
     a.PWD = pwd
     err = a.Save()
+  }
+  return
+}
+
+func (a *Account) CreateEmailAddressCode(newUID string) (error) {
+  a.NewUID = newUID
+  a.EmailAddressCode = code()
+  return a.Save()
+}
+
+func (a *Account) ClearEmailAddressCode(code string) (err error) {
+  if a.EmailAddressCode == code {
+    a.NewUID = ""
+    a.EmailAddressCode = ""
+    err = a.Save()
+  }
+  return
+}
+
+func (a *Account) ChangeEmailAddress(code string) (err error, conflict bool) {
+  if code != a.EmailAddressCode {
+    err, conflict = ErrEmailAddressCodeIncorrect, true
+  } else {
+    a.UID = a.NewUID
+    err, conflict = a.ClearEmailAddressCode(code), false
   }
   return
 }
@@ -224,11 +262,4 @@ func Get (uid, pwd string) (account *Account, err error, conflict bool) {
 
 func GetInsecure (uid string) (account *Account, err error, conflict bool) {
   return get (uid)
-}
-
-func ClearPasswordCode (uid string) {
-  if acc, _, _ := get(uid); acc != nil {
-    acc.PasswordCode = nil
-    acc.Save()
-  }
 }

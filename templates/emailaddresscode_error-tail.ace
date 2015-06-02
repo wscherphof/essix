@@ -1,0 +1,4 @@
+p
+  a href=/account/emailaddresscode {{ Msg "Try again" }}
+p
+  a href=/ {{ Msg "Take me home" }}

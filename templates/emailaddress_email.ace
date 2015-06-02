@@ -6,9 +6,4 @@ html lang={{ .lang.Main }}
     link rel=icon href=/static/favicon.ico type=image/x-icon
     link rel="shortcut icon" href=/static/favicon.ico type=image/x-icon
   body
-    p {{ Msg "Hi" }} {{ .Name }},
-    p..
-      {{ Msg "Password code successful" }}
-      {{ Msg .Remark }}
-    p
-      a href=/ {{ Msg "Take me home" }}
+    = yield main

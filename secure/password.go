@@ -23,7 +23,7 @@ func passwordEmail(r *http.Request, acc *account.Account) (error, string) {
 
 func PasswordCodeForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
   return router.Template("passwordcode", "", map[string]interface{}{
-    "uid": ps.ByName("uid"),
+    "UID": ps.ByName("uid"),
     "CaptchaId": captcha.New(),
   })(w, r, ps)
 }
@@ -59,10 +59,10 @@ func PasswordCode(w http.ResponseWriter, r *http.Request, ps httprouter.Params) 
 }
 
 func PasswordForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
-  uid, code, extra := ps.ByName("uid"), r.FormValue("code"), r.FormValue("extra")
+  uid, code, extra, cancel := ps.ByName("uid"), r.FormValue("code"), r.FormValue("extra"), r.FormValue("cancel")
   expires, _ := util.URLDecode([]byte(extra))
-  if len(code) == 0 {
-    account.ClearPasswordCode(uid)
+  if cancel == "true" {
+    account.ClearPasswordCode(uid, code)
     router.Template("passwordcode_cancelled", "", nil)(w, r, ps)
   } else {
     router.Template("password", "", map[string]interface{}{
@@ -75,7 +75,8 @@ func PasswordForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) 
 }
 
 func ChangePassword(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
-  if acc, e, conflict := account.GetInsecure(r.FormValue("uid")); e != nil {
+  uid, code, pwd1, pwd2 := r.FormValue("uid"), r.FormValue("code"), r.FormValue("pwd1"), r.FormValue("pwd2")
+  if acc, e, conflict := account.GetInsecure(uid); e != nil {
     err = router.NewError(e)
     err.Conflict = conflict
   } else if acc.PasswordCode == nil {
@@ -87,7 +88,7 @@ func ChangePassword(w http.ResponseWriter, r *http.Request, ps httprouter.Params
     err.Data = map[string]interface{}{
       "UID": acc.UID,
     }
-  } else if e, conflict := acc.ChangePassword(r.FormValue("code"), r.FormValue("pwd1"), r.FormValue("pwd2")); err != nil {
+  } else if e, conflict := acc.ChangePassword(code, pwd1, pwd2); err != nil {
     err = router.NewError(e)
     err.Conflict = conflict
   } else {

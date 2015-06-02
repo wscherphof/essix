@@ -15,10 +15,11 @@ func sendEmail (r *http.Request, acc *account.Account, resource, code, extra str
     scheme = "https"
   }
   path := scheme + "://" + r.Host + "/account/" + resource + "/" + acc.UID
+  action := path + "?code=" + code + "&extra=" + string(util.URLEncode([]byte(extra)))
   // TODO: format links as "buttons" instead of hyperlinks
   body := util.BTemplate(resource + "_email", "lang", map[string]interface{}{
-    "action": path + "?code=" + code + "&extra=" + string(util.URLEncode([]byte(extra))),
-    "cancel": path,
+    "action": action,
+    "cancel": action + "&cancel=true",
     "name": acc.Name(),
     "extra": extra,
   })(r)

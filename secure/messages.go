@@ -96,11 +96,11 @@ func init () {
   a("nl", "Wachtwoord kwijt?")
   a("en", "Lost your password?")
 
-  m("Passwordcode successful")
+  m("Password code successful")
   a("nl", "Dank voor je aanvraag om je wachtwoord opnieuw in te stellen. Je krijgt een e-mail van ons met verdere instructies.")
   a("en", "Thanks for your request to reset your password. Please check your email for further instructions.")
 
-  m("Passwordcode cancelled")
+  m("Password code cancelled")
   a("nl", "Opnieuw instellen van het wachtwoord is geannuleerd.")
   a("en", "Password reset is cancelled.")
 
@@ -119,6 +119,34 @@ func init () {
   m("Expires")
   a("nl", "Geldig tot")
   a("en", "Expires")
+
+  m("emailaddress subject")
+  a("nl", "Mijn e-mailadres wijzigen")
+  a("en", "Change my email address")
+
+  m("Change email address")
+  a("nl", "Je e-mailadres wijzigen")
+  a("en", "Change your email address")
+
+  m("Want replace")
+  a("nl", "Ik wil")
+  a("en", "I want to replace")
+
+  m("Replace with")
+  a("nl", "vervangen door")
+  a("en", "with")
+
+  m("Email address code successful")
+  a("nl", "Dank voor je aanvraag om je e-mailadres. Je krijgt op het nieuwe adres een e-mail van ons met verdere instructies.")
+  a("en", "Thanks for your request to change your email address. For further instructions, please check your email on the new address.")
+
+  m("Email address code cancelled")
+  a("nl", "Wijzigen e-mailadres is geannuleerd.")
+  a("en", "Changing email address is cancelled.")
+
+  m("Change email address successful")
+  a("nl", "Je nieuwe e-mailadres is nu actief.")
+  a("en", "Your new email address is activated.")
 
   m("Edit account")
   a("nl", "Mijn account")

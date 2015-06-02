@@ -8,7 +8,7 @@ html lang={{ .lang.Main }}
   body
     p {{ Msg "Hi" }} {{ .Name }},
     p..
-      {{ Msg "Password code successful" }}
+      {{ Msg "Email address code successful" }}
       {{ Msg .Remark }}
     p
       a href=/ {{ Msg "Take me home" }}

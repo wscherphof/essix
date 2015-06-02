@@ -38,4 +38,12 @@ func init () {
   m(ErrPasswordCodeIncorrect.Error())
   a("nl", "Ongeldige aanvraag")
   a("en", "Invalid request")
+
+  m(ErrEmailAddressCodeUnset.Error())
+  a("nl", "Voor dit account is geen aanvraag bekend voor het wijzigen van het e-mailadres")
+  a("en", "This account has no pending request for changing the email address")
+
+  m(ErrEmailAddressCodeIncorrect.Error())
+  a("nl", "Ongeldige aanvraag")
+  a("en", "Invalid request")
 }
