@@ -7,7 +7,7 @@ import (
 	"net/smtp"
 )
 
-const EMAIL_KEY string = "email"
+const key = "email"
 
 type emailConfig struct {
 	EmailAddress string
@@ -21,17 +21,18 @@ type emailConfigStore struct {
 	Value *emailConfig
 }
 
+var ErrNotSentImmediately = errors.New("Message could not be sent immediately; it's queued to get sent shortly")
+
 var (
-	ErrNotSentImmediately = errors.New("Message could not be sent immediately; it's queued to get sent shortly")
-	conf                  *emailConfig
-	auth                  smtp.Auth
+	conf *emailConfig
+	auth smtp.Auth
 )
 
 func init() {
 	store := new(emailConfigStore)
-	if err := config.Get(EMAIL_KEY, store); err != nil {
+	if err := config.Get(key, store); err != nil {
 		log.Println("DEBUG: email.Init() Get error:", err)
-		store.Key = EMAIL_KEY
+		store.Key = key
 		if err := config.Set(store); err != nil {
 			log.Println("DEBUG: email.Init() Set error:", err)
 		} else {
@@ -54,7 +55,7 @@ func Send(subject, message string, recipients ...string) (err error) {
 	return
 }
 
-var mime string = "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n"
+const mime = "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n"
 
 func send(subject, message string, recipients ...string) error {
 	msg := "Subject: " + subject + "\n" + mime + message
