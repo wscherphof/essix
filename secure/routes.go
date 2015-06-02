@@ -5,7 +5,6 @@ import (
 )
 
 func init() {
-  // TODO: change email address (only when logged in, but still w/ an email to the new address)
   router.GET    ("/account", IfSecureHandle(UpdateAccountForm, SignUpForm))
   router.POST   ("/account", SignUp)
   router.PUT    ("/account", SecureHandle(UpdateAccount))
