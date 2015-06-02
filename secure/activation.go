@@ -9,7 +9,7 @@ import (
 )
 
 func activationEmail(r *http.Request, acc *account.Account) (error, string) {
-	return sendEmail(r, acc, "activation", acc.ActivationCode, "")
+	return sendEmail(r, acc.UID, acc.Name(), "activation", acc.ActivationCode, "")
 }
 
 func ActivateForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {

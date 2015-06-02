@@ -19,7 +19,7 @@ var ErrPasswordCodeTimedOut = errors.New("Password code has timed out")
 
 func passwordEmail(r *http.Request, acc *account.Account) (error, string) {
 	format := msg.Msg(r)("Time format")
-	return sendEmail(r, acc, "password", acc.PasswordCode.Value, acc.PasswordCode.Expires.Format(format))
+	return sendEmail(r, acc.UID, acc.Name(), "password", acc.PasswordCode.Value, acc.PasswordCode.Expires.Format(format))
 }
 
 func PasswordCodeForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {

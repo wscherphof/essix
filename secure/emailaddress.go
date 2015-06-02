@@ -9,12 +9,7 @@ import (
 )
 
 func emailAddressEmail(r *http.Request, acc *account.Account) (err error, remark string) {
-	// probably better to change the sendEmail() signature, but hey
-	currentUID := acc.UID
-	acc.UID = acc.NewUID
-	err, remark = sendEmail(r, acc, "emailaddress", acc.EmailAddressCode, "")
-	acc.UID = currentUID
-	return
+	return sendEmail(r, acc.NewUID, acc.Name(), "emailaddress", acc.EmailAddressCode, "")
 }
 
 func EmailAddressCodeForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
