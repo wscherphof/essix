@@ -8,9 +8,13 @@ import (
   "github.com/wscherphof/secure"
 )
 
-func emailAddressEmail(r *http.Request, acc *account.Account) (error, string) {
+func emailAddressEmail(r *http.Request, acc *account.Account) (err error, remark string) {
+  // probably better to change the sendEmail() signature, but hey
+  currentUID := acc.UID
   acc.UID = acc.NewUID
-  return sendEmail(r, acc, "emailaddress", acc.EmailAddressCode, "")
+  err, remark = sendEmail(r, acc, "emailaddress", acc.EmailAddressCode, "")
+  acc.UID = currentUID
+  return
 }
 
 func EmailAddressCodeForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
