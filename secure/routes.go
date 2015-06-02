@@ -30,9 +30,9 @@ func init() {
   router.GET    ("/account/password/:uid",       PasswordForm)
   router.PUT    ("/account/password",            ChangePassword)
   
-  router.GET    ("/account/emailaddresscode",    EmailAddressCodeForm)
-  router.GET    ("/account/emailaddresscode/",   EmailAddressCodeForm)
-  router.POST   ("/account/emailaddresscode",    EmailAddressCode)
-  router.GET    ("/account/emailaddress/:uid",   EmailAddressForm)
-  router.PUT    ("/account/emailaddress",        ChangeEmailAddress)
+  router.GET    ("/account/emailaddresscode",       SecureHandle(EmailAddressCodeForm))
+  router.GET    ("/account/emailaddresscode/",      SecureHandle(EmailAddressCodeForm))
+  router.POST   ("/account/emailaddresscode",       SecureHandle(EmailAddressCode))
+  router.GET    ("/account/emailaddress/*filepath", SecureHandle(EmailAddressForm))
+  router.PUT    ("/account/emailaddress",           SecureHandle(ChangeEmailAddress))
 }
