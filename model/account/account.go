@@ -24,11 +24,11 @@ var (
 	ErrEmailAddressCodeIncorrect = errors.New("Email address code given is incorrect")
 )
 
-const ACCOUNT_TABLE = "account"
+const table = "account"
 
 func init() {
-	if cursor, _ := db.TableCreatePK(ACCOUNT_TABLE, "UID"); cursor != nil {
-		log.Println("INFO: table created:", ACCOUNT_TABLE)
+	if cursor, _ := db.TableCreatePK(table, "UID"); cursor != nil {
+		log.Println("INFO: table created:", table)
 	}
 }
 
@@ -113,7 +113,7 @@ func (a *Account) ValidateFields() (err error) {
 
 func (a *Account) Save() (err error) {
 	a.Modified = time.Now()
-	_, err = db.InsertUpdate(ACCOUNT_TABLE, a)
+	_, err = db.InsertUpdate(table, a)
 	return
 }
 
@@ -201,7 +201,7 @@ func code() string {
 
 func New(uid, pwd1, pwd2 string) (account *Account, err error, conflict bool) {
 	uid = strings.ToLower(uid)
-	if e, found := db.Get(ACCOUNT_TABLE, uid, new(Account)); e != nil {
+	if e, found := db.Get(table, uid, new(Account)); e != nil {
 		err = e
 	} else if found {
 		err, conflict = ErrEmailTaken, true
@@ -223,7 +223,7 @@ func New(uid, pwd1, pwd2 string) (account *Account, err error, conflict bool) {
 
 func get(uid string) (account *Account, err error, conflict bool) {
 	acc := new(Account)
-	if e, found := db.Get(ACCOUNT_TABLE, strings.ToLower(uid), acc); e != nil {
+	if e, found := db.Get(table, strings.ToLower(uid), acc); e != nil {
 		err = e
 	} else if !found {
 		err, conflict = ErrInvalidCredentials, true
