@@ -13,11 +13,11 @@ type secureConfigStore struct {
 	Value *secure.Config
 }
 
-const SECURE_KEY = "secure"
+const key = "secure"
 
 func (s *secureDB) Fetch() (conf *secure.Config) {
 	store := new(secureConfigStore)
-	if err := config.Get(SECURE_KEY, store); err != nil {
+	if err := config.Get(key, store); err != nil {
 		log.Println("WARNING: SecureDB.Fetch() failed with:", err)
 	} else {
 		conf = store.Value
@@ -27,7 +27,7 @@ func (s *secureDB) Fetch() (conf *secure.Config) {
 
 func (s *secureDB) Upsert(conf *secure.Config) {
 	if err := config.Set(&secureConfigStore{
-		Key:   SECURE_KEY,
+		Key:   key,
 		Value: conf,
 	}); err != nil {
 		log.Panicln("ERROR: SecureDB.Upsert():", err)
