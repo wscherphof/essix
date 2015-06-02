@@ -6,8 +6,10 @@ import (
 	"time"
 )
 
-const QUEUE_TABLE string = "email_queue"
-const QUEUE_TIMEOUT time.Duration = 60 * time.Second
+const (
+	table   = "email_queue"
+	timeout = 60 * time.Second
+)
 
 type emailJob struct {
 	ID         string `gorethink:"id,omitempty"`
@@ -19,19 +21,19 @@ type emailJob struct {
 
 // TODO: init()?
 func initQueue() {
-	if cursor, _ := db.TableCreate(QUEUE_TABLE); cursor != nil {
-		log.Println("INFO: table created:", QUEUE_TABLE)
+	if cursor, _ := db.TableCreate(table); cursor != nil {
+		log.Println("INFO: table created:", table)
 	}
 	go func() {
 		for {
 			processQueue()
-			time.Sleep(QUEUE_TIMEOUT)
+			time.Sleep(timeout)
 		}
 	}()
 }
 
 func enQueue(subject, message string, recipients ...string) (err error) {
-	_, err = db.Insert(QUEUE_TABLE, &emailJob{
+	_, err = db.Insert(table, &emailJob{
 		Created:    time.Now(),
 		Subject:    subject,
 		Message:    message,
@@ -41,19 +43,19 @@ func enQueue(subject, message string, recipients ...string) (err error) {
 }
 
 func deQueue(job *emailJob) {
-	db.Delete(QUEUE_TABLE, job.ID)
+	db.Delete(table, job.ID)
 }
 
 func processQueue() {
-	if cursor, err := db.All(QUEUE_TABLE); err != nil {
-		log.Println("ERROR: reading"+QUEUE_TABLE+":", err)
+	if cursor, err := db.All(table); err != nil {
+		log.Println("ERROR: reading"+table+":", err)
 	} else {
 		job := new(emailJob)
 		for cursor.Next(job) {
 			processJob(job)
 		}
 		if cursor.Err() != nil {
-			log.Println("ERROR: looping through"+QUEUE_TABLE+":", err)
+			log.Println("ERROR: looping through"+table+":", err)
 		}
 	}
 }
