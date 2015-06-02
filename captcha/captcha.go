@@ -7,8 +7,10 @@ import (
 	"time"
 )
 
-const CAPTCHA_TABLE string = "captcha"
-const TIMEOUT time.Duration = 15 * time.Minute
+const (
+	table   = "captcha"
+	timeout = 15 * time.Minute
+)
 
 type captchaType struct {
 	ID      string `gorethink:"id"`
@@ -19,21 +21,21 @@ type captchaType struct {
 type store struct{}
 
 func (s *store) Set(id string, digits []byte) {
-	if _, err := db.Insert(CAPTCHA_TABLE, &captchaType{
+	if _, err := db.Insert(table, &captchaType{
 		ID:      id,
 		Digits:  digits,
 		Created: time.Now().Unix(),
 	}); err != nil {
-		log.Println("ERROR: Insert failed in table "+CAPTCHA_TABLE+":", err)
+		log.Println("ERROR: Insert failed in table "+table+":", err)
 	}
 }
 
 func (s *store) Get(id string, clear bool) (digits []byte) {
 	c := new(captchaType)
-	if err, found := db.Get(CAPTCHA_TABLE, id, c); err != nil {
-		log.Println("ERROR: Get failed in table "+CAPTCHA_TABLE+":", err)
+	if err, found := db.Get(table, id, c); err != nil {
+		log.Println("ERROR: Get failed in table "+table+":", err)
 	} else if !found {
-		log.Println("INFO: Not found in table "+CAPTCHA_TABLE+":", id)
+		log.Println("INFO: Not found in table "+table+":", id)
 	} else {
 		digits = c.Digits
 	}
@@ -43,20 +45,20 @@ func (s *store) Get(id string, clear bool) (digits []byte) {
 var Server = captcha.Server(captcha.StdWidth, captcha.StdHeight)
 
 func init() {
-	if cursor, _ := db.TableCreate(CAPTCHA_TABLE); cursor != nil {
-		log.Println("INFO: table created:", CAPTCHA_TABLE)
-		if _, err := db.IndexCreate(CAPTCHA_TABLE, "Created"); err != nil {
-			log.Println("ERROR: failed to create index:", CAPTCHA_TABLE, err)
+	if cursor, _ := db.TableCreate(table); cursor != nil {
+		log.Println("INFO: table created:", table)
+		if _, err := db.IndexCreate(table, "Created"); err != nil {
+			log.Println("ERROR: failed to create index:", table, err)
 		} else {
-			log.Println("INFO: index created:", CAPTCHA_TABLE)
+			log.Println("INFO: index created:", table)
 		}
 	}
 	captcha.SetCustomStore(new(store))
 	go func() {
 		for {
 			limit := time.Now().Unix()
-			time.Sleep(TIMEOUT)
-			if _, err := db.DeleteTerm(db.Between(CAPTCHA_TABLE, "Created", nil, limit, true, true)); err != nil {
+			time.Sleep(timeout)
+			if _, err := db.DeleteTerm(db.Between(table, "Created", nil, limit, true, true)); err != nil {
 				log.Println("WARNING: captcha prune failed:", err)
 			}
 		}
