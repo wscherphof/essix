@@ -1,7 +1,12 @@
 label {{ Msg "Captcha" }}*
-  br
-  img id=captchaImg src="/captcha/{{ .CaptchaId }}.png" alt={{ Msg "Captcha image" }}
-  / TODO: add audio
   input id=captchaSolution type=number name=captchaSolution placeholder=975431 required= size=35
+  br
+  img id=captchaImg src=/captcha/{{ .CaptchaId }}.png alt={{ Msg "Captcha image" }}
+  br
+  audio id=audio controls= preload=none loop= src=/captcha/{{ .CaptchaId }}.wav
+    You browser doesn't support audio.
+    a href=/captcha/download/{{ .CaptchaId }}.wav
+      Download file
+    to play it in an external player.
   input type=hidden name=captchaId value={{ .CaptchaId }}
 br
