@@ -11,6 +11,32 @@ import (
 	"strings"
 )
 
+func SignUpForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
+	return router.Template("signup", "", map[string]interface{}{
+		"Countries": data.Countries(),
+		"CaptchaId": captcha.New(),
+	})(w, r, ps)
+}
+
+func SignUp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
+	if !captcha.VerifyString(r.FormValue("captchaId"), r.FormValue("captchaSolution")) {
+		err = router.NewError(captcha.ErrNotFound, "signup")
+		err.Conflict = true
+	} else if acc, e, conflict := account.New(r.FormValue("uid"), r.FormValue("pwd1"), r.FormValue("pwd2")); e != nil {
+		err = router.NewError(e, "signup")
+		err.Conflict = conflict
+	} else if e, remark := activationEmail(r, acc); e != nil {
+		err = router.NewError(e, "signup")
+	} else {
+		router.Template("signup_success", "", map[string]interface{}{
+			"uid":    acc.UID,
+			"name":   acc.Name(),
+			"remark": remark,
+		})(w, r, ps)
+	}
+	return
+}
+
 func UpdateAccountForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
 	acc := Authentication(r)
 	return router.Template("account", "", map[string]interface{}{
@@ -37,32 +63,6 @@ func UpdateAccount(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 	} else {
 		secure.LogIn(w, r, acc, false)
 		http.Redirect(w, r, r.URL.Path, http.StatusSeeOther)
-	}
-	return
-}
-
-func SignUpForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
-	return router.Template("signup", "", map[string]interface{}{
-		"Countries": data.Countries(),
-		"CaptchaId": captcha.New(),
-	})(w, r, ps)
-}
-
-func SignUp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
-	if !captcha.VerifyString(r.FormValue("captchaId"), r.FormValue("captchaSolution")) {
-		err = router.NewError(captcha.ErrNotFound, "signup")
-		err.Conflict = true
-	} else if acc, e, conflict := account.New(r.FormValue("uid"), r.FormValue("pwd1"), r.FormValue("pwd2")); e != nil {
-		err = router.NewError(e, "signup")
-		err.Conflict = conflict
-	} else if e, remark := activationEmail(r, acc); e != nil {
-		err = router.NewError(e, "signup")
-	} else {
-		router.Template("signup_success", "", map[string]interface{}{
-			"uid":    acc.UID,
-			"name":   acc.Name(),
-			"remark": remark,
-		})(w, r, ps)
 	}
 	return
 }
