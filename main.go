@@ -10,6 +10,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 )
 
 var (
@@ -30,7 +31,14 @@ func main() {
 
 	// Express server serves static resources through https, without application handler overhead
 	go func() {
-		http.Handle("/static/", http.FileServer(http.Dir("")))
+		fileServer := http.FileServer(http.Dir(""))
+		http.HandleFunc("/static/", func(w http.ResponseWriter, r *http.Request) {
+			if strings.HasSuffix(r.URL.Path, "/") {
+				http.NotFound(w, r)
+			} else {
+				fileServer.ServeHTTP(w, r)
+			}
+		})
 		http.Handle("/captcha/", captcha.Server)
 		log.Println("INFO: Express server     @", expressAddress)
 		log.Fatal(http.ListenAndServeTLS(expressAddress, "cert.pem", "key.pem",
