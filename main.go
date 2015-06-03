@@ -12,34 +12,41 @@ import (
 	"os"
 )
 
-func main() {
-	router.GET("/", secure.IfSecureHandle(
-		router.Template("home", "home_loggedin", nil),
-		router.Template("home", "home_loggedout", nil)))
+var (
+	applicationAddress = env.Get("HTTP_HOST") + env.Get("HTTPS_PORT")
+	expressAddress     = env.Get("HTTP_HOST") + env.Get("EXPRESS_PORT")
+	redirectAddress    = env.Get("HTTP_HOST") + env.Get("HTTP_PORT")
+)
 
+func main() {
+	// Redirect server serves http & redirects everything to the application server's https address
 	go func() {
 		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-			http.Redirect(w, r, "https://"+env.Get("HTTP_HOST")+env.Get("HTTPS_PORT")+r.URL.Path, http.StatusMovedPermanently)
+			http.Redirect(w, r, "https://"+applicationAddress+r.URL.Path, http.StatusMovedPermanently)
 		})
-		address := env.Get("HTTP_HOST") + env.Get("HTTP_PORT")
-		log.Println("INFO: Redirect server @", address)
-		log.Fatal(http.ListenAndServe(address, nil))
+		log.Println("INFO: Redirect server    @", redirectAddress)
+		log.Fatal(http.ListenAndServe(redirectAddress, nil))
 	}()
 
+	// Express server serves static resources through https, without application handler overhead
 	go func() {
 		http.Handle("/static/", http.FileServer(http.Dir("")))
 		http.Handle("/captcha/", captcha.Server)
-		address := env.Get("HTTP_HOST") + env.Get("EXPRESS_PORT")
-		log.Println("INFO: Express server  @", address)
-		log.Fatal(http.ListenAndServeTLS(address, "cert.pem", "key.pem",
+		log.Println("INFO: Express server     @", expressAddress)
+		log.Fatal(http.ListenAndServeTLS(expressAddress, "cert.pem", "key.pem",
 			handlers.CompressHandler(
 				handlers.CombinedLoggingHandler(os.Stdout,
 					http.DefaultServeMux))))
 	}()
 
-	address := env.Get("HTTP_HOST") + env.Get("HTTPS_PORT")
-	log.Println("INFO: HTTPS server    @", address)
-	log.Fatal(http.ListenAndServeTLS(address, "cert.pem", "key.pem",
+	// Home is the application's start page
+	router.GET("/", secure.IfSecureHandle(
+		router.Template("home", "home_loggedin", nil),
+		router.Template("home", "home_loggedout", nil)))
+
+	// Application server wraps and handles application routes
+	log.Println("INFO: Application server @", applicationAddress)
+	log.Fatal(http.ListenAndServeTLS(applicationAddress, "cert.pem", "key.pem",
 		context.ClearHandler(
 			secure.AuthenticationHandler(
 				handlers.HTTPMethodOverrideHandler(
