@@ -1,14 +1,8 @@
-= doctype html
-html lang={{ .lang.Main }}
-  head
-    meta charset=utf-8
-    title Expeertise
-    link rel=icon href=/static/favicon.ico type=image/x-icon
-    link rel="shortcut icon" href=/static/favicon.ico type=image/x-icon
-  body
-    p {{ Msg "Change email address" }}
-    p {{ Msg "Want replace" }} "{{ .Account.UID }}" {{ Msg "Replace with" }} "{{ .Account.NewUID }}"
-    form method=POST action=/account/emailaddress
-      input type=hidden name=_method value=PUT
-      input type=hidden name=code value={{ .Account.EmailAddressCode }}
-      input type=submit value={{ Msg "Confirm" }}
+= include includes/head .
+body
+  p {{ Msg "Change email address" }}
+  p {{ Msg "Want replace" }} "{{ .Account.UID }}" {{ Msg "Replace with" }} "{{ .Account.NewUID }}"
+  form method=POST action=/account/emailaddress
+    input type=hidden name=_method value=PUT
+    input type=hidden name=code value={{ .Account.EmailAddressCode }}
+    input type=submit value={{ Msg "Confirm" }}

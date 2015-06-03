@@ -5,9 +5,3 @@ html lang={{ .lang.Main }}
     title Expeertise
     link rel=icon href={{ Express "/static/favicon.ico" }} type=image/x-icon
     link rel="shortcut icon" href={{ Express "/static/favicon.ico" }} type=image/x-icon
-  body
-    p {{ Express "" }}
-    p
-      = yield account
-    p
-      = yield session

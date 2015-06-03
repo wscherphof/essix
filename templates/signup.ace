@@ -1,31 +1,25 @@
-= doctype html
-html lang={{ .lang.Main }}
-  head
-    meta charset=utf-8
-    title Expeertise
-    link rel=icon href=/static/favicon.ico type=image/x-icon
-    link rel="shortcut icon" href=/static/favicon.ico type=image/x-icon
-  body
-    p {{ Msg "Sign up" }}
-    form method=POST action=/account onsubmit="return validate(this)"
-      label {{ Msg "Email" }}*
-        input id=uid type=email name=uid placeholder=email@provider.com required= size=35
-      br
-      label {{ Msg "Password" }}*
-        input id=pwd1 type=password name=pwd1 placeholder=******** required= size=35
-      br
-      label {{ Msg "Repeat password" }}*
-        input id=pwd2 type=password name=pwd2 placeholder=******** required= size=35
-      br
-      = include includes/captcha .
-      input type=submit
-    = javascript
-      function validate (form) {
-        if (form['pwd1'].value !== form['pwd2'].value) {
-          alert('{{ Msg "Passwords not equal" }}')
-          form['pwd2'].value = '';
-          form['pwd1'].value = '';
-          form['pwd1'].focus();
-          return false;
-        }
+= include includes/head .
+body
+  p {{ Msg "Sign up" }}
+  form method=POST action=/account onsubmit="return validate(this)"
+    label {{ Msg "Email" }}*
+      input id=uid type=email name=uid placeholder=email@provider.com required= size=35
+    br
+    label {{ Msg "Password" }}*
+      input id=pwd1 type=password name=pwd1 placeholder=******** required= size=35
+    br
+    label {{ Msg "Repeat password" }}*
+      input id=pwd2 type=password name=pwd2 placeholder=******** required= size=35
+    br
+    = include includes/captcha .
+    input type=submit
+  = javascript
+    function validate (form) {
+      if (form['pwd1'].value !== form['pwd2'].value) {
+        alert('{{ Msg "Passwords not equal" }}')
+        form['pwd2'].value = '';
+        form['pwd1'].value = '';
+        form['pwd1'].focus();
+        return false;
       }
+    }

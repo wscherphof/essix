@@ -1,16 +1,10 @@
-= doctype html
-html lang={{ .lang.Main }}
-  head
-    meta charset=utf-8
-    title Expeertise
-    link rel=icon href=/static/favicon.ico type=image/x-icon
-    link rel="shortcut icon" href=/static/favicon.ico type=image/x-icon
-  body
-    p {{ Msg "Hi" }} {{ .Name }},
-    p..
-      {{ Msg "Resend successful" }}
-      {{ Msg .Remark }}
-    p
-      a href=/account/activation/{{ .UID }} {{ Msg "activation subject" }}
-    p
-      a href=/ {{ Msg "Take me home" }}
+= include includes/head .
+body
+  p {{ Msg "Hi" }} {{ .Name }},
+  p..
+    {{ Msg "Resend successful" }}
+    {{ Msg .Remark }}
+  p
+    a href=/account/activation/{{ .UID }} {{ Msg "activation subject" }}
+  p
+    a href=/ {{ Msg "Take me home" }}

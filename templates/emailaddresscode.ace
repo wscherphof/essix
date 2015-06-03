@@ -1,16 +1,10 @@
-= doctype html
-html lang={{ .lang.Main }}
-  head
-    meta charset=utf-8
-    title Expeertise
-    link rel=icon href=/static/favicon.ico type=image/x-icon
-    link rel="shortcut icon" href=/static/favicon.ico type=image/x-icon
-  body
-    p {{ Msg "emailaddress subject" }}
-    form method=POST action=/account/emailaddresscode
-      label {{ Msg "Current" }}: {{ .UID }}
-      br
-      label {{ Msg "New" }}*
-        input id=newuid type=email name=newuid placeholder=email@provider.com required= size=35
-      br
-      input type=submit
+= include includes/head .
+body
+  p {{ Msg "emailaddress subject" }}
+  form method=POST action=/account/emailaddresscode
+    label {{ Msg "Current" }}: {{ .UID }}
+    br
+    label {{ Msg "New" }}*
+      input id=newuid type=email name=newuid placeholder=email@provider.com required= size=35
+    br
+    input type=submit
