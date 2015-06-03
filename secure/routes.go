@@ -14,6 +14,7 @@ func init() {
 	router.POST("/session", LogIn)
 	router.DELETE("/session", LogOut)
 
+	// TODO: test w/ & wo/ trailing /
 	router.GET("/account/activation", ActivateForm)
 	router.GET("/account/activation/", ActivateForm)
 	router.GET("/account/activation/:uid", ActivateForm)
