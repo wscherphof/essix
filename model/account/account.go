@@ -42,7 +42,7 @@ func newPassword(pwd1, pwd2 string) (pwd *password, err error) {
 		err = ErrPasswordEmpty
 	} else if pwd1 != pwd2 {
 		err = ErrPasswordsNotEqual
-	} else if hash, e := bcrypt.GenerateFromPassword([]byte(pwd1), bcrypt.DefaultCost); err != nil {
+	} else if hash, e := bcrypt.GenerateFromPassword([]byte(pwd1), bcrypt.DefaultCost); e != nil {
 		err = e
 	} else {
 		pwd = &password{

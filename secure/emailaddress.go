@@ -56,7 +56,7 @@ func ChangeEmailAddress(w http.ResponseWriter, r *http.Request, ps httprouter.Pa
 	if acc.EmailAddressCode == "" {
 		err = router.NewError(account.ErrEmailAddressCodeUnset)
 		err.Conflict = true
-	} else if e, conflict := acc.ChangeEmailAddress(code); err != nil {
+	} else if e, conflict := acc.ChangeEmailAddress(code); e != nil {
 		err = router.NewError(e)
 		err.Conflict = conflict
 	} else {

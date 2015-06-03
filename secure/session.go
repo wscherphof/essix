@@ -24,7 +24,7 @@ func LogIn(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *r
 		err.Conflict = conflict
 	} else {
 		complete := (acc.ValidateFields() == nil)
-		if e := secure.LogIn(w, r, acc, complete); err != nil {
+		if e := secure.LogIn(w, r, acc, complete); e != nil {
 			err = router.NewError(e, "login")
 		} else if !complete {
 			http.Redirect(w, r, "/account", http.StatusSeeOther)

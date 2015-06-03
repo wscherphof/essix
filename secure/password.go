@@ -89,7 +89,7 @@ func ChangePassword(w http.ResponseWriter, r *http.Request, ps httprouter.Params
 		err.Data = map[string]interface{}{
 			"UID": acc.UID,
 		}
-	} else if e, conflict := acc.ChangePassword(code, pwd1, pwd2); err != nil {
+	} else if e, conflict := acc.ChangePassword(code, pwd1, pwd2); e != nil {
 		err = router.NewError(e)
 		err.Conflict = conflict
 	} else {
