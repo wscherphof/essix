@@ -19,7 +19,7 @@ func LogIn(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *r
 	if !captcha.VerifyString(r.FormValue("captchaId"), r.FormValue("captchaSolution")) {
 		err = router.NewError(captcha.ErrNotFound, "login")
 		err.Conflict = true
-	} else if acc, e, conflict := account.Get(r.FormValue("uid"), r.FormValue("pwd")); err != nil {
+	} else if acc, e, conflict := account.Get(r.FormValue("uid"), r.FormValue("pwd")); e != nil {
 		err = router.NewError(e, "login")
 		err.Conflict = conflict
 	} else {
