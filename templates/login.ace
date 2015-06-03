@@ -17,7 +17,7 @@ html lang={{ .lang.Main }}
       = include includes/captcha .
       input type=submit
     p
-      a href=/account/passwordcode/{{ .uid }} {{ Msg "Forgot password" }}
-      span &nbsp;
+      a href=/account/passwordcode {{ Msg "Forgot password" }}
+      {{ " " }}
       a href=/account {{ Msg "Sign up" }}
 
