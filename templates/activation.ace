@@ -7,11 +7,11 @@ body
       input id=uid type=email name=uid value={{ .UID }} placeholder=email@provider.com required= size=35
     br
     label {{ Msg "Activation code" }}*
-      input id=code type=text name=code value={{ .cCde }} placeholder=zc-968YEX3VYu_YmdA7ynBp_d2cydmR1MRRqmglh1R0= required= size=35
+      input id=code type=text name=code value={{ .Code }} placeholder=zc-968YEX3VYu_YmdA7ynBp_d2cydmR1MRRqmglh1R0= required= size=35
     br
     input type=submit
-  {{ if eq .code "" }}
+  {{ if eq .Code "" }}
   p {{ Msg "Activation code source" }}
     br
-    a href=/account/activationcode/{{ .uid }} {{ Msg "Resend activation code" }}
+    a href=/account/activationcode/{{ .UID }} {{ Msg "Resend activation code" }}
   {{ end }}
