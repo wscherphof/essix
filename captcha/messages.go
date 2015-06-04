@@ -6,17 +6,15 @@ import (
 )
 
 func init() {
-	var m, a = msg.Definition()
+	msg.New("Captcha").
+		Add("nl", "Typ de code zoals hieronder afgebeeld").
+		Add("en", "Enter the code as depicted below")
 
-	m("Captcha")
-	a("nl", "Typ de code zoals hieronder afgebeeld")
-	a("en", "Enter the code as depicted below")
+	msg.New("Captcha image").
+		Add("nl", "Afbeelding van captchacode").
+		Add("en", "Image of captcha code")
 
-	m("Captcha image")
-	a("nl", "Afbeelding van captchacode")
-	a("en", "Image of captcha code")
-
-	m(captcha.ErrNotFound.Error())
-	a("nl", "De 'captcha' code ontbreekt of is onjuist of verlopen")
-	a("en", "The 'captcha' code is missing or incorrect or expired")
+	msg.New(captcha.ErrNotFound.Error()).
+		Add("nl", "De 'captcha' code ontbreekt of is onjuist of verlopen").
+		Add("en", "The 'captcha' code is missing or incorrect or expired")
 }

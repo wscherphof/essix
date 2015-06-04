@@ -6,157 +6,155 @@ import (
 )
 
 func init() {
-	var m, a = msg.Definition()
+	msg.New(secure.ErrNoTLS.Error()).
+		Add("nl", "Voor inloggen is een vercijferde verbinding (https) vereist").
+		Add("en", "Logging in requires an encrypted connection (https)")
 
-	m(secure.ErrNoTLS.Error())
-	a("nl", "Voor inloggen is een vercijferde verbinding (https) vereist")
-	a("en", "Logging in requires an encrypted connection (https)")
+	msg.New(secure.ErrTokenNotSaved.Error()).
+		Add("nl", "Het lukt de webserver niet om de inlogsessie aan te maken :-(").
+		Add("en", "The server is failing to create the log in session :-(")
 
-	m(secure.ErrTokenNotSaved.Error())
-	a("nl", "Het lukt de webserver niet om de inlogsessie aan te maken :-(")
-	a("en", "The server is failing to create the log in session :-(")
+	msg.New("Email").
+		Add("nl", "E-mailadres").
+		Add("en", "Email address")
 
-	m("Email")
-	a("nl", "E-mailadres")
-	a("en", "Email address")
+	msg.New("Password").
+		Add("nl", "Wachtwoord").
+		Add("en", "Password")
 
-	m("Password")
-	a("nl", "Wachtwoord")
-	a("en", "Password")
+	msg.New("Log in").
+		Add("nl", "Inloggen").
+		Add("en", "Log in")
 
-	m("Log in")
-	a("nl", "Inloggen")
-	a("en", "Log in")
+	msg.New("Log out").
+		Add("nl", "Uitloggen").
+		Add("en", "Log out")
 
-	m("Log out")
-	a("nl", "Uitloggen")
-	a("en", "Log out")
+	msg.New("Sign up").
+		Add("nl", "Een account aanmaken").
+		Add("en", "Sign up")
 
-	m("Sign up")
-	a("nl", "Een account aanmaken")
-	a("en", "Sign up")
+	msg.New("Repeat password").
+		Add("nl", "Wachtwoord nogmaals").
+		Add("en", "Repeat password")
 
-	m("Repeat password")
-	a("nl", "Wachtwoord nogmaals")
-	a("en", "Repeat password")
+	msg.New("Passwords not equal").
+		Add("nl", "De wachtwoorden zijn niet hetzelfde").
+		Add("en", "Passwords don't match")
 
-	m("Passwords not equal")
-	a("nl", "De wachtwoorden zijn niet hetzelfde")
-	a("en", "Passwords don't match")
+	msg.New("Country").
+		Add("nl", "Land").
+		Add("en", "Country")
 
-	m("Country")
-	a("nl", "Land")
-	a("en", "Country")
+	msg.New("Postcode").
+		Add("nl", "Postcode").
+		Add("en", "Postal code")
 
-	m("Postcode")
-	a("nl", "Postcode")
-	a("en", "Postal code")
+	msg.New("First name").
+		Add("nl", "Voornaam").
+		Add("en", "First name")
 
-	m("First name")
-	a("nl", "Voornaam")
-	a("en", "First name")
+	msg.New("Last name").
+		Add("nl", "Achternaam").
+		Add("en", "Last name")
 
-	m("Last name")
-	a("nl", "Achternaam")
-	a("en", "Last name")
+	msg.New("Signup successful").
+		Add("nl", "Bedankt voor het aanmelden bij Expeertise! Voordat je kan inloggen moet je account nog geactiveerd worden; we hebben je een e-mail gestuurd met de activatiecode.").
+		Add("en", "Thanks for signing up with Expeertise! Before you can log in, your account needs to be activated; we've sent you an email containing the activation code.")
 
-	m("Signup successful")
-	a("nl", "Bedankt voor het aanmelden bij Expeertise! Voordat je kan inloggen moet je account nog geactiveerd worden; we hebben je een e-mail gestuurd met de activatiecode.")
-	a("en", "Thanks for signing up with Expeertise! Before you can log in, your account needs to be activated; we've sent you an email containing the activation code.")
+	msg.New("activation subject").
+		Add("nl", "Je account activeren").
+		Add("en", "Activate your account")
 
-	m("activation subject")
-	a("nl", "Je account activeren")
-	a("en", "Activate your account")
+	msg.New("Activation code").
+		Add("nl", "Activeringscode").
+		Add("en", "Activation code")
 
-	m("Activation code")
-	a("nl", "Activeringscode")
-	a("en", "Activation code")
+	msg.New("Activation code source").
+		Add("nl", "De activeringscode is je per e-mail toegestuurd").
+		Add("en", "The activation code was sent to you by email")
 
-	m("Activation code source")
-	a("nl", "De activeringscode is je per e-mail toegestuurd")
-	a("en", "The activation code was sent to you by email")
+	msg.New("Resend activation code").
+		Add("nl", "Stuur me de activeringscode opnieuw").
+		Add("en", "Resend me the activation code")
 
-	m("Resend activation code")
-	a("nl", "Stuur me de activeringscode opnieuw")
-	a("en", "Resend me the activation code")
+	msg.New("Activate successful").
+		Add("nl", "Bedankt voor het activeren van je account bij Expeertise! Je registratie is compleet; je kan nu inloggen.").
+		Add("en", "Thanks for activating your account with Expeertise! Your registration is complete; you are now able to log in.")
 
-	m("Activate successful")
-	a("nl", "Bedankt voor het activeren van je account bij Expeertise! Je registratie is compleet; je kan nu inloggen.")
-	a("en", "Thanks for activating your account with Expeertise! Your registration is complete; you are now able to log in.")
+	msg.New("Resend successful").
+		Add("nl", "Dank voor je aanvraag. Controleer je e-mail voor de activatiecode.").
+		Add("en", "Thanks for your request. Check your email for the activation code.")
 
-	m("Resend successful")
-	a("nl", "Dank voor je aanvraag. Controleer je e-mail voor de activatiecode.")
-	a("en", "Thanks for your request. Check your email for the activation code.")
+	msg.New("password subject").
+		Add("nl", "Mijn wachtwoord opnieuw instellen").
+		Add("en", "Reset my password")
 
-	m("password subject")
-	a("nl", "Mijn wachtwoord opnieuw instellen")
-	a("en", "Reset my password")
+	msg.New("Forgot password").
+		Add("nl", "Wachtwoord kwijt?").
+		Add("en", "Lost your password?")
 
-	m("Forgot password")
-	a("nl", "Wachtwoord kwijt?")
-	a("en", "Lost your password?")
+	msg.New("Password code successful").
+		Add("nl", "Dank voor je aanvraag om je wachtwoord opnieuw in te stellen. Je krijgt een e-mail van ons met verdere instructies.").
+		Add("en", "Thanks for your request to reset your password. Please check your email for further instructions.")
 
-	m("Password code successful")
-	a("nl", "Dank voor je aanvraag om je wachtwoord opnieuw in te stellen. Je krijgt een e-mail van ons met verdere instructies.")
-	a("en", "Thanks for your request to reset your password. Please check your email for further instructions.")
+	msg.New("Password code cancelled").
+		Add("nl", "Opnieuw instellen van het wachtwoord is geannuleerd.").
+		Add("en", "Password reset is cancelled.")
 
-	m("Password code cancelled")
-	a("nl", "Opnieuw instellen van het wachtwoord is geannuleerd.")
-	a("en", "Password reset is cancelled.")
+	msg.New("Create new password").
+		Add("nl", "Maak een nieuw wachtwoord aan").
+		Add("en", "Create a new password")
 
-	m("Create new password")
-	a("nl", "Maak een nieuw wachtwoord aan")
-	a("en", "Create a new password")
+	msg.New(ErrPasswordCodeTimedOut.Error()).
+		Add("nl", "De geldigheidstermijn van de aanvraag voor het opnieuw instellen van het wachtwoord is verstreken").
+		Add("en", "The request for a password reset is expired")
 
-	m(ErrPasswordCodeTimedOut.Error())
-	a("nl", "De geldigheidstermijn van de aanvraag voor het opnieuw instellen van het wachtwoord is verstreken")
-	a("en", "The request for a password reset is expired")
+	msg.New("Change password successful").
+		Add("nl", "Je nieuwe wachtwoord is nu actief.").
+		Add("en", "Your new password is activated.")
 
-	m("Change password successful")
-	a("nl", "Je nieuwe wachtwoord is nu actief.")
-	a("en", "Your new password is activated.")
+	msg.New("Expires").
+		Add("nl", "Geldig tot").
+		Add("en", "Expires")
 
-	m("Expires")
-	a("nl", "Geldig tot")
-	a("en", "Expires")
+	msg.New("emailaddress subject").
+		Add("nl", "Mijn e-mailadres wijzigen").
+		Add("en", "Change my email address")
 
-	m("emailaddress subject")
-	a("nl", "Mijn e-mailadres wijzigen")
-	a("en", "Change my email address")
+	msg.New("Change email address").
+		Add("nl", "Je e-mailadres wijzigen").
+		Add("en", "Change your email address")
 
-	m("Change email address")
-	a("nl", "Je e-mailadres wijzigen")
-	a("en", "Change your email address")
+	msg.New("Want replace").
+		Add("nl", "Ik wil").
+		Add("en", "I want to replace")
 
-	m("Want replace")
-	a("nl", "Ik wil")
-	a("en", "I want to replace")
+	msg.New("Replace with").
+		Add("nl", "vervangen door").
+		Add("en", "with")
 
-	m("Replace with")
-	a("nl", "vervangen door")
-	a("en", "with")
+	msg.New("Email address code successful").
+		Add("nl", "Dank voor je aanvraag om je e-mailadres. Je krijgt op het nieuwe adres een e-mail van ons met verdere instructies.").
+		Add("en", "Thanks for your request to change your email address. For further instructions, please check your email on the new address.")
 
-	m("Email address code successful")
-	a("nl", "Dank voor je aanvraag om je e-mailadres. Je krijgt op het nieuwe adres een e-mail van ons met verdere instructies.")
-	a("en", "Thanks for your request to change your email address. For further instructions, please check your email on the new address.")
+	msg.New("Email address code cancelled").
+		Add("nl", "Wijzigen e-mailadres is geannuleerd.").
+		Add("en", "Changing email address is cancelled.")
 
-	m("Email address code cancelled")
-	a("nl", "Wijzigen e-mailadres is geannuleerd.")
-	a("en", "Changing email address is cancelled.")
+	msg.New("Change email address successful").
+		Add("nl", "Je nieuwe e-mailadres is nu actief.").
+		Add("en", "Your new email address is activated.")
 
-	m("Change email address successful")
-	a("nl", "Je nieuwe e-mailadres is nu actief.")
-	a("en", "Your new email address is activated.")
+	msg.New("Edit account").
+		Add("nl", "Mijn account").
+		Add("en", "My account details")
 
-	m("Edit account")
-	a("nl", "Mijn account")
-	a("en", "My account details")
+	msg.New("Complete account").
+		Add("nl", "We hebben nog een paar laatste gegevens van je nodig").
+		Add("en", "Please provide the following concluding details")
 
-	m("Complete account")
-	a("nl", "We hebben nog een paar laatste gegevens van je nodig")
-	a("en", "Please provide the following concluding details")
-
-	m("Star is required")
-	a("nl", "Alleen de velden met een * zijn verplicht")
-	a("en", "Only the fields with a * are required")
+	msg.New("Star is required").
+		Add("nl", "Alleen de velden met een * zijn verplicht").
+		Add("en", "Only the fields with a * are required")
 }

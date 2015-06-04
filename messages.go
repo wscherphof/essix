@@ -5,49 +5,47 @@ import (
 )
 
 func init() {
-	var m, a = msg.Definition()
+	msg.New("").
+		Add("nl", "").
+		Add("en", "")
 
-	m("")
-	a("nl", "")
-	a("en", "")
+	msg.New("Hi").
+		Add("nl", "Hoi").
+		Add("en", "Hi")
 
-	m("Hi")
-	a("nl", "Hoi")
-	a("en", "Hi")
+	msg.New("Take me home").
+		Add("nl", "Naar de startpagina").
+		Add("en", "To the home page")
 
-	m("Take me home")
-	a("nl", "Naar de startpagina")
-	a("en", "To the home page")
+	msg.New("Try again").
+		Add("nl", "Opnieuw proberen").
+		Add("en", "Try again")
 
-	m("Try again")
-	a("nl", "Opnieuw proberen")
-	a("en", "Try again")
+	msg.New("Time format").
+		Add("nl", "2-1-2006, 15.04 u. (MST)").
+		Add("en", "1/2/2006 at 3:04pm (MST)")
 
-	m("Time format")
-	a("nl", "2-1-2006, 15.04 u. (MST)")
-	a("en", "1/2/2006 at 3:04pm (MST)")
+	msg.New("Last modified").
+		Add("nl", "Laatste wijziging").
+		Add("en", "Last modified")
 
-	m("Last modified")
-	a("nl", "Laatste wijziging")
-	a("en", "Last modified")
+	msg.New("Save changes").
+		Add("nl", "Wijzigingen opslaan").
+		Add("en", "Save changes")
 
-	m("Save changes")
-	a("nl", "Wijzigingen opslaan")
-	a("en", "Save changes")
+	msg.New("Current").
+		Add("nl", "Huidig").
+		Add("en", "Current")
 
-	m("Current")
-	a("nl", "Huidig")
-	a("en", "Current")
+	msg.New("New").
+		Add("nl", "Nieuw").
+		Add("en", "New")
 
-	m("New")
-	a("nl", "Nieuw")
-	a("en", "New")
+	msg.New("change").
+		Add("nl", "wijzigen").
+		Add("en", "change")
 
-	m("change")
-	a("nl", "wijzigen")
-	a("en", "change")
-
-	m("Confirm")
-	a("nl", "Bevestigen")
-	a("en", "Confirm")
+	msg.New("Confirm").
+		Add("nl", "Bevestigen").
+		Add("en", "Confirm")
 }
