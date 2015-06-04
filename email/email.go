@@ -31,12 +31,12 @@ var (
 func init() {
 	store := new(emailConfigStore)
 	if err := config.Get(key, store); err != nil {
-		log.Println("DEBUG: email.Init() Get error:", err)
+		log.Println("WARNING: email.init() Get error:", err)
 		store.Key = key
 		if err := config.Set(store); err != nil {
-			log.Println("DEBUG: email.Init() Set error:", err)
+			log.Println("ERROR: email.init() Set error:", err)
 		} else {
-			log.Println("DEBUG: email.Init() stored a blank email config in DB as a template to fill manually")
+			log.Println("WARNING: email.init() stored a blank email config in DB as a template to fill manually")
 		}
 	} else {
 		conf = store.Value
