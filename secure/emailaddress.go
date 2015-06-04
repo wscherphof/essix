@@ -13,14 +13,14 @@ func emailAddressEmail(r *http.Request, acc *account.Account) (err error, remark
 }
 
 func EmailAddressCodeForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
-	acc := Authentication(r)
+	acc := Authentication(w, r)
 	return router.Template("emailaddresscode", "", map[string]interface{}{
 		"UID": acc.UID,
 	})(w, r, ps)
 }
 
 func EmailAddressCode(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
-	acc := Authentication(r)
+	acc := Authentication(w, r)
 	newUID := r.FormValue("newuid")
 	if e := acc.CreateEmailAddressCode(newUID); e != nil {
 		err = router.NewError(e)
@@ -37,7 +37,7 @@ func EmailAddressCode(w http.ResponseWriter, r *http.Request, ps httprouter.Para
 }
 
 func EmailAddressForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
-	acc := Authentication(r)
+	acc := Authentication(w, r)
 	code, cancel := r.FormValue("code"), r.FormValue("cancel")
 	if cancel == "true" {
 		acc.ClearEmailAddressCode(code)
@@ -51,7 +51,7 @@ func EmailAddressForm(w http.ResponseWriter, r *http.Request, ps httprouter.Para
 }
 
 func ChangeEmailAddress(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
-	acc := Authentication(r)
+	acc := Authentication(w, r)
 	code := r.FormValue("code")
 	if acc.EmailAddressCode == "" {
 		err = router.NewError(account.ErrEmailAddressCodeUnset)

@@ -56,9 +56,8 @@ func main() {
 	log.Println("INFO: Application server @", applicationAddress)
 	log.Fatal(http.ListenAndServeTLS(applicationAddress, "cert.pem", "key.pem",
 		context.ClearHandler(
-			secure.AuthenticationHandler(
-				handlers.HTTPMethodOverrideHandler(
-					handlers.CompressHandler(
-						handlers.CombinedLoggingHandler(os.Stdout,
-							router.Router)))))))
+			handlers.HTTPMethodOverrideHandler(
+				handlers.CompressHandler(
+					handlers.CombinedLoggingHandler(os.Stdout,
+						router.Router))))))
 }

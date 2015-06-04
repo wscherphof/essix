@@ -38,7 +38,7 @@ func SignUp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *
 }
 
 func UpdateAccountForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
-	acc := Authentication(r)
+	acc := Authentication(w, r)
 	return router.Template("account", "", map[string]interface{}{
 		"Account":   acc,
 		"Countries": data.Countries(),
@@ -47,7 +47,7 @@ func UpdateAccountForm(w http.ResponseWriter, r *http.Request, ps httprouter.Par
 }
 
 func UpdateAccount(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
-	acc := Authentication(r)
+	acc := Authentication(w, r)
 	initial := (acc.ValidateFields() != nil)
 	acc.Country = r.FormValue("country")
 	acc.Postcode = strings.ToUpper(r.FormValue("postcode"))
