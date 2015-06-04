@@ -5,7 +5,7 @@ label {{ Msg "Captcha" }}*
   br
   audio id=audio controls= preload=none loop= src={{ Express "/captcha/" .CaptchaId ".wav" }}
     You browser doesn't support audio.
-    a href={{ Express "/captcha/download/" .CaptchaId ".wav" }}
+    a href=/captcha/download/{{ .CaptchaId }}.wav
       Download file
     to play it in an external player.
   input type=hidden name=captchaId value={{ .CaptchaId }}
