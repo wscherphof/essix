@@ -6,30 +6,30 @@ import (
 	"log"
 )
 
-type secureDB struct{}
-
 type secureConfigStore struct {
 	Key   string
 	Value *secure.Config
 }
 
-const key = "secure"
+var store = &secureConfigStore{
+	Key: "secure",
+}
 
-func (s *secureDB) Fetch() (conf *secure.Config) {
-	store := new(secureConfigStore)
-	if err := config.Get(key, store); err != nil {
-		log.Println("WARNING: SecureDB.Fetch() failed with:", err)
+type secureDB struct{}
+
+func (s *secureDB) Fetch(dst *secure.Config) (err error) {
+	if err = config.Get(store.Key, store); err != nil {
+		log.Println("WARNING: SecureDB.Fetch():", err)
 	} else {
-		conf = store.Value
+		*dst = *store.Value
 	}
 	return
 }
 
-func (s *secureDB) Upsert(conf *secure.Config) {
-	if err := config.Set(&secureConfigStore{
-		Key:   key,
-		Value: conf,
-	}); err != nil {
-		log.Panicln("ERROR: SecureDB.Upsert():", err)
+func (s *secureDB) Upsert(src *secure.Config) (err error) {
+	store.Value = src
+	if err = config.Set(store); err != nil {
+		log.Println("WARNING: SecureDB.Upsert():", err)
 	}
+	return
 }
