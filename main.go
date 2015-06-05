@@ -14,7 +14,6 @@ import (
 
 var (
 	applicationAddress = env.Get("HTTP_HOST") + env.Get("HTTPS_PORT")
-	expressAddress     = env.Get("HTTP_HOST") + env.Get("EXPRESS_PORT")
 	redirectAddress    = env.Get("HTTP_HOST") + env.Get("HTTP_PORT")
 )
 
