@@ -3,7 +3,7 @@ package util
 import (
 	"bytes"
 	"github.com/wscherphof/msg"
-	"github.com/yossi/ace"
+	"github.com/yosssi/ace"
 	"html/template"
 	"io"
 	"log"
