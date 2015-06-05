@@ -29,10 +29,17 @@ var (
 )
 
 func init() {
-	store := new(emailConfigStore)
-	if err := config.Get(key, store); err != nil {
+	store := &emailConfigStore{
+		Key: "email",
+		Value: &emailConfig{
+			EmailAddress: "expeertise@gmail.com",
+			PWD: "",
+			SmtpServer: "smtp.gmail.com",
+			PortNumber: "587",
+		},
+	}
+	if err := config.Get(store.Key, store); err != nil {
 		log.Println("WARNING: email.init() Get error:", err)
-		store.Key = key
 		if err := config.Set(store); err != nil {
 			log.Println("ERROR: email.init() Set error:", err)
 		} else {
