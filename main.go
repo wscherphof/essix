@@ -27,7 +27,6 @@ func main() {
 		log.Fatal(http.ListenAndServe(redirectAddress, nil))
 	}()
 
-	// Home is the application's start page
 	router.GET("/", secure.IfSecureHandle(
 		router.Template("home", "home_loggedin", nil),
 		router.Template("home", "home_loggedout", nil)))
@@ -35,7 +34,6 @@ func main() {
 	router.Router.Handler("GET", "/captcha/*filepath", captcha.Server)
 	router.Router.ServeFiles("/static/*filepath", http.Dir("./static"))
 
-	// Application server wraps and handles application routes
 	log.Println("INFO: Application server @", applicationAddress)
 	log.Fatal(http.ListenAndServeTLS(applicationAddress, "cert.pem", "key.pem",
 		context.ClearHandler(
