@@ -2,7 +2,6 @@ package util
 
 import (
 	"bytes"
-	"github.com/wscherphof/expeertise/env"
 	"github.com/wscherphof/msg"
 	"github.com/yossi/ace"
 	"html/template"
@@ -16,13 +15,6 @@ func aceOptions(r *http.Request) *ace.Options {
 		BaseDir: "templates",
 		FuncMap: template.FuncMap{
 			"Msg": msg.Msg(r),
-			"Express": func(path ...string) (address string) {
-				address = "https://" + env.Get("HTTP_HOST") + env.Get("EXPRESS_PORT")
-				for _, p := range path {
-					address = address + p
-				}
-				return
-			},
 		},
 	}
 }
