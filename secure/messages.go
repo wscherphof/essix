@@ -135,7 +135,7 @@ func init() {
 		Add("en", "with")
 
 	msg.New("Email address code successful").
-		Add("nl", "Dank voor je aanvraag om je e-mailadres. Je krijgt op het nieuwe adres een e-mail van ons met verdere instructies.").
+		Add("nl", "Dank voor je aanvraag om je e-mailadres te wijzigen. Je krijgt op het nieuwe adres een e-mail van ons met verdere instructies.").
 		Add("en", "Thanks for your request to change your email address. For further instructions, please check your email on the new address.")
 
 	msg.New("Email address code cancelled").
