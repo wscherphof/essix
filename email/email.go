@@ -33,9 +33,9 @@ func init() {
 		Key: "email",
 		Value: &emailConfig{
 			EmailAddress: "expeertise@gmail.com",
-			PWD: "",
-			SmtpServer: "smtp.gmail.com",
-			PortNumber: "587",
+			PWD:          "",
+			SmtpServer:   "smtp.gmail.com",
+			PortNumber:   "587",
 		},
 	}
 	if err := config.Get(store.Key, store); err != nil {
