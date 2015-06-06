@@ -17,11 +17,17 @@ type Error struct {
 }
 
 func NewError(e error, tail ...string) (err *Error) {
-	err = &Error{Error: e}
-	if len(tail) > 0 {
-		err.Tail = tail[0]
+	if e != nil {
+		err = &Error{Error: e}
+		if len(tail) > 0 {
+			err.Tail = tail[0]
+		}
 	}
 	return
+}
+
+func IfError(e error, tail ...string) (err *Error) {
+	return NewError(e, tail...)
 }
 
 type ErrorHandle func(http.ResponseWriter, *http.Request, httprouter.Params) *Error

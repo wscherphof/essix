@@ -27,7 +27,7 @@ func EmailAddressCode(w http.ResponseWriter, r *http.Request, ps httprouter.Para
 	} else if e, remark := emailAddressEmail(r, acc); e != nil {
 		err = router.NewError(e)
 	} else {
-		secure.LogIn(w, r, acc, false)
+		secure.Update(w, r, acc)
 		router.Template("emailaddresscode_success", "", map[string]interface{}{
 			"Name":   acc.Name(),
 			"Remark": remark,
@@ -60,7 +60,7 @@ func ChangeEmailAddress(w http.ResponseWriter, r *http.Request, ps httprouter.Pa
 		err = router.NewError(e)
 		err.Conflict = conflict
 	} else {
-		secure.LogIn(w, r, acc, false)
+		secure.Update(w, r, acc)
 		router.Template("emailaddress_success", "", nil)(w, r, ps)
 	}
 	return

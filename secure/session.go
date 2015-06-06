@@ -22,13 +22,12 @@ func LogIn(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *r
 	} else if acc, e, conflict := account.Get(r.FormValue("uid"), r.FormValue("pwd")); e != nil {
 		err = router.NewError(e, "login")
 		err.Conflict = conflict
+	} else if complete := (acc.ValidateFields() == nil); complete {
+		err = router.IfError(secure.LogIn(w, r, acc), "login")
+	} else if e := secure.Update(w, r, acc); e != nil {
+		err = router.NewError(e, "login")
 	} else {
-		complete := (acc.ValidateFields() == nil)
-		if e := secure.LogIn(w, r, acc, complete); e != nil {
-			err = router.NewError(e, "login")
-		} else if !complete {
-			http.Redirect(w, r, "/account", http.StatusSeeOther)
-		}
+		http.Redirect(w, r, "/account", http.StatusSeeOther)
 	}
 	return
 }

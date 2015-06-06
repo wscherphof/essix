@@ -6,7 +6,7 @@ import (
 
 func init() {
 	msg.New(ErrInvalidCredentials.Error()).
-		Add("nl", "E-mailadres onbekend of wachtwoord of activatiecode onjuist").
+		Add("nl", "E-mailadres onbekend of wachtwoord of activeringscode onjuist").
 		Add("en", "Unknown email address or incorrect password or activation code")
 
 	msg.New(ErrPasswordEmpty.Error()).

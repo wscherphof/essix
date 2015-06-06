@@ -7,7 +7,7 @@ import (
 func init() {
 	router.GET("/account", IfSecureHandle(UpdateAccountForm, SignUpForm))
 	router.POST("/account", SignUp)
-	router.PUT("/account", SecureHandle(UpdateAccount))
+	router.PUT("/account", UpdateAccount)
 	// TODO: router.DELETE ("/account", Authenticate(TerminateAccount))
 
 	router.GET("/session", LogInForm)
@@ -31,9 +31,9 @@ func init() {
 	router.GET("/account/password/:uid", PasswordForm)
 	router.PUT("/account/password", ChangePassword)
 
-	router.GET("/account/emailaddresscode", SecureHandle(EmailAddressCodeForm))
-	router.GET("/account/emailaddresscode/", SecureHandle(EmailAddressCodeForm))
-	router.POST("/account/emailaddresscode", SecureHandle(EmailAddressCode))
-	router.GET("/account/emailaddress/*filepath", SecureHandle(EmailAddressForm))
-	router.PUT("/account/emailaddress", SecureHandle(ChangeEmailAddress))
+	router.GET("/account/emailaddresscode", EmailAddressCodeForm)
+	router.GET("/account/emailaddresscode/", EmailAddressCodeForm)
+	router.POST("/account/emailaddresscode", EmailAddressCode)
+	router.GET("/account/emailaddress/*filepath", EmailAddressForm)
+	router.PUT("/account/emailaddress", ChangeEmailAddress)
 }

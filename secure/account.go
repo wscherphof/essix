@@ -59,9 +59,10 @@ func UpdateAccount(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 	} else if e := acc.Save(); e != nil {
 		err = router.NewError(e)
 	} else if initial {
-		secure.LogIn(w, r, acc, true)
-	} else {
-		secure.LogIn(w, r, acc, false)
+		err = router.IfError(secure.LogIn(w, r, acc))
+	} else if e := secure.Update(w, r, acc); e != nil {
+		err = router.NewError(e)
+	} else {		
 		http.Redirect(w, r, r.URL.Path, http.StatusSeeOther)
 	}
 	return
