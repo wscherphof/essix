@@ -2,9 +2,9 @@
   p Hoi {{ .name }},
   p Er is een aanvraag gedaan om het e-mailadres van je account bij Expeertise te wijzigen.
     br
-    a href={{ .action }} Klik op deze link om te bevestigen
+    a.button href={{ .action }} Klik op deze link om te bevestigen
   p Als je je huidige adres wil houden, {{ "" }}
-    a href={{ .cancel }} klik dan s.v.p. op deze link om de aanvraag te annuleren
+    a.button href={{ .cancel }} klik dan s.v.p. op deze link om de aanvraag te annuleren
   p..
     Dank,
     Met vriendelijke groet,

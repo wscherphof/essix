@@ -1,3 +1,4 @@
 = include includes/head .
 body
+  = include includes/styles/button
   = yield main
