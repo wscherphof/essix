@@ -1,4 +1,4 @@
-= include includes/head .
+= include ../../templates/includes/head .
 body
   p {{ Msg "Hi" }} {{ .Name }},
   p {{ Msg "Activate successful" }}

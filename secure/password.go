@@ -23,7 +23,7 @@ func passwordEmail(r *http.Request, acc *account.Account) (error, string) {
 }
 
 func PasswordCodeForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
-	return router.Template("passwordcode", "", map[string]interface{}{
+	return router.Template("secure", "passwordcode", "", map[string]interface{}{
 		"UID":       ps.ByName("uid"),
 		"CaptchaId": captcha.New(),
 	})(w, r, ps)
@@ -32,16 +32,16 @@ func PasswordCodeForm(w http.ResponseWriter, r *http.Request, ps httprouter.Para
 func PasswordCode(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
 	uid := r.FormValue("uid")
 	if !captcha.VerifyString(r.FormValue("captchaId"), r.FormValue("captchaSolution")) {
-		err = router.NewError(captcha.ErrNotFound, "passwordcode")
+		err = router.NewError(captcha.ErrNotFound, "secure", "passwordcode")
 		err.Conflict = true
 	} else if acc, e, conflict := account.GetInsecure(uid); e != nil {
-		err = router.NewError(e, "passwordcode")
+		err = router.NewError(e, "secure", "passwordcode")
 		err.Conflict = conflict
 		err.Data = map[string]interface{}{
 			"UID": uid,
 		}
 	} else if !acc.IsActive() {
-		err = router.NewError(account.ErrNotActivated, "activation_resend")
+		err = router.NewError(account.ErrNotActivated, "secure", "activation_resend")
 		err.Conflict = true
 		err.Data = map[string]interface{}{
 			"UID": uid,
@@ -51,7 +51,7 @@ func PasswordCode(w http.ResponseWriter, r *http.Request, ps httprouter.Params) 
 	} else if e, remark := passwordEmail(r, acc); e != nil {
 		err = router.NewError(e)
 	} else {
-		router.Template("passwordcode_success", "", map[string]interface{}{
+		router.Template("secure", "passwordcode_success", "", map[string]interface{}{
 			"Name":   acc.Name(),
 			"Remark": remark,
 		})(w, r, ps)
@@ -64,9 +64,9 @@ func PasswordForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) 
 	expires, _ := util.URLDecode([]byte(extra))
 	if cancel == "true" {
 		account.ClearPasswordCode(uid, code)
-		router.Template("passwordcode_cancelled", "", nil)(w, r, ps)
+		router.Template("secure", "passwordcode_cancelled", "", nil)(w, r, ps)
 	} else {
-		router.Template("password", "", map[string]interface{}{
+		router.Template("secure", "password", "", map[string]interface{}{
 			"UID":     uid,
 			"Code":    code,
 			"Expires": string(expires),
@@ -84,7 +84,7 @@ func ChangePassword(w http.ResponseWriter, r *http.Request, ps httprouter.Params
 		err = router.NewError(account.ErrPasswordCodeUnset)
 		err.Conflict = true
 	} else if time.Now().After(acc.PasswordCode.Expires) {
-		err = router.NewError(ErrPasswordCodeTimedOut, "passwordcode")
+		err = router.NewError(ErrPasswordCodeTimedOut, "secure", "passwordcode")
 		err.Conflict = true
 		err.Data = map[string]interface{}{
 			"UID": acc.UID,
@@ -94,7 +94,7 @@ func ChangePassword(w http.ResponseWriter, r *http.Request, ps httprouter.Params
 		err.Conflict = conflict
 	} else {
 		secure.LogOut(w, r, false)
-		router.Template("password_success", "", nil)(w, r, ps)
+		router.Template("secure", "password_success", "", nil)(w, r, ps)
 	}
 	return
 }

@@ -10,16 +10,19 @@ import (
 	"net/http"
 )
 
-func aceOptions(r *http.Request) *ace.Options {
+func aceOptions(dir string, r *http.Request) *ace.Options {
+	if dir == "" {
+		dir = "."
+	}
 	return &ace.Options{
-		BaseDir: "templates",
+		BaseDir: dir + "/templates",
 		FuncMap: template.FuncMap{
 			"Msg": msg.Msg(r),
 		},
 	}
 }
 
-func Template(base string, inner string, data map[string]interface{}) func(io.Writer, *http.Request) {
+func Template(dir, base, inner string, data map[string]interface{}) func(io.Writer, *http.Request) {
 	if data == nil {
 		data = map[string]interface{}{}
 	}
@@ -29,7 +32,7 @@ func Template(base string, inner string, data map[string]interface{}) func(io.Wr
 		if inner == "lang" {
 			inner = base + "-" + lang.Main
 		}
-		if tpl, err := ace.Load(base, inner, aceOptions(r)); err != nil {
+		if tpl, err := ace.Load(base, inner, aceOptions(dir, r)); err != nil {
 			log.Panicln("ERROR: ace.Load:", err)
 		} else if err := tpl.Execute(w, data); err != nil {
 			log.Panicln("ERROR: tpl.Execute:", err)
@@ -37,10 +40,10 @@ func Template(base string, inner string, data map[string]interface{}) func(io.Wr
 	}
 }
 
-func BTemplate(base string, inner string, data map[string]interface{}) func(*http.Request) []byte {
+func BTemplate(dir, base, inner string, data map[string]interface{}) func(*http.Request) []byte {
 	var b bytes.Buffer
 	return func(r *http.Request) []byte {
-		Template(base, inner, data)(&b, r)
+		Template(dir, base, inner, data)(&b, r)
 		return b.Bytes()
 	}
 }

@@ -28,8 +28,8 @@ func main() {
 	}()
 
 	router.GET("/", secure.IfSecureHandle(
-		router.Template("home", "home_loggedin", nil),
-		router.Template("home", "home_loggedout", nil)))
+		router.Template(".", "home", "home_loggedin", nil),
+		router.Template(".", "home", "home_loggedout", nil)))
 
 	router.Router.Handler("GET", "/captcha/*filepath", captcha.Server)
 	router.Router.ServeFiles("/static/*filepath", http.Dir("./static"))

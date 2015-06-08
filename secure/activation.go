@@ -13,7 +13,7 @@ func activationEmail(r *http.Request, acc *account.Account) (error, string) {
 }
 
 func ActivateForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
-	return router.Template("activation", "", map[string]interface{}{
+	return router.Template("secure", "activation", "", map[string]interface{}{
 		"UID":  ps.ByName("uid"),
 		"Code": r.FormValue("code"),
 	})(w, r, ps)
@@ -21,10 +21,10 @@ func ActivateForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) 
 
 func Activate(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
 	if acc, e, conflict := account.Activate(r.FormValue("uid"), r.FormValue("code")); e != nil {
-		err = router.NewError(e, "activation")
+		err = router.NewError(e, "secure", "activation")
 		err.Conflict = conflict
 	} else {
-		router.Template("activation_success", "", map[string]interface{}{
+		router.Template("secure", "activation_success", "", map[string]interface{}{
 			"Name": acc.Name(),
 		})(w, r, ps)
 	}
@@ -32,7 +32,7 @@ func Activate(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err
 }
 
 func ActivationCodeForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
-	return router.Template("activation_resend", "", map[string]interface{}{
+	return router.Template("secure", "activation_resend", "", map[string]interface{}{
 		"UID":       ps.ByName("uid"),
 		"CaptchaId": captcha.New(),
 	})(w, r, ps)
@@ -40,10 +40,10 @@ func ActivationCodeForm(w http.ResponseWriter, r *http.Request, ps httprouter.Pa
 
 func ActivationCode(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
 	if !captcha.VerifyString(r.FormValue("captchaId"), r.FormValue("captchaSolution")) {
-		err = router.NewError(captcha.ErrNotFound, "activation_resend")
+		err = router.NewError(captcha.ErrNotFound, "secure", "activation_resend")
 		err.Conflict = true
 	} else if acc, e, conflict := account.GetInsecure(r.FormValue("uid")); e != nil {
-		err = router.NewError(e, "activation_resend")
+		err = router.NewError(e, "secure", "activation_resend")
 		err.Conflict = conflict
 		err.Data = map[string]interface{}{
 			"UID": r.FormValue("uid"),
@@ -54,7 +54,7 @@ func ActivationCode(w http.ResponseWriter, r *http.Request, ps httprouter.Params
 	} else if e, remark := activationEmail(r, acc); e != nil {
 		err = router.NewError(e)
 	} else {
-		router.Template("activation_resend_success", "", map[string]interface{}{
+		router.Template("secure", "activation_resend_success", "", map[string]interface{}{
 			"Name":   acc.Name(),
 			"UID":    acc.UID,
 			"Remark": remark,

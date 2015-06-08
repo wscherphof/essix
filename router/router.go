@@ -9,18 +9,26 @@ import (
 
 var Router = httprouter.New()
 
+type tailType struct {
+	dir string
+	name string
+}
+
 type Error struct {
 	Error    error
 	Conflict bool
-	Tail     string
+	Tail     *tailType
 	Data     map[string]interface{}
 }
 
 func NewError(e error, tail ...string) (err *Error) {
 	if e != nil {
 		err = &Error{Error: e}
-		if len(tail) > 0 {
-			err.Tail = tail[0]
+		if len(tail) == 2  {
+			err.Tail = &tailType{
+				dir: tail[0],
+				name: tail[1] + "_error-tail",
+			}
 		}
 	}
 	return
@@ -42,11 +50,11 @@ func ErrorHandleFunc(errorHandle ErrorHandle) (handle httprouter.Handle) {
 			// Set the Content-Type to prevent CompressHandler from doing so after our WriteHeader()
 			w.Header().Set("Content-Type", "text/html; charset=utf-8")
 			w.WriteHeader(code)
-			Template("error", "", map[string]interface{}{
+			Template("router", "error", "", map[string]interface{}{
 				"Error": err.Error,
 			})(w, r, ps)
-			if len(err.Tail) > 0 {
-				Template(err.Tail+"_error-tail", "", err.Data)(w, r, ps)
+			if err.Tail != nil {
+				Template(err.Tail.dir, err.Tail.name, "", err.Data)(w, r, ps)
 			}
 			if code >= 500 {
 				log.Println("ERROR:", err.Error, "- Path:", r.URL.Path)
@@ -66,10 +74,10 @@ func PATCH(path string, handle ErrorHandle)   { Handle("PATCH", path, handle) }
 func OPTIONS(path string, handle ErrorHandle) { Handle("OPTIONS", path, handle) }
 func HEAD(path string, handle ErrorHandle)    { Handle("HEAD", path, handle) }
 
-func Template(base string, inner string, data map[string]interface{}) ErrorHandle {
+func Template(dir, base, inner string, data map[string]interface{}) ErrorHandle {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *Error) {
 		// TODO: try if we can do ps.ByName() from the ace template..
-		util.Template(base, inner, data)(w, r)
+		util.Template(dir, base, inner, data)(w, r)
 		return
 	}
 }

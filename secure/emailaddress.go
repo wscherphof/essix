@@ -14,7 +14,7 @@ func emailAddressEmail(r *http.Request, acc *account.Account) (err error, remark
 
 func EmailAddressCodeForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
 	acc := Authentication(w, r)
-	return router.Template("emailaddresscode", "", map[string]interface{}{
+	return router.Template("secure", "emailaddresscode", "", map[string]interface{}{
 		"UID": acc.UID,
 	})(w, r, ps)
 }
@@ -28,7 +28,7 @@ func EmailAddressCode(w http.ResponseWriter, r *http.Request, ps httprouter.Para
 		err = router.NewError(e)
 	} else {
 		secure.Update(w, r, acc)
-		router.Template("emailaddresscode_success", "", map[string]interface{}{
+		router.Template("secure", "emailaddresscode_success", "", map[string]interface{}{
 			"Name":   acc.Name(),
 			"Remark": remark,
 		})(w, r, ps)
@@ -41,9 +41,9 @@ func EmailAddressForm(w http.ResponseWriter, r *http.Request, ps httprouter.Para
 	code, cancel := r.FormValue("code"), r.FormValue("cancel")
 	if cancel == "true" {
 		acc.ClearEmailAddressCode(code)
-		router.Template("emailaddresscode_cancelled", "", nil)(w, r, ps)
+		router.Template("secure", "emailaddresscode_cancelled", "", nil)(w, r, ps)
 	} else {
-		router.Template("emailaddress", "", map[string]interface{}{
+		router.Template("secure", "emailaddress", "", map[string]interface{}{
 			"Account": acc,
 		})(w, r, ps)
 	}
@@ -61,7 +61,7 @@ func ChangeEmailAddress(w http.ResponseWriter, r *http.Request, ps httprouter.Pa
 		err.Conflict = conflict
 	} else {
 		secure.Update(w, r, acc)
-		router.Template("emailaddress_success", "", nil)(w, r, ps)
+		router.Template("secure", "emailaddress_success", "", nil)(w, r, ps)
 	}
 	return
 }

@@ -12,7 +12,7 @@ import (
 )
 
 func SignUpForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
-	return router.Template("signup", "", map[string]interface{}{
+	return router.Template("secure", "signup", "", map[string]interface{}{
 		"Countries": data.Countries(),
 		"CaptchaId": captcha.New(),
 	})(w, r, ps)
@@ -20,15 +20,15 @@ func SignUpForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (e
 
 func SignUp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
 	if !captcha.VerifyString(r.FormValue("captchaId"), r.FormValue("captchaSolution")) {
-		err = router.NewError(captcha.ErrNotFound, "signup")
+		err = router.NewError(captcha.ErrNotFound, "secure", "signup")
 		err.Conflict = true
 	} else if acc, e, conflict := account.New(r.FormValue("uid"), r.FormValue("pwd1"), r.FormValue("pwd2")); e != nil {
-		err = router.NewError(e, "signup")
+		err = router.NewError(e, "secure", "signup")
 		err.Conflict = conflict
 	} else if e, remark := activationEmail(r, acc); e != nil {
-		err = router.NewError(e, "signup")
+		err = router.NewError(e, "secure", "signup")
 	} else {
-		router.Template("signup_success", "", map[string]interface{}{
+		router.Template("secure", "signup_success", "", map[string]interface{}{
 			"uid":    acc.UID,
 			"name":   acc.Name(),
 			"remark": remark,
@@ -39,7 +39,7 @@ func SignUp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *
 
 func UpdateAccountForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
 	acc := Authentication(w, r)
-	return router.Template("account", "", map[string]interface{}{
+	return router.Template("secure", "account", "", map[string]interface{}{
 		"Account":   acc,
 		"Countries": data.Countries(),
 		"Initial":   (acc.ValidateFields() != nil),

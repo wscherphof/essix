@@ -10,22 +10,22 @@ import (
 )
 
 func LogInForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
-	return router.Template("login", "", map[string]interface{}{
+	return router.Template("secure", "login", "", map[string]interface{}{
 		"CaptchaId": captcha.New(),
 	})(w, r, ps)
 }
 
 func LogIn(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
 	if !captcha.VerifyString(r.FormValue("captchaId"), r.FormValue("captchaSolution")) {
-		err = router.NewError(captcha.ErrNotFound, "login")
+		err = router.NewError(captcha.ErrNotFound, "secure", "login")
 		err.Conflict = true
 	} else if acc, e, conflict := account.Get(r.FormValue("uid"), r.FormValue("pwd")); e != nil {
-		err = router.NewError(e, "login")
+		err = router.NewError(e, "secure", "login")
 		err.Conflict = conflict
 	} else if complete := (acc.ValidateFields() == nil); complete {
-		err = router.IfError(secure.LogIn(w, r, acc), "login")
+		err = router.IfError(secure.LogIn(w, r, acc), "secure", "login")
 	} else if e := secure.Update(w, r, acc); e != nil {
-		err = router.NewError(e, "login")
+		err = router.NewError(e, "secure", "login")
 	} else {
 		http.Redirect(w, r, "/account", http.StatusSeeOther)
 	}

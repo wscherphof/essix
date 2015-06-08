@@ -1,4 +1,4 @@
-= include includes/head .
+= include ../../templates/includes/head .
 body
   p {{ Msg "Change email address" }}
   p {{ Msg "Want replace" }} "{{ .Account.UID }}" {{ Msg "Replace with" }} "{{ .Account.NewUID }}"

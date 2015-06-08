@@ -1,3 +1,0 @@
-= include includes/head .
-body
-  p {{ Msg .Error.Error }}

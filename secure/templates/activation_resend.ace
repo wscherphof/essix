@@ -1,7 +1,7 @@
-= include includes/head .
+= include ../../templates/includes/head .
 body
-  p {{ Msg "password subject" }}
-  form method=POST action=/account/passwordcode
+  p {{ Msg "Resend activation code" }}
+  form method=POST action=/account/activationcode
     label {{ Msg "Email" }}*
       input id=uid type=email name=uid value={{ .UID }} placeholder=email@provider.com required= size=35
     br

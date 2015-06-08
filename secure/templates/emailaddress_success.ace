@@ -1,4 +1,4 @@
-= include includes/head .
+= include ../../templates/includes/head .
 body
   p {{ Msg "Change email address successful" }}
   p

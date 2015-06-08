@@ -1,4 +1,4 @@
-= include includes/head .
+= include ../../templates/includes/head .
 body
   p {{ Msg "Sign up" }}
   form method=POST action=/account onsubmit="return validate(this)"

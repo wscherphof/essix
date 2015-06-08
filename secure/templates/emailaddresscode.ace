@@ -1,4 +1,4 @@
-= include includes/head .
+= include ../../templates/includes/head .
 body
   p {{ Msg "emailaddress subject" }}
   form method=POST action=/account/emailaddresscode
