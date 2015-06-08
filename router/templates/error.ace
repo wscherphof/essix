@@ -1,3 +1,5 @@
-= include ../../templates/includes/head .
-body
-  p {{ Msg .Error.Error }}
+= doctype html
+html lang={{ .lang.Main }}
+  = include ../../templates/includes/head .
+  body
+    p {{ Msg .Error.Error }}

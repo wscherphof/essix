@@ -14,25 +14,20 @@ func init() {
 	router.POST("/session", LogIn)
 	router.DELETE("/session", LogOut)
 
-	// TODO: test w/ & wo/ trailing /
-	router.GET("/account/activation", ActivateForm)
-	router.GET("/account/activation/", ActivateForm)
 	router.GET("/account/activation/:uid", ActivateForm)
+	router.GET("/account/activation", ActivateForm)
 	router.PUT("/account/activation", Activate)
-	router.GET("/account/activationcode", ActivationCodeForm)
-	router.GET("/account/activationcode/", ActivationCodeForm)
 	router.GET("/account/activationcode/:uid", ActivationCodeForm)
+	router.GET("/account/activationcode", ActivationCodeForm)
 	router.POST("/account/activationcode", ActivationCode)
 
-	router.GET("/account/passwordcode", PasswordCodeForm)
-	router.GET("/account/passwordcode/", PasswordCodeForm)
 	router.GET("/account/passwordcode/:uid", PasswordCodeForm)
+	router.GET("/account/passwordcode", PasswordCodeForm)
 	router.POST("/account/passwordcode", PasswordCode)
 	router.GET("/account/password/:uid", PasswordForm)
 	router.PUT("/account/password", ChangePassword)
 
 	router.GET("/account/emailaddresscode", SecureHandle(EmailAddressCodeForm))
-	router.GET("/account/emailaddresscode/", SecureHandle(EmailAddressCodeForm))
 	router.POST("/account/emailaddresscode", SecureHandle(EmailAddressCode))
 	router.GET("/account/emailaddress/*filepath", SecureHandle(EmailAddressForm))
 	router.PUT("/account/emailaddress", SecureHandle(ChangeEmailAddress))

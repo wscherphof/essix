@@ -1,8 +1,6 @@
-= doctype html
-html lang={{ .lang.Main }}
-  head
-    meta charset=utf-8
-    title Expeertise
-    link rel=icon href="/static/favicon.ico" type=image/x-icon
-    link rel="shortcut icon" href="/static/favicon.ico" type=image/x-icon
-    meta name=viewport content="width=device-width, initial-scale=1"
+head
+  meta charset=utf-8
+  title Expeertise
+  link rel=icon href="/static/favicon.ico" type=image/x-icon
+  link rel="shortcut icon" href="/static/favicon.ico" type=image/x-icon
+  meta name=viewport content="width=device-width, initial-scale=1"

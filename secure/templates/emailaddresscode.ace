@@ -1,10 +1,12 @@
-= include ../../templates/includes/head .
-body
-  p {{ Msg "emailaddress subject" }}
-  form method=POST action=/account/emailaddresscode
-    label {{ Msg "Current" }}: {{ .UID }}
-    br
-    label {{ Msg "New" }}*
-      input id=newuid type=email name=newuid placeholder=email@provider.com required= size=35
-    br
-    input type=submit
+= doctype html
+html lang={{ .lang.Main }}
+  = include ../../templates/includes/head .
+  body
+    p {{ Msg "emailaddress subject" }}
+    form method=POST action=/account/emailaddresscode
+      label {{ Msg "Current" }}: {{ .UID }}
+      br
+      label {{ Msg "New" }}*
+        input id=newuid type=email name=newuid placeholder=email@provider.com required= size=35
+      br
+      input type=submit

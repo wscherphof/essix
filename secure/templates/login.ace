@@ -1,17 +1,19 @@
-= include ../../templates/includes/head .
-body
-  p {{ Msg "Log in" }}
-  form method=POST action=/session
-    label {{ Msg "Email" }}*
-      input id=uid type=email name=uid placeholder=email@provider.com required= size=35
-    br
-    label {{ Msg "Password" }}*
-      input id=pwd type=password name=pwd placeholder=******** required= size=35
-    br
-    = include includes/captcha .
-    input type=submit
-  p
-    a href=/account/passwordcode {{ Msg "Forgot password" }}
-    {{ " " }}
-    a href=/account {{ Msg "Sign up" }}
+= doctype html
+html lang={{ .lang.Main }}
+  = include ../../templates/includes/head .
+  body
+    p {{ Msg "Log in" }}
+    form method=POST action=/session
+      label {{ Msg "Email" }}*
+        input id=uid type=email name=uid placeholder=email@provider.com required= size=35
+      br
+      label {{ Msg "Password" }}*
+        input id=pwd type=password name=pwd placeholder=******** required= size=35
+      br
+      = include includes/captcha .
+      input type=submit
+    p
+      a href=/account/passwordcode {{ Msg "Forgot password" }}
+      {{ " " }}
+      a href=/account {{ Msg "Sign up" }}
 

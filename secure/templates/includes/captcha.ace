@@ -4,9 +4,8 @@ label {{ Msg "Captcha" }}*
   img id=captchaImg src=/captcha/{{ .CaptchaId }}.png alt={{ Msg "Captcha image" }}
   br
   audio id=audio controls= preload=none loop= src=/captcha/{{ .CaptchaId }}.wav
-    You browser doesn't support audio.
-    a href=/captcha/download/{{ .CaptchaId }}.wav
-      Download file
-    to play it in an external player.
+    | Your browser doesn't support audio.
+    a href=/captcha/download/{{ .CaptchaId }}.wav Download file
+    | to play it in an external player.
   input type=hidden name=captchaId value={{ .CaptchaId }}
 br
