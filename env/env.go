@@ -19,7 +19,7 @@ func set(name, defaultValue string) {
 }
 
 func init() {
-	set("HTTP_HOST", "localhost")
+	set("HTTP_HOST", "")
 	set("HTTP_PORT", ":9090")
 	set("HTTPS_PORT", ":10443")
 	set("DB_HOST", "localhost")
