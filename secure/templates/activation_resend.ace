@@ -2,10 +2,12 @@
 html lang={{ .lang.Main }}
   = include ../../templates/includes/head .
   body
-    p {{ Msg "Resend activation code" }}
+    h2 {{ Msg "Resend activation code" }}
     form method=POST action=/account/activationcode
-      label {{ Msg "Email" }}*
-        input id=uid type=email name=uid value={{ .UID }} placeholder=email@provider.com required= size=35
-      br
-      = include includes/captcha .
-      input type=submit
+      p
+        label {{ Msg "Email" }}*{{ " " }}
+          input id=uid type=email name=uid value={{ .UID }} placeholder=email@provider.com required= size=35
+      p
+        = include includes/captcha .
+      p
+        input type=submit

@@ -1,4 +1,4 @@
-label {{ Msg "Captcha" }}*
+label {{ Msg "Captcha" }}*{{ " " }}
   input id=captchaSolution type=number name=captchaSolution placeholder=975431 required= size=35
   br
   img id=captchaImg src=/captcha/{{ .CaptchaId }}.png alt={{ Msg "Captcha image" }}
@@ -8,4 +8,3 @@ label {{ Msg "Captcha" }}*
     a href=/captcha/download/{{ .CaptchaId }}.wav Download file
     | to play it in an external player.
   input type=hidden name=captchaId value={{ .CaptchaId }}
-br

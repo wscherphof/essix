@@ -2,16 +2,17 @@
 html lang={{ .lang.Main }}
   = include ../../templates/includes/head .
   body
-    p {{ Msg "activation subject" }}
+    h2 {{ Msg "activation subject" }}
     form method=POST action=/account/activation
       input type=hidden name=_method value=PUT
-      label {{ Msg "Email" }}*
-        input id=uid type=email name=uid value={{ .UID }} placeholder=email@provider.com required= size=35
-      br
-      label {{ Msg "Activation code" }}*
-        input id=code type=text name=code value={{ .Code }} placeholder=zc-968YEX3VYu_YmdA7ynBp_d2cydmR1MRRqmglh1R0= required= size=35
-      br
-      input type=submit
+      p
+        label {{ Msg "Email" }}*{{ " " }}
+          input id=uid type=email name=uid value={{ .UID }} placeholder=email@provider.com required= size=35
+      p
+        label {{ Msg "Activation code" }}*{{ " " }}
+          input id=code type=text name=code value={{ .Code }} placeholder=zc-968YEX3VYu_YmdA7ynBp_d2cydmR1MRRqmglh1R0= required= size=35
+      p
+        input type=submit
     {{ if eq .Code "" }}
     p {{ Msg "Activation code source" }}
       br
