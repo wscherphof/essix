@@ -2,9 +2,9 @@
   p Hi {{ .name }},
   p A request was filed to change the email address of your account with Expeertise.
     br
-    a.button href={{ .action }} Please follow this link to confirm
+    a href={{ .action }} Please follow this link to confirm
   p If you want to keep your current email address, {{ "" }}
-    a.button href={{ .cancel }} please follow this link to cancel the request
+    a href={{ .cancel }} please follow this link to cancel the request
   p Cheers,
   p Expeertise
   p
