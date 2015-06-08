@@ -20,7 +20,7 @@ type emailJob struct {
 }
 
 func initQueue() {
-	if cursor, _ := db.TableCreate(table); cursor != nil {
+	if _, err := db.TableCreate(table); err == nil {
 		log.Println("INFO: table created:", table)
 	}
 	go func() {
@@ -47,14 +47,15 @@ func deQueue(job *emailJob) {
 
 func processQueue() {
 	if cursor, err := db.All(table); err != nil {
-		log.Println("ERROR: reading"+table+":", err)
+		log.Println("ERROR: reading "+table+":", err)
 	} else {
+		defer cursor.Close()
 		job := new(emailJob)
 		for cursor.Next(job) {
 			processJob(job)
 		}
 		if cursor.Err() != nil {
-			log.Println("ERROR: looping through"+table+":", err)
+			log.Println("ERROR: looping through "+table+":", err)
 		}
 	}
 }

@@ -43,7 +43,7 @@ func init() {
 		if err := config.Set(store); err != nil {
 			log.Println("ERROR: email.init() Set error:", err)
 		} else {
-			log.Println("WARNING: email.init() stored a blank email config in DB as a template to fill manually")
+			log.Println("WARNING: email.init() stored a sample email config in DB as a template to fill manually. Restart the server to read it in.")
 		}
 	} else {
 		conf = store.Value

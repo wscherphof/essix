@@ -27,7 +27,7 @@ var (
 const table = "account"
 
 func init() {
-	if cursor, _ := db.TableCreatePK(table, "UID"); cursor != nil {
+	if _, err := db.TableCreatePK(table, "UID"); err == nil {
 		log.Println("INFO: table created:", table)
 	}
 }

@@ -45,7 +45,7 @@ func (s *store) Get(id string, clear bool) (digits []byte) {
 var Server = captcha.Server(captcha.StdWidth, captcha.StdHeight)
 
 func init() {
-	if cursor, _ := db.TableCreate(table); cursor != nil {
+	if _, err := db.TableCreate(table); err == nil {
 		log.Println("INFO: table created:", table)
 		if _, err := db.IndexCreate(table, "Created"); err != nil {
 			log.Println("ERROR: failed to create index:", table, err)

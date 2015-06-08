@@ -23,7 +23,7 @@ func main() {
 		http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, "https://"+applicationAddress+r.URL.Path, http.StatusMovedPermanently)
 		})
-		log.Println("INFO: Redirect server    @", redirectAddress)
+		log.Println("INFO: starting redirect server    @", redirectAddress)
 		log.Fatal(http.ListenAndServe(redirectAddress, nil))
 	}()
 
@@ -34,7 +34,7 @@ func main() {
 	router.Router.Handler("GET", "/captcha/*filepath", captcha.Server)
 	router.Router.ServeFiles("/static/*filepath", http.Dir("./static"))
 
-	log.Println("INFO: Application server @", applicationAddress)
+	log.Println("INFO: starting application server @", applicationAddress)
 	log.Fatal(http.ListenAndServeTLS(applicationAddress, "cert.pem", "key.pem",
 		context.ClearHandler(
 			handlers.HTTPMethodOverrideHandler(

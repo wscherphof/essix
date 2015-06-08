@@ -12,7 +12,7 @@ const (
 )
 
 func init() {
-	if cursor, _ := db.TableCreatePK(table, pk); cursor != nil {
+	if _, err := db.TableCreatePK(table, pk); err == nil {
 		log.Println("INFO: table created:", table)
 	}
 }
