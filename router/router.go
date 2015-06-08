@@ -10,7 +10,7 @@ import (
 var Router = httprouter.New()
 
 type tailType struct {
-	dir string
+	dir  string
 	name string
 }
 
@@ -24,9 +24,9 @@ type Error struct {
 func NewError(e error, tail ...string) (err *Error) {
 	if e != nil {
 		err = &Error{Error: e}
-		if len(tail) == 2  {
+		if len(tail) == 2 {
 			err.Tail = &tailType{
-				dir: tail[0],
+				dir:  tail[0],
 				name: tail[1] + "_error-tail",
 			}
 		}

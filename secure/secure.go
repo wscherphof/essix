@@ -16,6 +16,15 @@ func Authentication(w http.ResponseWriter, r *http.Request, optional ...bool) (r
 	return
 }
 
+func SecureHandle(handle router.ErrorHandle) router.ErrorHandle {
+	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
+		if secure.Authentication(w, r, false) != nil {
+			err = handle(w, r, ps)
+		}
+		return
+	}
+}
+
 func IfSecureHandle(authenticated router.ErrorHandle, unauthenticated router.ErrorHandle) router.ErrorHandle {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) *router.Error {
 		if secure.Authentication(w, r, true) != nil {

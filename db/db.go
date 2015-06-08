@@ -14,7 +14,7 @@ var (
 func init() {
 	dbname = env.Get("DB_NAME")
 	address := env.Get("DB_HOST") + env.Get("DB_PORT")
-	if session, err := r.Connect(r.ConnectOpts{Address:  address}); err != nil {
+	if session, err := r.Connect(r.ConnectOpts{Address: address}); err != nil {
 		log.Fatalln("ERROR:", err)
 	} else {
 		if _, err := r.DbCreate(dbname).RunWrite(session); err == nil {
