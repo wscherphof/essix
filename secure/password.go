@@ -1,7 +1,6 @@
 package secure
 
 import (
-	"errors"
 	"github.com/dchest/captcha"
 	"github.com/julienschmidt/httprouter"
 	"github.com/wscherphof/expeertise/model/account"
@@ -10,12 +9,7 @@ import (
 	"github.com/wscherphof/msg"
 	"github.com/wscherphof/secure"
 	"net/http"
-	"time"
 )
-
-const PWD_CODE_TIMEOUT = 1 * time.Hour
-
-var ErrPasswordCodeTimedOut = errors.New("Password code has timed out")
 
 func passwordEmail(r *http.Request, acc *account.Account) (error, string) {
 	format := msg.Msg(r)("Time format")
@@ -46,7 +40,7 @@ func PasswordCode(w http.ResponseWriter, r *http.Request, ps httprouter.Params) 
 		err.Data = map[string]interface{}{
 			"UID": uid,
 		}
-	} else if e := acc.CreatePasswordCode(PWD_CODE_TIMEOUT); e != nil {
+	} else if e := acc.CreatePasswordCode(); e != nil {
 		err = router.NewError(e)
 	} else if e, remark := passwordEmail(r, acc); e != nil {
 		err = router.NewError(e)
@@ -80,18 +74,12 @@ func ChangePassword(w http.ResponseWriter, r *http.Request, ps httprouter.Params
 	if acc, e, conflict := account.GetInsecure(uid); e != nil {
 		err = router.NewError(e)
 		err.Conflict = conflict
-	} else if acc.PasswordCode == nil {
-		err = router.NewError(account.ErrPasswordCodeUnset)
-		err.Conflict = true
-	} else if time.Now().After(acc.PasswordCode.Expires) {
-		err = router.NewError(ErrPasswordCodeTimedOut, "secure", "passwordcode")
-		err.Conflict = true
+	} else if e, conflict := acc.ChangePassword(code, pwd1, pwd2); e != nil {
+		err = router.NewError(e, "secure", "passwordcode")
+		err.Conflict = conflict
 		err.Data = map[string]interface{}{
 			"UID": acc.UID,
 		}
-	} else if e, conflict := acc.ChangePassword(code, pwd1, pwd2); e != nil {
-		err = router.NewError(e)
-		err.Conflict = conflict
 	} else {
 		secure.LogOut(w, r, false)
 		router.Template("secure", "password_success", "", nil)(w, r, ps)

@@ -41,6 +41,7 @@ func EmailAddressForm(w http.ResponseWriter, r *http.Request, ps httprouter.Para
 	code, cancel := r.FormValue("code"), r.FormValue("cancel")
 	if cancel == "true" {
 		acc.ClearEmailAddressCode(code)
+		secure.Update(w, r, acc)
 		router.Template("secure", "emailaddresscode_cancelled", "", nil)(w, r, ps)
 	} else {
 		router.Template("secure", "emailaddress", "", map[string]interface{}{
@@ -53,10 +54,7 @@ func EmailAddressForm(w http.ResponseWriter, r *http.Request, ps httprouter.Para
 func ChangeEmailAddress(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
 	acc := Authentication(w, r)
 	code := r.FormValue("code")
-	if acc.EmailAddressCode == "" {
-		err = router.NewError(account.ErrEmailAddressCodeUnset)
-		err.Conflict = true
-	} else if e, conflict := acc.ChangeEmailAddress(code); e != nil {
+	if e, conflict := acc.ChangeEmailAddress(code); e != nil {
 		err = router.NewError(e)
 		err.Conflict = conflict
 	} else {

@@ -17,18 +17,24 @@ var (
 	ErrEmailTaken                = errors.New("Email address taken")
 	ErrNotActivated              = errors.New("Account hasn't been activated yet")
 	ErrAlreadyActivated          = errors.New("Account is already activated")
-	ErrPasswordCodeUnset         = errors.New("PasswordCode is nil")
-	ErrPasswordCodeIncorrect     = errors.New("Password code given is incorrect")
 	ErrValidationFailed          = errors.New("Field values are missing or incorrect")
-	ErrEmailAddressCodeUnset     = errors.New("Email address code is empty")
-	ErrEmailAddressCodeIncorrect = errors.New("Email address code given is incorrect")
+	ErrCodeUnset         = errors.New("Code is empty")
+	ErrCodeIncorrect = errors.New("Code given is incorrect")
+	ErrPasswordCodeTimedOut = errors.New("Password code has timed out")
 )
 
-const table = "account"
+const (
+	table = "account"
+	tableDel = "account_deleted"
+	pwdCodeTimeOut = 1 * time.Hour
+	)
 
 func init() {
 	if _, err := db.TableCreatePK(table, "UID"); err == nil {
 		log.Println("INFO: table created:", table)
+	}
+	if _, err := db.TableCreate(tableDel); err == nil {
+		log.Println("INFO: table created:", tableDel)
 	}
 }
 
@@ -71,6 +77,7 @@ type Account struct {
 	PasswordCode     *passwordCode
 	EmailAddressCode string
 	NewUID           string
+	TerminateCode string
 }
 
 func (a *Account) FullName() (name string) {
@@ -132,9 +139,9 @@ func (a *Account) activate(code string) (err error) {
 	return
 }
 
-func (a *Account) CreatePasswordCode(timeout time.Duration) error {
+func (a *Account) CreatePasswordCode() error {
 	a.PasswordCode = &passwordCode{
-		Expires: time.Now().Add(timeout),
+		Expires: time.Now().Add(pwdCodeTimeOut),
 		Value:   code(),
 	}
 	return a.Save()
@@ -150,8 +157,14 @@ func ClearPasswordCode(uid, code string) {
 }
 
 func (a *Account) ChangePassword(code, pwd1, pwd2 string) (err error, conflict bool) {
-	if code != a.PasswordCode.Value {
-		err, conflict = ErrPasswordCodeIncorrect, true
+	if a.PasswordCode == nil {
+		err, conflict = ErrCodeUnset, true
+	} else if time.Now().After(a.PasswordCode.Expires) {
+		a.PasswordCode = nil
+		a.Save()
+		err, conflict = ErrPasswordCodeTimedOut, true
+	} else if code == "" || code != a.PasswordCode.Value {
+		err, conflict = ErrCodeIncorrect, true
 	} else if pwd, e := newPassword(pwd1, pwd2); e != nil {
 		err, conflict = e, true
 	} else {
@@ -178,11 +191,60 @@ func (a *Account) ClearEmailAddressCode(code string) (err error) {
 }
 
 func (a *Account) ChangeEmailAddress(code string) (err error, conflict bool) {
-	if code != a.EmailAddressCode {
-		err, conflict = ErrEmailAddressCodeIncorrect, true
+	uid := a.UID
+	if acc, e, c := get(uid); e != nil {
+		err, conflict = e, c
+	} else if acc.EmailAddressCode == "" {
+		err, conflict = ErrCodeUnset, true
+	} else if code == "" || code != acc.EmailAddressCode {
+		err, conflict = ErrCodeIncorrect, true
 	} else {
-		a.UID = a.NewUID
-		err, conflict = a.ClearEmailAddressCode(code), false
+		acc.UID = acc.NewUID
+		if e := acc.ClearEmailAddressCode(code); e != nil {
+			err, conflict = e, false
+		} else {
+			*a = *acc
+		}
+	}
+	return
+}
+
+func (a *Account) CreateTerminateCode(sure bool) (err error, conflict bool) {
+	if !sure {
+		err, conflict = ErrCodeIncorrect, true
+	} else {
+		a.TerminateCode = code()
+		err = a.Save()
+	}
+	return
+}
+
+func (a *Account) ClearTerminateCode(code string) (err error) {
+	if a.TerminateCode == code {
+		a.TerminateCode = ""
+		err = a.Save()
+	}
+	return
+}
+
+type Deleted struct {
+	Account *Account
+}
+
+func (a *Account) Terminate(code string, sure bool) (err error, conflict bool) {
+	uid := a.UID
+	if !sure {
+		err, conflict = ErrCodeIncorrect, true
+	} else if acc, e, c := get(uid); e != nil {
+		err, conflict = e, c
+	} else if acc.TerminateCode == "" {
+		err, conflict = ErrCodeUnset, true
+	} else if code == "" || code != acc.TerminateCode {
+		err, conflict = ErrCodeIncorrect, true
+	} else if _, e := db.Insert(tableDel, &Deleted{acc}); e != nil {
+		err = e
+	} else if _, e := db.Delete(table, uid); e != nil {
+		err = e
 	}
 	return
 }

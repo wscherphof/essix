@@ -29,19 +29,15 @@ func init() {
 		Add("nl", "Dit account is al geactiveerd").
 		Add("en", "This account is already activated")
 
-	msg.New(ErrPasswordCodeUnset.Error()).
-		Add("nl", "Voor dit account is geen aanvraag bekend voor het opnieuw instellen van het wachtwoord").
-		Add("en", "This account has no pending request for a password reset")
+	msg.New(ErrCodeUnset.Error()).
+		Add("nl", "Geen aanvraag bekend voor dit account").
+		Add("en", "No pending request for this account")
 
-	msg.New(ErrPasswordCodeIncorrect.Error()).
+	msg.New(ErrCodeIncorrect.Error()).
 		Add("nl", "Ongeldige aanvraag").
 		Add("en", "Invalid request")
 
-	msg.New(ErrEmailAddressCodeUnset.Error()).
-		Add("nl", "Voor dit account is geen aanvraag bekend voor het wijzigen van het e-mailadres").
-		Add("en", "This account has no pending request for changing the email address")
-
-	msg.New(ErrEmailAddressCodeIncorrect.Error()).
-		Add("nl", "Ongeldige aanvraag").
-		Add("en", "Invalid request")
+	msg.New(ErrPasswordCodeTimedOut.Error()).
+		Add("nl", "De geldigheidstermijn van de aanvraag voor het opnieuw instellen van het wachtwoord is verstreken").
+		Add("en", "The request for a password reset is expired")
 }

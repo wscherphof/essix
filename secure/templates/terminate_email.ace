@@ -1,0 +1,5 @@
+= doctype html
+html lang={{ .lang.Main }}
+  = include ../../templates/includes/head .
+  body
+    = yield main

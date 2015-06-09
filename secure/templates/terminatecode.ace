@@ -1,0 +1,12 @@
+= doctype html
+html lang={{ .lang.Main }}
+  = include ../../templates/includes/head .
+  body
+    h2 {{ Msg "terminate subject" }}
+    p {{ Msg "Terminate sure" }}
+    form method=POST action=/account/terminatecode
+      p
+        label  {{ Msg "Yes, that's what I want" }}
+          input type=checkbox name=sure value=affirmative
+      p
+        input type=submit

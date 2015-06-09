@@ -106,10 +106,6 @@ func init() {
 		Add("nl", "Maak een nieuw wachtwoord aan").
 		Add("en", "Create a new password")
 
-	msg.New(ErrPasswordCodeTimedOut.Error()).
-		Add("nl", "De geldigheidstermijn van de aanvraag voor het opnieuw instellen van het wachtwoord is verstreken").
-		Add("en", "The request for a password reset is expired")
-
 	msg.New("Change password successful").
 		Add("nl", "Je nieuwe wachtwoord is nu actief.").
 		Add("en", "Your new password is activated.")
@@ -157,4 +153,34 @@ func init() {
 	msg.New("Star is required").
 		Add("nl", "Alleen de velden met een * zijn verplicht").
 		Add("en", "Only the fields with a * are required")
+
+	msg.New("terminate subject").
+		Add("nl", "Mijn account opzeggen").
+		Add("en", "Terminate my account")
+
+	msg.New("Terminate account").
+		Add("nl", "Je account opzeggen").
+		Add("en", "Terminate your account")
+
+	msg.New("Terminate sure").
+		Add("nl", `Weet je zeker dat je je account bij Expeertise wil opzeggen?
+			Je kan je later weliswaar weer opnieuw aanmelden, maar met het opzeggen gaan nu wel alle gekoppelde gegevens verloren.`).
+		Add("en", `Are you sure you want to terminate your account?
+			Though you can always sign up again later, all data currently linked to your account would get lost now.`)
+
+	msg.New("Yes, that's what I want").
+		Add("nl", "Ja, dat wil ik").
+		Add("en", "Yes, that's what I want")
+
+	msg.New("Terminate code successful").
+		Add("nl", "Je hebt een aanvraag ingediend om je account op te zeggen. Je krijgt een e-mail van ons met verdere instructies.").
+		Add("en", "You filed a request to terminate your account. For further instructions, please check your email.")
+
+	msg.New("Terminate code cancelled").
+		Add("nl", "Opzeggen van het account is geannuleerd.").
+		Add("en", "Termination of the account is cancelled.")
+
+	msg.New("Terminate successful").
+		Add("nl", "Je account is nu verwijderd.").
+		Add("en", "Your accounst has been deleted now.")
 }

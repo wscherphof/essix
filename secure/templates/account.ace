@@ -3,7 +3,7 @@ html lang={{ .lang.Main }}
   = include ../../templates/includes/head .
   body
     {{ if .Initial }}
-      h2 {{ Msg "Hi" }} {{ .Account.Name }}{{ "," }}
+      p {{ Msg "Hi" }} {{ .Account.Name }}{{ "," }}
       p
         {{ Msg "Complete account" }}
         br
@@ -20,6 +20,13 @@ html lang={{ .lang.Main }}
         {{ if not .Initial }}
           {{ " - " }}
           a href=/account/emailaddresscode {{ Msg "change" }}
+          br
+          small
+            a href=/account/passwordcode
+              {{ Msg "password subject" }}
+            {{ " " }}
+            a href=/account/terminatecode
+              {{ Msg "terminate subject" }}
         {{ end }}
       p
         label {{ Msg "Country" }}*{{ " " }}

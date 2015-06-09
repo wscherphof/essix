@@ -1,0 +1,7 @@
+= doctype html
+html lang={{ .lang.Main }}
+  = include ../../templates/includes/head .
+  body
+    p {{ Msg "Terminate code cancelled" }}
+    p
+      a href=/ {{ Msg "Take me home" }}
