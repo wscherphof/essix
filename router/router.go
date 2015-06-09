@@ -1,13 +1,17 @@
 package router
 
 import (
+	"errors"
 	"github.com/julienschmidt/httprouter"
 	"github.com/wscherphof/expeertise/util"
 	"log"
 	"net/http"
 )
 
-var Router = httprouter.New()
+var (
+	Router                 = httprouter.New()
+	ErrInternalServerError = errors.New("Internal server error")
+)
 
 type tailType struct {
 	dir  string
@@ -21,23 +25,6 @@ type Error struct {
 	Data     map[string]interface{}
 }
 
-func NewError(e error, tail ...string) (err *Error) {
-	if e != nil {
-		err = &Error{Error: e}
-		if len(tail) == 2 {
-			err.Tail = &tailType{
-				dir:  tail[0],
-				name: tail[1] + "_error-tail",
-			}
-		}
-	}
-	return
-}
-
-func IfError(e error, tail ...string) (err *Error) {
-	return NewError(e, tail...)
-}
-
 type ErrorHandle func(http.ResponseWriter, *http.Request, httprouter.Params) *Error
 
 func ErrorHandleFunc(errorHandle ErrorHandle) (handle httprouter.Handle) {
@@ -46,19 +33,18 @@ func ErrorHandleFunc(errorHandle ErrorHandle) (handle httprouter.Handle) {
 			code := http.StatusInternalServerError
 			if err.Conflict {
 				code = http.StatusConflict
+			} else {
+				log.Printf("ERROR: %+v: %s %#v", r.URL, err.Error, err.Error)
+				err.Error = ErrInternalServerError
 			}
 			// Set the Content-Type to prevent CompressHandler from doing so after our WriteHeader()
 			w.Header().Set("Content-Type", "text/html; charset=utf-8")
 			w.WriteHeader(code)
-			// TODO: Log, but not write >=500 errors!
 			Template("router", "error", "", map[string]interface{}{
 				"Error": err.Error,
 			})(w, r, ps)
 			if err.Tail != nil {
 				Template(err.Tail.dir, err.Tail.name, "", err.Data)(w, r, ps)
-			}
-			if code >= 500 {
-				log.Println("ERROR:", err.Error, "- Path:", r.URL.Path)
 			}
 		}
 	}
@@ -81,4 +67,21 @@ func Template(dir, base, inner string, data map[string]interface{}) ErrorHandle 
 		util.Template(dir, base, inner, data)(w, r)
 		return
 	}
+}
+
+func NewError(e error, tail ...string) (err *Error) {
+	if e != nil {
+		err = &Error{Error: e}
+		if len(tail) == 2 {
+			err.Tail = &tailType{
+				dir:  tail[0],
+				name: tail[1] + "_error-tail",
+			}
+		}
+	}
+	return
+}
+
+func IfError(e error, tail ...string) (err *Error) {
+	return NewError(e, tail...)
 }
