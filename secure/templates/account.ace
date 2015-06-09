@@ -10,22 +10,17 @@ html lang={{ .lang.Main }}
         small {{ Msg "Star is required" }}
     {{ else }}
       h2 {{ Msg "Edit account" }}
-      small
-        {{ Msg "Last modified" }}: {{ .Account.Modified.Format (Msg "Time format") }}
-        br
-        a href=/account/passwordcode
-          {{ Msg "password subject" }}
-        {{ " " }}
-        a href=/account/terminatecode
-          {{ Msg "terminate subject" }}
     {{ end }}
     form method=POST action=/account
       input type=hidden name=_method value=PUT
       p
         label {{ Msg "Email" }}: {{ .Account.UID }}
         {{ if not .Initial }}
-          {{ " - " }}
-          a href=/account/emailaddresscode {{ Msg "change" }}
+          br
+          small
+            a href=/account/passwordcode {{ Msg "password subject" }}
+            {{ " " }}
+            a href=/account/emailaddresscode {{ Msg "emailaddress subject" }}
         {{ end }}
       p
         label {{ Msg "Country" }}*{{ " " }}
@@ -53,3 +48,10 @@ html lang={{ .lang.Main }}
       input type=reset
       {{ " " }}
       input type=submit value={{ Msg "Save changes" }}
+    {{ if not .Initial }}
+      p
+        small
+          {{ Msg "Last modified" }}: {{ .Account.Modified.Format (Msg "Time format") }}
+          br
+          a href=/account/terminatecode {{ Msg "terminate subject" }}
+    {{ end }}
