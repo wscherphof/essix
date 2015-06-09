@@ -3,7 +3,6 @@ package router
 import (
 	"errors"
 	"github.com/julienschmidt/httprouter"
-	"github.com/wscherphof/expeertise/util"
 	"log"
 	"net/http"
 )
@@ -12,18 +11,6 @@ var (
 	Router                 = httprouter.New()
 	ErrInternalServerError = errors.New("Internal server error")
 )
-
-type tailType struct {
-	dir  string
-	name string
-}
-
-type Error struct {
-	Error    error
-	Conflict bool
-	Tail     *tailType
-	Data     map[string]interface{}
-}
 
 type ErrorHandle func(http.ResponseWriter, *http.Request, httprouter.Params) *Error
 
@@ -60,28 +47,3 @@ func DELETE(path string, handle ErrorHandle)  { Handle("DELETE", path, handle) }
 func PATCH(path string, handle ErrorHandle)   { Handle("PATCH", path, handle) }
 func OPTIONS(path string, handle ErrorHandle) { Handle("OPTIONS", path, handle) }
 func HEAD(path string, handle ErrorHandle)    { Handle("HEAD", path, handle) }
-
-func Template(dir, base, inner string, data map[string]interface{}) ErrorHandle {
-	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *Error) {
-		// TODO: try if we can do ps.ByName() from the ace template..
-		util.Template(dir, base, inner, data)(w, r)
-		return
-	}
-}
-
-func NewError(e error, tail ...string) (err *Error) {
-	if e != nil {
-		err = &Error{Error: e}
-		if len(tail) == 2 {
-			err.Tail = &tailType{
-				dir:  tail[0],
-				name: tail[1] + "_error-tail",
-			}
-		}
-	}
-	return
-}
-
-func IfError(e error, tail ...string) (err *Error) {
-	return NewError(e, tail...)
-}
