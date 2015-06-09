@@ -60,6 +60,7 @@ func PasswordForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) 
 		account.ClearPasswordCode(uid, code)
 		router.Template("secure", "passwordcode_cancelled", "", nil)(w, r, ps)
 	} else {
+		// TODO: indicate password strength
 		router.Template("secure", "password", "", map[string]interface{}{
 			"UID":     uid,
 			"Code":    code,
