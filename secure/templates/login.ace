@@ -3,21 +3,19 @@ html lang={{ .lang.Main }}
   = include ../../templates/includes/head .
   body
     h2 {{ Msg "Log in" }}
+    small
+      a href=/account
+        {{ Msg "Sign up" }}
+      {{ " " }}
+      a href=/account/passwordcode
+        {{ Msg "Forgot password" }}
     form method=POST action=/session
       p
         label {{ Msg "Email" }}*{{ " " }}
           input id=uid type=email name=uid placeholder=email@provider.com required= size=35
-          br
-          a href=/account
-            small
-              {{ Msg "Sign up" }}
       p
         label {{ Msg "Password" }}*{{ " " }}
           input id=pwd type=password name=pwd placeholder=******** required= size=35
-          br
-          a href=/account/passwordcode
-            small
-              {{ Msg "Forgot password" }}
       p
         = include includes/captcha .
       p
