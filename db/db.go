@@ -103,7 +103,11 @@ func DeleteTerm(term r.Term) (r.WriteResponse, error) {
 }
 
 func Get(table, key string, result interface{}) (err error, found bool) {
-	if cursor, e := r.Db(dbname).Table(table).Get(key).Run(s); e != nil {
+	cursor, e := r.Db(dbname).Table(table).Get(key).Run(s)
+	if cursor != nil {
+		defer cursor.Close()
+	}
+	if e != nil {
 		err = e
 	} else if e = cursor.One(result); e == nil {
 		found = true
@@ -114,7 +118,11 @@ func Get(table, key string, result interface{}) (err error, found bool) {
 }
 
 func One(table string, result interface{}) (err error, found bool) {
-	if cursor, e := r.Db(dbname).Table(table).Run(s); e != nil {
+	cursor, e := r.Db(dbname).Table(table).Run(s)
+	if cursor != nil {
+		defer cursor.Close()
+	}
+	if e != nil {
 		err = e
 	} else if e = cursor.One(result); e == nil {
 		found = true
