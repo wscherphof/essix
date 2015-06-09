@@ -11,23 +11,23 @@ import (
 )
 
 var (
-	ErrInvalidCredentials        = errors.New("Unknown email address or incorrect password or activation code")
-	ErrPasswordEmpty             = errors.New("Password empty")
-	ErrPasswordsNotEqual         = errors.New("Passwords not equal")
-	ErrEmailTaken                = errors.New("Email address taken")
-	ErrNotActivated              = errors.New("Account hasn't been activated yet")
-	ErrAlreadyActivated          = errors.New("Account is already activated")
-	ErrValidationFailed          = errors.New("Field values are missing or incorrect")
-	ErrCodeUnset         = errors.New("Code is empty")
-	ErrCodeIncorrect = errors.New("Code given is incorrect")
+	ErrInvalidCredentials   = errors.New("Unknown email address or incorrect password or activation code")
+	ErrPasswordEmpty        = errors.New("Password empty")
+	ErrPasswordsNotEqual    = errors.New("Passwords not equal")
+	ErrEmailTaken           = errors.New("Email address taken")
+	ErrNotActivated         = errors.New("Account hasn't been activated yet")
+	ErrAlreadyActivated     = errors.New("Account is already activated")
+	ErrValidationFailed     = errors.New("Field values are missing or incorrect")
+	ErrCodeUnset            = errors.New("Code is empty")
+	ErrCodeIncorrect        = errors.New("Code given is incorrect")
 	ErrPasswordCodeTimedOut = errors.New("Password code has timed out")
 )
 
 const (
-	table = "account"
-	tableDel = "account_deleted"
+	table          = "account"
+	tableDel       = "account_deleted"
 	pwdCodeTimeOut = 1 * time.Hour
-	)
+)
 
 func init() {
 	if _, err := db.TableCreatePK(table, "UID"); err == nil {
@@ -77,7 +77,7 @@ type Account struct {
 	PasswordCode     *passwordCode
 	EmailAddressCode string
 	NewUID           string
-	TerminateCode string
+	TerminateCode    string
 }
 
 func (a *Account) FullName() (name string) {
