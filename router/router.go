@@ -50,6 +50,7 @@ func ErrorHandleFunc(errorHandle ErrorHandle) (handle httprouter.Handle) {
 			// Set the Content-Type to prevent CompressHandler from doing so after our WriteHeader()
 			w.Header().Set("Content-Type", "text/html; charset=utf-8")
 			w.WriteHeader(code)
+			// TODO: Log, but not write >=500 errors!
 			Template("router", "error", "", map[string]interface{}{
 				"Error": err.Error,
 			})(w, r, ps)
