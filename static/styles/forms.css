@@ -1,4 +1,7 @@
-.right {
-	/*float: right;*/
+input.right, select.right {
 	width: 175px;
+}
+
+input[type="submit"] {
+	width: initial;
 }

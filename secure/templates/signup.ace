@@ -3,23 +3,22 @@ html lang={{ .lang.Main }}
   = include ../../templates/includes/head .
   body
     h2 {{ Msg "Sign up" }}
-    form method=POST action=/account onsubmit="return validate(this)"
-      #envelope
-        p
-          label {{ Msg "Email" }}*{{ " " }}
-            input#uid.right type=email name=uid autocomplete=username placeholder=email@provider.com required= size=35
-        p
-          label {{ Msg "Password" }}*{{ " " }}
-            input#pwd1.right type=password name=pwd1 autocomplete=new-password placeholder=******** required= size=35 oninput="judgePassword(this.value, 'verdict')"
-            {{ " " }}
-            span#verdict
-        p
-          label {{ Msg "Repeat password" }}*{{ " " }}
-            input#pwd2.right type=password name=pwd2 autocomplete=new-password placeholder=******** required= size=35
+    form.envelope method=POST action=/account onsubmit="return validate(this)"
+      p
+        label {{ Msg "Email" }}*{{ " " }}
+          input#uid.right type=email name=uid autocomplete=username placeholder=email@provider.com required= size=35
+      p
+        label {{ Msg "Password" }}*{{ " " }}
+          input#pwd1.right type=password name=pwd1 autocomplete=new-password placeholder=******** required= size=35 oninput="judgePassword(this.value, 'verdict')"
+          {{ " " }}
+          span#verdict
+      p
+        label {{ Msg "Repeat password" }}*{{ " " }}
+          input#pwd2.right type=password name=pwd2 autocomplete=new-password placeholder=******** required= size=35
       p
         = include includes/captcha .
       p
-        input type=submit
+        input.right type=submit
     script type=text/javascript src=/static/scripts/forms.js
     script type=text/javascript src=/static/scripts/password.js
     = javascript

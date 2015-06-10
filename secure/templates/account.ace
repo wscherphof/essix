@@ -4,54 +4,53 @@ html lang={{ .lang.Main }}
   body
     {{ if .Initial }}
       p {{ Msg "Hi" }} {{ .Account.Name }}{{ "," }}
-      p
-        {{ Msg "Complete account" }}
+      p {{ Msg "Complete account" }}
         br
         small {{ Msg "Star is required" }}
     {{ else }}
       h2 {{ Msg "Edit account" }}
-      p
-        small
-          a href=/account/passwordcode {{ Msg "password subject" }}
-          {{ " " }}
-          a href=/account/emailaddresscode {{ Msg "emailaddress subject" }}
+      form#emailaddresscode method=GET action=/account/emailaddresscode
     {{ end }}
-    form method=POST action=/account
+    form.envelope method=POST action=/account
       input type=hidden name=_method value=PUT
-      p
-        label {{ Msg "Email" }}: {{ .Account.UID }}
-      #envelope
+      label.right {{ Msg "Email" }}: {{ .Account.UID }}
+      {{ if not .Initial }}
+        {{ " " }}
+        input.right2 form=emailaddresscode type=submit title={{ Msg "emailaddress subject" }} value=&#8230;
         p
-          label {{ Msg "Country" }}*{{ " " }}
-            select#country.right name=country autocomplete=off required=
-              {{ $setCountry := .Account.Country }}
-              {{ $mainLang := .lang.Main }}
-              {{ $subLang := .lang.Sub }}
-              {{ range .Countries }}
-                {{ if or (eq .Code $setCountry) (eq .Code $mainLang) (eq .Code $subLang) }}
-                  option value={{ .Code }} selected= {{ .Name }}
-                {{ else }}
-                  option value={{ .Code }} {{ .Name }}
-                {{ end }}
+          a href=/account/passwordcode {{ Msg "password subject" }}
+      {{ end }}
+      p
+        label {{ Msg "Country" }}*{{ " " }}
+          select#country.right name=country autocomplete=off required=
+            {{ $setCountry := .Account.Country }}
+            {{ $mainLang := .lang.Main }}
+            {{ $subLang := .lang.Sub }}
+            {{ range .Countries }}
+              {{ if or (eq .Code $setCountry) (eq .Code $mainLang) (eq .Code $subLang) }}
+                option value={{ .Code }} selected= {{ .Name }}
+              {{ else }}
+                option value={{ .Code }} {{ .Name }}
               {{ end }}
-        p
-          label {{ Msg "Postcode" }}*{{ " " }}
-            input#postcode.right type=text name=postcode autocomplete=postal-code value={{ .Account.Postcode }} placeholder="1200 JC" required= size=35
-        p
-          label {{ Msg "First name" }}{{ " " }}
-            input#firstname.right type=text name=firstname autocomplete=given-name value={{ .Account.FirstName }} placeholder=John size=35
-        p
-          label {{ Msg "Last name" }}{{ " " }}
-            input#lastname.right type=text name=lastname autocomplete=family-name value={{ .Account.LastName }} placeholder=Doe size=35
+            {{ end }}
       p
-      input type=reset
-      {{ " " }}
-      input type=submit value={{ Msg "Save changes" }}
+        label {{ Msg "Postcode" }}*{{ " " }}
+          input#postcode.right type=text name=postcode autocomplete=postal-code value={{ .Account.Postcode }} placeholder="1200 JC" required= size=35
+      p
+        label {{ Msg "First name" }}{{ " " }}
+          input#firstname.right type=text name=firstname autocomplete=given-name value={{ .Account.FirstName }} placeholder=John size=35
+      p
+        label {{ Msg "Last name" }}{{ " " }}
+          input#lastname.right type=text name=lastname autocomplete=family-name value={{ .Account.LastName }} placeholder=Doe size=35
+      p
+        input type=reset
+        {{ " " }}
+        input.right type=submit value={{ Msg "Save changes" }}
     {{ if not .Initial }}
-      p
-        small
+      small
+        p
           {{ Msg "Last modified" }}: {{ .Account.Modified.Format (Msg "Time format") }}
-          br
+        p
           a href=/account/terminatecode {{ Msg "terminate subject" }}
     {{ end }}
     script type=text/javascript src=/static/scripts/forms.js

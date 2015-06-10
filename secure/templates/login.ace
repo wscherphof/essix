@@ -3,21 +3,21 @@ html lang={{ .lang.Main }}
   = include ../../templates/includes/head .
   body
     h2 {{ Msg "Log in" }}
-    p
-      small
-        a href=/account {{ Msg "Sign up" }}
+    form#account method=GET action=/account
+    form#passwordcode method=GET action=/account/passwordcode
+    form.envelope method=POST action=/session
+      p
+        label {{ Msg "Email" }}*{{ " " }}
+          input#uid.right type=email name=uid autocomplete=username placeholder=email@provider.com required=
         {{ " " }}
-        a href=/account/passwordcode {{ Msg "Forgot password" }}
-    form method=POST action=/session
-      #envelope
-        p
-          label {{ Msg "Email" }}*{{ " " }}
-            input#uid.right type=email name=uid autocomplete=username placeholder=email@provider.com required=
-        p
-          label {{ Msg "Password" }}*{{ " " }}
-            input#pwd.right type=password name=pwd autocomplete=current-password placeholder=********** required=
+        input.right2 form=account type=submit title={{ Msg "Sign up" }} value=&#8230;
+      p
+        label {{ Msg "Password" }}*{{ " " }}
+          input#pwd.right type=password name=pwd autocomplete=current-password placeholder=********** required=
+        {{ " " }}
+        input.right2 form=passwordcode type=submit title={{ Msg "Forgot password" }} value=&#8230;
       p
         = include includes/captcha .
       p
-        input type=submit
+        input.right type=submit
     script type=text/javascript src=/static/scripts/forms.js

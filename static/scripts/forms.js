@@ -1,19 +1,40 @@
-document.addEventListener("DOMContentLoaded", function(event) {
-	var rights = document.getElementsByClassName('right');
-	if (!rights) return;
+function max(list) {
 	var max = 0;
-	for (var i = 0; i < rights.length; i++) {
-		var e = rights[i];
-		var val = e.offsetLeft + e.offsetWidth;
-		if (val > max) {
-			max = val;
+	if (list) {
+		for (var i = 0; i < list.length; i++) {
+			var elem = list[i];
+			var val = elem.offsetLeft + elem.offsetWidth;
+			if (val > max) {
+				max = val;
+			}
 		}
 	}
-	var envelope = document.getElementById("envelope");
-	if (!envelope) return;
-	envelope.style.width = "" + max + "px";
-	for (var i = 0; i < rights.length; i++) {
-		var e = rights[i];
-		e.style.float = "right";
+	return max;
+}
+
+function position(list, max) {
+	if (list) {
+		for (var i = 0; i < list.length; i++) {
+			var elem = list[i];
+			var offset = max - elem.offsetLeft - elem.offsetWidth;
+			elem.style.position = "relative";
+			elem.style.left = offset + "px";
+		}
 	}
-});
+}
+
+function alignRight(event) {
+	var envelopes = document.getElementsByClassName("envelope");
+	if (!envelopes) return;
+	for (var i = 0; i < envelopes.length; i++) {
+		var envelope = envelopes[i];
+		var rights = envelope.querySelectorAll('.right');
+		var right2s = envelope.querySelectorAll('.right2');
+		var maxRights = max(rights);
+		var maxRight2s = max(right2s);
+		position(rights, maxRights);
+		position(right2s, maxRight2s);
+	}
+}
+
+document.addEventListener("DOMContentLoaded", alignRight);
