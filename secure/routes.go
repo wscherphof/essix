@@ -9,6 +9,7 @@ func init() {
 	router.POST("/account", SignUp)
 	router.PUT("/account", UpdateAccount)
 
+	// TODO: autocomplete
 	router.GET("/session", LogInForm)
 	router.POST("/session", LogIn)
 	router.DELETE("/session", LogOut)
