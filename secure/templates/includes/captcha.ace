@@ -1,10 +1,11 @@
-label {{ Msg "Captcha" }}*{{ " " }}
-  input id=captchaSolution type=number name=captchaSolution autocomplete=off placeholder=975431 required= size=35
+label {{ Msg "Captcha" }}*
   br
   img id=captchaImg src=/captcha/{{ .CaptchaId }}.png alt={{ Msg "Captcha image" }}
   br
-  audio id=audio controls= preload=none loop= src=/captcha/{{ .CaptchaId }}.wav
+  audio id=audio controls= preload=none loop= src=/captcha/{{ .CaptchaId }}.wav style="width: 240px;"
     | Your browser doesn't support audio.
     a href=/captcha/download/{{ .CaptchaId }}.wav Download file
     | to play it in an external player.
+  br
+  input#captchaSolution type=number name=captchaSolution autocomplete=off placeholder=975431 required= style="width: 240px;"
   input type=hidden name=captchaId value={{ .CaptchaId }}

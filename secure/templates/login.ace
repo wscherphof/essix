@@ -9,13 +9,15 @@ html lang={{ .lang.Main }}
         {{ " " }}
         a href=/account/passwordcode {{ Msg "Forgot password" }}
     form method=POST action=/session
-      p
-        label {{ Msg "Email" }}*{{ " " }}
-          input id=uid type=email name=uid autocomplete=username placeholder=email@provider.com required= size=35
-      p
-        label {{ Msg "Password" }}*{{ " " }}
-          input id=pwd type=password name=pwd autocomplete=current-password placeholder=********** required= size=35
+      #envelope
+        p
+          label {{ Msg "Email" }}*{{ " " }}
+            input#uid.right type=email name=uid autocomplete=username placeholder=email@provider.com required=
+        p
+          label {{ Msg "Password" }}*{{ " " }}
+            input#pwd.right type=password name=pwd autocomplete=current-password placeholder=********** required=
       p
         = include includes/captcha .
       p
         input type=submit
+    script type=text/javascript src=/static/scripts/forms.js
