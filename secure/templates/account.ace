@@ -10,21 +10,19 @@ html lang={{ .lang.Main }}
         small {{ Msg "Star is required" }}
     {{ else }}
       h2 {{ Msg "Edit account" }}
+      p
+        small
+          a href=/account/passwordcode {{ Msg "password subject" }}
+          {{ " " }}
+          a href=/account/emailaddresscode {{ Msg "emailaddress subject" }}
     {{ end }}
     form method=POST action=/account
       input type=hidden name=_method value=PUT
       p
         label {{ Msg "Email" }}: {{ .Account.UID }}
-        {{ if not .Initial }}
-          br
-          small
-            a href=/account/passwordcode {{ Msg "password subject" }}
-            {{ " " }}
-            a href=/account/emailaddresscode {{ Msg "emailaddress subject" }}
-        {{ end }}
       p
         label {{ Msg "Country" }}*{{ " " }}
-          select id=country name=country required=
+          select id=country name=country autocomplete=off required=
             {{ $setCountry := .Account.Country }}
             {{ $mainLang := .lang.Main }}
             {{ $subLang := .lang.Sub }}
@@ -37,13 +35,13 @@ html lang={{ .lang.Main }}
             {{ end }}
       p
         label {{ Msg "Postcode" }}*{{ " " }}
-          input id=postcode type=text name=postcode value={{ .Account.Postcode }} placeholder="1200 JC" required= size=35
+          input id=postcode type=text name=postcode autocomplete=postal-code value={{ .Account.Postcode }} placeholder="1200 JC" required= size=35
       p
         label {{ Msg "First name" }}{{ " " }}
-          input id=firstname type=text name=firstname value={{ .Account.FirstName }} placeholder=John size=35
+          input id=firstname type=text name=firstname autocomplete=given-name value={{ .Account.FirstName }} placeholder=John size=35
       p
         label {{ Msg "Last name" }}{{ " " }}
-          input id=lastname type=text name=lastname value={{ .Account.LastName }} placeholder=Doe size=35
+          input id=lastname type=text name=lastname autocomplete=family-name value={{ .Account.LastName }} placeholder=Doe size=35
       p
       input type=reset
       {{ " " }}

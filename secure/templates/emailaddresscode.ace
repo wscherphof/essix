@@ -8,6 +8,6 @@ html lang={{ .lang.Main }}
         label {{ Msg "Current" }}: {{ .UID }}
       p
         label {{ Msg "New" }}*{{ " " }}
-          input id=newuid type=email name=newuid placeholder=email@provider.com required= size=35
+          input id=newuid type=email name=newuid autocomplete=username placeholder=email@provider.com required= size=35
       p
         input type=submit

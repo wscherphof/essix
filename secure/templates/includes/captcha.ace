@@ -1,5 +1,5 @@
 label {{ Msg "Captcha" }}*{{ " " }}
-  input id=captchaSolution type=number name=captchaSolution placeholder=975431 required= size=35
+  input id=captchaSolution type=number name=captchaSolution autocomplete=off placeholder=975431 required= size=35
   br
   img id=captchaImg src=/captcha/{{ .CaptchaId }}.png alt={{ Msg "Captcha image" }}
   br
