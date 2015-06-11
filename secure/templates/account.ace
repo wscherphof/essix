@@ -8,19 +8,13 @@ html lang={{ .lang.Main }}
         br
         small {{ Msg "Star is required" }}
     {{ else }}
-      h2 {{ Msg "Edit account" }}
-      form#emailaddresscode method=GET action=/account/emailaddresscode
+      h3 {{ Msg "Edit account" }}
     {{ end }}
+    p
+      label {{ Msg "Email" }}: {{ .Account.UID }}
     form.envelope method=POST action=/account
       input type=hidden name=_method value=PUT
-      label.right {{ Msg "Email" }}: {{ .Account.UID }}
-      {{ if not .Initial }}
-        {{ " " }}
-        input.right2 form=emailaddresscode type=submit title={{ Msg "emailaddress subject" }} value=&#8230;
-        p
-          a href=/account/passwordcode {{ Msg "password subject" }}
-      {{ end }}
-      p
+      span
         label {{ Msg "Country" }}*{{ " " }}
           select#country.right name=country autocomplete=off required=
             {{ $setCountry := .Account.Country }}
@@ -46,10 +40,17 @@ html lang={{ .lang.Main }}
         input type=reset
         {{ " " }}
         input.right type=submit value={{ Msg "Save changes" }}
+      {{ if not .Initial }}
+        p
+          small
+            {{ Msg "Last modified" }}: {{ .Account.Modified.Format (Msg "Time format") }}
+      {{ end }}
     {{ if not .Initial }}
       small
         p
-          {{ Msg "Last modified" }}: {{ .Account.Modified.Format (Msg "Time format") }}
+          a href=/account/passwordcode {{ Msg "password subject" }}
+        p
+          a href=/account/emailaddresscode {{ Msg "emailaddress subject" }}
         p
           a href=/account/terminatecode {{ Msg "terminate subject" }}
     {{ end }}

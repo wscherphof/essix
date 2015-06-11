@@ -2,7 +2,7 @@
 html lang={{ .lang.Main }}
   = include ../../templates/includes/head .
   body
-    h2 {{ Msg "Change email address" }}
+    h3 {{ Msg "Change email address" }}
     p {{ Msg "Want replace" }} "{{ .Account.UID }}" {{ Msg "Replace with" }} "{{ .Account.NewUID }}"
     form method=POST action=/account/emailaddress
       input type=hidden name=_method value=PUT

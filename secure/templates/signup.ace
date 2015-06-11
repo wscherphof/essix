@@ -2,9 +2,9 @@
 html lang={{ .lang.Main }}
   = include ../../templates/includes/head .
   body
-    h2 {{ Msg "Sign up" }}
+    h3 {{ Msg "Sign up" }}
     form.envelope method=POST action=/account onsubmit="return validate(this)"
-      p
+      span
         label {{ Msg "Email" }}*{{ " " }}
           input#uid.right type=email name=uid autocomplete=username placeholder=email@provider.com required= size=35
       p

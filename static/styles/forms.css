@@ -1,7 +1,12 @@
 input.right, select.right {
-	width: 175px;
+	width: 15em;
 }
 
 input[type="submit"] {
 	width: initial;
+}
+
+.envelope {
+	float: left;
+	margin-right: 1em;
 }
