@@ -23,6 +23,19 @@ input[type="button"], input[type="submit"], input[type="reset"] {
 	width: initial;
 }
 
+.form {
+  max-width: 22em;
+}
+
+.right {
+  float: right;
+}
+
+.p {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
 .wrap {
   display: flex;
   flex-wrap: wrap;

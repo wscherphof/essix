@@ -4,31 +4,22 @@ html lang={{ .lang.Main }}
   body
     header
       h1 {{ Msg "Sign up" }}
-    main
+    main.form
       form method=POST action=/account onsubmit="return validatePassword(this['pwd1'], this['pwd2'], '{{ Msg "Passwords not equal" }}')"
-        table
-          thead
-          tbody
-            tr
-              td
-                label for=uid {{ Msg "Email" }}*
-              td align=right
-                input#uid type=email name=uid autocomplete=username placeholder=email@provider.com required=
-            tr
-              td
-                label for=pwd1 {{ Msg "Password" }}*
-              td align=right
-                input#pwd1 type=password name=pwd1 autocomplete=new-password placeholder=******** required= oninput="judgePassword(this.value, 'verdict')"
-              td#verdict
-            tr
-              td
-                label for=pwd2 {{ Msg "Repeat password" }}*
-              td align=right
-                input#pwd2 type=password name=pwd2 autocomplete=new-password placeholder=******** required=
-            tr
-              td colspan=2
-                = include includes/captcha .
-            tr
-              td colspan=2 align=right
-                input type=submit
+        .p
+          label for=uid {{ Msg "Email" }}*
+          input#uid.right type=email name=uid autocomplete=username placeholder=email@provider.com required=
+        .p
+          label for=pwd1 {{ Msg "Password" }}*
+          span.right
+            span#verdict
+            span &nbsp;
+            input#pwd1 type=password name=pwd1 autocomplete=new-password placeholder=******** required= oninput="judgePassword(this.value, 'verdict')"
+        .p
+          label for=pwd2 {{ Msg "Repeat password" }}*
+          input#pwd2.right type=password name=pwd2 autocomplete=new-password placeholder=******** required=
+        .p
+          = include includes/captcha .
+        .p
+          input.right type=submit
     script type=text/javascript src=/static/scripts/password.js
