@@ -1,12 +1,21 @@
-input.right, select.right {
+h1 {
+  font-size: larger;
+}
+
+input, select {
 	width: 15em;
 }
 
-input[type="submit"] {
+input[type="button"], input[type="submit"], input[type="reset"] {
 	width: initial;
 }
 
-.envelope {
-	float: left;
-	margin-right: 1em;
+.wrap {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.wrap nav ul {
+  font-size: smaller;
+  -webkit-padding-start: 2em;
 }

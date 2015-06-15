@@ -2,21 +2,31 @@
 html lang={{ .lang.Main }}
   = include ../../templates/includes/head .
   body
-    h3 {{ Msg "Log in" }}
-    form.envelope method=POST action=/session
-      span
-        label {{ Msg "Email" }}*{{ " " }}
-          input#uid.right type=email name=uid autocomplete=username placeholder=email@provider.com required=
-      p
-        label {{ Msg "Password" }}*{{ " " }}
-          input#pwd.right type=password name=pwd autocomplete=current-password placeholder=********** required=
-      p
-        = include includes/captcha .
-      p
-        input.right type=submit
-    small
-      p
-        a href=/account {{ Msg "Sign up" }}
-      p
-        a href=/account/passwordcode {{ Msg "Forgot password" }}
-    script type=text/javascript src=/static/scripts/forms.js
+    h1 {{ Msg "Log in" }}
+    form.wrap method=POST action=/session
+      table
+        thead
+        tbody
+          tr
+            td
+              label for=uid {{ Msg "Email" }}*
+            td
+              input#uid type=email name=uid autocomplete=username placeholder=email@provider.com required=
+          tr
+            td
+              label for=pwd {{ Msg "Password" }}*
+            td
+              input#pwd type=password name=pwd autocomplete=current-password placeholder=********** required=
+          tr
+            td colspan=2
+              = include includes/captcha .
+          tr
+            td
+            td align=right
+              input type=submit
+      nav
+        ul
+          li
+            a href=/account {{ Msg "Sign up" }}
+          li
+            a href=/account/passwordcode {{ Msg "Forgot password" }}
