@@ -2,8 +2,12 @@ h1 {
   font-size: larger;
 }
 
-input, select {
-	width: 15em;
+input {
+  width: 15em;
+}
+
+select {
+  width: 15.5em;
 }
 
 input[type="button"], input[type="submit"], input[type="reset"] {
@@ -15,7 +19,10 @@ input[type="button"], input[type="submit"], input[type="reset"] {
   flex-wrap: wrap;
 }
 
-.wrap nav ul {
+aside, footer {
   font-size: smaller;
+}
+
+ul {
   -webkit-padding-start: 2em;
 }
