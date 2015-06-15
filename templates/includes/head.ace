@@ -4,4 +4,5 @@ head
   link rel=icon href=/static/favicon.ico type=image/x-icon
   link rel="shortcut icon" href=/static/favicon.ico type=image/x-icon
   link rel=stylesheet type=text/css href=/static/styles/forms.css
+  link rel=stylesheet type=text/css href=https://fonts.googleapis.com/css?family=Roboto
   meta name=viewport content="width=device-width, initial-scale=1"

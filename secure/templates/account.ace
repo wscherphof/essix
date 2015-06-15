@@ -11,47 +11,47 @@ html lang={{ .lang.Main }}
       {{ else }}
         h1 {{ .Account.UID }}
       {{ end }}
-    form#account method=POST action=/account
-      input type=hidden name=_method value=PUT
     main.wrap
-      table
-        thead
-        tbody
-          tr
-            td
-              label for=country {{ Msg "Country" }}*
-            td
-              select#country form=account name=country autocomplete=off required=
-                {{ $setCountry := .Account.Country }}
-                {{ $mainLang := .lang.Main }}
-                {{ $subLang := .lang.Sub }}
-                {{ range .Countries }}
-                  {{ if or (eq .Code $setCountry) (eq .Code $mainLang) (eq .Code $subLang) }}
-                    option value={{ .Code }} selected= {{ .Name }}
-                  {{ else }}
-                    option value={{ .Code }} {{ .Name }}
+      form method=POST action=/account
+        input type=hidden name=_method value=PUT
+        table
+          thead
+          tbody
+            tr
+              td
+                label for=country {{ Msg "Country" }}*
+              td
+                select#country name=country autocomplete=off required=
+                  {{ $setCountry := .Account.Country }}
+                  {{ $mainLang := .lang.Main }}
+                  {{ $subLang := .lang.Sub }}
+                  {{ range .Countries }}
+                    {{ if or (eq .Code $setCountry) (eq .Code $mainLang) (eq .Code $subLang) }}
+                      option value={{ .Code }} selected= {{ .Name }}
+                    {{ else }}
+                      option value={{ .Code }} {{ .Name }}
+                    {{ end }}
                   {{ end }}
-                {{ end }}
-          tr
-            td
-              label for=postcode {{ Msg "Postcode" }}*
-            td
-              input#postcode type=text form=account name=postcode autocomplete=postal-code value={{ .Account.Postcode }} placeholder="1200 JC" required= size=35
-          tr
-            td
-              label for=firstname {{ Msg "First name" }}
-            td
-              input#firstname type=text form=account name=firstname autocomplete=given-name value={{ .Account.FirstName }} placeholder=John size=35
-          tr
-            td
-              label for=lastname {{ Msg "Last name" }}
-            td
-              input#lastname type=text form=account name=lastname autocomplete=family-name value={{ .Account.LastName }} placeholder=Doe size=35
-          tr
-            td
-              input type=reset form=account
-            td align=right
-              input type=submit form=account value={{ Msg "Save changes" }}
+            tr
+              td
+                label for=postcode {{ Msg "Postcode" }}*
+              td
+                input#postcode type=text name=postcode autocomplete=postal-code value={{ .Account.Postcode }} placeholder="1200 JC" required= size=35
+            tr
+              td
+                label for=firstname {{ Msg "First name" }}
+              td
+                input#firstname type=text name=firstname autocomplete=given-name value={{ .Account.FirstName }} placeholder=John size=35
+            tr
+              td
+                label for=lastname {{ Msg "Last name" }}
+              td
+                input#lastname type=text name=lastname autocomplete=family-name value={{ .Account.LastName }} placeholder=Doe size=35
+            tr
+              td
+                input type=reset
+              td align=right
+                input type=submit value={{ Msg "Save changes" }}
       {{ if not .Initial }}
         aside
           nav

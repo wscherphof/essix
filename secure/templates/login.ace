@@ -4,27 +4,27 @@ html lang={{ .lang.Main }}
   body
     header
       h1 {{ Msg "Log in" }}
-    form#session method=POST action=/session
     main.wrap
-      table
-        thead
-        tbody
-          tr
-            td
-              label for=uid {{ Msg "Email" }}*
-            td
-              input#uid type=email form=session name=uid autocomplete=username placeholder=email@provider.com required=
-          tr
-            td
-              label for=pwd {{ Msg "Password" }}*
-            td
-              input#pwd type=password form=session name=pwd autocomplete=current-password placeholder=********** required=
-          tr
-            td colspan=2
-              = include includes/captcha .
-          tr
-            td colspan=2 align=right
-              input type=submit form=session
+      form method=POST action=/session
+        table
+          thead
+          tbody
+            tr
+              td
+                label for=uid {{ Msg "Email" }}*
+              td
+                input#uid type=email name=uid autocomplete=username placeholder=email@provider.com required=
+            tr
+              td
+                label for=pwd {{ Msg "Password" }}*
+              td
+                input#pwd type=password name=pwd autocomplete=current-password placeholder=********** required=
+            tr
+              td colspan=2
+                = include includes/captcha .
+            tr
+              td colspan=2 align=right
+                input type=submit
       aside
         nav
           ul
