@@ -20,7 +20,7 @@ html lang={{ .lang.Main }}
             tr
               td
                 label for=country {{ Msg "Country" }}*
-              td
+              td align=right
                 select#country name=country autocomplete=off required=
                   {{ $setCountry := .Account.Country }}
                   {{ $mainLang := .lang.Main }}
@@ -35,17 +35,17 @@ html lang={{ .lang.Main }}
             tr
               td
                 label for=postcode {{ Msg "Postcode" }}*
-              td
+              td align=right
                 input#postcode type=text name=postcode autocomplete=postal-code value={{ .Account.Postcode }} placeholder="1200 JC" required= size=35
             tr
               td
                 label for=firstname {{ Msg "First name" }}
-              td
+              td align=right
                 input#firstname type=text name=firstname autocomplete=given-name value={{ .Account.FirstName }} placeholder=John size=35
             tr
               td
                 label for=lastname {{ Msg "Last name" }}
-              td
+              td align=right
                 input#lastname type=text name=lastname autocomplete=family-name value={{ .Account.LastName }} placeholder=Doe size=35
             tr
               td

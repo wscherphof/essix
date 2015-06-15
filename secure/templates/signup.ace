@@ -2,32 +2,33 @@
 html lang={{ .lang.Main }}
   = include ../../templates/includes/head .
   body
-    h3 {{ Msg "Sign up" }}
-    form.envelope method=POST action=/account onsubmit="return validate(this)"
-      span
-        label {{ Msg "Email" }}*{{ " " }}
-          input#uid.right type=email name=uid autocomplete=username placeholder=email@provider.com required= size=35
-      p
-        label {{ Msg "Password" }}*{{ " " }}
-          input#pwd1.right type=password name=pwd1 autocomplete=new-password placeholder=******** required= size=35 oninput="judgePassword(this.value, 'verdict')"
-          {{ " " }}
-          span#verdict
-      p
-        label {{ Msg "Repeat password" }}*{{ " " }}
-          input#pwd2.right type=password name=pwd2 autocomplete=new-password placeholder=******** required= size=35
-      p
-        = include includes/captcha .
-      p
-        input.right type=submit
-    script type=text/javascript src=/static/scripts/forms.js
+    header
+      h1 {{ Msg "Sign up" }}
+    main
+      form method=POST action=/account onsubmit="return validatePassword(this['pwd1'], this['pwd2'], '{{ Msg "Passwords not equal" }}')"
+        table
+          thead
+          tbody
+            tr
+              td
+                label for=uid {{ Msg "Email" }}*
+              td align=right
+                input#uid type=email name=uid autocomplete=username placeholder=email@provider.com required=
+            tr
+              td
+                label for=pwd1 {{ Msg "Password" }}*
+              td align=right
+                input#pwd1 type=password name=pwd1 autocomplete=new-password placeholder=******** required= oninput="judgePassword(this.value, 'verdict')"
+              td#verdict
+            tr
+              td
+                label for=pwd2 {{ Msg "Repeat password" }}*
+              td align=right
+                input#pwd2 type=password name=pwd2 autocomplete=new-password placeholder=******** required=
+            tr
+              td colspan=2
+                = include includes/captcha .
+            tr
+              td colspan=2 align=right
+                input type=submit
     script type=text/javascript src=/static/scripts/password.js
-    = javascript
-      function validate(form) {
-        if (form['pwd1'].value !== form['pwd2'].value) {
-          alert('{{ Msg "Passwords not equal" }}')
-          form['pwd2'].value = '';
-          form['pwd1'].value = '';
-          form['pwd1'].focus();
-          return false;
-        }
-      }

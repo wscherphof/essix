@@ -2,13 +2,21 @@
 html lang={{ .lang.Main }}
   = include ../../templates/includes/head .
   body
-    h3 {{ Msg "Resend activation code" }}
-    form.envelope method=POST action=/account/activationcode
-      span
-        label {{ Msg "Email" }}*{{ " " }}
-          input.right#uid type=email name=uid autocomplete=username value={{ .UID }} placeholder=email@provider.com required= size=35
-      p
-        = include includes/captcha .
-      p
-        input.right type=submit
-    script type=text/javascript src=/static/scripts/forms.js
+    header
+      h1 {{ Msg "Resend activation code" }}
+    main
+      form method=POST action=/account/activationcode
+        table
+          thead
+          tbody
+            tr
+              td
+                label for=uid {{ Msg "Email" }}*
+              td align=right
+                input#uid type=email name=uid autocomplete=username value={{ .UID }} placeholder=email@provider.com required=
+            tr
+              td colspan=2
+                = include includes/captcha .
+            tr
+              td colspan=2 align=right
+                input type=submit

@@ -12,12 +12,12 @@ html lang={{ .lang.Main }}
             tr
               td
                 label for=uid {{ Msg "Email" }}*
-              td
+              td align=right
                 input#uid type=email name=uid autocomplete=username placeholder=email@provider.com required=
             tr
               td
                 label for=pwd {{ Msg "Password" }}*
-              td
+              td align=right
                 input#pwd type=password name=pwd autocomplete=current-password placeholder=********** required=
             tr
               td colspan=2

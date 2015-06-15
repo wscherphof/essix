@@ -43,3 +43,13 @@ function judgePassword(value, verdictId) {
 		verdict.style.color = color;
     }
 }
+
+function validatePassword(pwd1, pwd2, msg) {
+    if (pwd1.value !== pwd2.value) {
+        alert(msg)
+        pwd2.value = '';
+        pwd1.value = '';
+        pwd1.focus();
+        return false;
+    }
+}

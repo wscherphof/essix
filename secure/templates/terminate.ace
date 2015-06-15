@@ -2,13 +2,15 @@
 html lang={{ .lang.Main }}
   = include ../../templates/includes/head .
   body
-    h3 {{ Msg "Terminate account" }}
-    p {{ Msg "Terminate sure" }}
-    form method=POST action=/account
-      input type=hidden name=_method value=DELETE
-      input type=hidden name=code value={{ .Account.TerminateCode }}
-      p
-        label {{ Msg "Yes, that's what I want" }}
-          input#sure type=checkbox name=sure value=affirmative
-      p
-        input type=submit value={{ Msg "Confirm" }}
+    header
+      h1 {{ Msg "Terminate account" }}
+    main
+      p {{ Msg "Terminate sure" }}
+      form method=POST action=/account
+        input type=hidden name=_method value=DELETE
+        input type=hidden name=code value={{ .Account.TerminateCode }}
+        p
+          label {{ Msg "Yes, that's what I want" }}
+            input#sure type=checkbox name=sure value=affirmative
+        p
+          input type=submit value={{ Msg "Confirm" }}

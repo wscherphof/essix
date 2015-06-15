@@ -2,13 +2,23 @@
 html lang={{ .lang.Main }}
   = include ../../templates/includes/head .
   body
-    h3 {{ Msg "emailaddress subject" }}
-    p
-      label {{ Msg "Current" }}: {{ .UID }}
-    form.envelope method=POST action=/account/emailaddresscode
-      span
-        label {{ Msg "New" }}*{{ " " }}
-          input.right#newuid type=email name=newuid autocomplete=username placeholder=email@provider.com required= size=35
-      p
-        input.right type=submit
-    script type=text/javascript src=/static/scripts/forms.js
+    header
+      h1 {{ Msg "emailaddress subject" }}
+    main
+      form method=POST action=/account/emailaddresscode
+        table
+          thead
+          tbody
+            tr
+              td
+                {{ Msg "Current" }}{{ ":" }}
+              td align=right
+                {{ .UID }}
+            tr
+              td
+                label for=newuid {{ Msg "New" }}*
+              td align=right
+                input#newuid type=email name=newuid autocomplete=username placeholder=email@provider.com required= style="width: 97%;"
+            tr
+              td colspan=2 align=right
+                input type=submit
