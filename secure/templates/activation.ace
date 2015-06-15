@@ -2,22 +2,30 @@
 html lang={{ .lang.Main }}
   = include ../../templates/includes/head .
   body
-    h3 {{ Msg "activation subject" }}
-    form.envelope method=POST action=/account/activation
-      input type=hidden name=_method value=PUT
-      span
-        label {{ Msg "Email" }}*{{ " " }}
-          input.right#uid type=email name=uid autocomplete=username value={{ .UID }} placeholder=email@provider.com required= size=35
-      p
-        label {{ Msg "Activation code" }}*{{ " " }}
-          input.right#code type=text name=code autocomplete=off value={{ .Code }} placeholder=zc-968YEX3VYu_YmdA7ynBp_d2cydmR1MRRqmglh1R0= required= size=35
-      p
-        input.right type=submit
+    header
+      h1 {{ Msg "activation subject" }}
+    main
+      form.envelope method=POST action=/account/activation
+        input type=hidden name=_method value=PUT
+        table
+          thead
+          tbody
+            tr
+              td
+                label for=uid {{ Msg "Email" }}*
+              td
+                input#uid type=email name=uid autocomplete=username value={{ .UID }} placeholder=email@provider.com required=
+            tr
+              td
+                label for=code {{ Msg "Activation code" }}*{{ " " }}
+              td
+                input#code type=text name=code autocomplete=off value={{ .Code }} placeholder=zc-968YEX3VYu_YmdA7ynBp_d2cydmR1MRRqmglh1R0= required=
+            tr
+              td colspan=2 align=right
+                input type=submit
     {{ if eq .Code "" }}
-      small
-        p
-          {{ Msg "Activation code source" }}
+      footer
+        p {{ Msg "Activation code source" }}
           br
           a href=/account/activationcode/{{ .UID }} {{ Msg "Resend activation code" }}
     {{ end }}
-    script type=text/javascript src=/static/scripts/forms.js
