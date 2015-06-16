@@ -7,8 +7,8 @@ import (
 
 func init() {
 	msg.New("Captcha").
-		Add("nl", "Typ de code zoals hieronder afgebeeld").
-		Add("en", "Enter the code as depicted below")
+		Add("nl", "Typ de onderstaande code").
+		Add("en", "Enter the code below")
 
 	msg.New("Captcha image").
 		Add("nl", "Afbeelding van captchacode").

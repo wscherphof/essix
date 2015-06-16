@@ -6,25 +6,16 @@ html lang={{ .lang.Main }}
       h1 {{ Msg "Log in" }}
     main.wrap
       form method=POST action=/session
-        table
-          thead
-          tbody
-            tr
-              td
-                label for=uid {{ Msg "Email" }}*
-              td align=right
-                input#uid type=email name=uid autocomplete=username placeholder=email@provider.com required=
-            tr
-              td
-                label for=pwd {{ Msg "Password" }}*
-              td align=right
-                input#pwd type=password name=pwd autocomplete=current-password placeholder=********** required=
-            tr
-              td colspan=2
-                = include includes/captcha .
-            tr
-              td colspan=2 align=right
-                input type=submit
+        .p
+          label {{ Msg "Email" }}*
+            input#uid.right type=email name=uid autocomplete=username placeholder=email@provider.com required=
+        .p
+          label {{ Msg "Password" }}*
+            input#pwd.right type=password name=pwd autocomplete=current-password placeholder=********** required=
+        .p
+          = include includes/captcha .
+        .p &nbsp;
+          input.right type=submit
       aside
         nav
           ul

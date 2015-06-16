@@ -23,8 +23,8 @@ input[type="button"], input[type="submit"], input[type="reset"] {
 	width: initial;
 }
 
-form {
-  max-width: 23em;
+label {
+  margin-right: 0.5em;
 }
 
 .right {
@@ -33,6 +33,10 @@ form {
 
 .p {
   padding: 0.3em;
+}
+
+.flex {
+  display: flex;
 }
 
 .wrap {
