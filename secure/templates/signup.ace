@@ -20,6 +20,6 @@ html lang={{ .lang.Main }}
           input#pwd2.right type=password name=pwd2 autocomplete=new-password placeholder=******** required=
         .p
           = include includes/captcha .
-        .p
+        .p &nbsp;
           input.right type=submit
     script type=text/javascript src=/static/scripts/password.js
