@@ -5,10 +5,10 @@ html lang={{ .lang.Main }}
     header
       h1 {{ Msg "terminate subject" }}
     main
-      p {{ Msg "Terminate sure" }}
+      .p {{ Msg "Terminate sure" }}
       form method=POST action=/account/terminatecode
-        p
+        .p
           label {{ Msg "Yes, that's what I want" }}
             input#sure type=checkbox name=sure value=affirmative
-        p
+        .p
           input type=submit

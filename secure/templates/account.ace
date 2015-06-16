@@ -14,44 +14,31 @@ html lang={{ .lang.Main }}
     main.wrap
       form method=POST action=/account
         input type=hidden name=_method value=PUT
-        table
-          thead
-          tbody
-            tr
-              td
-                label for=country {{ Msg "Country" }}*
-              td align=right
-                select#country name=country autocomplete=off required=
-                  {{ $setCountry := .Account.Country }}
-                  {{ $mainLang := .lang.Main }}
-                  {{ $subLang := .lang.Sub }}
-                  {{ range .Countries }}
-                    {{ if or (eq .Code $setCountry) (eq .Code $mainLang) (eq .Code $subLang) }}
-                      option value={{ .Code }} selected= {{ .Name }}
-                    {{ else }}
-                      option value={{ .Code }} {{ .Name }}
-                    {{ end }}
-                  {{ end }}
-            tr
-              td
-                label for=postcode {{ Msg "Postcode" }}*
-              td align=right
-                input#postcode type=text name=postcode autocomplete=postal-code value={{ .Account.Postcode }} placeholder="1200 JC" required= size=35
-            tr
-              td
-                label for=firstname {{ Msg "First name" }}
-              td align=right
-                input#firstname type=text name=firstname autocomplete=given-name value={{ .Account.FirstName }} placeholder=John size=35
-            tr
-              td
-                label for=lastname {{ Msg "Last name" }}
-              td align=right
-                input#lastname type=text name=lastname autocomplete=family-name value={{ .Account.LastName }} placeholder=Doe size=35
-            tr
-              td
-                input type=reset
-              td align=right
-                input type=submit value={{ Msg "Save changes" }}
+        .p
+          label {{ Msg "Country" }}*
+            select#country.right name=country autocomplete=off required=
+              {{ $setCountry := .Account.Country }}
+              {{ $mainLang := .lang.Main }}
+              {{ $subLang := .lang.Sub }}
+              {{ range .Countries }}
+                {{ if or (eq .Code $setCountry) (eq .Code $mainLang) (eq .Code $subLang) }}
+                  option value={{ .Code }} selected= {{ .Name }}
+                {{ else }}
+                  option value={{ .Code }} {{ .Name }}
+                {{ end }}
+              {{ end }}
+        .p
+          label {{ Msg "Postcode" }}*
+            input#postcode.right type=text name=postcode autocomplete=postal-code value={{ .Account.Postcode }} placeholder="1200 JC" required= size=35
+        .p
+          label {{ Msg "First name" }}
+            input#firstname.right type=text name=firstname autocomplete=given-name value={{ .Account.FirstName }} placeholder=John size=35
+        .p
+          label {{ Msg "Last name" }}
+            input#lastname.right type=text name=lastname autocomplete=family-name value={{ .Account.LastName }} placeholder=Doe size=35
+        .p
+          input type=reset
+          input.right type=submit value={{ Msg "Save changes" }}
       {{ if not .Initial }}
         aside
           nav

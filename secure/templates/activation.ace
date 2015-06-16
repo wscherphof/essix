@@ -4,25 +4,17 @@ html lang={{ .lang.Main }}
   body
     header
       h1 {{ Msg "activation subject" }}
-    main
+    main.flex
       form.envelope method=POST action=/account/activation
         input type=hidden name=_method value=PUT
-        table
-          thead
-          tbody
-            tr
-              td
-                label for=uid {{ Msg "Email" }}*
-              td align=right
-                input#uid type=email name=uid autocomplete=username value={{ .UID }} placeholder=email@provider.com required=
-            tr
-              td
-                label for=code {{ Msg "Activation code" }}*{{ " " }}
-              td align=right
-                input#code type=text name=code autocomplete=off value={{ .Code }} placeholder=zc-968YEX3VYu_YmdA7ynBp_d2cydmR1MRRqmglh1R0= required=
-            tr
-              td colspan=2 align=right
-                input type=submit
+        .p
+          label {{ Msg "Email" }}*
+            input#uid.right type=email name=uid autocomplete=username value={{ .UID }} placeholder=email@provider.com required=
+        .p
+          label {{ Msg "Activation code" }}*{{ " " }}
+            input#code.right type=text name=code autocomplete=off value={{ .Code }} placeholder=zc-968YEX3VYu_YmdA7ynBp_d2cydmR1MRRqmglh1R0= required=
+        .p &nbsp;
+          input.right type=submit
     {{ if eq .Code "" }}
       footer
         p {{ Msg "Activation code source" }}

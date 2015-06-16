@@ -4,21 +4,13 @@ html lang={{ .lang.Main }}
   body
     header
       h1 {{ Msg "emailaddress subject" }}
-    main
+    main.flex
       form method=POST action=/account/emailaddresscode
-        table
-          thead
-          tbody
-            tr
-              td
-                {{ Msg "Current" }}{{ ":" }}
-              td align=right
-                {{ .UID }}
-            tr
-              td
-                label for=newuid {{ Msg "New" }}*
-              td align=right
-                input#newuid type=email name=newuid autocomplete=username placeholder=email@provider.com required= style="width: 97%;"
-            tr
-              td colspan=2 align=right
-                input type=submit
+        .p
+          label {{ Msg "Current" }}:
+            span.right {{ .UID }}
+        .p
+          label {{ Msg "New" }}*
+            input#newuid.right type=email name=newuid autocomplete=username placeholder=email@provider.com required=
+        .p &nbsp;
+          input.right type=submit
