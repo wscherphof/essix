@@ -4,7 +4,7 @@ html lang={{ .lang.Main }}
   body
     header
       h1 {{ Msg "Sign up" }}
-    main.form
+    main
       form method=POST action=/account onsubmit="return validatePassword(this['pwd1'], this['pwd2'], '{{ Msg "Passwords not equal" }}')"
         .p
           label {{ Msg "Email" }}*
