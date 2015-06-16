@@ -32,7 +32,7 @@ label {
 }
 
 .p {
-  padding: 0.3em;
+  margin: 0.3em;
 }
 
 .flex {
@@ -42,6 +42,11 @@ label {
 .wrap {
   display: flex;
   flex-wrap: wrap;
+}
+
+form {
+  display: flex;
+  flex-direction: column;  
 }
 
 aside, footer {
