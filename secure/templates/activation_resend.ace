@@ -11,5 +11,5 @@ html lang={{ .lang.Main }}
             input#uid.right type=email name=uid autocomplete=username value={{ .UID }} placeholder=email@provider.com required=
         .p
           = include includes/captcha .
-        .p &nbsp;
+        .p
           input.right type=submit

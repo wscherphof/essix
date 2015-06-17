@@ -13,7 +13,7 @@ html lang={{ .lang.Main }}
         .p
           label {{ Msg "Activation code" }}*{{ " " }}
             input#code.right type=text name=code autocomplete=off value={{ .Code }} placeholder=zc-968YEX3VYu_YmdA7ynBp_d2cydmR1MRRqmglh1R0= required=
-        .p &nbsp;
+        .p
           input.right type=submit
     {{ if eq .Code "" }}
       footer

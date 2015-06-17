@@ -12,5 +12,5 @@ html lang={{ .lang.Main }}
         .p
           label {{ Msg "New" }}*
             input#newuid.right type=email name=newuid autocomplete=username placeholder=email@provider.com required=
-        .p &nbsp;
+        .p
           input.right type=submit

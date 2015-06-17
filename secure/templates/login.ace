@@ -14,7 +14,7 @@ html lang={{ .lang.Main }}
             input#pwd.right type=password name=pwd autocomplete=current-password placeholder=********** required=
         .p
           = include includes/captcha .
-        .p &nbsp;
+        .p
           input.right type=submit
       aside
         nav
