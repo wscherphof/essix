@@ -32,6 +32,9 @@ label {
 
 .right {
   float: right;
+}
+
+input.right {
   margin-top: 3px;
 }
 
