@@ -1,6 +1,6 @@
-label {{ Msg "Captcha" }}*
+label {{ Msg .lang "Captcha" }}*
   br
-  img id=captchaImg src=/captcha/{{ .CaptchaId }}.png alt={{ Msg "Captcha image" }}
+  img id=captchaImg src=/captcha/{{ .CaptchaId }}.png alt={{ Msg .lang "Captcha image" }}
   br
   audio id=audio controls= preload=none loop= src=/captcha/{{ .CaptchaId }}.wav style="width: 240px;"
     | Your browser doesn't support audio.

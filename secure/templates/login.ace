@@ -3,14 +3,14 @@ html lang={{ .lang.Main }}
   = include ../../templates/includes/head .
   body
     header
-      h1 {{ Msg "Log in" }}
+      h1 {{ Msg .lang "Log in" }}
     main.wrap
       form method=POST action=/session
         .p
-          label {{ Msg "Email" }}*
+          label {{ Msg .lang "Email" }}*
             input#uid.right type=email name=uid autocomplete=username placeholder=email@provider.com required=
         .p
-          label {{ Msg "Password" }}*
+          label {{ Msg .lang "Password" }}*
             input#pwd.right type=password name=pwd autocomplete=current-password placeholder=********** required=
         .p
           = include includes/captcha .
@@ -20,6 +20,6 @@ html lang={{ .lang.Main }}
         nav
           ul
             li
-              a href=/account {{ Msg "Sign up" }}
+              a href=/account {{ Msg .lang "Sign up" }}
             li
-              a href=/account/passwordcode {{ Msg "Forgot password" }}
+              a href=/account/passwordcode {{ Msg .lang "Forgot password" }}

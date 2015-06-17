@@ -10,14 +10,14 @@ import (
 	"net/http"
 )
 
-func aceOptions(dir string, r *http.Request) *ace.Options {
+func aceOptions(dir string) *ace.Options {
 	if dir == "" {
 		dir = "."
 	}
 	return &ace.Options{
 		BaseDir: dir + "/templates",
 		FuncMap: template.FuncMap{
-			"Msg": msg.Msg(r),
+			"Msg": msg.Msg,
 		},
 	}
 }
@@ -32,7 +32,7 @@ func Template(dir, base, inner string, data map[string]interface{}) func(io.Writ
 		if inner == "lang" {
 			inner = base + "-" + lang.Main
 		}
-		if tpl, err := ace.Load(base, inner, aceOptions(dir, r)); err != nil {
+		if tpl, err := ace.Load(base, inner, aceOptions(dir)); err != nil {
 			log.Panicln("ERROR: ace.Load:", err)
 		} else if err := tpl.Execute(w, data); err != nil {
 			log.Panicln("ERROR: tpl.Execute:", err)

@@ -2,8 +2,8 @@
 html lang={{ .lang.Main }}
   = include ../../templates/includes/head .
   body
-    p {{ Msg "Change email address successful" }}
+    p {{ Msg .lang "Change email address successful" }}
     p
-      a href=/account {{ Msg "Edit account" }}
+      a href=/account {{ Msg .lang "Edit account" }}
     p
-      a href=/ {{ Msg "Take me home" }}
+      a href=/ {{ Msg .lang "Take me home" }}

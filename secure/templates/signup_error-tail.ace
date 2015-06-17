@@ -1,4 +1,4 @@
 p
-  a href=/account {{ Msg "Try again" }}
+  a href=/account {{ Msg .lang "Try again" }}
 p
-  a href=/ {{ Msg "Take me home" }}
+  a href=/ {{ Msg .lang "Take me home" }}

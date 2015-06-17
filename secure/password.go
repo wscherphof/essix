@@ -12,7 +12,7 @@ import (
 )
 
 func passwordEmail(r *http.Request, acc *account.Account) (error, string) {
-	format := msg.Msg(r)("Time format")
+	format := msg.Msg(msg.Language(r), "Time format")
 	return sendEmail(r, acc.UID, acc.Name(), "password", acc.PasswordCode.Value, acc.PasswordCode.Expires.Format(format))
 }
 

@@ -2,9 +2,9 @@
 html lang={{ .lang.Main }}
   = include ../../templates/includes/head .
   body
-    p {{ Msg "Hi" }} {{ .Name }},
-    p {{ Msg "Activate successful" }}
+    p {{ Msg .lang "Hi" }} {{ .Name }},
+    p {{ Msg .lang "Activate successful" }}
     p
-      a href=/session {{ Msg "Log in" }}
+      a href=/session {{ Msg .lang "Log in" }}
     p
-      a href=/ {{ Msg "Take me home" }}
+      a href=/ {{ Msg .lang "Take me home" }}

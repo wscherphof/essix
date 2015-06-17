@@ -3,20 +3,20 @@ html lang={{ .lang.Main }}
   = include ../../templates/includes/head .
   body
     header
-      h1 {{ Msg "Sign up" }}
+      h1 {{ Msg .lang "Sign up" }}
     main.flex
-      form method=POST action=/account onsubmit="return validatePassword(this['pwd1'], this['pwd2'], '{{ Msg "Passwords not equal" }}')"
+      form method=POST action=/account onsubmit="return validatePassword(this['pwd1'], this['pwd2'], '{{ Msg .lang "Passwords not equal" }}')"
         .p
-          label {{ Msg "Email" }}*
+          label {{ Msg .lang "Email" }}*
             input#uid.right type=email name=uid autocomplete=username placeholder=email@provider.com required=
         .p
-          label {{ Msg "Password" }}*
+          label {{ Msg .lang "Password" }}*
             span.right
               span#verdict
               span &nbsp;
               input#pwd1 type=password name=pwd1 autocomplete=new-password placeholder=******** required= oninput="judgePassword(this.value, 'verdict')"
         .p
-          label {{ Msg "Repeat password" }}*
+          label {{ Msg .lang "Repeat password" }}*
             input#pwd2.right type=password name=pwd2 autocomplete=new-password placeholder=******** required=
         .p
           = include includes/captcha .

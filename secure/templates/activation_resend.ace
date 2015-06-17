@@ -3,11 +3,11 @@ html lang={{ .lang.Main }}
   = include ../../templates/includes/head .
   body
     header
-      h1 {{ Msg "Resend activation code" }}
+      h1 {{ Msg .lang "Resend activation code" }}
     main.flex
       form method=POST action=/account/activationcode
         .p
-          label {{ Msg "Email" }}*
+          label {{ Msg .lang "Email" }}*
             input#uid.right type=email name=uid autocomplete=username value={{ .UID }} placeholder=email@provider.com required=
         .p
           = include includes/captcha .

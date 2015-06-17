@@ -1,4 +1,0 @@
-p
-  a href=/account/terminatecode {{ Msg "Try again" }}
-p
-  a href=/ {{ Msg "Take me home" }}

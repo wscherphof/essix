@@ -3,14 +3,14 @@ html lang={{ .lang.Main }}
   = include ../../templates/includes/head .
   body
     header
-      h1 {{ Msg "emailaddress subject" }}
+      h1 {{ Msg .lang "emailaddress subject" }}
     main.flex
       form method=POST action=/account/emailaddresscode
         .p
-          label {{ Msg "Current" }}:
+          label {{ Msg .lang "Current" }}:
             span.right {{ .UID }}
         .p
-          label {{ Msg "New" }}*
+          label {{ Msg .lang "New" }}*
             input#newuid.right type=email name=newuid autocomplete=username placeholder=email@provider.com required=
         .p
           input.right type=submit

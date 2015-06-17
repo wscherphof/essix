@@ -2,6 +2,6 @@
 html lang={{ .lang.Main }}
   = include ../../templates/includes/head .
   body
-    p {{ Msg "Terminate code cancelled" }}
+    p {{ Msg .lang "Terminate code cancelled" }}
     p
-      a href=/ {{ Msg "Take me home" }}
+      a href=/ {{ Msg .lang "Take me home" }}
