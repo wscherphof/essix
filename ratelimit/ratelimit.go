@@ -24,7 +24,7 @@ type token struct {
 	limit   time
 }
 
-func NewToken(r *http.Request) (secure.RequestToken, error) {
+func NewToken(r *http.Request) (string, error) {
 	return secure.NewRequestToken(&token{
 		ip:        r.RemoteAddr,
 		timestamp: time.Now(),
