@@ -16,7 +16,7 @@ var (
 	ErrTokenExpired    = errors.New("Token Expired")
 )
 
-const tokenTimeOut = int(time.Minute)
+const tokenTimeOut = time.Minute
 
 type token struct {
 	ip      string
@@ -58,7 +58,7 @@ func RateLimitHandle(seconds int, handle router.ErrorHandle) router.ErrorHandle 
 		} else if t.ip != r.RemoteAddr {
 			err = router.NewError(ErrInvalidRequest)
 			log.Printf("ATTACK: rate limit token invalid address %#v", r)
-		} else if t.timestamp.Add(time.Duration(tokenTimeOut)).Before(time.Now) {
+		} else if t.timestamp.Add(tokenTimeOut).Before(time.Now) {
 			err = router.NewError(ErrTokenExpired)
 		} else if e := prev(seconds, r); e != nil {
 			// TODO
