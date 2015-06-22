@@ -25,11 +25,10 @@ type token struct {
 }
 
 func NewToken(r *http.Request) (secure.RequestToken, error) {
-	token := &token{
+	return secure.NewRequestToken(&token{
 		ip:        r.RemoteAddr,
 		timestamp: time.Now(),
-	}
-	return secure.NewRequestToken(token)
+	})
 }
 
 func init() {
