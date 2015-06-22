@@ -36,8 +36,14 @@ func init() {
 }
 
 type request struct {
-	timestamp time
-	clear     time
+	Timestamp time
+	Clear     time
+}
+
+type client struct {
+	IP       string
+	Clear    time
+	Requests map[string]request
 }
 
 func prev(seconds int, r *http.Request) (err error) {
