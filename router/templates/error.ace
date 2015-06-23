@@ -2,4 +2,4 @@
 html lang={{ .lang.Main }}
   = include ../../templates/includes/head .
   body
-    p {{ Msg .Error.Error }}
+    p {{ Msg .lang .Error.Error }}
