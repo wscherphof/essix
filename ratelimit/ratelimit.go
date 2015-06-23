@@ -59,6 +59,7 @@ func init() {
 type token struct {
 	IP        string
 	Timestamp time.Time
+	// TODO: Path path
 }
 
 func NewToken(r *http.Request) (string, error) {
