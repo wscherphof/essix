@@ -1,25 +1,26 @@
 package secure
 
 import (
-	"github.com/dchest/captcha"
 	"github.com/julienschmidt/httprouter"
 	"github.com/wscherphof/expeertise/model/account"
+	"github.com/wscherphof/expeertise/ratelimit"
 	"github.com/wscherphof/expeertise/router"
 	"github.com/wscherphof/secure"
 	"net/http"
 )
 
 func LogInForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
+	token, e := ratelimit.NewToken(r)
+	if e != nil {
+		return router.NewError(e)
+	}
 	return router.Template("secure", "login", "", map[string]interface{}{
-		"CaptchaId": captcha.New(),
+		"RateLimitToken": token,
 	})(w, r, ps)
 }
 
 func LogIn(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
-	if !captcha.VerifyString(r.FormValue("captchaId"), r.FormValue("captchaSolution")) {
-		err = router.NewError(captcha.ErrNotFound, "secure", "login")
-		err.Conflict = true
-	} else if acc, e, conflict := account.Get(r.FormValue("uid"), r.FormValue("pwd")); e != nil {
+	if acc, e, conflict := account.Get(r.FormValue("uid"), r.FormValue("pwd")); e != nil {
 		err = router.NewError(e, "secure", "login")
 		err.Conflict = conflict
 	} else if complete := (acc.ValidateFields() == nil); complete {

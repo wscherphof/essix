@@ -1,6 +1,7 @@
 package secure
 
 import (
+	"github.com/wscherphof/expeertise/ratelimit"
 	"github.com/wscherphof/expeertise/router"
 )
 
@@ -10,7 +11,7 @@ func init() {
 	router.PUT("/account", UpdateAccount)
 
 	router.GET("/session", LogInForm)
-	router.POST("/session", LogIn)
+	router.POST("/session", ratelimit.Handle(60, LogIn))
 	router.DELETE("/session", LogOut)
 
 	router.GET("/account/activation/:uid", ActivateForm)
