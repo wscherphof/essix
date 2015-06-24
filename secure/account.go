@@ -12,7 +12,6 @@ import (
 )
 
 func SignUpForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
-	// TODO: indicate password strength
 	return router.Template("secure", "signup", "", map[string]interface{}{
 		"Countries": data.Countries(),
 		"CaptchaId": captcha.New(),
