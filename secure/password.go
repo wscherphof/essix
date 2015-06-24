@@ -1,9 +1,9 @@
 package secure
 
 import (
-	"github.com/dchest/captcha"
 	"github.com/julienschmidt/httprouter"
 	"github.com/wscherphof/expeertise/model/account"
+	"github.com/wscherphof/expeertise/ratelimit"
 	"github.com/wscherphof/expeertise/router"
 	"github.com/wscherphof/expeertise/util"
 	"github.com/wscherphof/msg"
@@ -17,18 +17,20 @@ func passwordEmail(r *http.Request, acc *account.Account) (error, string) {
 }
 
 func PasswordCodeForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
-	return router.Template("secure", "passwordcode", "", map[string]interface{}{
-		"UID":       ps.ByName("uid"),
-		"CaptchaId": captcha.New(),
-	})(w, r, ps)
+	if token, e := ratelimit.NewToken(r); e != nil {
+		err = router.NewError(e)
+	} else {
+		router.Template("secure", "passwordcode", "", map[string]interface{}{
+			"UID":            ps.ByName("uid"),
+			"RateLimitToken": token,
+		})(w, r, ps)
+	}
+	return
 }
 
 func PasswordCode(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
 	uid := r.FormValue("uid")
-	if !captcha.VerifyString(r.FormValue("captchaId"), r.FormValue("captchaSolution")) {
-		err = router.NewError(captcha.ErrNotFound)
-		err.Conflict = true
-	} else if acc, e, conflict := account.GetInsecure(uid); e != nil {
+	if acc, e, conflict := account.GetInsecure(uid); e != nil {
 		err = router.NewError(e)
 		err.Conflict = conflict
 	} else if !acc.IsActive() {

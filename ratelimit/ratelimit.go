@@ -123,6 +123,8 @@ func Handle(seconds int, handle router.ErrorHandle) router.ErrorHandle {
 			err.Data = map[string]interface{}{
 				"Window": window,
 			}
+		} else if e := handle(w, r, ps); e != nil {
+			err = e
 		} else {
 			c.Requests[p] = time.Now()
 			clear := time.Now().Add(window).Unix()
@@ -132,7 +134,6 @@ func Handle(seconds int, handle router.ErrorHandle) router.ErrorHandle {
 			if e := c.save(); e != nil {
 				log.Printf("WARNING: error saving to table %v: %v", table, e)
 			}
-			err = handle(w, r, ps)
 		}
 		return
 	}

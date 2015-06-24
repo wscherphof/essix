@@ -5,6 +5,6 @@ html lang={{ .lang.Main }}
     p {{ Msg .lang "Hi" }} {{ .Name }},
     p..
       {{ Msg .lang "Email address code successful" }}
-      {{ Msg .Remark }}
+      {{ Msg .lang .Remark }}
     p
       a href=/ {{ Msg .lang "Take me home" }}

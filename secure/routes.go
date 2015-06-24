@@ -19,11 +19,11 @@ func init() {
 	router.PUT("/account/activation", Activate)
 	router.GET("/account/activationcode/:uid", ActivationCodeForm)
 	router.GET("/account/activationcode", ActivationCodeForm)
-	router.POST("/account/activationcode", ActivationCode)
+	router.POST("/account/activationcode", ratelimit.Handle(3600, ActivationCode))
 
 	router.GET("/account/passwordcode/:uid", PasswordCodeForm)
 	router.GET("/account/passwordcode", PasswordCodeForm)
-	router.POST("/account/passwordcode", PasswordCode)
+	router.POST("/account/passwordcode", ratelimit.Handle(3600, PasswordCode))
 	router.GET("/account/password/:uid", PasswordForm)
 	router.PUT("/account/password", ChangePassword)
 

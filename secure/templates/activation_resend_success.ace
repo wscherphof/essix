@@ -5,7 +5,7 @@ html lang={{ .lang.Main }}
     p {{ Msg .lang "Hi" }} {{ .Name }},
     p..
       {{ Msg .lang "Resend successful" }}
-      {{ Msg .Remark }}
+      {{ Msg .lang .Remark }}
     p
       a href=/account/activation/{{ .UID }} {{ Msg .lang "activation subject" }}
     p
