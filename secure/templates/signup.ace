@@ -6,6 +6,7 @@ html lang={{ .lang.Main }}
       h1 {{ Msg .lang "Sign up" }}
     main.flex
       form method=POST action=/account onsubmit="return validatePassword(this['pwd1'], this['pwd2'], '{{ Msg .lang "Passwords not equal" }}')"
+        input type=hidden name=_rate value={{ .RateLimitToken }}
         .p
           label {{ Msg .lang "Email" }}*
             input#uid.right type=email name=uid autocomplete=username placeholder=email@provider.com required=
@@ -18,8 +19,6 @@ html lang={{ .lang.Main }}
         .p
           label {{ Msg .lang "Repeat password" }}*
             input#pwd2.right type=password name=pwd2 autocomplete=new-password placeholder=******** required=
-        .p
-          = include includes/captcha .
         .p
           input.right type=submit
     script type=text/javascript src=/static/scripts/password.js

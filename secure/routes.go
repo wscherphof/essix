@@ -7,7 +7,7 @@ import (
 
 func init() {
 	router.GET("/account", IfSecureHandle(UpdateAccountForm, SignUpForm))
-	router.POST("/account", SignUp)
+	router.POST("/account", ratelimit.Handle(3600, SignUp))
 	router.PUT("/account", UpdateAccount)
 
 	router.GET("/session", LogInForm)

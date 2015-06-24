@@ -1,10 +1,10 @@
 package secure
 
 import (
-	"github.com/dchest/captcha"
 	"github.com/julienschmidt/httprouter"
 	"github.com/wscherphof/expeertise/data"
 	"github.com/wscherphof/expeertise/model/account"
+	"github.com/wscherphof/expeertise/ratelimit"
 	"github.com/wscherphof/expeertise/router"
 	"github.com/wscherphof/secure"
 	"net/http"
@@ -12,17 +12,19 @@ import (
 )
 
 func SignUpForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
-	return router.Template("secure", "signup", "", map[string]interface{}{
-		"Countries": data.Countries(),
-		"CaptchaId": captcha.New(),
-	})(w, r, ps)
+	if token, e := ratelimit.NewToken(r); e != nil {
+		err = router.NewError(e)
+	} else {
+		router.Template("secure", "signup", "", map[string]interface{}{
+			"Countries":      data.Countries(),
+			"RateLimitToken": token,
+		})(w, r, ps)
+	}
+	return
 }
 
 func SignUp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
-	if !captcha.VerifyString(r.FormValue("captchaId"), r.FormValue("captchaSolution")) {
-		err = router.NewError(captcha.ErrNotFound)
-		err.Conflict = true
-	} else if acc, e, conflict := account.New(r.FormValue("uid"), r.FormValue("pwd1"), r.FormValue("pwd2")); e != nil {
+	if acc, e, conflict := account.New(r.FormValue("uid"), r.FormValue("pwd1"), r.FormValue("pwd2")); e != nil {
 		err = router.NewError(e)
 		err.Conflict = conflict
 	} else if e, remark := activationEmail(r, acc); e != nil {
