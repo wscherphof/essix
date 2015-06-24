@@ -19,8 +19,7 @@ var (
 )
 
 const (
-	table        = "ratelimit"
-	tokenTimeOut = time.Minute
+	table = "ratelimit"
 )
 
 type path string
@@ -94,9 +93,6 @@ func Handle(seconds int, handle router.ErrorHandle) router.ErrorHandle {
 			err = router.NewError(ErrInvalidRequest)
 			err.Conflict = true
 			log.Printf("ATTACK: rate limit token invalid path: %v, not %v", t.Path, p)
-		} else if t.Timestamp.After(time.Now().Add(tokenTimeOut)) {
-			err = router.NewError(ErrTokenExpired)
-			err.Conflict = true
 		} else if c := getClient(ip); c.Requests[p].After(time.Now().Add(-window)) {
 			err = router.NewError(ErrTooManyRequests)
 			err.Conflict = true
