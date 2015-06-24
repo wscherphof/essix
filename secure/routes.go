@@ -8,7 +8,7 @@ import (
 func init() {
 	router.GET("/account", IfSecureHandle(UpdateAccountForm, SignUpForm))
 	router.POST("/account", ratelimit.Handle(3600, SignUp))
-	router.PUT("/account", UpdateAccount)
+	router.PUT("/account", SecureHandle(UpdateAccount))
 
 	router.GET("/session", LogInForm)
 	router.POST("/session", ratelimit.Handle(60, LogIn))
