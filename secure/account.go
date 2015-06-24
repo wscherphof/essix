@@ -21,13 +21,13 @@ func SignUpForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (e
 
 func SignUp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
 	if !captcha.VerifyString(r.FormValue("captchaId"), r.FormValue("captchaSolution")) {
-		err = router.NewError(captcha.ErrNotFound, "secure", "signup")
+		err = router.NewError(captcha.ErrNotFound)
 		err.Conflict = true
 	} else if acc, e, conflict := account.New(r.FormValue("uid"), r.FormValue("pwd1"), r.FormValue("pwd2")); e != nil {
-		err = router.NewError(e, "secure", "signup")
+		err = router.NewError(e)
 		err.Conflict = conflict
 	} else if e, remark := activationEmail(r, acc); e != nil {
-		err = router.NewError(e, "secure", "signup")
+		err = router.NewError(e)
 	} else {
 		router.Template("secure", "signup_success", "", map[string]interface{}{
 			"uid":    acc.UID,

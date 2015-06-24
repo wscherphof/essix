@@ -13,14 +13,6 @@ func init() {
 		Add("nl", "Hoi").
 		Add("en", "Hi")
 
-	msg.New("Take me home").
-		Add("nl", "Naar de startpagina").
-		Add("en", "To the home page")
-
-	msg.New("Try again").
-		Add("nl", "Opnieuw proberen").
-		Add("en", "Try again")
-
 	msg.New("Time format").
 		Add("nl", "2-1-2006, 15.04 u. (MST)").
 		Add("en", "1/2/2006 at 3:04pm (MST)")

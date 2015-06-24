@@ -24,15 +24,23 @@ func ErrorHandleFunc(errorHandle ErrorHandle) (handle httprouter.Handle) {
 				log.Printf("ERROR: %+v: %s %#v", r.URL, err.Error, err.Error)
 				err.Error = ErrInternalServerError
 			}
+			data := map[string]interface{}{
+				"Error": err.Error,
+				"Path":  r.URL.Path,
+			}
+			if err.Data != nil {
+				for k, v := range err.Data {
+					data[k] = v
+				}
+			}
+			inner := ""
+			if err.Tail != nil {
+				inner = "../../" + err.Tail.dir + "/templates/" + err.Tail.name
+			}
 			// Set the Content-Type to prevent CompressHandler from doing so after our WriteHeader()
 			w.Header().Set("Content-Type", "text/html; charset=utf-8")
 			w.WriteHeader(code)
-			Template("router", "error", "", map[string]interface{}{
-				"Error": err.Error,
-			})(w, r, ps)
-			if err.Tail != nil {
-				Template(err.Tail.dir, err.Tail.name, "", err.Data)(w, r, ps)
-			}
+			Template("router", "error", inner, data)(w, r, ps)
 		}
 	}
 }

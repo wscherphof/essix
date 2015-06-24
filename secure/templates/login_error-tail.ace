@@ -1,8 +1,5 @@
-p
-  a href=/session {{ Msg .lang "Try again" }}
-p
-  a href=/account {{ Msg .lang "Sign up" }}
-p
-  a href=/account/activation {{ Msg .lang "activation subject" }}
-p
-  a href=/ {{ Msg .lang "Take me home" }}
+= content tail
+  p
+    a href=/account {{ Msg .lang "Sign up" }}
+  p
+    a href=/account/activation {{ Msg .lang "activation subject" }}

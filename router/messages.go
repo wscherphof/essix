@@ -12,4 +12,12 @@ func init() {
 		Add("en", `Sorry; something unexpected went wrong on the server.
 			De error is logged for our system operators.
 			Please try again later.`)
+
+	msg.New("Take me home").
+		Add("nl", "Naar de startpagina").
+		Add("en", "To the home page")
+
+	msg.New("Try again").
+		Add("nl", "Opnieuw proberen").
+		Add("en", "Try again")
 }

@@ -40,14 +40,11 @@ func ActivationCodeForm(w http.ResponseWriter, r *http.Request, ps httprouter.Pa
 
 func ActivationCode(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
 	if !captcha.VerifyString(r.FormValue("captchaId"), r.FormValue("captchaSolution")) {
-		err = router.NewError(captcha.ErrNotFound, "secure", "activation_resend")
+		err = router.NewError(captcha.ErrNotFound)
 		err.Conflict = true
 	} else if acc, e, conflict := account.GetInsecure(r.FormValue("uid")); e != nil {
-		err = router.NewError(e, "secure", "activation_resend")
+		err = router.NewError(e)
 		err.Conflict = conflict
-		err.Data = map[string]interface{}{
-			"UID": r.FormValue("uid"),
-		}
 	} else if acc.IsActive() {
 		err = router.NewError(account.ErrAlreadyActivated)
 		err.Conflict = true

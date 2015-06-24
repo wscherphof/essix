@@ -26,20 +26,14 @@ func PasswordCodeForm(w http.ResponseWriter, r *http.Request, ps httprouter.Para
 func PasswordCode(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
 	uid := r.FormValue("uid")
 	if !captcha.VerifyString(r.FormValue("captchaId"), r.FormValue("captchaSolution")) {
-		err = router.NewError(captcha.ErrNotFound, "secure", "passwordcode")
+		err = router.NewError(captcha.ErrNotFound)
 		err.Conflict = true
 	} else if acc, e, conflict := account.GetInsecure(uid); e != nil {
-		err = router.NewError(e, "secure", "passwordcode")
+		err = router.NewError(e)
 		err.Conflict = conflict
-		err.Data = map[string]interface{}{
-			"UID": uid,
-		}
 	} else if !acc.IsActive() {
 		err = router.NewError(account.ErrNotActivated, "secure", "activation_resend")
 		err.Conflict = true
-		err.Data = map[string]interface{}{
-			"UID": uid,
-		}
 	} else if e := acc.CreatePasswordCode(); e != nil {
 		err = router.NewError(e)
 	} else if e, remark := passwordEmail(r, acc); e != nil {
@@ -60,7 +54,6 @@ func PasswordForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) 
 		account.ClearPasswordCode(uid, code)
 		router.Template("secure", "passwordcode_cancelled", "", nil)(w, r, ps)
 	} else {
-		// TODO: indicate password strength
 		router.Template("secure", "password", "", map[string]interface{}{
 			"UID":     uid,
 			"Code":    code,
@@ -76,11 +69,8 @@ func ChangePassword(w http.ResponseWriter, r *http.Request, ps httprouter.Params
 		err = router.NewError(e)
 		err.Conflict = conflict
 	} else if e, conflict := acc.ChangePassword(code, pwd1, pwd2); e != nil {
-		err = router.NewError(e, "secure", "passwordcode")
+		err = router.NewError(e)
 		err.Conflict = conflict
-		err.Data = map[string]interface{}{
-			"UID": acc.UID,
-		}
 	} else {
 		secure.LogOut(w, r, false)
 		router.Template("secure", "password_success", "", nil)(w, r, ps)

@@ -4,3 +4,8 @@ html lang={{ .lang.Main }}
   body
     main
       p {{ Msg .lang .Error.Error }}
+      = yield tail
+      p
+        a href={{ .Path }} {{ Msg .lang "Try again" }}
+      p
+        a href=/ {{ Msg .lang "Take me home" }}

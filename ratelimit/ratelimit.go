@@ -99,7 +99,7 @@ func Handle(seconds int, handle router.ErrorHandle) router.ErrorHandle {
 			err.Conflict = true
 			log.Printf("SUSPICIOUS: rate limit token reuse: %v %v, token %v, previous request %v", ip, p, t.Timestamp, c.Requests[p])
 		} else if c.Requests[p].After(time.Now().Add(-window)) {
-			err = router.NewError(ErrTooManyRequests) // TODO: tail
+			err = router.NewError(ErrTooManyRequests, "ratelimit", "toomanyrequests")
 			err.Conflict = true
 			err.Data = map[string]interface{}{
 				"Window": window,
