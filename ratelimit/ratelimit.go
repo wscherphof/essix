@@ -18,13 +18,32 @@ var (
 )
 
 const (
-	table = "ratelimit"
+	table         = "ratelimit"
+	index         = "Clear"
+	pk            = "IP"
+	clearInterval = time.Hour
 )
 
 func init() {
-	if _, err := db.TableCreatePK(table, "IP"); err == nil {
+	if _, err := db.TableCreatePK(table, pk); err == nil {
 		log.Println("INFO: table created:", table)
+		if _, err := db.IndexCreate(table, index); err != nil {
+			log.Println("ERROR: failed to create index:", table, index, err)
+		} else {
+			log.Println("INFO: index created:", table, index)
+		}
 	}
+	go func() {
+		for {
+			time.Sleep(clearInterval)
+			limit := time.Now().Unix()
+			if resp, err := db.DeleteTerm(db.Between(table, index, nil, limit, true, true)); err != nil {
+				log.Printf("WARNING: rate limit clearing failed: %v", err)
+			} else {
+				log.Printf("INFO: %v rate limit records cleared", resp.Deleted)
+			}
+		}
+	}()
 	secure.RegisterRequestTokenData(token{})
 }
 
@@ -52,7 +71,7 @@ type requests map[path]time.Time
 
 type client struct {
 	IP       string
-	Clear    time.Time
+	Clear    int64
 	Requests requests
 }
 
@@ -106,8 +125,8 @@ func Handle(seconds int, handle router.ErrorHandle) router.ErrorHandle {
 			}
 		} else {
 			c.Requests[p] = time.Now()
-			clear := time.Now().Add(window)
-			if clear.After(c.Clear) {
+			clear := time.Now().Add(window).Unix()
+			if clear > c.Clear {
 				c.Clear = clear
 			}
 			if e := c.save(); e != nil {
@@ -118,5 +137,3 @@ func Handle(seconds int, handle router.ErrorHandle) router.ErrorHandle {
 		return
 	}
 }
-
-// TODO: clear job
