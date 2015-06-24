@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/gorilla/context"
 	"github.com/gorilla/handlers"
-	"github.com/wscherphof/expeertise/captcha"
 	"github.com/wscherphof/expeertise/env"
 	"github.com/wscherphof/expeertise/router"
 	"github.com/wscherphof/expeertise/secure"
@@ -31,7 +30,6 @@ func main() {
 		router.Template(".", "home", "home_loggedin", nil),
 		router.Template(".", "home", "home_loggedout", nil)))
 
-	router.Router.Handler("GET", "/captcha/*filepath", captcha.Server)
 	router.Router.ServeFiles("/static/*filepath", http.Dir("./static"))
 
 	log.Println("INFO: starting application server @", applicationAddress)
