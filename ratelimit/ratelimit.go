@@ -104,7 +104,10 @@ func Handle(seconds int, handle router.ErrorHandle) router.ErrorHandle {
 			err.Conflict = true
 		} else {
 			c.Requests[p] = time.Now()
-			c.Clear = time.Now().Add(window)
+			clear := time.Now().Add(window)
+			if clear.After(c.Clear) {
+				c.Clear = clear
+			}
 			if e := c.save(); e != nil {
 				log.Printf("WARNING: error saving to table %v: %v", table, e)
 			}
