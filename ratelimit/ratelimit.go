@@ -15,7 +15,6 @@ import (
 var (
 	ErrTooManyRequests = errors.New("429 Too Many Requests")
 	ErrInvalidRequest  = errors.New("Invalid Request")
-	ErrTokenExpired    = errors.New("Token Expired")
 )
 
 const (
@@ -96,12 +95,15 @@ func Handle(seconds int, handle router.ErrorHandle) router.ErrorHandle {
 			err.Conflict = true
 			log.Printf("SUSPICIOUS: rate limit token invalid path: %v, token path %v, expected %v", ip, t.Path, p)
 		} else if c := getClient(ip); c.Requests[p].After(t.Timestamp) {
-			err = router.NewError(ErrTokenExpired)
+			err = router.NewError(ErrInvalidRequest)
 			err.Conflict = true
 			log.Printf("SUSPICIOUS: rate limit token reuse: %v %v, token %v, previous request %v", ip, p, t.Timestamp, c.Requests[p])
 		} else if c.Requests[p].After(time.Now().Add(-window)) {
-			err = router.NewError(ErrTooManyRequests)
+			err = router.NewError(ErrTooManyRequests) // TODO: tail
 			err.Conflict = true
+			err.Data = map[string]interface{}{
+				"Window": window,
+			}
 		} else {
 			c.Requests[p] = time.Now()
 			clear := time.Now().Add(window)
