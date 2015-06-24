@@ -10,13 +10,14 @@ import (
 )
 
 func LogInForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
-	token, e := ratelimit.NewToken(r)
-	if e != nil {
-		return router.NewError(e)
+	if token, e := ratelimit.NewToken(r); e != nil {
+		err = router.NewError(e)
+	} else {
+		router.Template("secure", "login", "", map[string]interface{}{
+			"RateLimitToken": token,
+		})(w, r, ps)
 	}
-	return router.Template("secure", "login", "", map[string]interface{}{
-		"RateLimitToken": token,
-	})(w, r, ps)
+	return
 }
 
 func LogIn(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
