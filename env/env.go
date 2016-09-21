@@ -22,7 +22,7 @@ func init() {
 	set("HTTP_HOST", "localhost")
 	set("HTTP_PORT", ":9090")
 	set("HTTPS_PORT", ":10443")
-	set("DB_HOST", "localhost")
+	set("DB_HOST", "db1")
 	set("DB_PORT", ":28015")
 	set("DB_NAME", "expeertise")
 }
