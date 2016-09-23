@@ -6,29 +6,22 @@ import (
 	"github.com/wscherphof/expeertise/router"
 	"github.com/wscherphof/expeertise/secure"
 	"github.com/wscherphof/letsencrypt"
-	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 )
 
 func copy(src, dst string) error {
-	in, err := os.Open(src)
+	in, err := ioutil.ReadFile(src)
 	if err != nil {
 		return err
 	}
-	defer in.Close()
-	out, err := os.Create(dst)
+	err = ioutil.WriteFile(dst, in, 0644)
 	if err != nil {
 		return err
 	}
-	defer out.Close()
-	_, err = io.Copy(out, in)
-	cerr := out.Close()
-	if err != nil {
-		return err
-	}
-	return cerr
+	return nil
 }
 
 func main() {
@@ -43,6 +36,8 @@ func main() {
 		if err := copy("/letsencrypt.cache", "/appdata/letsencrypt.cache"); err != nil {
 			log.Fatal("ERROR: ", err)
 		}
+	} else {
+		log.Println("INFO: using /appdata/letsencrypt.cache")
 	}
 
 	var m letsencrypt.Manager
