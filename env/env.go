@@ -19,6 +19,7 @@ func set(name, defaultValue string) {
 }
 
 func init() {
+	set("DOMAIN", "dev.wscherphof.nl")
 	set("DB_HOST", "db1")
 	set("DB_PORT", ":28015")
 	set("DB_NAME", "expeertise")
