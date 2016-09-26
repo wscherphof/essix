@@ -1,0 +1,6 @@
+{
+	"domain": "tst.wscherphof.nl",
+	"certUrl": "https://acme-v01.api.letsencrypt.org/acme/cert/03e69996c011cdb87e0ae405e972b3d50637",
+	"certStableUrl": "",
+	"accountRef": "https://acme-v01.api.letsencrypt.org/acme/reg/4639111"
+}

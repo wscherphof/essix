@@ -1,0 +1,6 @@
+{
+	"domain": "dev.wscherphof.nl",
+	"certUrl": "https://acme-v01.api.letsencrypt.org/acme/cert/037444d27f024261d9491a027a97a21e41dd",
+	"certStableUrl": "",
+	"accountRef": "https://acme-v01.api.letsencrypt.org/acme/reg/4639111"
+}
