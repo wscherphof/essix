@@ -13,7 +13,7 @@ import (
 
 func main() {
 	// Serve files in /static
-	router.Router.ServeFiles("/static/*filepath", http.Dir("./resources/static"))
+	router.Router.ServeFiles("/static/*filepath", http.Dir("./rrresources/static"))
 
 	// Template for home page, depending on login status
 	router.GET("/", secure.IfSecureHandle(
@@ -23,7 +23,7 @@ func main() {
 	domain := env.Default("DOMAIN", "dev.wscherphof.nl")
 	log.Println("INFO: starting secure application server for " + domain)
 	// Use the domain's proper certificates
-	log.Fatal(http.ListenAndServeTLS(":443", "/resources/certificates/"+domain+".crt", "/resources/certificates/"+domain+".key",
+	log.Fatal(http.ListenAndServeTLS(":443", "/rrresources/certificates/"+domain+".crt", "/rrresources/certificates/"+domain+".key",
 		// Clear the context data created for the request, as per the "Important note" in https://godoc.org/github.com/gorilla/sessions
 		context.ClearHandler(
 			// Support PUT & DELTE through POST forms

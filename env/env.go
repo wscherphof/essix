@@ -13,7 +13,7 @@ func Set(name, value string) {
 }
 
 func Default(name string, defaultValue string) (value string) {
-	var env := Get(name)
+	var env = Get(name)
 	if env == "" {
 		env = defaultValue
 		Set(name, env)

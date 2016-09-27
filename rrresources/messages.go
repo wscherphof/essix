@@ -1,4 +1,4 @@
-package main
+package rrresources
 
 import (
 	"github.com/wscherphof/msg"
