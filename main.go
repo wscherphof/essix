@@ -11,32 +11,35 @@ import (
 	"os"
 )
 
-func init() {
-	go http.ListenAndServe(":80", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.TLS != nil || r.Host == "" {
-			http.Error(w, "not found", http.StatusNotFound)
-		}
-
-		u := r.URL
-		u.Host = r.Host
-		u.Scheme = "https"
-		http.Redirect(w, r, u.String(), http.StatusFound)
-	}))
-}
-
 func main() {
+	// Serve files in /static
+	router.Router.ServeFiles("/static/*filepath", http.Dir("./static"))
+
+	// Template for home page, depending on login status
 	router.GET("/", secure.IfSecureHandle(
 		router.Template(".", "home", "home_loggedin", nil),
 		router.Template(".", "home", "home_loggedout", nil)))
 
-	router.Router.ServeFiles("/static/*filepath", http.Dir("./static"))
-
 	domain := env.Get("DOMAIN")
-	log.Println("INFO: starting application server for " + domain)
+	log.Println("INFO: starting secure application server for " + domain)
+	// Use the domain's proper certificates
 	log.Fatal(http.ListenAndServeTLS(":443", "/certificates/"+domain+".crt", "/certificates/"+domain+".key",
+		// Clear the context data created for the request, as per the "Important note" in https://godoc.org/github.com/gorilla/sessions
 		context.ClearHandler(
+			// Support PUT & DELTE through POST forms
 			handlers.HTTPMethodOverrideHandler(
+				// Zip responses
 				handlers.CompressHandler(
+					// Log request info in Apache Combined Log Format
 					handlers.CombinedLoggingHandler(os.Stdout,
+						// Use our routes
 						router.Router))))))
+
+	// Redirect http to https
+	go http.ListenAndServe(":80", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		u := r.URL
+		u.Host = r.Host
+		u.Scheme = "https"
+		http.Redirect(w, r, u.String(), http.StatusMovedPermanently)
+	}))
 }
