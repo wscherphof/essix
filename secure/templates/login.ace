@@ -1,24 +1,22 @@
-= doctype html
-html lang={{ .lang.Main }}
-  = include ../../templates/includes/head .
-  body
-    header
-      h1 {{ Msg .lang "Log in" }}
-    main.wrap
-      form method=POST action=/session
-        input type=hidden name=_rate value={{ .RateLimitToken }}
-        .p
-          label {{ Msg .lang "Email" }}*
-            input#uid.right type=email name=uid autocomplete=username placeholder=email@provider.com required=
-        .p
-          label {{ Msg .lang "Password" }}*
-            input#pwd.right type=password name=pwd autocomplete=current-password placeholder=********** required=
-        .p
-          input.right type=submit
-      aside
-        nav
-          ul
-            li
-              a href=/account {{ Msg .lang "Sign up" }}
-            li
-              a href=/account/passwordcode {{ Msg .lang "Forgot password" }}
+= include ../../templates/includes/top .
+body
+  header
+    h1 {{ Msg .lang "Log in" }}
+  main.wrap
+    form method=POST action=/session
+      input type=hidden name=_rate value={{ .RateLimitToken }}
+      .p
+        label {{ Msg .lang "Email" }}*
+          input#uid.right type=email name=uid autocomplete=username placeholder=email@provider.com required=
+      .p
+        label {{ Msg .lang "Password" }}*
+          input#pwd.right type=password name=pwd autocomplete=current-password placeholder=********** required=
+      .p
+        input.right type=submit
+    aside
+      nav
+        ul
+          li
+            a href=/account {{ Msg .lang "Sign up" }}
+          li
+            a href=/account/passwordcode {{ Msg .lang "Forgot password" }}

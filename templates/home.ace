@@ -1,8 +1,6 @@
-= doctype html
-html lang={{ .lang.Main }}
-  = include includes/head .
-  body
-    p
-      = yield account
-    p
-      = yield session
+= include includes/top .
+body
+  p
+    = yield account
+  p
+    = yield session
