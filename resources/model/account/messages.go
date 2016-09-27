@@ -5,7 +5,7 @@ import (
 	pkg "github.com/wscherphof/expeertise/model/account"
 )
 
-func iIit() {
+func Init() {
 	msg.New(pkg.ErrInvalidCredentials.Error()).
 		Add("nl", "E-mailadres onbekend of wachtwoord of activeringscode onjuist").
 		Add("en", "Unknown email address or incorrect password or activation code")
