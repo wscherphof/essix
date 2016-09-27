@@ -1,10 +1,10 @@
-package ratelimit
+package messages
 
 import (
 	"github.com/wscherphof/msg"
 )
 
-func Init() {
+func init() {
 	msg.New("ErrTooManyRequests").
 		Add("nl", `Sorry; hier geldt een frequentielimiet; je kan dit maar eens in
       de zoveel tijd aanvragen.

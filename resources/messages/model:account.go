@@ -1,10 +1,10 @@
-package account
+package messages
 
 import (
 	"github.com/wscherphof/msg"
 )
 
-func Init() {
+func init() {
 	msg.New("ErrInvalidCredentials").
 		Add("nl", "E-mailadres onbekend of wachtwoord of activeringscode onjuist").
 		Add("en", "Unknown email address or incorrect password or activation code")
