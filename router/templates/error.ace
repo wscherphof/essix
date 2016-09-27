@@ -1,11 +1,9 @@
-= doctype html
-html lang={{ .lang.Main }}
-  = include ../../templates/includes/head .
-  body
-    main
-      p {{ Msg .lang .Error.Error }}
-      = yield tail
-      p
-        a href={{ .Path }} {{ Msg .lang "Try again" }}
-      p
-        a href=/ {{ Msg .lang "Take me home" }}
+= include ../../templates/includes/top .
+body
+  main
+    p {{ Msg .lang .Error.Error }}
+    = yield tail
+    p
+      a href={{ .Path }} {{ Msg .lang "Try again" }}
+    p
+      a href=/ {{ Msg .lang "Take me home" }}
