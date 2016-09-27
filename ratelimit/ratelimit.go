@@ -13,8 +13,8 @@ import (
 )
 
 var (
-	ErrTooManyRequests = errors.New("429 Too Many Requests")
-	ErrInvalidRequest  = errors.New("Invalid Request")
+	ErrTooManyRequests = errors.New("ErrTooManyRequests")
+	ErrInvalidRequest  = errors.New("ErrInvalidRequest")
 )
 
 const (

@@ -4,8 +4,8 @@ import (
 	"github.com/wscherphof/msg"
 )
 
-func init() {
-	msg.New(errInternalServerError.Error()).
+func Init() {
+	msg.New("ErrInternalServerError").
 		Add("nl", `Sorry; er is op de server iets onverwachts misgegaan.
 			De foutmelding is gelogd voor onze systeembeheerders.
 			Probeer het later opnieuw.`).

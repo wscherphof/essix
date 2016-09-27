@@ -21,7 +21,7 @@ type emailConfigStore struct {
 	Value *emailConfig
 }
 
-var ErrNotSentImmediately = errors.New("Message could not be sent immediately; it's queued to get sent shortly")
+var ErrNotSentImmediately = errors.New("ErrNotSentImmediately")
 
 var (
 	conf *emailConfig

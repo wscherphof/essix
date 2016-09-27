@@ -11,16 +11,16 @@ import (
 )
 
 var (
-	ErrInvalidCredentials   = errors.New("Unknown email address or incorrect password or activation code")
-	ErrPasswordEmpty        = errors.New("Password empty")
-	ErrPasswordsNotEqual    = errors.New("Passwords not equal")
-	ErrEmailTaken           = errors.New("Email address taken")
-	ErrNotActivated         = errors.New("Account hasn't been activated yet")
-	ErrAlreadyActivated     = errors.New("Account is already activated")
-	ErrValidationFailed     = errors.New("Field values are missing or incorrect")
-	ErrCodeUnset            = errors.New("Code is empty")
-	ErrCodeIncorrect        = errors.New("Code given is incorrect")
-	ErrPasswordCodeTimedOut = errors.New("Password code has timed out")
+	ErrInvalidCredentials   = errors.New("ErrInvalidCredentials")
+	ErrPasswordEmpty        = errors.New("ErrPasswordEmpty")
+	ErrPasswordsNotEqual    = errors.New("ErrPasswordsNotEqual")
+	ErrEmailTaken           = errors.New("ErrEmailTaken")
+	ErrNotActivated         = errors.New("ErrNotActivated")
+	ErrAlreadyActivated     = errors.New("ErrAlreadyActivated")
+	errValidationFailed     = errors.New("errValidationFailed")
+	ErrCodeUnset            = errors.New("ErrCodeUnset")
+	ErrCodeIncorrect        = errors.New("ErrCodeIncorrect")
+	ErrPasswordCodeTimedOut = errors.New("ErrPasswordCodeTimedOut")
 )
 
 const (
@@ -113,7 +113,7 @@ func (a *Account) ValidateFields() (err error) {
 		len(a.Country) == 0 ||
 		len(a.Postcode) == 0 ||
 		false {
-		err = ErrValidationFailed
+		err = errValidationFailed
 	}
 	return
 }
