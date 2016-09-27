@@ -7,7 +7,6 @@ import (
 	"github.com/wscherphof/expeertise/resources/ratelimit"
 	"github.com/wscherphof/expeertise/resources/router"
 	"github.com/wscherphof/expeertise/resources/secure"
-	"log"
 )
 
 func Init() {
