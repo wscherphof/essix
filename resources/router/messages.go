@@ -2,10 +2,11 @@ package router
 
 import (
 	"github.com/wscherphof/msg"
+	pkg "github.com/wscherphof/expeertise/router"
 )
 
 func init() {
-	msg.New(errInternalServerError.Error()).
+	msg.New(pkg.ErrInternalServerError.Error()).
 		Add("nl", `Sorry; er is op de server iets onverwachts misgegaan.
 			De foutmelding is gelogd voor onze systeembeheerders.
 			Probeer het later opnieuw.`).

@@ -4,23 +4,19 @@ import (
 	"os"
 )
 
-var envs = make(map[string]string)
-
 func Get(name string) (value string) {
-	return envs[name]
+	return os.Getenv(name)
 }
 
-func set(name, defaultValue string) {
-	var env string
-	if env = os.Getenv(name); env == "" {
+func Set(name, value string) {
+	os.Setenv(name, value)
+}
+
+func Default(name string, defaultValue string) (value string) {
+	var env := Get(name)
+	if env == "" {
 		env = defaultValue
+		Set(name, env)
 	}
-	envs[name] = env
-}
-
-func init() {
-	set("DOMAIN", "dev.wscherphof.nl")
-	set("DB_HOST", "db1")
-	set("DB_PORT", ":28015")
-	set("DB_NAME", "expeertise")
+	return env
 }
