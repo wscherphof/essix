@@ -9,7 +9,7 @@ import (
 
 var (
 	Router                 = httprouter.New()
-	ErrInternalServerError = errors.New("Internal server error")
+	errInternalServerError = errors.New("errInternalServerError")
 )
 
 type ErrorHandle func(http.ResponseWriter, *http.Request, httprouter.Params) *Error
@@ -22,7 +22,7 @@ func errorHandleFunc(errorHandle ErrorHandle) (handle httprouter.Handle) {
 				code = http.StatusConflict
 			} else {
 				log.Printf("ERROR: %+v: %s %#v", r.URL, err.Error, err.Error)
-				err.Error = ErrInternalServerError
+				err.Error = errInternalServerError
 			}
 			data := map[string]interface{}{
 				"Error": err.Error,

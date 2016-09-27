@@ -18,9 +18,7 @@ func Init() {
 	secure.Init()
 	email.Init()
 	email.Init()
-}
 
-func init() {
 	msg.New("").
 		Add("nl", "").
 		Add("en", "")
