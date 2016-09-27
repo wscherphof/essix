@@ -21,7 +21,7 @@ type emailConfigStore struct {
 	Value *emailConfig
 }
 
-var errNotSentImmediately = errors.New("errNotSentImmediately")
+var ErrNotSentImmediately = errors.New("ErrNotSentImmediately")
 
 var (
 	conf *emailConfig
@@ -54,7 +54,7 @@ func init() {
 
 func Send(subject, message string, recipients ...string) (err error) {
 	if e := send(subject, message, recipients...); e != nil {
-		err = errNotSentImmediately
+		err = ErrNotSentImmediately
 		if e := enQueue(subject, message, recipients...); e != nil {
 			err = e
 		}

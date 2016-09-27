@@ -13,8 +13,8 @@ import (
 )
 
 var (
-	errTooManyRequests = errors.New("errTooManyRequests")
-	errInvalidRequest  = errors.New("errInvalidRequest")
+	ErrTooManyRequests = errors.New("ErrTooManyRequests")
+	ErrInvalidRequest  = errors.New("ErrInvalidRequest")
 )
 
 const (
@@ -98,27 +98,27 @@ func Handle(seconds int, handle router.ErrorHandle) router.ErrorHandle {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
 		t, ip, p := new(token), ip(r), path(r.URL.Path)
 		if rate := r.FormValue("_rate"); rate == "" {
-			err = router.NewError(errInvalidRequest)
+			err = router.NewError(ErrInvalidRequest)
 			err.Conflict = true
 			log.Printf("SUSPICIOUS: rate limit token missing %v %v", ip, p)
 		} else if e := secure.RequestToken(rate).Read(t); e != nil {
-			err = router.NewError(errInvalidRequest)
+			err = router.NewError(ErrInvalidRequest)
 			err.Conflict = true
 			log.Printf("SUSPICIOUS: rate limit token unreadable %v %v", ip, p)
 		} else if t.IP != ip {
-			err = router.NewError(errInvalidRequest)
+			err = router.NewError(ErrInvalidRequest)
 			err.Conflict = true
 			log.Printf("SUSPICIOUS: rate limit token invalid address: %v, expected %v %v", t.IP, ip, p)
 		} else if t.Path != p {
-			err = router.NewError(errInvalidRequest)
+			err = router.NewError(ErrInvalidRequest)
 			err.Conflict = true
 			log.Printf("SUSPICIOUS: rate limit token invalid path: %v, token path %v, expected %v", ip, t.Path, p)
 		} else if c := getClient(ip); c.Requests[p].After(t.Timestamp) {
-			err = router.NewError(errInvalidRequest)
+			err = router.NewError(ErrInvalidRequest)
 			err.Conflict = true
 			log.Printf("SUSPICIOUS: rate limit token reuse: %v %v, token %v, previous request %v", ip, p, t.Timestamp, c.Requests[p])
 		} else if c.Requests[p].After(time.Now().Add(-window)) {
-			err = router.NewError(errTooManyRequests, "ratelimit", "toomanyrequests")
+			err = router.NewError(ErrTooManyRequests, "ratelimit", "toomanyrequests")
 			err.Conflict = true
 			err.Data = map[string]interface{}{
 				"Window": window,

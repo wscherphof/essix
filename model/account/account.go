@@ -11,16 +11,16 @@ import (
 )
 
 var (
-	errInvalidCredentials   = errors.New("errInvalidCredentials")
-	errPasswordEmpty        = errors.New("errPasswordEmpty")
-	errPasswordsNotEqual    = errors.New("errPasswordsNotEqual")
-	errEmailTaken           = errors.New("errEmailTaken")
-	errNotActivated         = errors.New("errNotActivated")
-	errAlreadyActivated     = errors.New("errAlreadyActivated")
+	ErrInvalidCredentials   = errors.New("ErrInvalidCredentials")
+	ErrPasswordEmpty        = errors.New("ErrPasswordEmpty")
+	ErrPasswordsNotEqual    = errors.New("ErrPasswordsNotEqual")
+	ErrEmailTaken           = errors.New("ErrEmailTaken")
+	ErrNotActivated         = errors.New("ErrNotActivated")
+	ErrAlreadyActivated     = errors.New("ErrAlreadyActivated")
 	errValidationFailed     = errors.New("errValidationFailed")
-	errCodeUnset            = errors.New("errCodeUnset")
-	errCodeIncorrect        = errors.New("errCodeIncorrect")
-	errPasswordCodeTimedOut = errors.New("errPasswordCodeTimedOut")
+	ErrCodeUnset            = errors.New("ErrCodeUnset")
+	ErrCodeIncorrect        = errors.New("ErrCodeIncorrect")
+	ErrPasswordCodeTimedOut = errors.New("ErrPasswordCodeTimedOut")
 )
 
 const (
@@ -45,9 +45,9 @@ type password struct {
 
 func newPassword(pwd1, pwd2 string) (pwd *password, err error) {
 	if pwd1 == "" {
-		err = errPasswordEmpty
+		err = ErrPasswordEmpty
 	} else if pwd1 != pwd2 {
-		err = errPasswordsNotEqual
+		err = ErrPasswordsNotEqual
 	} else if hash, e := bcrypt.GenerateFromPassword([]byte(pwd1), bcrypt.DefaultCost); e != nil {
 		err = e
 	} else {
@@ -130,9 +130,9 @@ func (a *Account) IsActive() bool {
 
 func (a *Account) activate(code string) (err error) {
 	if a.IsActive() {
-		err = errAlreadyActivated
+		err = ErrAlreadyActivated
 	} else if code != a.ActivationCode {
-		err = errInvalidCredentials
+		err = ErrInvalidCredentials
 	} else {
 		a.ActivationCode = ""
 	}
@@ -158,13 +158,13 @@ func ClearPasswordCode(uid, code string) {
 
 func (a *Account) ChangePassword(code, pwd1, pwd2 string) (err error, conflict bool) {
 	if a.PasswordCode == nil {
-		err, conflict = errCodeUnset, true
+		err, conflict = ErrCodeUnset, true
 	} else if time.Now().After(a.PasswordCode.Expires) {
 		a.PasswordCode = nil
 		a.Save()
-		err, conflict = errPasswordCodeTimedOut, true
+		err, conflict = ErrPasswordCodeTimedOut, true
 	} else if code == "" || code != a.PasswordCode.Value {
-		err, conflict = errCodeIncorrect, true
+		err, conflict = ErrCodeIncorrect, true
 	} else if pwd, e := newPassword(pwd1, pwd2); e != nil {
 		err, conflict = e, true
 	} else {
@@ -195,9 +195,9 @@ func (a *Account) ChangeEmailAddress(code string) (err error, conflict bool) {
 	if acc, e, c := get(uid); e != nil {
 		err, conflict = e, c
 	} else if acc.EmailAddressCode == "" {
-		err, conflict = errCodeUnset, true
+		err, conflict = ErrCodeUnset, true
 	} else if code == "" || code != acc.EmailAddressCode {
-		err, conflict = errCodeIncorrect, true
+		err, conflict = ErrCodeIncorrect, true
 	} else {
 		acc.UID = acc.NewUID
 		if e := acc.ClearEmailAddressCode(code); e != nil {
@@ -211,7 +211,7 @@ func (a *Account) ChangeEmailAddress(code string) (err error, conflict bool) {
 
 func (a *Account) CreateTerminateCode(sure bool) (err error, conflict bool) {
 	if !sure {
-		err, conflict = errCodeIncorrect, true
+		err, conflict = ErrCodeIncorrect, true
 	} else {
 		a.TerminateCode = code()
 		err = a.Save()
@@ -234,13 +234,13 @@ type Deleted struct {
 func (a *Account) Terminate(code string, sure bool) (err error, conflict bool) {
 	uid := a.UID
 	if !sure {
-		err, conflict = errCodeIncorrect, true
+		err, conflict = ErrCodeIncorrect, true
 	} else if acc, e, c := get(uid); e != nil {
 		err, conflict = e, c
 	} else if acc.TerminateCode == "" {
-		err, conflict = errCodeUnset, true
+		err, conflict = ErrCodeUnset, true
 	} else if code == "" || code != acc.TerminateCode {
-		err, conflict = errCodeIncorrect, true
+		err, conflict = ErrCodeIncorrect, true
 	} else if _, e := db.Insert(tableDel, &Deleted{acc}); e != nil {
 		err = e
 	} else if _, e := db.Delete(table, uid); e != nil {
@@ -266,7 +266,7 @@ func New(uid, pwd1, pwd2 string) (account *Account, err error, conflict bool) {
 	if e, found := db.Get(table, uid, new(Account)); e != nil {
 		err = e
 	} else if found {
-		err, conflict = errEmailTaken, true
+		err, conflict = ErrEmailTaken, true
 	} else if pwd, e := newPassword(pwd1, pwd2); e != nil {
 		err, conflict = e, true
 	} else {
@@ -288,7 +288,7 @@ func get(uid string) (account *Account, err error, conflict bool) {
 	if e, found := db.Get(table, strings.ToLower(uid), acc); e != nil {
 		err = e
 	} else if !found {
-		err, conflict = errInvalidCredentials, true
+		err, conflict = ErrInvalidCredentials, true
 	} else {
 		account = acc
 	}
@@ -312,9 +312,9 @@ func Get(uid, pwd string) (account *Account, err error, conflict bool) {
 	if acc, e, c := get(uid); e != nil {
 		err, conflict = e, c
 	} else if !acc.IsActive() {
-		err, conflict = errNotActivated, true
+		err, conflict = ErrNotActivated, true
 	} else if e := bcrypt.CompareHashAndPassword(acc.PWD.Value, []byte(pwd)); e != nil {
-		err, conflict = errInvalidCredentials, true
+		err, conflict = ErrInvalidCredentials, true
 	} else {
 		pwd = ""
 		account = acc
