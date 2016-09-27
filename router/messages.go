@@ -5,7 +5,7 @@ import (
 )
 
 func init() {
-	msg.New(ErrInternalServerError.Error()).
+	msg.New(errInternalServerError.Error()).
 		Add("nl", `Sorry; er is op de server iets onverwachts misgegaan.
 			De foutmelding is gelogd voor onze systeembeheerders.
 			Probeer het later opnieuw.`).

@@ -9,12 +9,12 @@ import (
 
 var (
 	Router                 = httprouter.New()
-	ErrInternalServerError = errors.New("Internal server error")
+	errInternalServerError = errors.New("Internal server error")
 )
 
 type ErrorHandle func(http.ResponseWriter, *http.Request, httprouter.Params) *Error
 
-func ErrorHandleFunc(errorHandle ErrorHandle) (handle httprouter.Handle) {
+func errorHandleFunc(errorHandle ErrorHandle) (handle httprouter.Handle) {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		if err := errorHandle(w, r, ps); err != nil {
 			code := http.StatusInternalServerError
@@ -22,7 +22,7 @@ func ErrorHandleFunc(errorHandle ErrorHandle) (handle httprouter.Handle) {
 				code = http.StatusConflict
 			} else {
 				log.Printf("ERROR: %+v: %s %#v", r.URL, err.Error, err.Error)
-				err.Error = ErrInternalServerError
+				err.Error = errInternalServerError
 			}
 			data := map[string]interface{}{
 				"Error": err.Error,
@@ -45,13 +45,13 @@ func ErrorHandleFunc(errorHandle ErrorHandle) (handle httprouter.Handle) {
 	}
 }
 
-func Handle(method, path string, handle ErrorHandle) {
-	Router.Handle(method, path, ErrorHandleFunc(handle))
+func handle(method, path string, h ErrorHandle) {
+	Router.Handle(method, path, errorHandleFunc(h))
 }
-func GET(path string, handle ErrorHandle)     { Handle("GET", path, handle) }
-func PUT(path string, handle ErrorHandle)     { Handle("PUT", path, handle) }
-func POST(path string, handle ErrorHandle)    { Handle("POST", path, handle) }
-func DELETE(path string, handle ErrorHandle)  { Handle("DELETE", path, handle) }
-func PATCH(path string, handle ErrorHandle)   { Handle("PATCH", path, handle) }
-func OPTIONS(path string, handle ErrorHandle) { Handle("OPTIONS", path, handle) }
-func HEAD(path string, handle ErrorHandle)    { Handle("HEAD", path, handle) }
+func GET(path string, h ErrorHandle)     { handle("GET", path, h) }
+func PUT(path string, h ErrorHandle)     { handle("PUT", path, h) }
+func POST(path string, h ErrorHandle)    { handle("POST", path, h) }
+func DELETE(path string, h ErrorHandle)  { handle("DELETE", path, h) }
+func PATCH(path string, h ErrorHandle)   { handle("PATCH", path, h) }
+func OPTIONS(path string, h ErrorHandle) { handle("OPTIONS", path, h) }
+func HEAD(path string, h ErrorHandle)    { handle("HEAD", path, h) }
