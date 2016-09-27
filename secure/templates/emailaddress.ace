@@ -1,12 +1,10 @@
-= doctype html
-html lang={{ .lang.Main }}
-  = include ../../templates/includes/head .
-  body
-  	header
-	    h1 {{ Msg .lang "Change email address" }}
-    main
-      p {{ Msg .lang "Want replace" }} "{{ .Account.UID }}" {{ Msg .lang "Replace with" }} "{{ .Account.NewUID }}"
-      form method=POST action=/account/emailaddress
-        input type=hidden name=_method value=PUT
-        input type=hidden name=code value={{ .Account.EmailAddressCode }}
-        input type=submit value={{ Msg .lang "Confirm" }}
+= include ../../templates/includes/top .
+body
+	header
+    h1 {{ Msg .lang "Change email address" }}
+  main
+    p {{ Msg .lang "Want replace" }} "{{ .Account.UID }}" {{ Msg .lang "Replace with" }} "{{ .Account.NewUID }}"
+    form method=POST action=/account/emailaddress
+      input type=hidden name=_method value=PUT
+      input type=hidden name=code value={{ .Account.EmailAddressCode }}
+      input type=submit value={{ Msg .lang "Confirm" }}

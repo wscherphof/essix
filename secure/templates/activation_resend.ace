@@ -1,14 +1,12 @@
-= doctype html
-html lang={{ .lang.Main }}
-  = include ../../templates/includes/head .
-  body
-    header
-      h1 {{ Msg .lang "Resend activation code" }}
-    main.flex
-      form method=POST action=/account/activationcode
-        input type=hidden name=_rate value={{ .RateLimitToken }}
-        .p
-          label {{ Msg .lang "Email" }}*
-            input#uid.right type=email name=uid autocomplete=username value={{ .UID }} placeholder=email@provider.com required=
-        .p
-          input.right type=submit
+= include ../../templates/includes/top .
+body
+  header
+    h1 {{ Msg .lang "Resend activation code" }}
+  main.flex
+    form method=POST action=/account/activationcode
+      input type=hidden name=_rate value={{ .RateLimitToken }}
+      .p
+        label {{ Msg .lang "Email" }}*
+          input#uid.right type=email name=uid autocomplete=username value={{ .UID }} placeholder=email@provider.com required=
+      .p
+        input.right type=submit

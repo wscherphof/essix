@@ -1,9 +1,7 @@
-= doctype html
-html lang={{ .lang.Main }}
-  = include ../../templates/includes/head .
-  body
-    p {{ Msg .lang "Change email address successful" }}
-    p
-      a href=/account {{ Msg .lang "Edit account" }}
-    p
-      a href=/ {{ Msg .lang "Take me home" }}
+= include ../../templates/includes/top .
+body
+  p {{ Msg .lang "Change email address successful" }}
+  p
+    a href=/account {{ Msg .lang "Edit account" }}
+  p
+    a href=/ {{ Msg .lang "Take me home" }}

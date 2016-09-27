@@ -1,12 +1,10 @@
-= doctype html
-html lang={{ .lang.Main }}
-  = include ../../templates/includes/head .
-  body
-    p {{ Msg .lang "Hi" }} {{ .name }},
-    p..
-      {{ Msg .lang "Signup successful" }}
-      {{ Msg .lang .remark }}
-    p
-      a href=/account/activation/{{ .uid }} {{ Msg .lang "activation subject" }}
-    p
-      a href=/ {{ Msg .lang "Take me home" }}
+= include ../../templates/includes/top .
+body
+  p {{ Msg .lang "Hi" }} {{ .name }},
+  p..
+    {{ Msg .lang "Signup successful" }}
+    {{ Msg .lang .remark }}
+  p
+    a href=/account/activation/{{ .uid }} {{ Msg .lang "activation subject" }}
+  p
+    a href=/ {{ Msg .lang "Take me home" }}
