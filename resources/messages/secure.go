@@ -1,11 +1,11 @@
-package secure
+package messages
 
 import (
 	"github.com/wscherphof/msg"
 	"github.com/wscherphof/secure"
 )
 
-func Init() {
+func init() {
 	msg.New(secure.ErrNoTLS.Error()).
 		Add("nl", "Voor inloggen is een vercijferde verbinding (https) vereist").
 		Add("en", "Logging in requires an encrypted connection (https)")

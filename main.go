@@ -4,7 +4,7 @@ import (
 	"github.com/gorilla/context"
 	"github.com/gorilla/handlers"
 	"github.com/wscherphof/expeertise/env"
-	"github.com/wscherphof/expeertise/resources"
+	"github.com/wscherphof/expeertise/resources/messages"
 	"github.com/wscherphof/expeertise/router"
 	"github.com/wscherphof/expeertise/secure"
 	"log"
@@ -13,7 +13,7 @@ import (
 )
 
 func init() {
-	resources.Init()
+	messages.Load()
 }
 
 func main() {
