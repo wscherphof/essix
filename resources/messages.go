@@ -1,8 +1,25 @@
-package rrresources
+package resources
 
 import (
 	"github.com/wscherphof/msg"
+	"github.com/wscherphof/expeertise/resources/email"
+	"github.com/wscherphof/expeertise/resources/model/account"
+	"github.com/wscherphof/expeertise/resources/ratelimit"
+	"github.com/wscherphof/expeertise/resources/router"
+	"github.com/wscherphof/expeertise/resources/secure"
+	"log"
 )
+
+func Init() {
+	email.Init()
+	account.Init()
+	ratelimit.Init()
+	router.Init()
+	email.Init()
+	secure.Init()
+	email.Init()
+	email.Init()
+}
 
 func init() {
 	msg.New("").

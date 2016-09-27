@@ -5,7 +5,7 @@ import (
 	pkg "github.com/wscherphof/expeertise/router"
 )
 
-func init() {
+func Init() {
 	msg.New(pkg.ErrInternalServerError.Error()).
 		Add("nl", `Sorry; er is op de server iets onverwachts misgegaan.
 			De foutmelding is gelogd voor onze systeembeheerders.

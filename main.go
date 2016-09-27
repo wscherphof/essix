@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/gorilla/context"
 	"github.com/gorilla/handlers"
+	"github.com/wscherphof/expeertise/resources"
 	"github.com/wscherphof/expeertise/env"
 	"github.com/wscherphof/expeertise/router"
 	"github.com/wscherphof/expeertise/secure"
@@ -10,6 +11,10 @@ import (
 	"net/http"
 	"os"
 )
+
+func init() {
+	resources.Init()
+}
 
 func main() {
 	// Serve files in /static

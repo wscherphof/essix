@@ -5,7 +5,7 @@ import (
 	pkg "github.com/wscherphof/expeertise/ratelimit"
 )
 
-func init() {
+func Init() {
 	msg.New(pkg.ErrTooManyRequests.Error()).
 		Add("nl", `Sorry; hier geldt een frequentielimiet; je kan dit maar eens in
       de zoveel tijd aanvragen.

@@ -5,7 +5,7 @@ import (
 	"github.com/wscherphof/secure"
 )
 
-func init() {
+func Init() {
 	msg.New(secure.ErrNoTLS.Error()).
 		Add("nl", "Voor inloggen is een vercijferde verbinding (https) vereist").
 		Add("en", "Logging in requires an encrypted connection (https)")
