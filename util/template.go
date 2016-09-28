@@ -11,11 +11,8 @@ import (
 )
 
 func aceOptions(dir string) *ace.Options {
-	if dir == "" {
-		dir = "."
-	}
 	return &ace.Options{
-		BaseDir: dir + "/templates",
+		BaseDir: "/resources/templates/" + dir,
 		FuncMap: template.FuncMap{
 			"Msg": msg.Msg,
 		},
