@@ -3,12 +3,12 @@ Package msg provides a means to manage translations of text labels ("messages")
 in a web application.
 
 New messages are defined like this:
-	msg.New("Hello").
-	  Add("en", "Hello, world").
-	  Add("nl", "Hallo wereld")
-	msg.New("Hi").
-	  Add("en", "Hi").
-	  Add("nl", "Hoi")
+	msg.Key("Hello").
+	  Set("en", "Hello, world").
+	  Set("nl", "Hallo wereld")
+	msg.Key("Hi").
+	  Set("en", "Hi").
+	  Set("nl", "Hoi")
 
 When you ask for the translation of a certain message key, the user's language
 is determined from the "Accept-Language" request header.
@@ -34,7 +34,8 @@ import (
 // Message holds the translations for a message key.
 type Message map[string]string
 
-// Set stores the translation of the message for the given language.
+// Set stores the translation of the message for the given language. Any old
+// value is overwritten.
 func (m Message) Set(language, translation string) Message {
 	language = strings.ToLower(language)
 	m[language] = translation

@@ -4,7 +4,11 @@ import (
 	"github.com/wscherphof/msg"
 )
 
-func Load() {
+func Key(key string) msg.Message {
+	return msg.Key(key)
+}
+
+func init() {
 	msg.Key("").
 		Set("nl", "").
 		Set("en", "")
