@@ -182,5 +182,5 @@ func init() {
 
 	msg.Key("Terminate successful").
 		Set("nl", "Je account is nu verwijderd.").
-		Set("en", "Your accounst has been deleted now.")
+		Set("en", "Your account has been deleted now.")
 }
