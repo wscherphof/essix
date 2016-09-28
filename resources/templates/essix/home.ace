@@ -1,4 +1,4 @@
-= include includes/top .
+= include ../includes/top .
 body
   p
     = yield account
