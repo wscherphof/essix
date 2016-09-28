@@ -1,10 +1,10 @@
-package main
+package essix
 
 import (
 	"github.com/gorilla/context"
 	"github.com/gorilla/handlers"
 	"github.com/wscherphof/essix/env"
-	"github.com/wscherphof/essix/resources/messages"
+	"github.com/wscherphof/essix/messages"
 	"github.com/wscherphof/essix/router"
 	"github.com/wscherphof/essix/secure"
 	"log"
@@ -12,20 +12,25 @@ import (
 	"os"
 )
 
+var domain string
+
 func init() {
+	domain = env.Get("DOMAIN")
+	if domain == "" {
+		log.Fatal("DOMAIN environment variable not set")
+	}
 	messages.Load()
 }
 
 func Run() {
 	// Serve files in /static
-	router.Router.ServeFiles("/static/*filepath", http.Dir("./resources/static"))
+	router.Router.ServeFiles("/static/*filepath", http.Dir("/resources/static"))
 
 	// Template for home page, depending on login status
 	router.GET("/", secure.IfSecureHandle(
 		router.Template(".", "home", "home_loggedin", nil),
 		router.Template(".", "home", "home_loggedout", nil)))
 
-	domain := env.Default("DOMAIN", "dev.wscherphof.nl")
 	log.Println("INFO: starting secure application server for " + domain)
 	// Use the domain's proper certificates
 	log.Fatal(http.ListenAndServeTLS(":443", "/resources/certificates/"+domain+".crt", "/resources/certificates/"+domain+".key",
