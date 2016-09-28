@@ -1,0 +1,127 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "ldqtPESbUSxHBPdQWvNy35WVV1g=",
+			"path": "github.com/Sirupsen/logrus",
+			"revision": "07d998d174c4e2dc90e2f1989a20724220bca1ff",
+			"revisionTime": "2015-07-07T18:07:35Z"
+		},
+		{
+			"checksumSHA1": "skXTwCEobkX6oc474xwD4uCujQ0=",
+			"path": "github.com/cenk/backoff",
+			"revision": "528acabf42ce572ffb500286be5cfa61c36cebd2",
+			"revisionTime": "2016-09-04T11:32:05Z"
+		},
+		{
+			"checksumSHA1": "4YrUyn/tPVnk2ZFl47dP2tM/zbs=",
+			"path": "github.com/golang/protobuf/proto",
+			"revision": "ab974be44dc3b7b8a1fb306fb32fe9b9f3864b3d",
+			"revisionTime": "2015-07-08T03:13:00Z"
+		},
+		{
+			"checksumSHA1": "iIUYZyoanCQQTUaWsu8b+iOSPt4=",
+			"path": "github.com/gorilla/context",
+			"revision": "215affda49addc4c8ef7e2534915df2c8c35c6cd",
+			"revisionTime": "2014-12-17T16:02:51Z"
+		},
+		{
+			"checksumSHA1": "5UzG0fIketWu6LzQmMK6UJG1nc4=",
+			"path": "github.com/gorilla/handlers",
+			"revision": "1467d04c2cea3563bfe156b7b0014864adce02b6",
+			"revisionTime": "2015-07-05T07:25:59Z"
+		},
+		{
+			"checksumSHA1": "fO93/TrbcU60FmzLDO/eeM58Eg0=",
+			"path": "github.com/gorilla/securecookie",
+			"revision": "e8ab2fa5d114bbc278da9bd20dc67553bed7a3c4",
+			"revisionTime": "2015-07-05T07:27:28Z"
+		},
+		{
+			"checksumSHA1": "+nUrErawD+edg74PjL4kx6b4A78=",
+			"path": "github.com/gorilla/sessions",
+			"revision": "f61c3ec2cf65d69e7efedfd4d060fe128882c951",
+			"revisionTime": "2015-04-17T17:47:05Z"
+		},
+		{
+			"checksumSHA1": "O0r0hj4YL+jSRNjnshkeH4GY+4s=",
+			"path": "github.com/hailocab/go-hostpool",
+			"revision": "e80d13ce29ede4452c43dea11e79b9bc8a15b478",
+			"revisionTime": "2016-01-25T11:53:50Z"
+		},
+		{
+			"checksumSHA1": "Farach1xcmsQYrhiUfkwF2rbIaE=",
+			"path": "github.com/julienschmidt/httprouter",
+			"revision": "6aacfd5ab513e34f7e64ea9627ab9670371b34e7",
+			"revisionTime": "2015-07-08T21:54:00Z"
+		},
+		{
+			"checksumSHA1": "nanCG2Qf0oVCtLnx9yfiAdVC230=",
+			"path": "github.com/wscherphof/msg",
+			"revision": "def8d6877a3add3d1486e628046e0bc7abc8c53b",
+			"revisionTime": "2016-07-30T04:22:15Z"
+		},
+		{
+			"checksumSHA1": "7l9hIMv/i8jtDLw3wgq6pElQ4mc=",
+			"path": "github.com/wscherphof/secure",
+			"revision": "d3587b52a426028f2226894f1f48652ad36a163a",
+			"revisionTime": "2015-06-23T20:28:40Z"
+		},
+		{
+			"checksumSHA1": "vH4qvaFoGIKpnn7+yV6wWA5pqwI=",
+			"path": "github.com/yosssi/ace",
+			"revision": "78e48a2f0ac5fb5a642585f96b03a5f47f7775f5",
+			"revisionTime": "2015-05-15T12:13:52Z"
+		},
+		{
+			"checksumSHA1": "vE43s37+4CJ2CDU6TlOUOYE0K9c=",
+			"path": "golang.org/x/crypto/bcrypt",
+			"revision": "f6a608df624ae17d57958a8a294c66da81730577",
+			"revisionTime": "2015-07-11T13:10:58Z"
+		},
+		{
+			"checksumSHA1": "udD2DzUPFZbMVXP0VNADhef4zKk=",
+			"path": "golang.org/x/crypto/blowfish",
+			"revision": "f6a608df624ae17d57958a8a294c66da81730577",
+			"revisionTime": "2015-07-11T13:10:58Z"
+		},
+		{
+			"checksumSHA1": "1MGpGDQqnUoRpv7VEcQrXOBydXE=",
+			"path": "golang.org/x/crypto/pbkdf2",
+			"revision": "f6a608df624ae17d57958a8a294c66da81730577",
+			"revisionTime": "2015-07-11T13:10:58Z"
+		},
+		{
+			"checksumSHA1": "/gzcl3OLKjO3mUv7MtfxR4BQ+gs=",
+			"path": "gopkg.in/dancannon/gorethink.v2",
+			"revision": "036953cca024435498adeec12fd0d5a8f7d98a87",
+			"revisionTime": "2016-09-20T21:21:00Z"
+		},
+		{
+			"checksumSHA1": "N5RTTLfsBGd3eIIP8xVWQJYu3XU=",
+			"path": "gopkg.in/dancannon/gorethink.v2/encoding",
+			"revision": "036953cca024435498adeec12fd0d5a8f7d98a87",
+			"revisionTime": "2016-09-20T21:21:00Z"
+		},
+		{
+			"checksumSHA1": "fjbclzTrJJT+pawuU3idWDX1Bws=",
+			"path": "gopkg.in/dancannon/gorethink.v2/ql2",
+			"revision": "036953cca024435498adeec12fd0d5a8f7d98a87",
+			"revisionTime": "2016-09-20T21:21:00Z"
+		},
+		{
+			"checksumSHA1": "6bj8J83HYu6fYqwpwRbHAOQ6Leo=",
+			"path": "gopkg.in/dancannon/gorethink.v2/types",
+			"revision": "036953cca024435498adeec12fd0d5a8f7d98a87",
+			"revisionTime": "2016-09-20T21:21:00Z"
+		},
+		{
+			"checksumSHA1": "412N7e7+ueRP9ej8IOl5khpYyoY=",
+			"path": "gopkg.in/fatih/pool.v2",
+			"revision": "20a0a429c5f93de45c90f5f09ea297c25e0929b3",
+			"revisionTime": "2016-07-21T14:54:10Z"
+		}
+	],
+	"rootPath": "github.com/wscherphof/essix"
+}
