@@ -45,8 +45,11 @@ pushd "$SOURCEDIR" 1>/dev/null
 continue
 
 mkdir -p merge/resources
+continue
 cp -rf "${ESSIX}/resources/" merge/resources
+continue
 cp -rf "./resources/" merge/resources
+continue
 
 ${BUILD} -p 80 -p 443 -a merge/resources . ${TAG} ${SWARM}
 
