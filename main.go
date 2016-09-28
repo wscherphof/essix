@@ -16,7 +16,7 @@ func init() {
 	messages.Load()
 }
 
-func main() {
+func Run() {
 	// Serve files in /static
 	router.Router.ServeFiles("/static/*filepath", http.Dir("./resources/static"))
 
