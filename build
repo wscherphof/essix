@@ -1,0 +1,55 @@
+#!/bin/bash
+
+usage ()
+{
+	echo
+	echo "Usage: $(basename $0) [OPTIONS] SOURCEDIR IMAGE [SWARM]"
+	echo
+	echo "Formats & compile go sources, and build a Docker image"
+	echo
+	echo "SOURCEDIR  directory containing the sources to compile"
+	echo "IMAGE      repo/name:tag identifying the image"
+	echo "SWARM      swarm on which nodes to build the image (instead of building locally, then pushing to reporitory)"
+	echo
+	echo "Options:"
+	echo "  -b buildpath  path to the local github.com/wscherphof/rethinkswarmmode/go/build command (default=../../wscherphof/rethinkswarmmode/go/build)"
+	echo
+}
+
+while getopts "b:e:h" opt; do
+    case $opt in
+        b  ) BUILD="$OPTARG";;
+        e  ) ESSIX="$OPTARG";;
+        h  ) usage; exit;;
+        \? ) echo "Unknown option: -$OPTARG" >&2; exit 1;;
+        :  ) echo "Missing option argument for -$OPTARG" >&2; exit 1;;
+        *  ) echo "Unimplemented option: -$OPTARG" >&2; exit 1;;
+    esac
+done
+shift $((OPTIND -1))
+
+BUILD="${BUILD-../../wscherphof/rethinkswarmmode/go/build}"
+ESSIX="$(dirname $0)"
+SOURCEDIR=$1
+TAG=$2
+SWARM=$3
+
+continue ()
+{
+	if [ "$?" != "0" ]; then
+		exit $?
+	fi
+}
+
+pushd "$SOURCEDIR" 1>/dev/null
+continue
+
+mkdir -p merge/resources
+cp -rf "${ESSIX}/resources/" merge/resources
+cp -rf "./resources/" merge/resources
+
+${BUILD} -p 80 -p 443 -a merge/resources . ${TAG} ${SWARM}
+
+rm -rf ./merge 2>/dev/null
+
+popd 1>/dev/null
