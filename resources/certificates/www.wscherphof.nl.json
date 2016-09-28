@@ -1,6 +1,0 @@
-{
-	"domain": "www.wscherphof.nl",
-	"certUrl": "https://acme-v01.api.letsencrypt.org/acme/cert/031a67caf1b352260c94164bbd7a4a153ff2",
-	"certStableUrl": "",
-	"accountRef": "https://acme-v01.api.letsencrypt.org/acme/reg/4639111"
-}
