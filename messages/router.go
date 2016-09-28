@@ -5,19 +5,19 @@ import (
 )
 
 func init() {
-	msg.New("ErrInternalServerError").
-		Add("nl", `Sorry; er is op de server iets onverwachts misgegaan.
+	msg.Key("ErrInternalServerError").
+		Set("nl", `Sorry; er is op de server iets onverwachts misgegaan.
 			De foutmelding is gelogd voor onze systeembeheerders.
 			Probeer het later opnieuw.`).
-		Add("en", `Sorry; something unexpected went wrong on the server.
+		Set("en", `Sorry; something unexpected went wrong on the server.
 			De error is logged for our system operators.
 			Please try again later.`)
 
-	msg.New("Take me home").
-		Add("nl", "Naar de startpagina").
-		Add("en", "To the home page")
+	msg.Key("Take me home").
+		Set("nl", "Naar de startpagina").
+		Set("en", "To the home page")
 
-	msg.New("Try again").
-		Add("nl", "Opnieuw proberen").
-		Add("en", "Try again")
+	msg.Key("Try again").
+		Set("nl", "Opnieuw proberen").
+		Set("en", "Try again")
 }

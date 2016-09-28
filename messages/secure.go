@@ -6,181 +6,181 @@ import (
 )
 
 func init() {
-	msg.New(secure.ErrNoTLS.Error()).
-		Add("nl", "Voor inloggen is een vercijferde verbinding (https) vereist").
-		Add("en", "Logging in requires an encrypted connection (https)")
+	msg.Key(secure.ErrNoTLS.Error()).
+		Set("nl", "Voor inloggen is een vercijferde verbinding (https) vereist").
+		Set("en", "Logging in requires an encrypted connection (https)")
 
-	msg.New(secure.ErrTokenNotSaved.Error()).
-		Add("nl", "Het lukt de webserver niet om de inlogsessie aan te maken :-(").
-		Add("en", "The server is failing to create the log in session :-(")
+	msg.Key(secure.ErrTokenNotSaved.Error()).
+		Set("nl", "Het lukt de webserver niet om de inlogsessie aan te maken :-(").
+		Set("en", "The server is failing to create the log in session :-(")
 
-	msg.New("Email").
-		Add("nl", "E-mailadres").
-		Add("en", "Email address")
+	msg.Key("Email").
+		Set("nl", "E-mailadres").
+		Set("en", "Email address")
 
-	msg.New("Password").
-		Add("nl", "Wachtwoord").
-		Add("en", "Password")
+	msg.Key("Password").
+		Set("nl", "Wachtwoord").
+		Set("en", "Password")
 
-	msg.New("Log in").
-		Add("nl", "Inloggen").
-		Add("en", "Log in")
+	msg.Key("Log in").
+		Set("nl", "Inloggen").
+		Set("en", "Log in")
 
-	msg.New("Log out").
-		Add("nl", "Uitloggen").
-		Add("en", "Log out")
+	msg.Key("Log out").
+		Set("nl", "Uitloggen").
+		Set("en", "Log out")
 
-	msg.New("Sign up").
-		Add("nl", "Een account aanmaken").
-		Add("en", "Sign up")
+	msg.Key("Sign up").
+		Set("nl", "Een account aanmaken").
+		Set("en", "Sign up")
 
-	msg.New("Repeat password").
-		Add("nl", "Wachtwoord nogmaals").
-		Add("en", "Repeat password")
+	msg.Key("Repeat password").
+		Set("nl", "Wachtwoord nogmaals").
+		Set("en", "Repeat password")
 
-	msg.New("Passwords not equal").
-		Add("nl", "De wachtwoorden zijn niet hetzelfde").
-		Add("en", "Passwords don't match")
+	msg.Key("Passwords not equal").
+		Set("nl", "De wachtwoorden zijn niet hetzelfde").
+		Set("en", "Passwords don't match")
 
-	msg.New("Country").
-		Add("nl", "Land").
-		Add("en", "Country")
+	msg.Key("Country").
+		Set("nl", "Land").
+		Set("en", "Country")
 
-	msg.New("Postcode").
-		Add("nl", "Postcode").
-		Add("en", "Postal code")
+	msg.Key("Postcode").
+		Set("nl", "Postcode").
+		Set("en", "Postal code")
 
-	msg.New("First name").
-		Add("nl", "Voornaam").
-		Add("en", "First name")
+	msg.Key("First name").
+		Set("nl", "Voornaam").
+		Set("en", "First name")
 
-	msg.New("Last name").
-		Add("nl", "Achternaam").
-		Add("en", "Last name")
+	msg.Key("Last name").
+		Set("nl", "Achternaam").
+		Set("en", "Last name")
 
-	msg.New("Signup successful").
-		Add("nl", "Bedankt voor het aanmelden bij Essix! Voordat je kan inloggen moet je account nog geactiveerd worden; we hebben je een e-mail gestuurd met de activatiecode.").
-		Add("en", "Thanks for signing up with Essix! Before you can log in, your account needs to be activated; we've sent you an email containing the activation code.")
+	msg.Key("Signup successful").
+		Set("nl", "Bedankt voor het aanmelden bij Essix! Voordat je kan inloggen moet je account nog geactiveerd worden; we hebben je een e-mail gestuurd met de activatiecode.").
+		Set("en", "Thanks for signing up with Essix! Before you can log in, your account needs to be activated; we've sent you an email containing the activation code.")
 
-	msg.New("activation subject").
-		Add("nl", "Je account activeren").
-		Add("en", "Activate your account")
+	msg.Key("activation subject").
+		Set("nl", "Je account activeren").
+		Set("en", "Activate your account")
 
-	msg.New("Activation code").
-		Add("nl", "Activeringscode").
-		Add("en", "Activation code")
+	msg.Key("Activation code").
+		Set("nl", "Activeringscode").
+		Set("en", "Activation code")
 
-	msg.New("Activation code source").
-		Add("nl", "De activeringscode is je per e-mail toegestuurd").
-		Add("en", "The activation code was sent to you by email")
+	msg.Key("Activation code source").
+		Set("nl", "De activeringscode is je per e-mail toegestuurd").
+		Set("en", "The activation code was sent to you by email")
 
-	msg.New("Resend activation code").
-		Add("nl", "Stuur me de activeringscode opnieuw").
-		Add("en", "Resend me the activation code")
+	msg.Key("Resend activation code").
+		Set("nl", "Stuur me de activeringscode opnieuw").
+		Set("en", "Resend me the activation code")
 
-	msg.New("Activate successful").
-		Add("nl", "Bedankt voor het activeren van je account bij Essix! Je registratie is compleet; je kan nu inloggen.").
-		Add("en", "Thanks for activating your account with Essix! Your registration is complete; you are now able to log in.")
+	msg.Key("Activate successful").
+		Set("nl", "Bedankt voor het activeren van je account bij Essix! Je registratie is compleet; je kan nu inloggen.").
+		Set("en", "Thanks for activating your account with Essix! Your registration is complete; you are now able to log in.")
 
-	msg.New("Resend successful").
-		Add("nl", "Dank voor je aanvraag. Controleer je e-mail voor de activatiecode.").
-		Add("en", "Thanks for your request. Check your email for the activation code.")
+	msg.Key("Resend successful").
+		Set("nl", "Dank voor je aanvraag. Controleer je e-mail voor de activatiecode.").
+		Set("en", "Thanks for your request. Check your email for the activation code.")
 
-	msg.New("password subject").
-		Add("nl", "Mijn wachtwoord opnieuw instellen").
-		Add("en", "Reset my password")
+	msg.Key("password subject").
+		Set("nl", "Mijn wachtwoord opnieuw instellen").
+		Set("en", "Reset my password")
 
-	msg.New("Forgot password").
-		Add("nl", "Wachtwoord kwijt?").
-		Add("en", "Lost your password?")
+	msg.Key("Forgot password").
+		Set("nl", "Wachtwoord kwijt?").
+		Set("en", "Lost your password?")
 
-	msg.New("Password code successful").
-		Add("nl", "Dank voor je aanvraag om je wachtwoord opnieuw in te stellen. Je krijgt een e-mail van ons met verdere instructies.").
-		Add("en", "Thanks for your request to reset your password. Please check your email for further instructions.")
+	msg.Key("Password code successful").
+		Set("nl", "Dank voor je aanvraag om je wachtwoord opnieuw in te stellen. Je krijgt een e-mail van ons met verdere instructies.").
+		Set("en", "Thanks for your request to reset your password. Please check your email for further instructions.")
 
-	msg.New("Password code cancelled").
-		Add("nl", "Opnieuw instellen van het wachtwoord is geannuleerd.").
-		Add("en", "Password reset is cancelled.")
+	msg.Key("Password code cancelled").
+		Set("nl", "Opnieuw instellen van het wachtwoord is geannuleerd.").
+		Set("en", "Password reset is cancelled.")
 
-	msg.New("Create new password").
-		Add("nl", "Maak een nieuw wachtwoord aan").
-		Add("en", "Create a new password")
+	msg.Key("Create new password").
+		Set("nl", "Maak een nieuw wachtwoord aan").
+		Set("en", "Create a new password")
 
-	msg.New("Change password successful").
-		Add("nl", "Je nieuwe wachtwoord is nu actief.").
-		Add("en", "Your new password is activated.")
+	msg.Key("Change password successful").
+		Set("nl", "Je nieuwe wachtwoord is nu actief.").
+		Set("en", "Your new password is activated.")
 
-	msg.New("Expires").
-		Add("nl", "Geldig tot").
-		Add("en", "Expires")
+	msg.Key("Expires").
+		Set("nl", "Geldig tot").
+		Set("en", "Expires")
 
-	msg.New("emailaddress subject").
-		Add("nl", "Mijn e-mailadres wijzigen").
-		Add("en", "Change my email address")
+	msg.Key("emailaddress subject").
+		Set("nl", "Mijn e-mailadres wijzigen").
+		Set("en", "Change my email address")
 
-	msg.New("Change email address").
-		Add("nl", "Je e-mailadres wijzigen").
-		Add("en", "Change your email address")
+	msg.Key("Change email address").
+		Set("nl", "Je e-mailadres wijzigen").
+		Set("en", "Change your email address")
 
-	msg.New("Want replace").
-		Add("nl", "Ik wil").
-		Add("en", "I want to replace")
+	msg.Key("Want replace").
+		Set("nl", "Ik wil").
+		Set("en", "I want to replace")
 
-	msg.New("Replace with").
-		Add("nl", "vervangen door").
-		Add("en", "with")
+	msg.Key("Replace with").
+		Set("nl", "vervangen door").
+		Set("en", "with")
 
-	msg.New("Email address code successful").
-		Add("nl", "Dank voor je aanvraag om je e-mailadres te wijzigen. Je krijgt op het nieuwe adres een e-mail van ons met verdere instructies.").
-		Add("en", "Thanks for your request to change your email address. For further instructions, please check your email on the new address.")
+	msg.Key("Email address code successful").
+		Set("nl", "Dank voor je aanvraag om je e-mailadres te wijzigen. Je krijgt op het nieuwe adres een e-mail van ons met verdere instructies.").
+		Set("en", "Thanks for your request to change your email address. For further instructions, please check your email on the new address.")
 
-	msg.New("Email address code cancelled").
-		Add("nl", "Wijzigen e-mailadres is geannuleerd.").
-		Add("en", "Changing email address is cancelled.")
+	msg.Key("Email address code cancelled").
+		Set("nl", "Wijzigen e-mailadres is geannuleerd.").
+		Set("en", "Changing email address is cancelled.")
 
-	msg.New("Change email address successful").
-		Add("nl", "Je nieuwe e-mailadres is nu actief.").
-		Add("en", "Your new email address is activated.")
+	msg.Key("Change email address successful").
+		Set("nl", "Je nieuwe e-mailadres is nu actief.").
+		Set("en", "Your new email address is activated.")
 
-	msg.New("Edit account").
-		Add("nl", "Mijn account").
-		Add("en", "My account details")
+	msg.Key("Edit account").
+		Set("nl", "Mijn account").
+		Set("en", "My account details")
 
-	msg.New("Complete account").
-		Add("nl", "We hebben nog een paar laatste gegevens van je nodig").
-		Add("en", "Please provide the following concluding details")
+	msg.Key("Complete account").
+		Set("nl", "We hebben nog een paar laatste gegevens van je nodig").
+		Set("en", "Please provide the following concluding details")
 
-	msg.New("Star is required").
-		Add("nl", "Alleen de velden met een * zijn verplicht").
-		Add("en", "Only the fields with a * are required")
+	msg.Key("Star is required").
+		Set("nl", "Alleen de velden met een * zijn verplicht").
+		Set("en", "Only the fields with a * are required")
 
-	msg.New("terminate subject").
-		Add("nl", "Mijn account opzeggen").
-		Add("en", "Terminate my account")
+	msg.Key("terminate subject").
+		Set("nl", "Mijn account opzeggen").
+		Set("en", "Terminate my account")
 
-	msg.New("Terminate account").
-		Add("nl", "Je account opzeggen").
-		Add("en", "Terminate your account")
+	msg.Key("Terminate account").
+		Set("nl", "Je account opzeggen").
+		Set("en", "Terminate your account")
 
-	msg.New("Terminate sure").
-		Add("nl", `Weet je zeker dat je je account bij Essix wil opzeggen?
+	msg.Key("Terminate sure").
+		Set("nl", `Weet je zeker dat je je account bij Essix wil opzeggen?
 			Je kan je later weliswaar weer opnieuw aanmelden, maar met het opzeggen gaan nu wel alle gekoppelde gegevens verloren.`).
-		Add("en", `Are you sure you want to terminate your account?
+		Set("en", `Are you sure you want to terminate your account?
 			Though you can always sign up again later, all data currently linked to your account would get lost now.`)
 
-	msg.New("Yes, that's what I want").
-		Add("nl", "Ja, dat wil ik").
-		Add("en", "Yes, that's what I want")
+	msg.Key("Yes, that's what I want").
+		Set("nl", "Ja, dat wil ik").
+		Set("en", "Yes, that's what I want")
 
-	msg.New("Terminate code successful").
-		Add("nl", "Je hebt een aanvraag ingediend om je account op te zeggen. Je krijgt een e-mail van ons met verdere instructies.").
-		Add("en", "You filed a request to terminate your account. For further instructions, please check your email.")
+	msg.Key("Terminate code successful").
+		Set("nl", "Je hebt een aanvraag ingediend om je account op te zeggen. Je krijgt een e-mail van ons met verdere instructies.").
+		Set("en", "You filed a request to terminate your account. For further instructions, please check your email.")
 
-	msg.New("Terminate code cancelled").
-		Add("nl", "Opzeggen van het account is geannuleerd.").
-		Add("en", "Termination of the account is cancelled.")
+	msg.Key("Terminate code cancelled").
+		Set("nl", "Opzeggen van het account is geannuleerd.").
+		Set("en", "Termination of the account is cancelled.")
 
-	msg.New("Terminate successful").
-		Add("nl", "Je account is nu verwijderd.").
-		Add("en", "Your accounst has been deleted now.")
+	msg.Key("Terminate successful").
+		Set("nl", "Je account is nu verwijderd.").
+		Set("en", "Your accounst has been deleted now.")
 }
