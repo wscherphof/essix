@@ -1,8 +1,8 @@
 package secure
 
 import (
-	"github.com/wscherphof/expeertise/email"
-	"github.com/wscherphof/expeertise/util"
+	"github.com/wscherphof/essix/email"
+	"github.com/wscherphof/essix/util"
 	"github.com/wscherphof/msg"
 	"net/http"
 )

@@ -2,7 +2,7 @@ package config
 
 import (
 	"errors"
-	"github.com/wscherphof/expeertise/db"
+	"github.com/wscherphof/essix/db"
 	"log"
 )
 

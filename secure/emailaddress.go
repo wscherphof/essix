@@ -2,8 +2,8 @@ package secure
 
 import (
 	"github.com/julienschmidt/httprouter"
-	"github.com/wscherphof/expeertise/model/account"
-	"github.com/wscherphof/expeertise/router"
+	"github.com/wscherphof/essix/model/account"
+	"github.com/wscherphof/essix/router"
 	"github.com/wscherphof/secure"
 	"net/http"
 )

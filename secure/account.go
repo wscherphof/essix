@@ -2,10 +2,10 @@ package secure
 
 import (
 	"github.com/julienschmidt/httprouter"
-	"github.com/wscherphof/expeertise/data"
-	"github.com/wscherphof/expeertise/model/account"
-	"github.com/wscherphof/expeertise/ratelimit"
-	"github.com/wscherphof/expeertise/router"
+	"github.com/wscherphof/essix/data"
+	"github.com/wscherphof/essix/model/account"
+	"github.com/wscherphof/essix/ratelimit"
+	"github.com/wscherphof/essix/router"
 	"github.com/wscherphof/secure"
 	"net/http"
 	"strings"

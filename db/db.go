@@ -2,7 +2,7 @@ package db
 
 import (
 	r "gopkg.in/dancannon/gorethink.v2"
-	"github.com/wscherphof/expeertise/env"
+	"github.com/wscherphof/essix/env"
 	"log"
 )
 
@@ -12,7 +12,7 @@ var (
 )
 
 func init() {
-	dbname = env.Default("DB_NAME", "expeertise")
+	dbname = env.Default("DB_NAME", "essix")
 	address := env.Default("DB_HOST", "db1") +":"+ env.Default("DB_PORT", "28015")
 	if session, err := r.Connect(r.ConnectOpts{Address: address}); err != nil {
 		log.Fatalln("ERROR:", err)

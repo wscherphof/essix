@@ -1,8 +1,8 @@
 package secure
 
 import (
-	"github.com/wscherphof/expeertise/ratelimit"
-	"github.com/wscherphof/expeertise/router"
+	"github.com/wscherphof/essix/ratelimit"
+	"github.com/wscherphof/essix/router"
 )
 
 func init() {

@@ -2,7 +2,7 @@ package router
 
 import (
 	"github.com/julienschmidt/httprouter"
-	"github.com/wscherphof/expeertise/util"
+	"github.com/wscherphof/essix/util"
 	"net/http"
 )
 

@@ -1,7 +1,7 @@
 package email
 
 import (
-	"github.com/wscherphof/expeertise/db"
+	"github.com/wscherphof/essix/db"
 	"log"
 	"time"
 )

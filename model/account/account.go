@@ -2,8 +2,8 @@ package account
 
 import (
 	"errors"
-	"github.com/wscherphof/expeertise/db"
-	"github.com/wscherphof/expeertise/util"
+	"github.com/wscherphof/essix/db"
+	"github.com/wscherphof/essix/util"
 	"golang.org/x/crypto/bcrypt"
 	"log"
 	"strings"

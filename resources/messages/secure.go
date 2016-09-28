@@ -59,8 +59,8 @@ func init() {
 		Add("en", "Last name")
 
 	msg.New("Signup successful").
-		Add("nl", "Bedankt voor het aanmelden bij Expeertise! Voordat je kan inloggen moet je account nog geactiveerd worden; we hebben je een e-mail gestuurd met de activatiecode.").
-		Add("en", "Thanks for signing up with Expeertise! Before you can log in, your account needs to be activated; we've sent you an email containing the activation code.")
+		Add("nl", "Bedankt voor het aanmelden bij Essix! Voordat je kan inloggen moet je account nog geactiveerd worden; we hebben je een e-mail gestuurd met de activatiecode.").
+		Add("en", "Thanks for signing up with Essix! Before you can log in, your account needs to be activated; we've sent you an email containing the activation code.")
 
 	msg.New("activation subject").
 		Add("nl", "Je account activeren").
@@ -79,8 +79,8 @@ func init() {
 		Add("en", "Resend me the activation code")
 
 	msg.New("Activate successful").
-		Add("nl", "Bedankt voor het activeren van je account bij Expeertise! Je registratie is compleet; je kan nu inloggen.").
-		Add("en", "Thanks for activating your account with Expeertise! Your registration is complete; you are now able to log in.")
+		Add("nl", "Bedankt voor het activeren van je account bij Essix! Je registratie is compleet; je kan nu inloggen.").
+		Add("en", "Thanks for activating your account with Essix! Your registration is complete; you are now able to log in.")
 
 	msg.New("Resend successful").
 		Add("nl", "Dank voor je aanvraag. Controleer je e-mail voor de activatiecode.").
@@ -163,7 +163,7 @@ func init() {
 		Add("en", "Terminate your account")
 
 	msg.New("Terminate sure").
-		Add("nl", `Weet je zeker dat je je account bij Expeertise wil opzeggen?
+		Add("nl", `Weet je zeker dat je je account bij Essix wil opzeggen?
 			Je kan je later weliswaar weer opnieuw aanmelden, maar met het opzeggen gaan nu wel alle gekoppelde gegevens verloren.`).
 		Add("en", `Are you sure you want to terminate your account?
 			Though you can always sign up again later, all data currently linked to your account would get lost now.`)

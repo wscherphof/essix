@@ -2,7 +2,7 @@ package email
 
 import (
 	"errors"
-	"github.com/wscherphof/expeertise/config"
+	"github.com/wscherphof/essix/config"
 	"log"
 	"net/smtp"
 )
@@ -32,7 +32,7 @@ func init() {
 	store := &emailConfigStore{
 		Key: "email",
 		Value: &emailConfig{
-			EmailAddress: "expeertise@gmail.com",
+			EmailAddress: "essix@gmail.com",
 			PWD:          "",
 			SmtpServer:   "smtp.gmail.com",
 			PortNumber:   "587",

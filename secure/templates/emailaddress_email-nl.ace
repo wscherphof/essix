@@ -1,6 +1,6 @@
 = content main
   p Hoi {{ .name }},
-  p Er is een aanvraag gedaan om het e-mailadres van je account bij Expeertise te wijzigen.
+  p Er is een aanvraag gedaan om het e-mailadres van je account bij Essix te wijzigen.
     br
     a href={{ .action }} Klik op deze link om te bevestigen
   p Als je je huidige adres wil houden, {{ "" }}
@@ -8,7 +8,7 @@
   p..
     Dank,
     Met vriendelijke groet,
-    Expeertise
+    Essix
   p
     small..
       Als de link niet werkt, plak dan onderstaande URL in de adresbalk van je webbrowser:

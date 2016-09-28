@@ -1,7 +1,7 @@
 package secure
 
 import (
-	"github.com/wscherphof/expeertise/config"
+	"github.com/wscherphof/essix/config"
 	"github.com/wscherphof/secure"
 	"log"
 )
