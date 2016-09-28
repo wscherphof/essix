@@ -1,4 +1,4 @@
-= include ../../templates/includes/top .
+= include ../includes/top .
 body
   main
     p {{ Msg .lang .Error.Error }}
