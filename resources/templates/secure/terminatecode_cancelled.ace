@@ -1,5 +1,5 @@
 = include ../includes/top .
 body
-  p {{ Msg .lang "Terminate code cancelled" }}
+  p {{ Msg "Terminate code cancelled" }}
   p
-    a href=/ {{ Msg .lang "Take me home" }}
+    a href=/ {{ Msg "Take me home" }}

@@ -1,15 +1,15 @@
 = include ../includes/top .
 body
   header
-    h1 {{ Msg .lang "Log in" }}
+    h1 {{ Msg "Log in" }}
   main.wrap
     form method=POST action=/session
       input type=hidden name=_rate value={{ .RateLimitToken }}
       .p
-        label {{ Msg .lang "Email" }}*
+        label {{ Msg "Email" }}*
           input#uid.right type=email name=uid autocomplete=username placeholder=email@provider.com required=
       .p
-        label {{ Msg .lang "Password" }}*
+        label {{ Msg "Password" }}*
           input#pwd.right type=password name=pwd autocomplete=current-password placeholder=********** required=
       .p
         input.right type=submit
@@ -17,6 +17,6 @@ body
       nav
         ul
           li
-            a href=/account {{ Msg .lang "Sign up" }}
+            a href=/account {{ Msg "Sign up" }}
           li
-            a href=/account/passwordcode {{ Msg .lang "Forgot password" }}
+            a href=/account/passwordcode {{ Msg "Forgot password" }}

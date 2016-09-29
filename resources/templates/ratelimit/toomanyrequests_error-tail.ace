@@ -1,3 +1,3 @@
 = content tail
   p
-    {{ Msg .lang "Limit is set to" }} {{ .Window }}
+    {{ Msg "Limit is set to" }} {{ .Window }}

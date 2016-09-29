@@ -31,29 +31,29 @@ import (
 	"strings"
 )
 
-// Message holds the translations for a message key.
-type Message map[string]string
+// MessageType holds the translations for a message key.
+type MessageType map[string]string
 
 // Set stores the translation of the message for the given language. Any old
 // value is overwritten.
-func (m Message) Set(language, translation string) Message {
+func (m MessageType) Set(language, translation string) MessageType {
 	language = strings.ToLower(language)
 	m[language] = translation
 	return m
 }
 
-var messageStore = make(map[string]Message, 500)
+var messageStore = make(map[string]MessageType, 500)
 
 // NumLang sets the initial capacity for translations in a new message.
 var NumLang = 2
 
 // Key returns the message stored under the given key, if it doesn't exist yet,
 // it gets created.
-func Key(key string) (message Message) {
+func Key(key string) (message MessageType) {
 	if m, ok := messageStore[key]; ok {
 		message = m
 	} else {
-		message = make(Message, NumLang)
+		message = make(MessageType, NumLang)
 		messageStore[key] = message
 	}
 	return
@@ -95,17 +95,20 @@ func Language(r *http.Request) (language LanguageType) {
 	return
 }
 
-// Msg returns a function that looks up the translation for a certain message
-// key in the given language.
-func Msg(lang LanguageType, key string) (value string) {
-	if val, ok := messageStore[key][lang.Full]; ok {
-		value = val
-	} else if val, ok := messageStore[key][lang.Sub]; ok {
-		value = val
-	} else if val, ok := messageStore[key][lang.Main]; ok {
-		value = val
-	} else {
-		value = "X-" + key
+// Msg...
+func Msg(r *http.Request) (translate func (string) string) {
+	language := Language(r)
+	return func (key string) (value string) {
+		if val, ok := messageStore[key][language.Full]; ok {
+			value = val
+		} else if val, ok := messageStore[key][language.Sub]; ok {
+			value = val
+		} else if val, ok := messageStore[key][language.Main]; ok {
+			value = val
+		} else {
+			value = "X-" + key
+		}
+		return
 	}
-	return
 }
+

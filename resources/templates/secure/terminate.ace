@@ -1,15 +1,15 @@
 = include ../includes/top .
 body
   header
-    h1 {{ Msg .lang "Terminate account" }}
+    h1 {{ Msg "Terminate account" }}
   main
-    .p {{ Msg .lang "Email" }}: {{ .Account.UID }}
-    .p {{ Msg .lang "Terminate sure" }}
+    .p {{ Msg "Email" }}: {{ .Account.UID }}
+    .p {{ Msg "Terminate sure" }}
     form method=POST action=/account
       input type=hidden name=_method value=DELETE
       input type=hidden name=code value={{ .Account.TerminateCode }}
       .p
-        label {{ Msg .lang "Yes, that's what I want" }}
+        label {{ Msg "Yes, that's what I want" }}
           input#sure type=checkbox name=sure value=affirmative
       .p
-        input type=submit value={{ Msg .lang "Confirm" }}
+        input type=submit value={{ Msg "Confirm" }}

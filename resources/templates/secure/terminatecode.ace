@@ -1,12 +1,12 @@
 = include ../includes/top .
 body
   header
-    h1 {{ Msg .lang "terminate subject" }}
+    h1 {{ Msg "terminate subject" }}
   main
-    .p {{ Msg .lang "Terminate sure" }}
+    .p {{ Msg "Terminate sure" }}
     form method=POST action=/account/terminatecode
       .p
-        label {{ Msg .lang "Yes, that's what I want" }}
+        label {{ Msg "Yes, that's what I want" }}
           input#sure type=checkbox name=sure value=affirmative
       .p
         input type=submit
