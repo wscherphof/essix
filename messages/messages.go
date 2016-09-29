@@ -4,10 +4,6 @@ import (
 	"github.com/wscherphof/msg"
 )
 
-func Key(key string) msg.Message {
-	return msg.Key(key)
-}
-
 func init() {
 	msg.Key("").
 		Set("nl", "").

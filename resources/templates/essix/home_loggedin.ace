@@ -1,6 +1,6 @@
 = content account
-  a href=/account {{ Msg .lang "Edit account" }}
+  a href=/account {{ Msg "Edit account" }}
 = content session
   form action=/session method=POST
     input type=hidden name=_method value=DELETE
-    input type=submit value={{ Msg .lang "Log out" }}
+    input type=submit value={{ Msg "Log out" }}

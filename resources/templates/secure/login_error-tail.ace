@@ -1,5 +1,5 @@
 = content tail
   p
-    a href=/account {{ Msg .lang "Sign up" }}
+    a href=/account {{ Msg "Sign up" }}
   p
-    a href=/account/activation {{ Msg .lang "activation subject" }}
+    a href=/account/activation {{ Msg "activation subject" }}

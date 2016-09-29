@@ -8,7 +8,7 @@ import (
 )
 
 func sendEmail(r *http.Request, address, name, resource, code, extra string) (err error, remark string) {
-	subject := msg.Msg(msg.Language(r), resource+" subject")
+	subject := msg.Msg(r)(resource+" subject")
 	scheme := "http"
 	if r.TLS != nil {
 		scheme = "https"

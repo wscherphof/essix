@@ -10,29 +10,26 @@ import (
 	"net/http"
 )
 
-func aceOptions(dir string) *ace.Options {
-	return &ace.Options{
-		BaseDir: "/resources/templates/" + dir,
-		FuncMap: template.FuncMap{
-			"Msg": msg.Msg,
-		},
-	}
-}
-
 func Template(dir, base, inner string, data map[string]interface{}) func(io.Writer, *http.Request) {
 	if data == nil {
 		data = map[string]interface{}{}
 	}
 	return func(w io.Writer, r *http.Request) {
 		lang := msg.Language(r)
-		data["lang"] = lang
 		if inner == "lang" {
 			inner = base + "-" + lang.Main
 		}
-		if tpl, err := ace.Load(base, inner, aceOptions(dir)); err != nil {
+		data["lang"] = lang
+		var options = &ace.Options{
+			BaseDir: "/resources/templates/" + dir,
+			FuncMap: template.FuncMap{
+				"Msg": msg.Msg(r),
+			},
+		}
+		if template, err := ace.Load(base, inner, options); err != nil {
 			log.Panicln("ERROR: ace.Load:", err)
-		} else if err := tpl.Execute(w, data); err != nil {
-			log.Panicln("ERROR: tpl.Execute:", err)
+		} else if err := template.Execute(w, data); err != nil {
+			log.Panicln("ERROR: template.Execute:", err)
 		}
 	}
 }

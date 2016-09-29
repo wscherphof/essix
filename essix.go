@@ -5,6 +5,7 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/wscherphof/essix/env"
 	"github.com/wscherphof/essix/router"
+	"github.com/wscherphof/essix/messages"
 	"github.com/wscherphof/essix/secure"
 	"log"
 	"net/http"
@@ -18,6 +19,7 @@ func init() {
 	if domain == "" {
 		log.Fatal("DOMAIN environment variable not set")
 	}
+	messages.Init()
 }
 
 func Run() {

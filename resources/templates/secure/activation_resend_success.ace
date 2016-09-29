@@ -1,10 +1,10 @@
 = include ../includes/top .
 body
-  p {{ Msg .lang "Hi" }} {{ .Name }},
+  p {{ Msg "Hi" }} {{ .Name }},
   p..
-    {{ Msg .lang "Resend successful" }}
-    {{ Msg .lang .Remark }}
+    {{ Msg "Resend successful" }}
+    {{ Msg .Remark }}
   p
-    a href=/account/activation/{{ .UID }} {{ Msg .lang "activation subject" }}
+    a href=/account/activation/{{ .UID }} {{ Msg "activation subject" }}
   p
-    a href=/ {{ Msg .lang "Take me home" }}
+    a href=/ {{ Msg "Take me home" }}

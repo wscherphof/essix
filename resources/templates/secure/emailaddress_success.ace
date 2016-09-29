@@ -1,7 +1,7 @@
 = include ../includes/top .
 body
-  p {{ Msg .lang "Change email address successful" }}
+  p {{ Msg "Change email address successful" }}
   p
-    a href=/account {{ Msg .lang "Edit account" }}
+    a href=/account {{ Msg "Edit account" }}
   p
-    a href=/ {{ Msg .lang "Take me home" }}
+    a href=/ {{ Msg "Take me home" }}

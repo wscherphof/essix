@@ -1,21 +1,21 @@
 = include ../includes/top .
 body
   header
-    h1 {{ Msg .lang "activation subject" }}
+    h1 {{ Msg "activation subject" }}
   main.flex
     form.envelope method=POST action=/account/activation
       input type=hidden name=_method value=PUT
       .p
-        label {{ Msg .lang "Email" }}*
+        label {{ Msg "Email" }}*
           input#uid.right type=email name=uid autocomplete=username value={{ .UID }} placeholder=email@provider.com required=
       .p
-        label {{ Msg .lang "Activation code" }}*{{ " " }}
+        label {{ Msg "Activation code" }}*{{ " " }}
           input#code.right type=text name=code autocomplete=off value={{ .Code }} placeholder=zc-968YEX3VYu_YmdA7ynBp_d2cydmR1MRRqmglh1R0= required=
       .p
         input.right type=submit
   {{ if eq .Code "" }}
     footer
-      p {{ Msg .lang "Activation code source" }}
+      p {{ Msg "Activation code source" }}
         br
-        a href=/account/activationcode/{{ .UID }} {{ Msg .lang "Resend activation code" }}
+        a href=/account/activationcode/{{ .UID }} {{ Msg "Resend activation code" }}
   {{ end }}

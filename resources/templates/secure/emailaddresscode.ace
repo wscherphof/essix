@@ -1,14 +1,14 @@
 = include ../includes/top .
 body
   header
-    h1 {{ Msg .lang "emailaddress subject" }}
+    h1 {{ Msg "emailaddress subject" }}
   main.flex
     form method=POST action=/account/emailaddresscode
       .p
-        label {{ Msg .lang "Current" }}:
+        label {{ Msg "Current" }}:
           span.right {{ .UID }}
       .p
-        label {{ Msg .lang "New" }}*
+        label {{ Msg "New" }}*
           input#newuid.right type=email name=newuid autocomplete=username placeholder=email@provider.com required=
       .p
         input.right type=submit
