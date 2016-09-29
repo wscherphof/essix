@@ -12,7 +12,7 @@ usage ()
 	echo "SWARM      swarm on which nodes to build the image (instead of building locally, then pushing to reporitory)"
 	echo
 	echo "Options:"
-	echo "  -b buildpath  path to the local github.com/wscherphof/rethinkswarmmode/go/build command (default=../../wscherphof/rethinkswarmmode/go/build)"
+	echo "  -b buildpath  path to the local github.com/wscherphof/rethinkswarmmode/go/build command (default=../../wscherphof/rethinkswarmmode/go/build, relative to the SOURCEDIR)"
 	echo
 }
 
