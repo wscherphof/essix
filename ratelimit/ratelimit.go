@@ -4,7 +4,7 @@ import (
 	"errors"
 	"github.com/julienschmidt/httprouter"
 	"github.com/wscherphof/essix/db"
-	"github.com/wscherphof/essix/util"
+	"github.com/wscherphof/essix/template"
 	"github.com/wscherphof/secure"
 	"log"
 	"net/http"
@@ -98,22 +98,22 @@ func Handle(seconds int, handle httprouter.Handle) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		t, ip, p := new(token), ip(r), path(r.URL.Path)
 		if rate := r.FormValue("_rate"); rate == "" {
-			util.Error(w, r, ErrInvalidRequest, true)
+			template.Error(w, r, ErrInvalidRequest, true)
 			log.Printf("SUSPICIOUS: rate limit token missing %v %v", ip, p)
 		} else if e := secure.RequestToken(rate).Read(t); e != nil {
-			util.Error(w, r, ErrInvalidRequest, true)
+			template.Error(w, r, ErrInvalidRequest, true)
 			log.Printf("SUSPICIOUS: rate limit token unreadable %v %v", ip, p)
 		} else if t.IP != ip {
-			util.Error(w, r, ErrInvalidRequest, true)
+			template.Error(w, r, ErrInvalidRequest, true)
 			log.Printf("SUSPICIOUS: rate limit token invalid address: %v, expected %v %v", t.IP, ip, p)
 		} else if t.Path != p {
-			util.Error(w, r, ErrInvalidRequest, true)
+			template.Error(w, r, ErrInvalidRequest, true)
 			log.Printf("SUSPICIOUS: rate limit token invalid path: %v, token path %v, expected %v", ip, t.Path, p)
 		} else if c := getClient(ip); c.Requests[p].After(t.Timestamp) {
-			util.Error(w, r, ErrInvalidRequest, true)
+			template.Error(w, r, ErrInvalidRequest, true)
 			log.Printf("SUSPICIOUS: rate limit token reuse: %v %v, token %v, previous request %v", ip, p, t.Timestamp, c.Requests[p])
 		} else if c.Requests[p].After(time.Now().Add(-window)) {
-			util.DataError(w, r, ErrTooManyRequests, map[string]interface{}{
+			template.DataError(w, r, ErrTooManyRequests, map[string]interface{}{
 				"Window": window,
 			}, "ratelimit", "toomanyrequests")
 		} else {

@@ -5,6 +5,7 @@ import (
 	"github.com/wscherphof/essix/model/account"
 	"github.com/wscherphof/essix/ratelimit"
 	"github.com/wscherphof/essix/util"
+	"github.com/wscherphof/essix/template"
 	"github.com/wscherphof/msg"
 	"github.com/wscherphof/secure"
 	"net/http"
@@ -17,9 +18,9 @@ func passwordEmail(r *http.Request, acc *account.Account) (error, string) {
 
 func PasswordCodeForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	if token, e := ratelimit.NewToken(r); e != nil {
-		util.Error(w, r, e, false)
+		template.Error(w, r, e, false)
 	} else {
-		util.Template(w, r, "secure", "passwordcode", "", map[string]interface{}{
+		template.Run(w, r, "secure", "passwordcode", "", map[string]interface{}{
 			"UID":            ps.ByName("uid"),
 			"RateLimitToken": token,
 		})
@@ -29,15 +30,15 @@ func PasswordCodeForm(w http.ResponseWriter, r *http.Request, ps httprouter.Para
 func PasswordCode(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	uid := r.FormValue("uid")
 	if acc, e, conflict := account.GetInsecure(uid); e != nil {
-		util.Error(w, r, e, conflict)
+		template.Error(w, r, e, conflict)
 	} else if !acc.IsActive() {
-		util.Error(w, r, account.ErrNotActivated, conflict, "secure", "activation_resend")
+		template.Error(w, r, account.ErrNotActivated, conflict, "secure", "activation_resend")
 	} else if e := acc.CreatePasswordCode(); e != nil {
-		util.Error(w, r, e, false)
+		template.Error(w, r, e, false)
 	} else if e, remark := passwordEmail(r, acc); e != nil {
-		util.Error(w, r, e, false)
+		template.Error(w, r, e, false)
 	} else {
-		util.Template(w, r, "secure", "passwordcode_success", "", map[string]interface{}{
+		template.Run(w, r, "secure", "passwordcode_success", "", map[string]interface{}{
 			"Name":   acc.Name(),
 			"Remark": remark,
 		})
@@ -49,9 +50,9 @@ func PasswordForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) 
 	expires, _ := util.URLDecode([]byte(extra))
 	if cancel == "true" {
 		account.ClearPasswordCode(uid, code)
-		util.Template(w, r, "secure", "passwordcode_cancelled", "", nil)
+		template.Run(w, r, "secure", "passwordcode_cancelled", "", nil)
 	} else {
-		util.Template(w, r, "secure", "password", "", map[string]interface{}{
+		template.Run(w, r, "secure", "password", "", map[string]interface{}{
 			"UID":     uid,
 			"Code":    code,
 			"Expires": string(expires),
@@ -62,11 +63,11 @@ func PasswordForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) 
 func ChangePassword(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	uid, code, pwd1, pwd2 := r.FormValue("uid"), r.FormValue("code"), r.FormValue("pwd1"), r.FormValue("pwd2")
 	if acc, e, conflict := account.GetInsecure(uid); e != nil {
-		util.Error(w, r, e, conflict)
+		template.Error(w, r, e, conflict)
 	} else if e, conflict := acc.ChangePassword(code, pwd1, pwd2); e != nil {
-		util.Error(w, r, e, conflict)
+		template.Error(w, r, e, conflict)
 	} else {
 		secure.LogOut(w, r, false)
-		util.Template(w, r, "secure", "password_success", "", nil)
+		template.Run(w, r, "secure", "password_success", "", nil)
 	}
 }

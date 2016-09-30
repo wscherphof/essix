@@ -1,4 +1,4 @@
-package util
+package template
 
 import (
 	"github.com/wscherphof/msg"
@@ -34,7 +34,7 @@ func TestMsg(t *testing.T) {
 
 func template_test_run(t *testing.T, base, inner string, inputs []template_test_input) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		Template("util", base, inner, nil)(w, r, nil)
+		Run(w, r, "util", base, inner, nil)
 	}))
 	defer ts.Close()
 	client := &http.Client{}
