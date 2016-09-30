@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-var	Router                 = httprouter.New()
+var	Router = httprouter.New()
 
 // TemplateHandle returns a Handle executing a template
 func TemplateHandle(dir, base, inner string, data map[string]interface{}) httprouter.Handle {
