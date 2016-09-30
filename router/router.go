@@ -12,9 +12,14 @@ var (
 	ErrInternalServerError = errors.New("ErrInternalServerError")
 )
 
+// ErrorHandle is a function that can be registered to a route to handle HTTP
+// requests. Like httprouter.Handle, but returns an error value.
+// Use this package's GET, PUT, POST, DELETE, PATH, OPTIONS, or HEAD to either
+// execute a template, or return an Error. If Error isn't nil, an error template
+// is executed.
 type ErrorHandle func(http.ResponseWriter, *http.Request, httprouter.Params) *Error
 
-func errorHandleFunc(errorHandle ErrorHandle) (handle httprouter.Handle) {
+func handleError(errorHandle ErrorHandle) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		if err := errorHandle(w, r, ps); err != nil {
 			code := http.StatusInternalServerError
@@ -35,7 +40,7 @@ func errorHandleFunc(errorHandle ErrorHandle) (handle httprouter.Handle) {
 			}
 			inner := ""
 			if err.Tail != nil {
-				inner = "../../" + err.Tail.dir + "/templates/" + err.Tail.name
+				inner = "../" + err.Tail.dir + "/" + err.Tail.name
 			}
 			// Set the Content-Type to prevent CompressHandler from doing so after our WriteHeader()
 			w.Header().Set("Content-Type", "text/html; charset=utf-8")
@@ -45,13 +50,23 @@ func errorHandleFunc(errorHandle ErrorHandle) (handle httprouter.Handle) {
 	}
 }
 
-func handle(method, path string, h ErrorHandle) {
-	Router.Handle(method, path, errorHandleFunc(h))
-}
-func GET(path string, h ErrorHandle)     { handle("GET", path, h) }
-func PUT(path string, h ErrorHandle)     { handle("PUT", path, h) }
-func POST(path string, h ErrorHandle)    { handle("POST", path, h) }
-func DELETE(path string, h ErrorHandle)  { handle("DELETE", path, h) }
-func PATCH(path string, h ErrorHandle)   { handle("PATCH", path, h) }
-func OPTIONS(path string, h ErrorHandle) { handle("OPTIONS", path, h) }
-func HEAD(path string, h ErrorHandle)    { handle("HEAD", path, h) }
+// GET registers a new request handle with the given path method GET.
+func GET(path string, errorHandle ErrorHandle) { Router.Handle("GET", path, handleError(errorHandle)) }
+
+// PUT registers a new request handle with the given path method PUT.
+func PUT(path string, errorHandle ErrorHandle) { Router.Handle("PUT", path, handleError(errorHandle)) }
+
+// POST registers a new request handle with the given path method POST.
+func POST(path string, errorHandle ErrorHandle) { Router.Handle("POST", path, handleError(errorHandle)) }
+
+// DELETE registers a new request handle with the given path method DELETE.
+func DELETE(path string, errorHandle ErrorHandle) { Router.Handle("DELETE", path, handleError(errorHandle)) }
+
+// PATCH registers a new request handle with the given path method PATCH.
+func PATCH(path string, errorHandle ErrorHandle) { Router.Handle("PATCH", path, handleError(errorHandle)) }
+
+// OPTIONS registers a new request handle with the given path method OPTIONS.
+func OPTIONS(path string, errorHandle ErrorHandle) { Router.Handle("OPTIONS", path, handleError(errorHandle)) }
+
+// HEAD registers a new request handle with the given path method HEAD.
+func HEAD(path string, errorHandle ErrorHandle) { Router.Handle("HEAD", path, handleError(errorHandle)) }

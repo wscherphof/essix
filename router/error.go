@@ -5,6 +5,7 @@ type tailType struct {
 	name string
 }
 
+// Error is what an ErrorHandler should return instead of executing a template
 type Error struct {
 	Error    error
 	Conflict bool
@@ -12,6 +13,7 @@ type Error struct {
 	Data     map[string]interface{}
 }
 
+// NewError constructs an Error
 func NewError(e error, tail ...string) (err *Error) {
 	if e != nil {
 		err = &Error{Error: e}
@@ -25,6 +27,7 @@ func NewError(e error, tail ...string) (err *Error) {
 	return
 }
 
+// IfError returns a new Error constructed from e, or nil if e was nil
 func IfError(e error, tail ...string) (err *Error) {
 	return NewError(e, tail...)
 }
