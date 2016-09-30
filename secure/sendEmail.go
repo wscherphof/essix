@@ -3,6 +3,7 @@ package secure
 import (
 	"github.com/wscherphof/essix/email"
 	"github.com/wscherphof/essix/util"
+	"github.com/wscherphof/essix/template"
 	"github.com/wscherphof/msg"
 	"net/http"
 )
@@ -16,7 +17,7 @@ func sendEmail(r *http.Request, address, name, resource, code, extra string) (er
 	path := scheme + "://" + r.Host + "/account/" + resource + "/" + address
 	action := path + "?code=" + code + "&extra=" + string(util.URLEncode([]byte(extra)))
 	// TODO: format links as "buttons" instead of hyperlinks
-	body := util.BTemplate(r, "secure", resource+"_email", "lang", map[string]interface{}{
+	body := template.Write(r, "secure", resource+"_email", "lang", map[string]interface{}{
 		"action": action,
 		"cancel": action + "&cancel=true",
 		"name":   name,

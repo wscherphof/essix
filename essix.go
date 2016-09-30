@@ -5,6 +5,7 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/wscherphof/essix/env"
 	"github.com/wscherphof/essix/router"
+	"github.com/wscherphof/essix/template"
 	"github.com/wscherphof/essix/messages"
 	"github.com/wscherphof/essix/secure"
 	"log"
@@ -15,11 +16,13 @@ import (
 var domain string
 
 func init() {
+	// Die if domain is unset
 	domain = env.Get("DOMAIN")
 	if domain == "" {
 		log.Fatal("DOMAIN environment variable not set")
 	}
 
+	// Load all messages
 	messages.Init()
 
 	// Redirect http to https
@@ -37,8 +40,8 @@ func Run() {
 
 	// Template for home page, depending on login status
 	router.GET("/", secure.IfSecureHandle(
-		router.TemplateHandle("essix", "home", "home_loggedin", nil),
-		router.TemplateHandle("essix", "home", "home_loggedout", nil)))
+		template.Handle("essix", "home", "home_loggedin", nil),
+		template.Handle("essix", "home", "home_loggedout", nil)))
 
 	log.Println("INFO: starting secure application server for " + domain)
 	// Use the domain's proper certificates

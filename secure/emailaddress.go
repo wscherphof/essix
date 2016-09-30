@@ -3,7 +3,7 @@ package secure
 import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/wscherphof/essix/model/account"
-	"github.com/wscherphof/essix/util"
+	"github.com/wscherphof/essix/template"
 	"github.com/wscherphof/secure"
 	"net/http"
 )
@@ -14,7 +14,7 @@ func emailAddressEmail(r *http.Request, acc *account.Account) (err error, remark
 
 func EmailAddressCodeForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	acc := Authentication(w, r)
-	util.Template(w, r, "secure", "emailaddresscode", "", map[string]interface{}{
+	template.Run(w, r, "secure", "emailaddresscode", "", map[string]interface{}{
 		"UID": acc.UID,
 	})
 }
@@ -23,12 +23,12 @@ func EmailAddressCode(w http.ResponseWriter, r *http.Request, ps httprouter.Para
 	acc := Authentication(w, r)
 	newUID := r.FormValue("newuid")
 	if e := acc.CreateEmailAddressCode(newUID); e != nil {
-		util.Error(w, r, e, false)
+		template.Error(w, r, e, false)
 	} else if e, remark := emailAddressEmail(r, acc); e != nil {
-		util.Error(w, r, e, false)
+		template.Error(w, r, e, false)
 	} else {
 		secure.Update(w, r, acc)
-		util.Template(w, r, "secure", "emailaddresscode_success", "", map[string]interface{}{
+		template.Run(w, r, "secure", "emailaddresscode_success", "", map[string]interface{}{
 			"Name":   acc.Name(),
 			"Remark": remark,
 		})
@@ -42,7 +42,7 @@ func EmailAddressForm(w http.ResponseWriter, r *http.Request, ps httprouter.Para
 		acc.ClearEmailAddressCode(code)
 		secure.Update(w, r, acc)
 	} else {
-		util.Template(w, r, "secure", "emailaddress", "", map[string]interface{}{
+		template.Run(w, r, "secure", "emailaddress", "", map[string]interface{}{
 			"Account": acc,
 		})
 	}
@@ -52,9 +52,9 @@ func ChangeEmailAddress(w http.ResponseWriter, r *http.Request, ps httprouter.Pa
 	acc := Authentication(w, r)
 	code := r.FormValue("code")
 	if e, conflict := acc.ChangeEmailAddress(code); e != nil {
-		util.Error(w, r, e, conflict)
+		template.Error(w, r, e, conflict)
 	} else {
 		secure.Update(w, r, acc)
-		util.Template(w, r, "secure", "emailaddress_success", "", nil)
+		template.Run(w, r, "secure", "emailaddress_success", "", nil)
 	}
 }
