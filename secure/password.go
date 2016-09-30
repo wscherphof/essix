@@ -18,7 +18,7 @@ func passwordEmail(r *http.Request, acc *account.Account) (error, string) {
 
 func PasswordCodeForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	if token, e := ratelimit.NewToken(r); e != nil {
-		router.Error(e, false)(w, r, ps)
+		router.Error(w, r, e, false)
 	} else {
 		util.Template(w, r, "secure", "passwordcode", "", map[string]interface{}{
 			"UID":            ps.ByName("uid"),
@@ -30,13 +30,13 @@ func PasswordCodeForm(w http.ResponseWriter, r *http.Request, ps httprouter.Para
 func PasswordCode(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	uid := r.FormValue("uid")
 	if acc, e, conflict := account.GetInsecure(uid); e != nil {
-		router.Error(e, conflict)(w, r, ps)
+		router.Error(w, r, e, conflict)
 	} else if !acc.IsActive() {
-		router.Error(account.ErrNotActivated, conflict, "secure", "activation_resend")
+		router.Error(w, r, account.ErrNotActivated, conflict, "secure", "activation_resend")
 	} else if e := acc.CreatePasswordCode(); e != nil {
-		router.Error(e, false)(w, r, ps)
+		router.Error(w, r, e, false)
 	} else if e, remark := passwordEmail(r, acc); e != nil {
-		router.Error(e, false)(w, r, ps)
+		router.Error(w, r, e, false)
 	} else {
 		util.Template(w, r, "secure", "passwordcode_success", "", map[string]interface{}{
 			"Name":   acc.Name(),
@@ -63,9 +63,9 @@ func PasswordForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) 
 func ChangePassword(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	uid, code, pwd1, pwd2 := r.FormValue("uid"), r.FormValue("code"), r.FormValue("pwd1"), r.FormValue("pwd2")
 	if acc, e, conflict := account.GetInsecure(uid); e != nil {
-		router.Error(e, conflict)(w, r, ps)
+		router.Error(w, r, e, conflict)
 	} else if e, conflict := acc.ChangePassword(code, pwd1, pwd2); e != nil {
-		router.Error(e, conflict)(w, r, ps)
+		router.Error(w, r, e, conflict)
 	} else {
 		secure.LogOut(w, r, false)
 		util.Template(w, r, "secure", "password_success", "", nil)

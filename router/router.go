@@ -48,44 +48,42 @@ func newError(e error, conflict bool, tail ...string) (err *routerError) {
 	return
 }
 
-// Error returns a Handle executing a template reporting on e
-func Error(e error, conflict bool, tail ...string) httprouter.Handle {
+// Error executes a template reporting on e
+func Error(w http.ResponseWriter, r *http.Request, e error, conflict bool, tail ...string) {
 	err := newError(e, conflict, tail...)
-	return errorHandle(err)
+	errorTemplate(w, r, err)
 }
 
-// DataError returns a Handle executing a template reporting on e & data
-func DataError(e error, data map[string]interface{}, tail ...string) httprouter.Handle {
+// DataError executes a template reporting on e & data
+func DataError(w http.ResponseWriter, r *http.Request, e error, data map[string]interface{}, tail ...string) {
 	err := newError(e, true, tail...)
 	err.Data = data
-	return errorHandle(err)
+	errorTemplate(w, r, err)
 }
 
-func errorHandle(err *routerError) httprouter.Handle {
-	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-		code := http.StatusInternalServerError
-		if err.Conflict {
-			code = http.StatusConflict
-		} else {
-			log.Printf("ERROR: %+v: %s %#v", r.URL, err.Error, err.Error)
-			err.Error = ErrInternalServerError
-		}
-		data := map[string]interface{}{
-			"Error": err.Error,
-			"Path":  r.URL.Path,
-		}
-		if err.Data != nil {
-			for k, v := range err.Data {
-				data[k] = v
-			}
-		}
-		inner := ""
-		if err.Tail != nil {
-			inner = "../" + err.Tail.dir + "/" + err.Tail.name
-		}
-		// Set the Content-Type to prevent CompressHandler from doing so after our WriteHeader()
-		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		w.WriteHeader(code)
-		util.Template(w, r, "router", "error", inner, data)
+func errorTemplate(w http.ResponseWriter, r *http.Request, err *routerError) {
+	code := http.StatusInternalServerError
+	if err.Conflict {
+		code = http.StatusConflict
+	} else {
+		log.Printf("ERROR: %+v: %s %#v", r.URL, err.Error, err.Error)
+		err.Error = ErrInternalServerError
 	}
+	data := map[string]interface{}{
+		"Error": err.Error,
+		"Path":  r.URL.Path,
+	}
+	if err.Data != nil {
+		for k, v := range err.Data {
+			data[k] = v
+		}
+	}
+	inner := ""
+	if err.Tail != nil {
+		inner = "../" + err.Tail.dir + "/" + err.Tail.name
+	}
+	// Set the Content-Type to prevent CompressHandler from doing so after our WriteHeader()
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(code)
+	util.Template(w, r, "router", "error", inner, data)
 }

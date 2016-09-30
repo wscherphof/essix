@@ -14,7 +14,7 @@ import (
 
 func SignUpForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	if token, e := ratelimit.NewToken(r); e != nil {
-		router.Error(e, false)(w, r, ps)
+		router.Error(w, r, e, false)
 	} else {
 		util.Template(w, r, "secure", "signup", "", map[string]interface{}{
 			"Countries":      data.Countries(),
@@ -25,9 +25,9 @@ func SignUpForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 
 func SignUp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	if acc, e, conflict := account.New(r.FormValue("uid"), r.FormValue("pwd1"), r.FormValue("pwd2")); e != nil {
-		router.Error(e, conflict)(w, r, ps)
+		router.Error(w, r, e, conflict)
 	} else if e, remark := activationEmail(r, acc); e != nil {
-		router.Error(e, false)(w, r, ps)
+		router.Error(w, r, e, false)
 	} else {
 		util.Template(w, r, "secure", "signup_success", "", map[string]interface{}{
 			"uid":    acc.UID,
@@ -54,15 +54,15 @@ func UpdateAccount(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 	acc.FirstName = r.FormValue("firstname")
 	acc.LastName = r.FormValue("lastname")
 	if e := acc.ValidateFields(); e != nil {
-		router.Error(e, true)(w, r, ps)
+		router.Error(w, r, e, true)
 	} else if e := acc.Save(); e != nil {
-		router.Error(e, false)(w, r, ps)
+		router.Error(w, r, e, false)
 	} else if initial {
 		if e := secure.LogIn(w, r, acc); e != nil {
-			router.Error(e, false)(w, r, ps)
+			router.Error(w, r, e, false)
 		}
 	} else if e := secure.Update(w, r, acc); e != nil {
-		router.Error(e, false)(w, r, ps)
+		router.Error(w, r, e, false)
 	} else {
 		http.Redirect(w, r, r.URL.Path, http.StatusSeeOther)
 	}
