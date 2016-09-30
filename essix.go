@@ -19,7 +19,16 @@ func init() {
 	if domain == "" {
 		log.Fatal("DOMAIN environment variable not set")
 	}
+
 	messages.Init()
+
+	// Redirect http to https
+	go http.ListenAndServe(":80", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		url := r.URL
+		url.Host = r.Host
+		url.Scheme = "https"
+		http.Redirect(w, r, url.String(), http.StatusMovedPermanently)
+	}))
 }
 
 func Run() {
@@ -44,12 +53,4 @@ func Run() {
 					handlers.CombinedLoggingHandler(os.Stdout,
 						// Use our routes
 						router.Router))))))
-
-	// Redirect http to https
-	go http.ListenAndServe(":80", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		u := r.URL
-		u.Host = r.Host
-		u.Scheme = "https"
-		http.Redirect(w, r, u.String(), http.StatusMovedPermanently)
-	}))
 }
