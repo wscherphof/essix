@@ -7,9 +7,8 @@ import (
 )
 
 // Template
-func Template(dir, base, inner string, data map[string]interface{}) ErrorHandle {
-	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *Error) {
+func Template(dir, base, inner string, data map[string]interface{}) httprouter.Handle {
+	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		util.Template(dir, base, inner, data)(w, r)
-		return
 	}
 }

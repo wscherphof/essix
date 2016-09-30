@@ -27,7 +27,7 @@ func Run() {
 	router.Router.ServeFiles("/static/*filepath", http.Dir("/resources/static"))
 
 	// Template for home page, depending on login status
-	router.GET("/", secure.IfSecureHandle(
+	router.Router.GET("/", secure.IfSecureHandle(
 		router.Template("essix", "home", "home_loggedin", nil),
 		router.Template("essix", "home", "home_loggedout", nil)))
 

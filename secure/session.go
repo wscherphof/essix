@@ -9,32 +9,30 @@ import (
 	"net/http"
 )
 
-func LogInForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
+func LogInForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	if token, e := ratelimit.NewToken(r); e != nil {
-		err = router.NewError(e)
+		router.Error(e, false)(w, r, ps)
 	} else {
 		router.Template("secure", "login", "", map[string]interface{}{
 			"RateLimitToken": token,
 		})(w, r, ps)
 	}
-	return
 }
 
-func LogIn(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
+func LogIn(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	if acc, e, conflict := account.Get(r.FormValue("uid"), r.FormValue("pwd")); e != nil {
-		err = router.NewError(e, "secure", "login")
-		err.Conflict = conflict
+		router.Error(e, conflict, "secure", "login")(w, r, ps)
 	} else if complete := (acc.ValidateFields() == nil); complete {
-		err = router.IfError(secure.LogIn(w, r, acc), "secure", "login")
+		if e := secure.LogIn(w, r, acc); e != nil {
+			router.Error(e, false, "secure", "login")(w, r, ps)
+		}
 	} else if e := secure.Update(w, r, acc); e != nil {
-		err = router.NewError(e, "secure", "login")
+		router.Error(e, false, "secure", "login")(w, r, ps)
 	} else {
 		http.Redirect(w, r, "/account", http.StatusSeeOther)
 	}
-	return
 }
 
-func LogOut(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
+func LogOut(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	secure.LogOut(w, r, true)
-	return
 }

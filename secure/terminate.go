@@ -12,19 +12,18 @@ func terminateEmail(r *http.Request, acc *account.Account) (err error, remark st
 	return sendEmail(r, acc.UID, acc.Name(), "terminate", acc.TerminateCode, "")
 }
 
-func TerminateCodeForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
+func TerminateCodeForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	_ = Authentication(w, r)
-	return router.Template("secure", "terminatecode", "", nil)(w, r, ps)
+	router.Template("secure", "terminatecode", "", nil)(w, r, ps)
 }
 
-func TerminateCode(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
+func TerminateCode(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	acc := Authentication(w, r)
 	sure := r.FormValue("sure")
 	if e, conflict := acc.CreateTerminateCode((sure == "affirmative")); e != nil {
-		err = router.NewError(e)
-		err.Conflict = conflict
+		router.Error(e, conflict)(w, r, ps)
 	} else if e, remark := terminateEmail(r, acc); e != nil {
-		err = router.NewError(e)
+		router.Error(e, false)(w, r, ps)
 	} else {
 		secure.Update(w, r, acc)
 		router.Template("secure", "terminatecode_success", "", map[string]interface{}{
@@ -32,10 +31,9 @@ func TerminateCode(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 			"Remark": remark,
 		})(w, r, ps)
 	}
-	return
 }
 
-func TerminateForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
+func TerminateForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	acc := Authentication(w, r)
 	code, cancel := r.FormValue("code"), r.FormValue("cancel")
 	if cancel == "true" {
@@ -47,18 +45,15 @@ func TerminateForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 			"Account": acc,
 		})(w, r, ps)
 	}
-	return
 }
 
-func Terminate(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
+func Terminate(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	acc := Authentication(w, r)
 	code, sure := r.FormValue("code"), r.FormValue("sure")
 	if e, conflict := acc.Terminate(code, (sure == "affirmative")); e != nil {
-		err = router.NewError(e)
-		err.Conflict = conflict
+		router.Error(e, conflict)(w, r, ps)
 	} else {
 		secure.LogOut(w, r, false)
 		router.Template("secure", "terminate_success", "", nil)(w, r, ps)
 	}
-	return
 }

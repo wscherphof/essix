@@ -93,39 +93,31 @@ func (c *client) save() (err error) {
 	return
 }
 
-func Handle(seconds int, handle router.ErrorHandle) router.ErrorHandle {
+func Handle(seconds int, handle httprouter.Handle) httprouter.Handle {
 	window := time.Duration(seconds) * time.Second
-	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
+	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		t, ip, p := new(token), ip(r), path(r.URL.Path)
 		if rate := r.FormValue("_rate"); rate == "" {
-			err = router.NewError(ErrInvalidRequest)
-			err.Conflict = true
+			router.Error(ErrInvalidRequest, true)(w, r, ps)
 			log.Printf("SUSPICIOUS: rate limit token missing %v %v", ip, p)
 		} else if e := secure.RequestToken(rate).Read(t); e != nil {
-			err = router.NewError(ErrInvalidRequest)
-			err.Conflict = true
+			router.Error(ErrInvalidRequest, true)(w, r, ps)
 			log.Printf("SUSPICIOUS: rate limit token unreadable %v %v", ip, p)
 		} else if t.IP != ip {
-			err = router.NewError(ErrInvalidRequest)
-			err.Conflict = true
+			router.Error(ErrInvalidRequest, true)(w, r, ps)
 			log.Printf("SUSPICIOUS: rate limit token invalid address: %v, expected %v %v", t.IP, ip, p)
 		} else if t.Path != p {
-			err = router.NewError(ErrInvalidRequest)
-			err.Conflict = true
+			router.Error(ErrInvalidRequest, true)(w, r, ps)
 			log.Printf("SUSPICIOUS: rate limit token invalid path: %v, token path %v, expected %v", ip, t.Path, p)
 		} else if c := getClient(ip); c.Requests[p].After(t.Timestamp) {
-			err = router.NewError(ErrInvalidRequest)
-			err.Conflict = true
+			router.Error(ErrInvalidRequest, true)(w, r, ps)
 			log.Printf("SUSPICIOUS: rate limit token reuse: %v %v, token %v, previous request %v", ip, p, t.Timestamp, c.Requests[p])
 		} else if c.Requests[p].After(time.Now().Add(-window)) {
-			err = router.NewError(ErrTooManyRequests, "ratelimit", "toomanyrequests")
-			err.Conflict = true
-			err.Data = map[string]interface{}{
+			router.DataError(ErrTooManyRequests, map[string]interface{}{
 				"Window": window,
-			}
-		} else if e := handle(w, r, ps); e != nil {
-			err = e
+			}, "ratelimit", "toomanyrequests")(w, r, ps)
 		} else {
+			handle(w, r, ps)
 			c.Requests[p] = time.Now()
 			clear := time.Now().Add(window).Unix()
 			if clear > c.Clear {

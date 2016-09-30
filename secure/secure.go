@@ -3,7 +3,6 @@ package secure
 import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/wscherphof/essix/model/account"
-	"github.com/wscherphof/essix/router"
 	"github.com/wscherphof/secure"
 	"net/http"
 )
@@ -16,21 +15,20 @@ func Authentication(w http.ResponseWriter, r *http.Request, optional ...bool) (r
 	return
 }
 
-func SecureHandle(handle router.ErrorHandle) router.ErrorHandle {
-	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
+func SecureHandle(handle httprouter.Handle) httprouter.Handle {
+	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		if secure.Authentication(w, r, false) != nil {
-			err = handle(w, r, ps)
+			handle(w, r, ps)
 		}
-		return
 	}
 }
 
-func IfSecureHandle(authenticated router.ErrorHandle, unauthenticated router.ErrorHandle) router.ErrorHandle {
-	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) *router.Error {
+func IfSecureHandle(authenticated httprouter.Handle, unauthenticated httprouter.Handle) httprouter.Handle {
+	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		if secure.Authentication(w, r, true) != nil {
-			return authenticated(w, r, ps)
+			authenticated(w, r, ps)
 		} else {
-			return unauthenticated(w, r, ps)
+			unauthenticated(w, r, ps)
 		}
 	}
 }

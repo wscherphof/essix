@@ -16,40 +16,36 @@ func passwordEmail(r *http.Request, acc *account.Account) (error, string) {
 	return sendEmail(r, acc.UID, acc.Name(), "password", acc.PasswordCode.Value, acc.PasswordCode.Expires.Format(format))
 }
 
-func PasswordCodeForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
+func PasswordCodeForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	if token, e := ratelimit.NewToken(r); e != nil {
-		err = router.NewError(e)
+		router.Error(e, false)(w, r, ps)
 	} else {
 		router.Template("secure", "passwordcode", "", map[string]interface{}{
 			"UID":            ps.ByName("uid"),
 			"RateLimitToken": token,
 		})(w, r, ps)
 	}
-	return
 }
 
-func PasswordCode(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
+func PasswordCode(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	uid := r.FormValue("uid")
 	if acc, e, conflict := account.GetInsecure(uid); e != nil {
-		err = router.NewError(e)
-		err.Conflict = conflict
+		router.Error(e, conflict)(w, r, ps)
 	} else if !acc.IsActive() {
-		err = router.NewError(account.ErrNotActivated, "secure", "activation_resend")
-		err.Conflict = true
+		router.Error(account.ErrNotActivated, conflict, "secure", "activation_resend")
 	} else if e := acc.CreatePasswordCode(); e != nil {
-		err = router.NewError(e)
+		router.Error(e, false)(w, r, ps)
 	} else if e, remark := passwordEmail(r, acc); e != nil {
-		err = router.NewError(e)
+		router.Error(e, false)(w, r, ps)
 	} else {
 		router.Template("secure", "passwordcode_success", "", map[string]interface{}{
 			"Name":   acc.Name(),
 			"Remark": remark,
 		})(w, r, ps)
 	}
-	return
 }
 
-func PasswordForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
+func PasswordForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	uid, code, extra, cancel := ps.ByName("uid"), r.FormValue("code"), r.FormValue("extra"), r.FormValue("cancel")
 	expires, _ := util.URLDecode([]byte(extra))
 	if cancel == "true" {
@@ -62,20 +58,16 @@ func PasswordForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) 
 			"Expires": string(expires),
 		})(w, r, ps)
 	}
-	return
 }
 
-func ChangePassword(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
+func ChangePassword(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	uid, code, pwd1, pwd2 := r.FormValue("uid"), r.FormValue("code"), r.FormValue("pwd1"), r.FormValue("pwd2")
 	if acc, e, conflict := account.GetInsecure(uid); e != nil {
-		err = router.NewError(e)
-		err.Conflict = conflict
+		router.Error(e, conflict)(w, r, ps)
 	} else if e, conflict := acc.ChangePassword(code, pwd1, pwd2); e != nil {
-		err = router.NewError(e)
-		err.Conflict = conflict
+		router.Error(e, conflict)(w, r, ps)
 	} else {
 		secure.LogOut(w, r, false)
 		router.Template("secure", "password_success", "", nil)(w, r, ps)
 	}
-	return
 }

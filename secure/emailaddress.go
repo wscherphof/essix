@@ -12,20 +12,20 @@ func emailAddressEmail(r *http.Request, acc *account.Account) (err error, remark
 	return sendEmail(r, acc.NewUID, acc.Name(), "emailaddress", acc.EmailAddressCode, "")
 }
 
-func EmailAddressCodeForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
+func EmailAddressCodeForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	acc := Authentication(w, r)
-	return router.Template("secure", "emailaddresscode", "", map[string]interface{}{
+	router.Template("secure", "emailaddresscode", "", map[string]interface{}{
 		"UID": acc.UID,
 	})(w, r, ps)
 }
 
-func EmailAddressCode(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
+func EmailAddressCode(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	acc := Authentication(w, r)
 	newUID := r.FormValue("newuid")
 	if e := acc.CreateEmailAddressCode(newUID); e != nil {
-		err = router.NewError(e)
+		router.Error(e, false)(w, r, ps)
 	} else if e, remark := emailAddressEmail(r, acc); e != nil {
-		err = router.NewError(e)
+		router.Error(e, false)(w, r, ps)
 	} else {
 		secure.Update(w, r, acc)
 		router.Template("secure", "emailaddresscode_success", "", map[string]interface{}{
@@ -33,10 +33,9 @@ func EmailAddressCode(w http.ResponseWriter, r *http.Request, ps httprouter.Para
 			"Remark": remark,
 		})(w, r, ps)
 	}
-	return
 }
 
-func EmailAddressForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
+func EmailAddressForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	acc := Authentication(w, r)
 	code, cancel := r.FormValue("code"), r.FormValue("cancel")
 	if cancel == "true" {
@@ -48,18 +47,15 @@ func EmailAddressForm(w http.ResponseWriter, r *http.Request, ps httprouter.Para
 			"Account": acc,
 		})(w, r, ps)
 	}
-	return
 }
 
-func ChangeEmailAddress(w http.ResponseWriter, r *http.Request, ps httprouter.Params) (err *router.Error) {
+func ChangeEmailAddress(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	acc := Authentication(w, r)
 	code := r.FormValue("code")
 	if e, conflict := acc.ChangeEmailAddress(code); e != nil {
-		err = router.NewError(e)
-		err.Conflict = conflict
+		router.Error(e, conflict)(w, r, ps)
 	} else {
 		secure.Update(w, r, acc)
 		router.Template("secure", "emailaddress_success", "", nil)(w, r, ps)
 	}
-	return
 }
