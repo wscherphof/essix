@@ -1,57 +1,24 @@
 package router
 
 import (
-	"errors"
 	"github.com/julienschmidt/httprouter"
-	"log"
+	"github.com/wscherphof/essix/util"
 	"net/http"
 )
 
-var (
-	Router                 = httprouter.New()
-	ErrInternalServerError = errors.New("ErrInternalServerError")
-)
+var	Router = httprouter.New()
 
-type ErrorHandle func(http.ResponseWriter, *http.Request, httprouter.Params) *Error
+func GET(path string, handle httprouter.Handle) {Router.GET(path, handle)}
+func PUT(path string, handle httprouter.Handle) {Router.PUT(path, handle)}
+func POST(path string, handle httprouter.Handle) {Router.POST(path, handle)}
+func DELETE(path string, handle httprouter.Handle) {Router.DELETE(path, handle)}
+func HEAD(path string, handle httprouter.Handle) {Router.HEAD(path, handle)}
+func OPTIONS(path string, handle httprouter.Handle) {Router.OPTIONS(path, handle)}
+func PATCH(path string, handle httprouter.Handle) {Router.PATCH(path, handle)}
 
-func errorHandleFunc(errorHandle ErrorHandle) (handle httprouter.Handle) {
+// TemplateHandle returns a Handle executing a template
+func TemplateHandle(dir, base, inner string, data map[string]interface{}) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-		if err := errorHandle(w, r, ps); err != nil {
-			code := http.StatusInternalServerError
-			if err.Conflict {
-				code = http.StatusConflict
-			} else {
-				log.Printf("ERROR: %+v: %s %#v", r.URL, err.Error, err.Error)
-				err.Error = ErrInternalServerError
-			}
-			data := map[string]interface{}{
-				"Error": err.Error,
-				"Path":  r.URL.Path,
-			}
-			if err.Data != nil {
-				for k, v := range err.Data {
-					data[k] = v
-				}
-			}
-			inner := ""
-			if err.Tail != nil {
-				inner = "../../" + err.Tail.dir + "/templates/" + err.Tail.name
-			}
-			// Set the Content-Type to prevent CompressHandler from doing so after our WriteHeader()
-			w.Header().Set("Content-Type", "text/html; charset=utf-8")
-			w.WriteHeader(code)
-			Template("router", "error", inner, data)(w, r, ps)
-		}
+		util.Template(w, r, dir, base, inner, data)
 	}
 }
-
-func handle(method, path string, h ErrorHandle) {
-	Router.Handle(method, path, errorHandleFunc(h))
-}
-func GET(path string, h ErrorHandle)     { handle("GET", path, h) }
-func PUT(path string, h ErrorHandle)     { handle("PUT", path, h) }
-func POST(path string, h ErrorHandle)    { handle("POST", path, h) }
-func DELETE(path string, h ErrorHandle)  { handle("DELETE", path, h) }
-func PATCH(path string, h ErrorHandle)   { handle("PATCH", path, h) }
-func OPTIONS(path string, h ErrorHandle) { handle("OPTIONS", path, h) }
-func HEAD(path string, h ErrorHandle)    { handle("HEAD", path, h) }

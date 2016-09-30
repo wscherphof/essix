@@ -16,12 +16,12 @@ func sendEmail(r *http.Request, address, name, resource, code, extra string) (er
 	path := scheme + "://" + r.Host + "/account/" + resource + "/" + address
 	action := path + "?code=" + code + "&extra=" + string(util.URLEncode([]byte(extra)))
 	// TODO: format links as "buttons" instead of hyperlinks
-	body := util.BTemplate("secure", resource+"_email", "lang", map[string]interface{}{
+	body := util.BTemplate(r, "secure", resource+"_email", "lang", map[string]interface{}{
 		"action": action,
 		"cancel": action + "&cancel=true",
 		"name":   name,
 		"extra":  extra,
-	})(r)
+	})
 	if e := email.Send(subject, string(body), address); e != nil {
 		if e == email.ErrNotSentImmediately {
 			remark = e.Error()
