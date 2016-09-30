@@ -4,7 +4,6 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/wscherphof/essix/model/account"
 	"github.com/wscherphof/essix/util"
-	"github.com/wscherphof/essix/router"
 	"github.com/wscherphof/secure"
 	"net/http"
 )
@@ -24,9 +23,9 @@ func EmailAddressCode(w http.ResponseWriter, r *http.Request, ps httprouter.Para
 	acc := Authentication(w, r)
 	newUID := r.FormValue("newuid")
 	if e := acc.CreateEmailAddressCode(newUID); e != nil {
-		router.Error(w, r, e, false)
+		util.Error(w, r, e, false)
 	} else if e, remark := emailAddressEmail(r, acc); e != nil {
-		router.Error(w, r, e, false)
+		util.Error(w, r, e, false)
 	} else {
 		secure.Update(w, r, acc)
 		util.Template(w, r, "secure", "emailaddresscode_success", "", map[string]interface{}{
@@ -53,7 +52,7 @@ func ChangeEmailAddress(w http.ResponseWriter, r *http.Request, ps httprouter.Pa
 	acc := Authentication(w, r)
 	code := r.FormValue("code")
 	if e, conflict := acc.ChangeEmailAddress(code); e != nil {
-		router.Error(w, r, e, conflict)
+		util.Error(w, r, e, conflict)
 	} else {
 		secure.Update(w, r, acc)
 		util.Template(w, r, "secure", "emailaddress_success", "", nil)

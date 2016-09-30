@@ -4,7 +4,6 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/wscherphof/essix/model/account"
 	"github.com/wscherphof/essix/util"
-	"github.com/wscherphof/essix/router"
 	"github.com/wscherphof/secure"
 	"net/http"
 )
@@ -22,9 +21,9 @@ func TerminateCode(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 	acc := Authentication(w, r)
 	sure := r.FormValue("sure")
 	if e, conflict := acc.CreateTerminateCode((sure == "affirmative")); e != nil {
-		router.Error(w, r, e, conflict)
+		util.Error(w, r, e, conflict)
 	} else if e, remark := terminateEmail(r, acc); e != nil {
-		router.Error(w, r, e, false)
+		util.Error(w, r, e, false)
 	} else {
 		secure.Update(w, r, acc)
 		util.Template(w, r, "secure", "terminatecode_success", "", map[string]interface{}{
@@ -52,7 +51,7 @@ func Terminate(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	acc := Authentication(w, r)
 	code, sure := r.FormValue("code"), r.FormValue("sure")
 	if e, conflict := acc.Terminate(code, (sure == "affirmative")); e != nil {
-		router.Error(w, r, e, conflict)
+		util.Error(w, r, e, conflict)
 	} else {
 		secure.LogOut(w, r, false)
 		util.Template(w, r, "secure", "terminate_success", "", nil)
