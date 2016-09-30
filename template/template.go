@@ -10,7 +10,7 @@ import (
 	"net/http"
 )
 
-// T loads and executes a template, writing the output to w
+// Run loads and executes a template, writing the output to w
 func Run(w io.Writer, r *http.Request, dir, base, inner string, data map[string]interface{}) {
 	if data == nil {
 		data = map[string]interface{}{}

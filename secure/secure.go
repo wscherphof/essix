@@ -34,12 +34,19 @@ func IfSecureHandle(authenticated httprouter.Handle, unauthenticated httprouter.
 }
 
 func init() {
-	secure.Configure(account.Account{}, &secureDB{}, func(src interface{}) (dst interface{}, valid bool) {
+	// Authentication will be based on a record of model/account
+	var record = account.Account{}
+	// Security keys will be found through an instance of our secureDB implementation of the secure.DB interface
+	var db = &secureDB{}
+	// The validate function will test whether the session still valid
+	var validate = func(src interface{}) (dst interface{}, valid bool) {
 		if src != nil {
 			acc := src.(account.Account)
+			// Refresh updates the account's field values & returns the validity of the session
 			valid = acc.Refresh()
 			dst = acc
 		}
 		return
-	})
+	}
+	secure.Configure(record, db, validate)
 }
