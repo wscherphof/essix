@@ -32,10 +32,8 @@ func Template(w io.Writer, r *http.Request, dir, base, inner string, data map[st
 	}
 }
 
-func BTemplate(dir, base, inner string, data map[string]interface{}) func(*http.Request) []byte {
+func BTemplate(r *http.Request, dir, base, inner string, data map[string]interface{}) []byte {
 	var b bytes.Buffer
-	return func(r *http.Request) []byte {
-		Template(&b, r, dir, base, inner, data)
-		return b.Bytes()
-	}
+	Template(&b, r, dir, base, inner, data)
+	return b.Bytes()
 }

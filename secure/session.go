@@ -2,6 +2,7 @@ package secure
 
 import (
 	"github.com/julienschmidt/httprouter"
+	"github.com/wscherphof/essix/util"
 	"github.com/wscherphof/essix/model/account"
 	"github.com/wscherphof/essix/ratelimit"
 	"github.com/wscherphof/essix/router"
@@ -13,9 +14,9 @@ func LogInForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	if token, e := ratelimit.NewToken(r); e != nil {
 		router.Error(e, false)(w, r, ps)
 	} else {
-		router.Template("secure", "login", "", map[string]interface{}{
+		util.Template(w, r, "secure", "login", "", map[string]interface{}{
 			"RateLimitToken": token,
-		})(w, r, ps)
+		})
 	}
 }
 

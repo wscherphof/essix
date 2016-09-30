@@ -20,10 +20,10 @@ func PasswordCodeForm(w http.ResponseWriter, r *http.Request, ps httprouter.Para
 	if token, e := ratelimit.NewToken(r); e != nil {
 		router.Error(e, false)(w, r, ps)
 	} else {
-		router.Template("secure", "passwordcode", "", map[string]interface{}{
+		util.Template(w, r, "secure", "passwordcode", "", map[string]interface{}{
 			"UID":            ps.ByName("uid"),
 			"RateLimitToken": token,
-		})(w, r, ps)
+		})
 	}
 }
 
@@ -38,10 +38,10 @@ func PasswordCode(w http.ResponseWriter, r *http.Request, ps httprouter.Params) 
 	} else if e, remark := passwordEmail(r, acc); e != nil {
 		router.Error(e, false)(w, r, ps)
 	} else {
-		router.Template("secure", "passwordcode_success", "", map[string]interface{}{
+		util.Template(w, r, "secure", "passwordcode_success", "", map[string]interface{}{
 			"Name":   acc.Name(),
 			"Remark": remark,
-		})(w, r, ps)
+		})
 	}
 }
 
@@ -50,13 +50,13 @@ func PasswordForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) 
 	expires, _ := util.URLDecode([]byte(extra))
 	if cancel == "true" {
 		account.ClearPasswordCode(uid, code)
-		router.Template("secure", "passwordcode_cancelled", "", nil)(w, r, ps)
+		util.Template(w, r, "secure", "passwordcode_cancelled", "", nil)
 	} else {
-		router.Template("secure", "password", "", map[string]interface{}{
+		util.Template(w, r, "secure", "password", "", map[string]interface{}{
 			"UID":     uid,
 			"Code":    code,
 			"Expires": string(expires),
-		})(w, r, ps)
+		})
 	}
 }
 
@@ -68,6 +68,6 @@ func ChangePassword(w http.ResponseWriter, r *http.Request, ps httprouter.Params
 		router.Error(e, conflict)(w, r, ps)
 	} else {
 		secure.LogOut(w, r, false)
-		router.Template("secure", "password_success", "", nil)(w, r, ps)
+		util.Template(w, r, "secure", "password_success", "", nil)
 	}
 }

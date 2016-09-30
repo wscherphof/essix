@@ -3,6 +3,7 @@ package secure
 import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/wscherphof/essix/model/account"
+	"github.com/wscherphof/essix/util"
 	"github.com/wscherphof/essix/router"
 	"github.com/wscherphof/secure"
 	"net/http"
@@ -14,7 +15,7 @@ func terminateEmail(r *http.Request, acc *account.Account) (err error, remark st
 
 func TerminateCodeForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	_ = Authentication(w, r)
-	router.Template("secure", "terminatecode", "", nil)(w, r, ps)
+	util.Template(w, r, "secure", "terminatecode", "", nil)
 }
 
 func TerminateCode(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
@@ -26,10 +27,10 @@ func TerminateCode(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 		router.Error(e, false)(w, r, ps)
 	} else {
 		secure.Update(w, r, acc)
-		router.Template("secure", "terminatecode_success", "", map[string]interface{}{
+		util.Template(w, r, "secure", "terminatecode_success", "", map[string]interface{}{
 			"Name":   acc.Name(),
 			"Remark": remark,
-		})(w, r, ps)
+		})
 	}
 }
 
@@ -39,11 +40,11 @@ func TerminateForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 	if cancel == "true" {
 		acc.ClearTerminateCode(code)
 		secure.Update(w, r, acc)
-		router.Template("secure", "terminatecode_cancelled", "", nil)(w, r, ps)
+		util.Template(w, r, "secure", "terminatecode_cancelled", "", nil)
 	} else {
-		router.Template("secure", "terminate", "", map[string]interface{}{
+		util.Template(w, r, "secure", "terminate", "", map[string]interface{}{
 			"Account": acc,
-		})(w, r, ps)
+		})
 	}
 }
 
@@ -54,6 +55,6 @@ func Terminate(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		router.Error(e, conflict)(w, r, ps)
 	} else {
 		secure.LogOut(w, r, false)
-		router.Template("secure", "terminate_success", "", nil)(w, r, ps)
+		util.Template(w, r, "secure", "terminate_success", "", nil)
 	}
 }

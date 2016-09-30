@@ -4,6 +4,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/wscherphof/essix/data"
 	"github.com/wscherphof/essix/model/account"
+	"github.com/wscherphof/essix/util"
 	"github.com/wscherphof/essix/ratelimit"
 	"github.com/wscherphof/essix/router"
 	"github.com/wscherphof/secure"
@@ -15,10 +16,10 @@ func SignUpForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	if token, e := ratelimit.NewToken(r); e != nil {
 		router.Error(e, false)(w, r, ps)
 	} else {
-		router.Template("secure", "signup", "", map[string]interface{}{
+		util.Template(w, r, "secure", "signup", "", map[string]interface{}{
 			"Countries":      data.Countries(),
 			"RateLimitToken": token,
-		})(w, r, ps)
+		})
 	}
 }
 
@@ -28,21 +29,21 @@ func SignUp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	} else if e, remark := activationEmail(r, acc); e != nil {
 		router.Error(e, false)(w, r, ps)
 	} else {
-		router.Template("secure", "signup_success", "", map[string]interface{}{
+		util.Template(w, r, "secure", "signup_success", "", map[string]interface{}{
 			"uid":    acc.UID,
 			"name":   acc.Name(),
 			"remark": remark,
-		})(w, r, ps)
+		})
 	}
 }
 
 func UpdateAccountForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	acc := Authentication(w, r)
-	router.Template("secure", "account", "", map[string]interface{}{
+	util.Template(w, r, "secure", "account", "", map[string]interface{}{
 		"Account":   acc,
 		"Countries": data.Countries(),
 		"Initial":   (acc.ValidateFields() != nil),
-	})(w, r, ps)
+	})
 }
 
 func UpdateAccount(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
