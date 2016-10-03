@@ -2,7 +2,7 @@ package account
 
 import (
 	"errors"
-	"github.com/wscherphof/essix/db"
+	db "github.com/wscherphof/rethinkdb"
 	"github.com/wscherphof/essix/util"
 	"golang.org/x/crypto/bcrypt"
 	"log"

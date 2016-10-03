@@ -2,6 +2,16 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## v2.2.2 - 2016-09-25
+
+### Changed
+
+ - The `gorethink` struct tag is now always checked even after calling `SetTags`
+
+### Fixed
+
+ - Fixed infinite loop in cursor when closed during read
+
 ## v2.2.1 - 2016-09-18
 
 ### Added

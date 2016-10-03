@@ -1,7 +1,7 @@
 package email
 
 import (
-	"github.com/wscherphof/essix/db"
+	db "github.com/wscherphof/rethinkdb"
 	"log"
 	"time"
 )
