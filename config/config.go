@@ -2,7 +2,7 @@ package config
 
 import (
 	"errors"
-	"github.com/wscherphof/essix/db"
+	db "github.com/wscherphof/rethinkdb"
 	"log"
 )
 

@@ -1,8 +1,8 @@
-package db
+package rethinkdb
 
 import (
 	r "gopkg.in/dancannon/gorethink.v2"
-	"github.com/wscherphof/essix/env"
+	"github.com/wscherphof/env"
 	"log"
 )
 
