@@ -12,8 +12,8 @@ var (
 )
 
 func init() {
-	dbname = env.Default("DB_NAME", "essix")
-	address := env.Default("DB_HOST", "db1") +":"+ env.Default("DB_PORT", "28015")
+	dbname = env.Get("DB_NAME", "essix")
+	address := env.Get("DB_HOST", "db1") +":"+ env.Get("DB_PORT", "28015")
 	if session, err := r.Connect(r.ConnectOpts{Address: address}); err != nil {
 		log.Fatalln("ERROR:", err)
 	} else {
