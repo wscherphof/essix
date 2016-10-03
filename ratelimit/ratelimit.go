@@ -93,7 +93,7 @@ func (c *client) save() (err error) {
 	return
 }
 
-func Handle(seconds int, handle httprouter.Handle) httprouter.Handle {
+func Handle(handle httprouter.Handle, seconds int) httprouter.Handle {
 	window := time.Duration(seconds) * time.Second
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		t, ip, p := new(token), ip(r), path(r.URL.Path)

@@ -16,11 +16,8 @@ import (
 var domain string
 
 func init() {
-	// Die if domain is unset
+	// Die if domain isn't set
 	domain = env.Get("DOMAIN")
-	if domain == "" {
-		log.Fatal("DOMAIN environment variable not set")
-	}
 
 	// Load all messages
 	messages.Init()
