@@ -25,18 +25,25 @@ func init() {
 	}
 }
 
-func insert(table string, record interface{}, opts ...r.InsertOpts) (r.WriteResponse, error) {
-	return r.DB(dbname).Table(table).Insert(record, opts...).RunWrite(s)
+func insert(table string, record interface{}, opts ...r.InsertOpts) (response r.WriteResponse, err error, conflict bool) {
+	response, err = r.DB(dbname).Table(table).Insert(record, opts...).RunWrite(s)
+	conflict = r.IsConflictErr(err)
+	return
 }
 
-func Insert(table string, record interface{}) (r.WriteResponse, error) {
+func Insert(table string, record interface{}) (response r.WriteResponse, err error, conflict bool) {
 	return insert(table, record)
 }
 
-func InsertUpdate(table string, record interface{}) (r.WriteResponse, error) {
-	return insert(table, record, r.InsertOpts{
-		Conflict: "update",
-	})
+func InsertUpdate(table string, record interface{}, id ...string) (response r.WriteResponse, err error) {
+	if len(id) == 1 {
+		response, err = r.DB(dbname).Table(table).Get(id[0]).Update(record).RunWrite(s)
+	} else {
+		response, err, _ = insert(table, record, r.InsertOpts{
+			Conflict: "update",
+		})
+	}
+	return
 }
 
 // Unused, untested:

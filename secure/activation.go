@@ -2,14 +2,14 @@ package secure
 
 import (
 	"github.com/julienschmidt/httprouter"
-	"github.com/wscherphof/essix/model/account"
+	"github.com/wscherphof/essix/model"
 	"github.com/wscherphof/essix/template"
 	"github.com/wscherphof/essix/ratelimit"
 	"net/http"
 )
 
-func activationEmail(r *http.Request, acc *account.Account) (error, string) {
-	return sendEmail(r, acc.UID, acc.Name(), "activation", acc.ActivationCode, "")
+func activationEmail(r *http.Request, acc *model.Account) (error, string) {
+	return sendEmail(r, acc.ID, acc.Name(), "activation", acc.ActivationCode, "")
 }
 
 func ActivateForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
@@ -20,7 +20,7 @@ func ActivateForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) 
 }
 
 func Activate(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	if acc, e, conflict := account.Activate(r.FormValue("uid"), r.FormValue("code")); e != nil {
+	if acc, e, conflict := model.ActivateAccount(r.FormValue("uid"), r.FormValue("code")); e != nil {
 		template.Error(w, r, e, conflict, "secure", "activation")
 	} else {
 		template.Run(w, r, "secure", "activation_success", "", map[string]interface{}{
@@ -41,16 +41,16 @@ func ActivationCodeForm(w http.ResponseWriter, r *http.Request, ps httprouter.Pa
 }
 
 func ActivationCode(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	if acc, e, conflict := account.GetInsecure(r.FormValue("uid")); e != nil {
+	if acc, e, conflict := model.GetAccountInsecure(r.FormValue("uid")); e != nil {
 		template.Error(w, r, e, conflict)
 	} else if acc.IsActive() {
-		template.Error(w, r, account.ErrAlreadyActivated, true)
+		template.Error(w, r, model.ErrAlreadyActivated, true)
 	} else if e, remark := activationEmail(r, acc); e != nil {
 		template.Error(w, r, e, false)
 	} else {
 		template.Run(w, r, "secure", "activation_resend_success", "", map[string]interface{}{
 			"Name":   acc.Name(),
-			"UID":    acc.UID,
+			"UID":    acc.ID,
 			"Remark": remark,
 		})
 	}

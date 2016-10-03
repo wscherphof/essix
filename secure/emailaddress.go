@@ -2,20 +2,20 @@ package secure
 
 import (
 	"github.com/julienschmidt/httprouter"
-	"github.com/wscherphof/essix/model/account"
+	"github.com/wscherphof/essix/model"
 	"github.com/wscherphof/essix/template"
 	"github.com/wscherphof/secure"
 	"net/http"
 )
 
-func emailAddressEmail(r *http.Request, acc *account.Account) (err error, remark string) {
+func emailAddressEmail(r *http.Request, acc *model.Account) (err error, remark string) {
 	return sendEmail(r, acc.NewUID, acc.Name(), "emailaddress", acc.EmailAddressCode, "")
 }
 
 func EmailAddressCodeForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	acc := Authentication(w, r)
 	template.Run(w, r, "secure", "emailaddresscode", "", map[string]interface{}{
-		"UID": acc.UID,
+		"UID": acc.ID,
 	})
 }
 
