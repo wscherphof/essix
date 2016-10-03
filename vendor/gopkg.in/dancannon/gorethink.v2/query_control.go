@@ -386,7 +386,7 @@ func RawQuery(q []byte) Term {
 		rawQuery: true,
 		data:     &data,
 		args: []Term{
-			Term{
+			{
 				termType: p.Term_DATUM,
 				data:     string(q),
 			},

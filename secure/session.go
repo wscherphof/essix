@@ -2,9 +2,9 @@ package secure
 
 import (
 	"github.com/julienschmidt/httprouter"
-	"github.com/wscherphof/essix/template"
 	"github.com/wscherphof/essix/model"
 	"github.com/wscherphof/essix/ratelimit"
+	"github.com/wscherphof/essix/template"
 	"github.com/wscherphof/secure"
 	"net/http"
 )

@@ -15,8 +15,8 @@ type template_test_input struct {
 
 func TestLanguage(t *testing.T) {
 	template_test_run(t, "template_test_language", "", []template_test_input{
-		template_test_input{accept_language: "nl-nl", want: "nl"},
-		template_test_input{accept_language: "en-gb", want: "en"},
+		{accept_language: "nl-nl", want: "nl"},
+		{accept_language: "en-gb", want: "en"},
 	})
 }
 
@@ -27,8 +27,8 @@ func TestMsg(t *testing.T) {
 	a("en", "hello")
 	// TODO: add cases for full and sub languages
 	template_test_run(t, "template_test_msg", "", []template_test_input{
-		template_test_input{accept_language: "nl-nl", want: "hallo"},
-		template_test_input{accept_language: "en-gb", want: "hello"},
+		{accept_language: "nl-nl", want: "hallo"},
+		{accept_language: "en-gb", want: "hello"},
 	})
 }
 

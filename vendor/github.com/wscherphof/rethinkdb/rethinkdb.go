@@ -1,8 +1,8 @@
 package rethinkdb
 
 import (
-	r "gopkg.in/dancannon/gorethink.v2"
 	"github.com/wscherphof/env"
+	r "gopkg.in/dancannon/gorethink.v2"
 	"log"
 )
 
@@ -13,7 +13,7 @@ var (
 
 func init() {
 	dbname = env.Get("DB_NAME", "essix")
-	address := env.Get("DB_HOST", "db1") +":"+ env.Get("DB_PORT", "28015")
+	address := env.Get("DB_HOST", "db1") + ":" + env.Get("DB_PORT", "28015")
 	if session, err := r.Connect(r.ConnectOpts{Address: address}); err != nil {
 		log.Fatalln("ERROR:", err)
 	} else {

@@ -96,9 +96,9 @@ func Language(r *http.Request) (language LanguageType) {
 }
 
 // Msg...
-func Msg(r *http.Request) (translate func (string) string) {
+func Msg(r *http.Request) (translate func(string) string) {
 	language := Language(r)
-	return func (key string) (value string) {
+	return func(key string) (value string) {
 		if val, ok := messageStore[key][language.Full]; ok {
 			value = val
 		} else if val, ok := messageStore[key][language.Sub]; ok {
@@ -111,4 +111,3 @@ func Msg(r *http.Request) (translate func (string) string) {
 		return
 	}
 }
-

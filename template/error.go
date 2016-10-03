@@ -1,12 +1,12 @@
 package template
 
 import (
+	"errors"
 	"log"
 	"net/http"
-	"errors"
 )
 
-var	ErrInternalServerError = errors.New("ErrInternalServerError")
+var ErrInternalServerError = errors.New("ErrInternalServerError")
 
 // Error executes a template reporting on e
 func Error(w http.ResponseWriter, r *http.Request, err error, conflict bool, tail ...string) {

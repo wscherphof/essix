@@ -1,9 +1,9 @@
 package secure
 
 import (
+	"github.com/wscherphof/env"
 	"github.com/wscherphof/essix/ratelimit"
 	"github.com/wscherphof/essix/router"
-	"github.com/wscherphof/env"
 )
 
 func init() {
