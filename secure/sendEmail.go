@@ -2,14 +2,14 @@ package secure
 
 import (
 	"github.com/wscherphof/essix/email"
-	"github.com/wscherphof/essix/util"
 	"github.com/wscherphof/essix/template"
+	"github.com/wscherphof/essix/util"
 	"github.com/wscherphof/msg"
 	"net/http"
 )
 
 func sendEmail(r *http.Request, address, name, resource, code, extra string) (err error, remark string) {
-	subject := msg.Msg(r)(resource+" subject")
+	subject := msg.Msg(r)(resource + " subject")
 	scheme := "http"
 	if r.TLS != nil {
 		scheme = "https"

@@ -2,14 +2,14 @@ package secure
 
 import (
 	"github.com/julienschmidt/httprouter"
-	"github.com/wscherphof/essix/model/account"
+	"github.com/wscherphof/essix/model"
 	"github.com/wscherphof/secure"
 	"net/http"
 )
 
-func Authentication(w http.ResponseWriter, r *http.Request, optional ...bool) (ret *account.Account) {
+func Authentication(w http.ResponseWriter, r *http.Request, optional ...bool) (ret *model.Account) {
 	if auth := secure.Authentication(w, r, optional...); auth != nil {
-		acc := auth.(account.Account)
+		acc := auth.(model.Account)
 		ret = &acc
 	}
 	return
@@ -35,13 +35,13 @@ func IfSecureHandle(authenticated httprouter.Handle, unauthenticated httprouter.
 
 func init() {
 	// Authentication will be based on a record of model/account
-	var record = account.Account{}
+	var record = model.Account{}
 	// Security keys will be found through an instance of our secureDB implementation of the secure.DB interface
 	var db = &secureDB{}
 	// The validate function will test whether the session still valid
 	var validate = func(src interface{}) (dst interface{}, valid bool) {
 		if src != nil {
-			acc := src.(account.Account)
+			acc := src.(model.Account)
 			// Refresh updates the account's field values & returns the validity of the session
 			valid = acc.Refresh()
 			dst = acc

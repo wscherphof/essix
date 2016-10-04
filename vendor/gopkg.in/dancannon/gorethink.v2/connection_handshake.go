@@ -418,7 +418,7 @@ func (c *connectionHandshakeV1_0) calculateProof(saltedPass []byte, clientNonce,
 	mac.Write([]byte(c.authMsg))
 	clientSignature := mac.Sum(nil)
 	clientProof := make([]byte, len(clientKey))
-	for i, _ := range clientKey {
+	for i := range clientKey {
 		clientProof[i] = clientKey[i] ^ clientSignature[i]
 	}
 

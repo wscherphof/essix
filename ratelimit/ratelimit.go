@@ -3,8 +3,8 @@ package ratelimit
 import (
 	"errors"
 	"github.com/julienschmidt/httprouter"
-	db "github.com/wscherphof/rethinkdb"
 	"github.com/wscherphof/essix/template"
+	db "github.com/wscherphof/rethinkdb"
 	"github.com/wscherphof/secure"
 	"log"
 	"net/http"

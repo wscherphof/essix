@@ -2,14 +2,14 @@ package secure
 
 import (
 	"github.com/julienschmidt/httprouter"
-	"github.com/wscherphof/essix/model/account"
+	"github.com/wscherphof/essix/model"
 	"github.com/wscherphof/essix/template"
 	"github.com/wscherphof/secure"
 	"net/http"
 )
 
-func terminateEmail(r *http.Request, acc *account.Account) (err error, remark string) {
-	return sendEmail(r, acc.UID, acc.Name(), "terminate", acc.TerminateCode, "")
+func terminateEmail(r *http.Request, acc *model.Account) (err error, remark string) {
+	return sendEmail(r, acc.ID, acc.Name(), "terminate", acc.TerminateCode, "")
 }
 
 func TerminateCodeForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {

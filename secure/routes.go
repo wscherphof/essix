@@ -1,17 +1,16 @@
 package secure
 
 import (
+	"github.com/wscherphof/env"
 	"github.com/wscherphof/essix/ratelimit"
 	"github.com/wscherphof/essix/router"
-	"github.com/wscherphof/env"
 )
 
 func init() {
 	var limit = env.GetInt("RATELIMIT", 60)
 
-	router.GET("/account", IfSecureHandle(UpdateAccountForm, SignUpForm))
+	router.GET("/account", SignUpForm)
 	router.POST("/account", ratelimit.Handle(SignUp, limit))
-	router.PUT("/account", SecureHandle(UpdateAccount))
 
 	router.GET("/session", LogInForm)
 	router.POST("/session", ratelimit.Handle(LogIn, limit))

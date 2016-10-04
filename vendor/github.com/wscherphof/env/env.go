@@ -1,8 +1,8 @@
 package env
 
 import (
-	"os"
 	"log"
+	"os"
 	"strconv"
 )
 
@@ -14,7 +14,7 @@ func Get(name string, defaultValue ...string) (value string) {
 		if len(defaultValue) == 1 {
 			value = defaultValue[0]
 		} else {
-			log.Fatal("ERROR: Environment variable " , name, " not set")
+			log.Fatal("ERROR: Environment variable ", name, " not set")
 		}
 	}
 	return
@@ -38,5 +38,5 @@ func GetInt(name string, defaultValue ...int) (value int) {
 	if value, err = strconv.Atoi(stringVal); err != nil {
 		log.Fatal("ERROR: Environment variable ", name, " has value \"", stringVal, "\" while an integer value is expected")
 	}
-	return 
+	return
 }

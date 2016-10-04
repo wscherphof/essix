@@ -32,7 +32,7 @@ func initQueue() {
 }
 
 func enQueue(subject, message string, recipients ...string) (err error) {
-	_, err = db.Insert(table, &emailJob{
+	_, err, _ = db.Insert(table, &emailJob{
 		Created:    time.Now(),
 		Subject:    subject,
 		Message:    message,
