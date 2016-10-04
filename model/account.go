@@ -3,7 +3,6 @@ package model
 import (
 	"errors"
 	"golang.org/x/crypto/bcrypt"
-	"log"
 	"strings"
 )
 
@@ -26,7 +25,7 @@ type Account struct {
 }
 
 func init() {
-	Register(&Account{}, "account")
+	Register(&Account{})
 }
 
 func initAccount(uid string) (account *Account) {
