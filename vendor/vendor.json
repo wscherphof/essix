@@ -55,6 +55,12 @@
 			"revisionTime": "2016-10-03T10:31:25Z"
 		},
 		{
+			"checksumSHA1": "Fs9Xiy7Ilfyd68NRfn6j88etvgI=",
+			"path": "github.com/jordan-wright/email",
+			"revision": "fd703108daeb23d77c124d12978e9b6c4f28f034",
+			"revisionTime": "2016-04-03T17:25:29Z"
+		},
+		{
 			"checksumSHA1": "Farach1xcmsQYrhiUfkwF2rbIaE=",
 			"path": "github.com/julienschmidt/httprouter",
 			"revision": "6aacfd5ab513e34f7e64ea9627ab9670371b34e7",
