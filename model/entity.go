@@ -50,7 +50,8 @@ func (e *Entity) Delete() (err error) {
 	return
 }
 
-var	tables = make(map[string]bool)
+var tables = make(map[string]bool)
+
 func (e *Entity) setTable(table string) {
 	if !tables[table] {
 		if _, err := db.TableCreate(table); err == nil {
@@ -61,6 +62,6 @@ func (e *Entity) setTable(table string) {
 	e.table = table
 }
 
-func Code() string {
+func NewCode() string {
 	return string(util.URLEncode(util.Random()))
 }
