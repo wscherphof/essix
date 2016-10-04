@@ -2,7 +2,6 @@ package model
 
 import (
 	"errors"
-	db "github.com/wscherphof/rethinkdb"
 	"golang.org/x/crypto/bcrypt"
 	"strings"
 	"time"
@@ -15,7 +14,6 @@ var (
 	ErrEmailTaken           = errors.New("ErrEmailTaken")
 	ErrNotActivated         = errors.New("ErrNotActivated")
 	ErrAlreadyActivated     = errors.New("ErrAlreadyActivated")
-	errValidationFailed     = errors.New("errValidationFailed")
 	ErrCodeUnset            = errors.New("ErrCodeUnset")
 	ErrCodeIncorrect        = errors.New("ErrCodeIncorrect")
 	ErrPasswordCodeTimedOut = errors.New("ErrPasswordCodeTimedOut")
@@ -23,7 +21,6 @@ var (
 
 const (
 	pwdCodeTimeOut = 1 * time.Hour
-	accountTable   = "account"
 )
 
 type password struct {
@@ -52,12 +49,8 @@ type passwordCode struct {
 	Value   string
 }
 
-func init() {
-	Table(accountTable)
-}
-
 type Account struct {
-	*Entity          `gorethink:"-"`
+	*Entity
 	PWD              *password
 	ActivationCode   string
 	PasswordCode     *passwordCode
@@ -66,22 +59,19 @@ type Account struct {
 	TerminateCode    string
 }
 
+func initAccount(uid string) (account *Account) {
+	account = &Account{Entity: &Entity{}}
+	account.Init("account", strings.ToLower(uid))
+	return
+}
+
 func NewAccount(uid, pwd1, pwd2 string) (account *Account, err error, conflict bool) {
-	uid = strings.ToLower(uid)
-	if pwd, e, c := newPassword(pwd1, pwd2); e != nil {
-		err, conflict = e, c
-	} else {
-		acc := &Account{
-			Entity:         &Entity{table: accountTable},
-			PWD:            pwd,
-			ActivationCode: Code(),
-		}
-		acc.ID = uid
-		if e, c = acc.New(acc); e != nil {
-			if c {
-				err, conflict = ErrEmailTaken, true
-			} else {
-				err, conflict = e, false
+	acc := initAccount(uid)
+	acc.ActivationCode = Code()
+	if acc.PWD, err, conflict = newPassword(pwd1, pwd2); err == nil {
+		if err, conflict = acc.Create(acc); err != nil {
+			if conflict {
+				err = ErrEmailTaken
 			}
 		} else {
 			account = acc
@@ -114,14 +104,14 @@ func (a *Account) CreatePasswordCode() error {
 		Expires: time.Now().Add(pwdCodeTimeOut),
 		Value:   Code(),
 	}
-	return a.Save(a)
+	return a.Update(a)
 }
 
 func ClearPasswordCode(uid, code string) {
 	if acc, _, _ := getAccount(uid); acc != nil {
 		if acc.PasswordCode.Value == code {
 			acc.PasswordCode = nil
-			acc.Save(acc)
+			acc.Update(acc)
 		}
 	}
 }
@@ -131,7 +121,7 @@ func (a *Account) ChangePassword(code, pwd1, pwd2 string) (err error, conflict b
 		err, conflict = ErrCodeUnset, true
 	} else if time.Now().After(a.PasswordCode.Expires) {
 		a.PasswordCode = nil
-		a.Save(a)
+		a.Update(a)
 		err, conflict = ErrPasswordCodeTimedOut, true
 	} else if code == "" || code != a.PasswordCode.Value {
 		err, conflict = ErrCodeIncorrect, true
@@ -140,7 +130,7 @@ func (a *Account) ChangePassword(code, pwd1, pwd2 string) (err error, conflict b
 	} else {
 		a.PasswordCode = nil
 		a.PWD = pwd
-		err = a.Save(a)
+		err = a.Update(a)
 	}
 	return
 }
@@ -148,14 +138,14 @@ func (a *Account) ChangePassword(code, pwd1, pwd2 string) (err error, conflict b
 func (a *Account) CreateEmailAddressCode(newUID string) error {
 	a.NewUID = newUID
 	a.EmailAddressCode = Code()
-	return a.Save(a)
+	return a.Update(a)
 }
 
 func (a *Account) ClearEmailAddressCode(code string) (err error) {
 	if a.EmailAddressCode == code {
 		a.NewUID = ""
 		a.EmailAddressCode = ""
-		err = a.Save(a)
+		err = a.Update(a)
 	}
 	return
 }
@@ -184,7 +174,7 @@ func (a *Account) CreateTerminateCode(sure bool) (err error, conflict bool) {
 		err, conflict = ErrCodeIncorrect, true
 	} else {
 		a.TerminateCode = Code()
-		err = a.Save(a)
+		err = a.Update(a)
 	}
 	return
 }
@@ -192,7 +182,7 @@ func (a *Account) CreateTerminateCode(sure bool) (err error, conflict bool) {
 func (a *Account) ClearTerminateCode(code string) (err error) {
 	if a.TerminateCode == code {
 		a.TerminateCode = ""
-		err = a.Save(a)
+		err = a.Update(a)
 	}
 	return
 }
@@ -207,8 +197,8 @@ func (a *Account) Terminate(code string, sure bool) (err error, conflict bool) {
 		err, conflict = ErrCodeUnset, true
 	} else if code == "" || code != acc.TerminateCode {
 		err, conflict = ErrCodeIncorrect, true
-	} else if _, e := db.Delete(accountTable, uid); e != nil {
-		err = e
+	} else {
+		err = acc.Delete()
 	}
 	return
 }
@@ -222,8 +212,8 @@ func (a *Account) Refresh() (current bool) {
 }
 
 func getAccount(uid string) (account *Account, err error, conflict bool) {
-	acc := new(Account)
-	if e, found := db.Get(accountTable, strings.ToLower(uid), acc); e != nil {
+	acc := initAccount(uid)
+	if e, found := acc.Read(acc); e != nil {
 		err = e
 	} else if !found {
 		err, conflict = ErrInvalidCredentials, true
@@ -238,7 +228,7 @@ func ActivateAccount(uid string, code string) (account *Account, err error, conf
 		err, conflict = e, c
 	} else if e := acc.activate(code); e != nil {
 		err, conflict = e, true
-	} else if e := acc.Save(acc); e != nil {
+	} else if e := acc.Update(acc); e != nil {
 		err = e
 	} else {
 		account = acc
