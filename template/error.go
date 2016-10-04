@@ -23,7 +23,7 @@ func errorTemplate(w http.ResponseWriter, r *http.Request, err error, conflict b
 	if conflict {
 		code = http.StatusConflict
 	} else {
-		log.Printf("ERROR: %+v: %s %#v", r.URL, err, err)
+		log.Printf("ERROR: %s %+v: %s %#v", r.Method, r.URL, err, err)
 		err = ErrInternalServerError
 	}
 	data := map[string]interface{}{

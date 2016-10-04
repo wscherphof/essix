@@ -1,7 +1,10 @@
 package email
 
 import (
+	"crypto/tls"
 	"errors"
+	"github.com/jordan-wright/email"
+	"github.com/wscherphof/essix/certs"
 	"github.com/wscherphof/essix/config"
 	"log"
 	"net/smtp"
@@ -24,8 +27,10 @@ type emailConfigStore struct {
 var ErrNotSentImmediately = errors.New("ErrNotSentImmediately")
 
 var (
-	conf *emailConfig
-	auth smtp.Auth
+	from      string
+	endpoint  string
+	auth      smtp.Auth
+	tlsConfig *tls.Config
 )
 
 func init() {
@@ -44,16 +49,22 @@ func init() {
 			log.Println("ERROR: email.init() Set error:", err)
 		} else {
 			log.Println("WARNING: email.init() stored a sample email config in DB as a template to fill manually. Restart the server to read it in.")
+			log.Println("INFO: r.db('essix').table('config').get('email').update({Value: {EmailAddress: 'essix@gmail.com', PWD: 'xxx', PortNumber: '587', SmtpServer: 'smtp.gmail.com'}})")
+			log.Println("INFO: (note that in gmail, you need to turn on 'Allow Less Secure Apps to Access Account' through https://myaccount.google.com/u/1/security)")
 		}
 	} else {
-		conf = store.Value
+		conf := store.Value
+		from = conf.EmailAddress
+		endpoint = conf.SmtpServer + ":" + conf.PortNumber
 		auth = smtp.PlainAuth("", conf.EmailAddress, conf.PWD, conf.SmtpServer)
+		tlsConfig = certs.NewConfig(conf.SmtpServer)
 	}
 	initQueue()
 }
 
 func Send(subject, message string, recipients ...string) (err error) {
 	if e := send(subject, message, recipients...); e != nil {
+		log.Println("INFO: error sending email, enqueueing...", e)
 		err = ErrNotSentImmediately
 		if e := enQueue(subject, message, recipients...); e != nil {
 			err = e
@@ -62,11 +73,11 @@ func Send(subject, message string, recipients ...string) (err error) {
 	return
 }
 
-const mime = "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n"
-
 func send(subject, message string, recipients ...string) error {
-	msg := "Subject: " + subject + "\n" + mime + message
-	// log.Println("DEBUG: email.send() msg:", msg)
-	endpoint := conf.SmtpServer + ":" + conf.PortNumber
-	return smtp.SendMail(endpoint, auth, conf.EmailAddress, recipients, []byte(msg))
+	mail := email.NewEmail()
+	mail.From = from
+	mail.To = recipients
+	mail.Subject = subject
+	mail.HTML = []byte(message)
+	return mail.SendWithTLS(endpoint, auth, tlsConfig)
 }

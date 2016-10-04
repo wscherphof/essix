@@ -29,7 +29,7 @@ func (a *Account) Terminate(code string, sure bool) (err error, conflict bool) {
 	} else if code == "" || code != acc.TerminateCode {
 		err, conflict = ErrCodeIncorrect, true
 	} else {
-		err = acc.Delete()
+		err = acc.Delete(acc)
 	}
 	return
 }

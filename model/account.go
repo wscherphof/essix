@@ -3,6 +3,7 @@ package model
 import (
 	"errors"
 	"golang.org/x/crypto/bcrypt"
+	"log"
 	"strings"
 )
 
@@ -10,7 +11,6 @@ var (
 	ErrInvalidCredentials = errors.New("ErrInvalidCredentials")
 	ErrEmailTaken         = errors.New("ErrEmailTaken")
 	ErrNotActivated       = errors.New("ErrNotActivated")
-	ErrAlreadyActivated   = errors.New("ErrAlreadyActivated")
 	ErrCodeUnset          = errors.New("ErrCodeUnset")
 	ErrCodeIncorrect      = errors.New("ErrCodeIncorrect")
 )
@@ -25,9 +25,13 @@ type Account struct {
 	TerminateCode    string
 }
 
+func init() {
+	Register(&Account{}, "account")
+}
+
 func initAccount(uid string) (account *Account) {
 	account = &Account{Entity: &Entity{}}
-	account.Init("account", strings.ToLower(uid))
+	account.Init(strings.ToLower(uid))
 	return
 }
 
@@ -54,17 +58,6 @@ func (a *Account) IsActive() bool {
 	return len(a.ActivationCode) == 0
 }
 
-func (a *Account) activate(code string) (err error) {
-	if a.IsActive() {
-		err = ErrAlreadyActivated
-	} else if code != a.ActivationCode {
-		err = ErrInvalidCredentials
-	} else {
-		a.ActivationCode = ""
-	}
-	return
-}
-
 func (a *Account) Refresh() (current bool) {
 	if saved, e, _ := getAccount(a.ID); e == nil {
 		current = a.PWD.Created.Equal(saved.PWD.Created)
@@ -79,19 +72,6 @@ func getAccount(uid string) (account *Account, err error, conflict bool) {
 		err = e
 	} else if !found {
 		err, conflict = ErrInvalidCredentials, true
-	} else {
-		account = acc
-	}
-	return
-}
-
-func ActivateAccount(uid string, code string) (account *Account, err error, conflict bool) {
-	if acc, e, c := getAccount(uid); e != nil {
-		err, conflict = e, c
-	} else if e := acc.activate(code); e != nil {
-		err, conflict = e, true
-	} else if e := acc.Update(acc); e != nil {
-		err = e
 	} else {
 		account = acc
 	}
