@@ -64,7 +64,7 @@ func init() {
 
 func Send(subject, message string, recipients ...string) (err error) {
 	if e := send(subject, message, recipients...); e != nil {
-		log.Println("WARNING: error sending email, enqueueing...", e)
+		log.Println("INFO: error sending email, enqueueing...", e)
 		err = ErrNotSentImmediately
 		if e := enQueue(subject, message, recipients...); e != nil {
 			err = e

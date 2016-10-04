@@ -35,7 +35,7 @@ func IfSecureHandle(authenticated httprouter.Handle, unauthenticated httprouter.
 
 func init() {
 	// Authentication will be based on a record of model/account
-	var record = model.Account{}
+	var record = model.Account{Entity: &model.Entity{}}
 	// Security keys will be found through an instance of our secureDB implementation of the secure.DB interface
 	var db = &secureDB{}
 	// The validate function will test whether the session still valid
