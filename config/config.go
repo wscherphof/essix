@@ -1,32 +1,23 @@
 package config
 
 import (
-	"errors"
-	db "github.com/wscherphof/rethinkdb"
-	"log"
+	"github.com/wscherphof/essix/entity"
+	"strings"
 )
 
-const (
-	table = "config"
-	pk    = "Key"
-)
+type item struct {
+	*entity.Base
+}
 
 func init() {
-	if _, err := db.TableCreatePK(table, pk); err == nil {
-		log.Println("INFO: table created:", table)
-	}
+	entity.Register("", "config")
 }
 
-func Get(key string, result interface{}) (err error) {
-	if e, found := db.Get(table, key, result); e != nil {
-		err = e
-	} else if !(found) {
-		err = errors.New("Key " + key + " not found in table " + table)
-	}
-	return
+func initItem(key string) *item {
+	return &item{Base: &entity.Base{ID: strings.ToLower(key)}}
 }
 
-func Set(record interface{}) (err error) {
-	_, err = db.InsertUpdate(table, record)
-	return
+func Get(key string, result interface{}) {
+	i := initItem(key)
+
 }

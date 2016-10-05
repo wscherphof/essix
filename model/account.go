@@ -26,7 +26,8 @@ type Account struct {
 }
 
 func init() {
-	entity.Register(&Account{})
+	dummy := initAccount("")
+	dummy.Register(dummy)
 }
 
 func initAccount(uid string) *Account {

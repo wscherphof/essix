@@ -5,47 +5,42 @@ import (
 	"errors"
 	"github.com/jordan-wright/email"
 	"github.com/wscherphof/essix/certs"
-	"github.com/wscherphof/essix/config"
+	"github.com/wscherphof/essix/entity"
 	"log"
 	"net/smtp"
 )
 
-const key = "email"
-
-type emailConfig struct {
+type config struct {
+	*entity.Base
 	EmailAddress string
 	PWD          string
 	SmtpServer   string
 	PortNumber   string
 }
 
-type emailConfigStore struct {
-	Key   string
-	Value *emailConfig
-}
-
-var ErrNotSentImmediately = errors.New("ErrNotSentImmediately")
-
 var (
 	from      string
 	endpoint  string
 	auth      smtp.Auth
 	tlsConfig *tls.Config
+	conf      = &config{
+		Base: &entity.Base{
+			ID:    "email",
+			Table: "config",
+		},
+		EmailAddress: "essix@gmail.com",
+		PWD:          "",
+		SmtpServer:   "smtp.gmail.com",
+		PortNumber:   "587",
+	}
+	ErrNotSentImmediately = errors.New("ErrNotSentImmediately")
 )
 
 func init() {
-	store := &emailConfigStore{
-		Key: "email",
-		Value: &emailConfig{
-			EmailAddress: "essix@gmail.com",
-			PWD:          "",
-			SmtpServer:   "smtp.gmail.com",
-			PortNumber:   "587",
-		},
-	}
-	if err := config.Get(store.Key, store); err != nil {
-		log.Println("WARNING: email.init() Get error:", err)
-		if err := config.Set(store); err != nil {
+	conf.Register(conf)
+	if err, found := conf.Read(conf); err != nil || !found {
+		log.Println("WARNING: email.init() error reading config:", err)
+		if err := conf.Update(conf); err != nil {
 			log.Println("ERROR: email.init() Set error:", err)
 		} else {
 			log.Println("WARNING: email.init() stored a sample email config in DB as a template to fill manually. Restart the server to read it in.")
@@ -53,7 +48,6 @@ func init() {
 			log.Println("INFO: (note that in gmail, you need to turn on 'Allow Less Secure Apps to Access Account' through https://myaccount.google.com/u/1/security)")
 		}
 	} else {
-		conf := store.Value
 		from = conf.EmailAddress
 		endpoint = conf.SmtpServer + ":" + conf.PortNumber
 		auth = smtp.PlainAuth("", conf.EmailAddress, conf.PWD, conf.SmtpServer)
