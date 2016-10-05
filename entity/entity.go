@@ -51,6 +51,9 @@ func (b *Base) Read(result interface{}) (err error, found bool) {
 }
 
 func (b *Base) Update(record interface{}) (err error) {
+	if b.Created.IsZero() {
+		b.Created = time.Now()
+	}
 	b.Modified = time.Now()
 	_, err = db.InsertUpdate(table(record), record)
 	return
