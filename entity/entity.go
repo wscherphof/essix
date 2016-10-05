@@ -22,7 +22,7 @@ func table(record interface{}) string {
 
 func Register(record interface{}) {
 	if _, err := db.TableCreate(table(record)); err == nil {
-		log.Println("INFO: table created:", table)
+		log.Println("INFO: table created:", table(record))
 	}
 }
 
