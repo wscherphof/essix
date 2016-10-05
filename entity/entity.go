@@ -32,7 +32,6 @@ func Token() string {
 
 type Base struct {
 	ID       string `gorethink:"id,omitempty"`
-	table    string `gorethink:"-"`
 	Created  time.Time
 	Modified time.Time
 }
