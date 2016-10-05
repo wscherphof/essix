@@ -13,12 +13,12 @@ import (
 	"os"
 )
 
-var domain string
+var (
+	// Die without a domain
+	domain = env.Get("DOMAIN")
+)
 
 func init() {
-	// Die if domain isn't set
-	domain = env.Get("DOMAIN")
-
 	// Load all messages
 	messages.Init()
 

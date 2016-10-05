@@ -2,6 +2,7 @@ package model
 
 import (
 	"errors"
+	"github.com/wscherphof/essix/entity"
 	"golang.org/x/crypto/bcrypt"
 	"strings"
 )
@@ -15,7 +16,7 @@ var (
 )
 
 type Account struct {
-	*Entity
+	*entity.Base
 	PWD              *password
 	ActivationCode   string
 	PasswordCode     *passwordCode
@@ -25,18 +26,16 @@ type Account struct {
 }
 
 func init() {
-	Register(&Account{})
+	entity.Register(&Account{})
 }
 
-func initAccount(uid string) (account *Account) {
-	account = &Account{Entity: &Entity{}}
-	account.Init(strings.ToLower(uid))
-	return
+func initAccount(uid string) *Account {
+	return &Account{Base: &entity.Base{ID: strings.ToLower(uid)}}
 }
 
 func NewAccount(uid, pwd1, pwd2 string) (account *Account, err error, conflict bool) {
 	acc := initAccount(uid)
-	acc.ActivationCode = NewCode()
+	acc.ActivationCode = entity.Token()
 	if acc.PWD, err, conflict = newPassword(pwd1, pwd2); err == nil {
 		if err, conflict = acc.Create(acc); err != nil {
 			if conflict {
@@ -58,9 +57,12 @@ func (a *Account) IsActive() bool {
 }
 
 func (a *Account) Refresh() (current bool) {
+	if a.Base == nil || a.ID == "" {
+		return false
+	}
 	if saved, e, _ := getAccount(a.ID); e == nil {
-		current = a.PWD.Created.Equal(saved.PWD.Created)
 		*a = *saved
+		current = a.PWD.Created.Equal(saved.PWD.Created)
 	}
 	return
 }

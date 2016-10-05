@@ -2,6 +2,7 @@ package model
 
 import (
 	"errors"
+	"github.com/wscherphof/essix/entity"
 	"golang.org/x/crypto/bcrypt"
 	"time"
 )
@@ -45,7 +46,7 @@ type passwordCode struct {
 func (a *Account) CreatePasswordCode() error {
 	a.PasswordCode = &passwordCode{
 		Expires: time.Now().Add(pwdCodeTimeOut),
-		Value:   NewCode(),
+		Value:   entity.Token(),
 	}
 	return a.Update(a)
 }
