@@ -1,34 +1,48 @@
 package secure
 
 import (
-	"github.com/wscherphof/essix/config"
+	"errors"
+	"github.com/wscherphof/essix/entity"
 	"github.com/wscherphof/secure"
 	"log"
 )
 
-type secureConfigStore struct {
-	Key   string
-	Value *secure.Config
+type config struct {
+	*entity.Base
+	*secure.Config
 }
 
-var store = &secureConfigStore{
-	Key: "secure",
+var conf = &config{
+	Base: &entity.Base{
+		ID:    "secure",
+		Table: "config",
+	},
+}
+
+var ErrEmptyResult = errors.New("ErrEmptyResult")
+
+func init() {
+	conf.Register(conf)
 }
 
 type secureDB struct{}
 
 func (s *secureDB) Fetch(dst *secure.Config) (err error) {
-	if err = config.Get(store.Key, store); err != nil {
+	if e, found := conf.Read(conf); e != nil {
+		err = e
+		log.Println("WARNING: SecureDB.Fetch():", err)
+	} else if !found {
+		err = ErrEmptyResult
 		log.Println("WARNING: SecureDB.Fetch():", err)
 	} else {
-		*dst = *store.Value
+		*dst = *conf.Config
 	}
 	return
 }
 
 func (s *secureDB) Upsert(src *secure.Config) (err error) {
-	store.Value = src
-	if err = config.Set(store); err != nil {
+	conf.Config = src
+	if err = conf.Update(conf); err != nil {
 		log.Println("WARNING: SecureDB.Upsert():", err)
 	}
 	return
