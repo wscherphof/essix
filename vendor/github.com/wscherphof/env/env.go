@@ -7,12 +7,13 @@ import (
 )
 
 // Get returns the value of the environment value named name,
-// or returns the default value if given,
+// or sets and returns the default value if given,
 // or else logs a fatal error.
 func Get(name string, defaultValue ...string) (value string) {
 	if value = os.Getenv(name); value == "" {
 		if len(defaultValue) == 1 {
 			value = defaultValue[0]
+			Set(name, value)
 		} else {
 			log.Fatal("ERROR: Environment variable ", name, " not set")
 		}

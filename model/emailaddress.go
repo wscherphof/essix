@@ -1,8 +1,12 @@
 package model
 
+import (
+	"github.com/wscherphof/essix/entity"
+)
+
 func (a *Account) CreateEmailAddressCode(newUID string) error {
 	a.NewUID = newUID
-	a.EmailAddressCode = NewCode()
+	a.EmailAddressCode = entity.Token()
 	return a.Update(a)
 }
 

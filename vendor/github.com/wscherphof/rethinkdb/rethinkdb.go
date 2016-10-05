@@ -7,65 +7,26 @@ import (
 )
 
 var (
-	s      *r.Session
-	dbname string
+	Session *r.Session
+	DB      string
 )
 
 func init() {
-	dbname = env.Get("DB_NAME", "essix")
-	address := env.Get("DB_HOST", "db1") + ":" + env.Get("DB_PORT", "28015")
-	if session, err := r.Connect(r.ConnectOpts{Address: address}); err != nil {
+	DB = env.Get("DB_NAME", "essix")
+	address := env.Get("DB_ADDRESS", "db1")
+	var err error
+	if Session, err = r.Connect(r.ConnectOpts{Address: address}); err != nil {
 		log.Fatalln("ERROR:", err)
-	} else {
-		if _, err := r.DBCreate(dbname).RunWrite(session); err == nil {
-			log.Println("INFO: created DB", dbname, "@", address)
-		}
-		s = session
-		log.Println("INFO: connected to DB", dbname, "@", address)
 	}
-}
-
-func insert(table string, record interface{}, opts ...r.InsertOpts) (response r.WriteResponse, err error, conflict bool) {
-	response, err = r.DB(dbname).Table(table).Insert(record, opts...).RunWrite(s)
-	conflict = r.IsConflictErr(err)
-	return
-}
-
-func Insert(table string, record interface{}) (response r.WriteResponse, err error, conflict bool) {
-	return insert(table, record)
-}
-
-func InsertUpdate(table string, record interface{}, id ...string) (response r.WriteResponse, err error) {
-	if len(id) == 1 {
-		response, err = r.DB(dbname).Table(table).Get(id[0]).Update(record).RunWrite(s)
+	if _, err := r.DBCreate(DB).RunWrite(Session); err == nil {
+		log.Println("INFO: created DB", DB, "@", address)
 	} else {
-		response, err, _ = insert(table, record, r.InsertOpts{
-			Conflict: "update",
-		})
+		log.Println("INFO: connected to DB", DB, "@", address)
 	}
-	return
-}
-
-// Unused, untested:
-
-// func Literal (args ...interface{}) r.Term {
-//   return r.DB(dbname).Literal(args)
-// }
-
-// func Update (table, key string, arg interface{}) (r.WriteResponse, error) {
-//   return r.DB(dbname).Table(table).Get(key).Update(arg).RunWrite(s)
-// }
-
-func Delete(table, key string) (r.WriteResponse, error) {
-	return r.DB(dbname).Table(table).Get(key).Delete().RunWrite(s)
-}
-
-func Truncate(table string) (r.WriteResponse, error) {
-	return r.DB(dbname).Table(table).Delete().RunWrite(s)
 }
 
 func tableCreate(table string, opts ...r.TableCreateOpts) (r.WriteResponse, error) {
-	return r.DB(dbname).TableCreate(table, opts...).RunWrite(s)
+	return r.DB(DB).TableCreate(table, opts...).RunWrite(Session)
 }
 
 func TableCreate(table string) (r.WriteResponse, error) {
@@ -79,7 +40,69 @@ func TableCreatePK(table, pk string) (r.WriteResponse, error) {
 }
 
 func IndexCreate(table, field string) (r.WriteResponse, error) {
-	return r.DB(dbname).Table(table).IndexCreate(field).RunWrite(s)
+	return r.DB(DB).Table(table).IndexCreate(field).RunWrite(Session)
+}
+
+func insert(table string, record interface{}, opts ...r.InsertOpts) (response r.WriteResponse, err error, conflict bool) {
+	response, err = r.DB(DB).Table(table).Insert(record, opts...).RunWrite(Session)
+	conflict = r.IsConflictErr(err)
+	return
+}
+
+func Insert(table string, record interface{}) (response r.WriteResponse, err error, conflict bool) {
+	return insert(table, record)
+}
+
+func Get(table, key string, result interface{}) (err error, found bool) {
+	cursor, e := r.DB(DB).Table(table).Get(key).Run(Session)
+	if cursor != nil {
+		defer cursor.Close()
+	}
+	if e != nil {
+		err = e
+	} else if e = cursor.One(result); e == nil {
+		found = true
+	} else if e != r.ErrEmptyResult {
+		err = e
+	}
+	return
+}
+
+func One(table string, result interface{}) (err error, found bool) {
+	cursor, e := r.DB(DB).Table(table).Run(Session)
+	if cursor != nil {
+		defer cursor.Close()
+	}
+	if e != nil {
+		err = e
+	} else if e = cursor.One(result); e == nil {
+		found = true
+	} else if e != r.ErrEmptyResult {
+		err = e
+	}
+	return
+}
+
+func All(table string) (cursor *r.Cursor, err error) {
+	return r.DB(DB).Table(table).Run(Session)
+}
+
+func InsertUpdate(table string, record interface{}, id ...string) (response r.WriteResponse, err error) {
+	if len(id) == 1 {
+		response, err = r.DB(DB).Table(table).Get(id[0]).Update(record).RunWrite(Session)
+	} else {
+		response, err, _ = insert(table, record, r.InsertOpts{
+			Conflict: "update",
+		})
+	}
+	return
+}
+func Delete(table, key string) (r.WriteResponse, error) {
+	return r.DB(DB).Table(table).Get(key).Delete().RunWrite(Session)
+}
+
+func Truncate(table string) (r.WriteResponse, error) {
+	return r.DB(DB).Table(table).Delete().RunWrite(Session)
 }
 
 func Between(table, index string, low, high interface{}, includeLeft, includeRight bool) r.Term {
@@ -102,43 +125,9 @@ func Between(table, index string, low, high interface{}, includeLeft, includeRig
 	if high == nil {
 		low = r.MaxVal
 	}
-	return r.DB(dbname).Table(table).Between(low, high, optArgs)
+	return r.DB(DB).Table(table).Between(low, high, optArgs)
 }
 
 func DeleteTerm(term r.Term) (r.WriteResponse, error) {
-	return term.Delete().RunWrite(s)
-}
-
-func Get(table, key string, result interface{}) (err error, found bool) {
-	cursor, e := r.DB(dbname).Table(table).Get(key).Run(s)
-	if cursor != nil {
-		defer cursor.Close()
-	}
-	if e != nil {
-		err = e
-	} else if e = cursor.One(result); e == nil {
-		found = true
-	} else if e != r.ErrEmptyResult {
-		err = e
-	}
-	return
-}
-
-func One(table string, result interface{}) (err error, found bool) {
-	cursor, e := r.DB(dbname).Table(table).Run(s)
-	if cursor != nil {
-		defer cursor.Close()
-	}
-	if e != nil {
-		err = e
-	} else if e = cursor.One(result); e == nil {
-		found = true
-	} else if e != r.ErrEmptyResult {
-		err = e
-	}
-	return
-}
-
-func All(table string) (cursor *r.Cursor, err error) {
-	return r.DB(dbname).Table(table).Run(s)
+	return term.Delete().RunWrite(Session)
 }

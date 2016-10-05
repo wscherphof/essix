@@ -1,10 +1,14 @@
 package model
 
+import (
+	"github.com/wscherphof/essix/entity"
+)
+
 func (a *Account) CreateTerminateCode(sure bool) (err error, conflict bool) {
 	if !sure {
 		err, conflict = ErrCodeIncorrect, true
 	} else {
-		a.TerminateCode = NewCode()
+		a.TerminateCode = entity.Token()
 		err = a.Update(a)
 	}
 	return
