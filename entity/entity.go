@@ -17,10 +17,6 @@ var (
 	tables                 = make(map[string]string, 100)
 )
 
-type Cursor struct {
-	*db.Cursor
-}
-
 func getType(record interface{}) string {
 	tpe := fmt.Sprintf("%T", record)
 	return typeReplacer.Replace(tpe)
@@ -45,6 +41,10 @@ func tbl(record interface{}) string {
 
 func Token() string {
 	return string(util.URLEncode(util.Random()))
+}
+
+type Cursor struct {
+	*db.Cursor
 }
 
 type Base struct {
