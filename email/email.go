@@ -37,7 +37,7 @@ var (
 
 func init() {
 	entity.Register(conf, "config")
-	if err, found := conf.Read(conf); err != nil || !found {
+	if err := conf.Read(conf); err != nil {
 		log.Println("WARNING: email.init() error reading config:", err)
 		if err := conf.Update(conf); err != nil {
 			log.Println("ERROR: email.init() Set error:", err)

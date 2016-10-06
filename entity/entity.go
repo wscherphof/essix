@@ -11,6 +11,7 @@ import (
 )
 
 var (
+	ErrEmptyResult         = db.ErrEmptyResult
 	ErrDuplicatePrimaryKey = errors.New("ErrDuplicatePrimaryKey")
 	typeReplacer           = strings.NewReplacer("*", "", ".", "_")
 	tables                 = make(map[string]string, 100)
@@ -57,8 +58,11 @@ func (b *Base) Create(record interface{}) (err error, conflict bool) {
 	return
 }
 
-func (b *Base) Read(result interface{}) (err error, found bool) {
-	return db.Get(tbl(result), b.ID, result)
+func (b *Base) Read(result interface{}) (err error) {
+	if err = db.Get(tbl(result), b.ID, result); err == db.ErrEmptyResult {
+		err = ErrEmptyResult
+	}
+	return
 }
 
 func (b *Base) Update(record interface{}) (err error) {

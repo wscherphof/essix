@@ -1,7 +1,6 @@
 package secure
 
 import (
-	"errors"
 	"github.com/wscherphof/essix/entity"
 	"github.com/wscherphof/secure"
 	"log"
@@ -18,8 +17,6 @@ var conf = &config{
 	},
 }
 
-var ErrEmptyResult = errors.New("ErrEmptyResult")
-
 func init() {
 	entity.Register(conf, "config")
 }
@@ -27,11 +24,8 @@ func init() {
 type secureDB struct{}
 
 func (s *secureDB) Fetch(dst *secure.Config) (err error) {
-	if e, found := conf.Read(conf); e != nil {
+	if e := conf.Read(conf); e != nil {
 		err = e
-		log.Println("WARNING: SecureDB.Fetch():", err)
-	} else if !found {
-		err = ErrEmptyResult
 		log.Println("WARNING: SecureDB.Fetch():", err)
 	} else {
 		*dst = *conf.Config

@@ -77,13 +77,13 @@ type client struct {
 
 func getClient(ip string) (c *client) {
 	c = new(client)
-	err, found := db.Get(table, ip, c)
-	if err != nil {
-		log.Printf("WARNING: error getting from table %v: %v", table, err)
-	}
-	if !found {
-		c.IP = ip
-		c.Requests = make(requests)
+	if err := db.Get(table, ip, c); err != nil {
+		if err == db.ErrEmptyResult {
+			c.IP = ip
+			c.Requests = make(requests)
+		} else {
+			log.Printf("WARNING: error getting from table %v: %v", table, err)
+		}
 	}
 	return
 }

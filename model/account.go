@@ -69,10 +69,12 @@ func (a *Account) Refresh() (current bool) {
 
 func getAccount(uid string) (account *Account, err error, conflict bool) {
 	acc := initAccount(uid)
-	if e, found := acc.Read(acc); e != nil {
-		err = e
-	} else if !found {
-		err, conflict = ErrInvalidCredentials, true
+	if e := acc.Read(acc); e != nil {
+		if e == entity.ErrEmptyResult {
+			err, conflict = ErrInvalidCredentials, true
+		} else {
+			err = e
+		}
 	} else {
 		account = acc
 	}
