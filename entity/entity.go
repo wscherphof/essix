@@ -117,8 +117,8 @@ func Index(record interface{}, column string) *indexType {
 	return &indexType{tbl(record), column}
 }
 
-func (i *indexType) Between(low, high interface{}, includeLeft, includeRight bool) *term {
-	return &term{db.Between(i.table, i.column, low, high, includeLeft, includeRight)}
+func (i *indexType) Between(low interface{}, includeLow bool, high interface{}, includeHigh bool) *term {
+	return &term{db.Between(i.table, i.column, low, includeLow, high, includeHigh)}
 }
 
 type term struct {

@@ -111,7 +111,7 @@ func Truncate(table string) (r.WriteResponse, error) {
 	return r.DB(DB).Table(table).Delete().RunWrite(Session)
 }
 
-func Between(table, index string, low, high interface{}, includeLeft, includeRight bool) Term {
+func Between(table, index string, low interface{}, includeLow bool, high interface{}, includeHigh bool) Term {
 	optArgs := r.BetweenOpts{
 		LeftBound:  "closed",
 		RightBound: "closed",
@@ -119,10 +119,10 @@ func Between(table, index string, low, high interface{}, includeLeft, includeRig
 	if len(index) > 0 {
 		optArgs.Index = index
 	}
-	if includeLeft {
+	if includeLow {
 		optArgs.LeftBound = "open"
 	}
-	if includeRight {
+	if includeHigh {
 		optArgs.RightBound = "open"
 	}
 	if low == nil {

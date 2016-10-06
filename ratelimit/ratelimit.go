@@ -21,6 +21,8 @@ const (
 	clearInterval = time.Hour
 )
 
+type path string
+
 type requests map[path]time.Time
 
 type client struct {
@@ -37,7 +39,7 @@ func init() {
 			time.Sleep(clearInterval)
 			limit := time.Now().Unix()
 			index := entity.Index(&client{}, "Clear")
-			selection := index.Between(nil, limit, true, true)
+			selection := index.Between(nil, true, limit, true)
 			if deleted, err := selection.Delete(); err != nil {
 				log.Printf("WARNING: rate limit clearing failed: %v", err)
 			} else {
@@ -46,8 +48,6 @@ func init() {
 		}
 	}()
 }
-
-type path string
 
 type token struct {
 	IP        string
