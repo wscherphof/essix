@@ -2,7 +2,7 @@ package model
 
 import (
 	"errors"
-	"github.com/wscherphof/essix/entity"
+	"github.com/wscherphof/entity"
 	"github.com/wscherphof/essix/util"
 	"golang.org/x/crypto/bcrypt"
 	"strings"
