@@ -4,8 +4,8 @@ import (
 	"crypto/tls"
 	"errors"
 	"github.com/jordan-wright/email"
+	"github.com/wscherphof/certs"
 	"github.com/wscherphof/entity"
-	"github.com/wscherphof/essix/certs"
 	"log"
 	"net/smtp"
 )
