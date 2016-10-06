@@ -11,6 +11,8 @@ import (
 )
 
 var (
+	Session                = db.Session
+	DB                     = db.DB
 	ErrEmptyResult         = db.ErrEmptyResult
 	ErrDuplicatePrimaryKey = errors.New("ErrDuplicatePrimaryKey")
 	typeReplacer           = strings.NewReplacer("*", "", ".", "_")
@@ -24,29 +26,50 @@ type Cursor struct {
 	*db.Cursor
 }
 
-type Base struct {
-	ID       string `gorethink:"id,omitempty"`
-	Created  time.Time
-	Modified time.Time
+type Term struct {
+	*db.Term
+}
+
+type tableType struct {
+	name string
+	new  bool
 }
 
 var tables = make(map[string]string, 100)
 
-func Register(record interface{}, table ...string) {
+func getType(record interface{}) string {
+	tpe := fmt.Sprintf("%T", record)
+	return typeReplacer.Replace(tpe)
+}
+
+func Register(record interface{}, table ...string) (ret *tableType) {
 	tpe := getType(record)
 	tbl := tpe
 	if len(table) == 1 {
 		tbl = table[0]
 	}
 	tables[tpe] = tbl
+	ret = &tableType{name: tbl}
 	if _, err := db.TableCreate(tbl); err == nil {
+		ret.new = true
 		log.Println("INFO: table created:", tbl)
 	}
+	return
 }
 
-func getType(record interface{}) string {
-	tpe := fmt.Sprintf("%T", record)
-	return typeReplacer.Replace(tpe)
+func (t *tableType) Index(column string) *tableType {
+	if _, err := db.IndexCreate(t.name, column); err != nil {
+		if t.new {
+			log.Println("ERROR: failed to create index:", t.name, column, err)
+		}
+	}
+	return t
+}
+
+type Base struct {
+	ID       string `gorethink:"id,omitempty"`
+	Created  time.Time
+	Modified time.Time
 }
 
 func tbl(record interface{}) string {
