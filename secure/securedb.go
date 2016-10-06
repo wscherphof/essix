@@ -1,7 +1,7 @@
 package secure
 
 import (
-	"github.com/wscherphof/essix/entity"
+	"github.com/wscherphof/entity"
 	"github.com/wscherphof/secure"
 	"log"
 )

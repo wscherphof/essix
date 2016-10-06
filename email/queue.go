@@ -1,7 +1,7 @@
 package email
 
 import (
-	"github.com/wscherphof/essix/entity"
+	"github.com/wscherphof/entity"
 	"log"
 	"time"
 )
