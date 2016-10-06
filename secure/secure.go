@@ -3,6 +3,7 @@ package secure
 import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/wscherphof/essix/model"
+	"github.com/wscherphof/essix/secure/db"
 	"github.com/wscherphof/secure"
 	"net/http"
 )
@@ -37,7 +38,7 @@ func init() {
 	// Authentication will be based on a record of model/account
 	var record = model.Account{}
 	// Security keys will be found through an instance of our secureDB implementation of the secure.DB interface
-	var db = &secureDB{}
+	var secureDB = db.New()
 	// The validate function will test whether the session still valid
 	var validate = func(src interface{}) (dst interface{}, valid bool) {
 		if src != nil {
@@ -48,5 +49,5 @@ func init() {
 		}
 		return
 	}
-	secure.Configure(record, db, validate)
+	secure.Configure(record, secureDB, validate)
 }
