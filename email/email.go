@@ -25,8 +25,7 @@ var (
 	tlsConfig *tls.Config
 	conf      = &config{
 		Base: &entity.Base{
-			ID:    "email",
-			Table: "config",
+			ID: "email",
 		},
 		EmailAddress: "essix@gmail.com",
 		PWD:          "",
@@ -37,14 +36,14 @@ var (
 )
 
 func init() {
-	conf.Register(conf)
+	entity.Register(conf, "config")
 	if err, found := conf.Read(conf); err != nil || !found {
 		log.Println("WARNING: email.init() error reading config:", err)
 		if err := conf.Update(conf); err != nil {
 			log.Println("ERROR: email.init() Set error:", err)
 		} else {
 			log.Println("WARNING: email.init() stored a sample email config in DB as a template to fill manually. Restart the server to read it in.")
-			log.Println("INFO: r.db('essix').table('config').get('email').update({Value: {EmailAddress: 'essix@gmail.com', PWD: 'xxx', PortNumber: '587', SmtpServer: 'smtp.gmail.com'}})")
+			log.Println("INFO: r.db('essix').table('config').get('email').update({EmailAddress: 'essix@gmail.com', PWD: 'xxx', PortNumber: '587', SmtpServer: 'smtp.gmail.com'})")
 			log.Println("INFO: (note that in gmail, you need to turn on 'Allow Less Secure Apps to Access Account' through https://myaccount.google.com/u/1/security)")
 		}
 	} else {

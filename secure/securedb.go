@@ -14,15 +14,14 @@ type config struct {
 
 var conf = &config{
 	Base: &entity.Base{
-		ID:    "secure",
-		Table: "config",
+		ID: "secure",
 	},
 }
 
 var ErrEmptyResult = errors.New("ErrEmptyResult")
 
 func init() {
-	conf.Register(conf)
+	entity.Register(conf, "config")
 }
 
 type secureDB struct{}
