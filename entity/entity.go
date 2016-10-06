@@ -26,10 +26,6 @@ type Cursor struct {
 	*db.Cursor
 }
 
-type Term struct {
-	*db.Term
-}
-
 type tableType struct {
 	name string
 	new  bool
@@ -109,5 +105,28 @@ func (b *Base) Update(record interface{}) (err error) {
 
 func (b *Base) Delete(record interface{}) (err error) {
 	_, err = db.Delete(tbl(record), b.ID)
+	return
+}
+
+// TODO: check if this type can be private
+type Term struct {
+	term db.Term
+}
+
+type indexType struct {
+	table  string
+	column string
+}
+
+func Index(record interface{}, column string) *indexType {
+	return &indexType{tbl(record), column}
+}
+
+func (i *indexType) Between(low, high interface{}, includeLeft, includeRight bool) *Term {
+	return &Term{db.Between(i.table, i.column, low, high, includeLeft, includeRight)}
+}
+
+func (t *Term) Delete() (err error) {
+	_, err = db.DeleteTerm(t.term)
 	return
 }
