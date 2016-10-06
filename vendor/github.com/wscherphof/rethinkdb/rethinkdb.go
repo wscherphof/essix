@@ -7,8 +7,9 @@ import (
 )
 
 var (
-	Session *r.Session
-	DB      string
+	Session        *r.Session
+	DB             string
+	ErrEmptyResult = r.ErrEmptyResult
 )
 
 func init() {
@@ -53,32 +54,28 @@ func Insert(table string, record interface{}) (response r.WriteResponse, err err
 	return insert(table, record)
 }
 
-func Get(table, key string, result interface{}) (err error, found bool) {
+func Get(table, key string, result interface{}) (err error) {
 	cursor, e := r.DB(DB).Table(table).Get(key).Run(Session)
 	if cursor != nil {
 		defer cursor.Close()
 	}
 	if e != nil {
 		err = e
-	} else if e = cursor.One(result); e == nil {
-		found = true
-	} else if e != r.ErrEmptyResult {
-		err = e
+	} else if err = cursor.One(result); err == r.ErrEmptyResult {
+		err = ErrEmptyResult
 	}
 	return
 }
 
-func One(table string, result interface{}) (err error, found bool) {
+func One(table string, result interface{}) (err error) {
 	cursor, e := r.DB(DB).Table(table).Run(Session)
 	if cursor != nil {
 		defer cursor.Close()
 	}
 	if e != nil {
 		err = e
-	} else if e = cursor.One(result); e == nil {
-		found = true
-	} else if e != r.ErrEmptyResult {
-		err = e
+	} else if err = cursor.One(result); err == r.ErrEmptyResult {
+		err = ErrEmptyResult
 	}
 	return
 }
