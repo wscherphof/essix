@@ -12,6 +12,10 @@ var (
 	ErrEmptyResult = r.ErrEmptyResult
 )
 
+type Cursor struct {
+	*r.Cursor
+}
+
 func init() {
 	DB = env.Get("DB_NAME", "essix")
 	address := env.Get("DB_ADDRESS", "db1")
@@ -80,8 +84,9 @@ func One(table string, result interface{}) (err error) {
 	return
 }
 
-func All(table string) (cursor *r.Cursor, err error) {
-	return r.DB(DB).Table(table).Run(Session)
+func All(table string) (*Cursor, error) {
+	c, e := r.DB(DB).Table(table).Run(Session)
+	return &Cursor{Cursor: c}, e
 }
 
 func InsertUpdate(table string, record interface{}, id ...string) (response r.WriteResponse, err error) {

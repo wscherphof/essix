@@ -52,7 +52,6 @@ func init() {
 		auth = smtp.PlainAuth("", conf.EmailAddress, conf.PWD, conf.SmtpServer)
 		tlsConfig = certs.NewConfig(conf.SmtpServer)
 	}
-	initQueue()
 }
 
 func Send(subject, message string, recipients ...string) (err error) {
