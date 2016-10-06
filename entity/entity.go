@@ -17,6 +17,10 @@ var (
 	tables                 = make(map[string]string, 100)
 )
 
+type Cursor struct {
+	*db.Cursor
+}
+
 func getType(record interface{}) string {
 	tpe := fmt.Sprintf("%T", record)
 	return typeReplacer.Replace(tpe)
@@ -63,6 +67,11 @@ func (b *Base) Read(result interface{}) (err error) {
 		err = ErrEmptyResult
 	}
 	return
+}
+
+func ReadAll(record interface{}) (*Cursor, error) {
+	c, e := db.All(tbl(record))
+	return &Cursor{Cursor: c}, e
 }
 
 func (b *Base) Update(record interface{}) (err error) {
