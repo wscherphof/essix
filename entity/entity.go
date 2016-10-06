@@ -3,7 +3,6 @@ package entity
 import (
 	"errors"
 	"fmt"
-	"github.com/wscherphof/essix/util"
 	db "github.com/wscherphof/rethinkdb"
 	"log"
 	"strings"
@@ -17,10 +16,6 @@ var (
 	ErrDuplicatePrimaryKey = errors.New("ErrDuplicatePrimaryKey")
 	typeReplacer           = strings.NewReplacer("*", "", ".", "_")
 )
-
-func Token() string {
-	return string(util.URLEncode(util.Random()))
-}
 
 type Cursor struct {
 	*db.Cursor
