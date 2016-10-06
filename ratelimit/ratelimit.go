@@ -39,7 +39,7 @@ func init() {
 			time.Sleep(clearInterval)
 			limit := time.Now().Unix()
 			index := entity.Index(&client{}, "Clear")
-			selection := index.Between(nil, limit, true, true)
+			selection := index.Between(nil, true, limit, true)
 			if deleted, err := selection.Delete(); err != nil {
 				log.Printf("WARNING: rate limit clearing failed: %v", err)
 			} else {
