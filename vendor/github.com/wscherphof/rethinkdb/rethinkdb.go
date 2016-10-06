@@ -16,6 +16,10 @@ type Cursor struct {
 	*r.Cursor
 }
 
+type Term struct {
+	*r.Term
+}
+
 func init() {
 	DB = env.Get("DB_NAME", "essix")
 	address := env.Get("DB_ADDRESS", "db1")
@@ -107,7 +111,7 @@ func Truncate(table string) (r.WriteResponse, error) {
 	return r.DB(DB).Table(table).Delete().RunWrite(Session)
 }
 
-func Between(table, index string, low, high interface{}, includeLeft, includeRight bool) r.Term {
+func Between(table, index string, low, high interface{}, includeLeft, includeRight bool) Term {
 	optArgs := r.BetweenOpts{
 		LeftBound:  "closed",
 		RightBound: "closed",
@@ -127,9 +131,10 @@ func Between(table, index string, low, high interface{}, includeLeft, includeRig
 	if high == nil {
 		low = r.MaxVal
 	}
-	return r.DB(DB).Table(table).Between(low, high, optArgs)
+	term := r.DB(DB).Table(table).Between(low, high, optArgs)
+	return Term{Term: &term}
 }
 
-func DeleteTerm(term r.Term) (r.WriteResponse, error) {
+func DeleteTerm(term Term) (r.WriteResponse, error) {
 	return term.Delete().RunWrite(Session)
 }

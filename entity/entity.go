@@ -11,46 +11,70 @@ import (
 )
 
 var (
+	Session                = db.Session
+	DB                     = db.DB
 	ErrEmptyResult         = db.ErrEmptyResult
 	ErrDuplicatePrimaryKey = errors.New("ErrDuplicatePrimaryKey")
 	typeReplacer           = strings.NewReplacer("*", "", ".", "_")
-	tables                 = make(map[string]string, 100)
 )
+
+func Token() string {
+	return string(util.URLEncode(util.Random()))
+}
 
 type Cursor struct {
 	*db.Cursor
 }
+
+type Term struct {
+	*db.Term
+}
+
+type tableType struct {
+	name string
+	new  bool
+}
+
+var tables = make(map[string]string, 100)
 
 func getType(record interface{}) string {
 	tpe := fmt.Sprintf("%T", record)
 	return typeReplacer.Replace(tpe)
 }
 
-func Register(record interface{}, table ...string) {
+func Register(record interface{}, table ...string) (ret *tableType) {
 	tpe := getType(record)
 	tbl := tpe
 	if len(table) == 1 {
 		tbl = table[0]
 	}
 	tables[tpe] = tbl
+	ret = &tableType{name: tbl}
 	if _, err := db.TableCreate(tbl); err == nil {
+		ret.new = true
 		log.Println("INFO: table created:", tbl)
 	}
+	return
 }
 
-func tbl(record interface{}) string {
-	tpe := getType(record)
-	return tables[tpe]
-}
-
-func Token() string {
-	return string(util.URLEncode(util.Random()))
+func (t *tableType) Index(column string) *tableType {
+	if _, err := db.IndexCreate(t.name, column); err != nil {
+		if t.new {
+			log.Println("ERROR: failed to create index:", t.name, column, err)
+		}
+	}
+	return t
 }
 
 type Base struct {
 	ID       string `gorethink:"id,omitempty"`
 	Created  time.Time
 	Modified time.Time
+}
+
+func tbl(record interface{}) string {
+	tpe := getType(record)
+	return tables[tpe]
 }
 
 func (b *Base) Create(record interface{}) (err error, conflict bool) {
