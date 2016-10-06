@@ -26,10 +26,6 @@ type Cursor struct {
 	*db.Cursor
 }
 
-type Term struct {
-	*db.Term
-}
-
 type tableType struct {
 	name string
 	new  bool
@@ -110,4 +106,26 @@ func (b *Base) Update(record interface{}) (err error) {
 func (b *Base) Delete(record interface{}) (err error) {
 	_, err = db.Delete(tbl(record), b.ID)
 	return
+}
+
+type indexType struct {
+	table  string
+	column string
+}
+
+func Index(record interface{}, column string) *indexType {
+	return &indexType{tbl(record), column}
+}
+
+func (i *indexType) Between(low, high interface{}, includeLeft, includeRight bool) *term {
+	return &term{db.Between(i.table, i.column, low, high, includeLeft, includeRight)}
+}
+
+type term struct {
+	term db.Term
+}
+
+func (t *term) Delete() (int, error) {
+	resp, e := db.DeleteTerm(t.term)
+	return resp.Deleted, e
 }
