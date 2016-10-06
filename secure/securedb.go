@@ -11,17 +11,17 @@ type config struct {
 	*secure.Config
 }
 
+func init() {
+	entity.Register(&config{}, "config")
+}
+
+type secureDB struct{}
+
 var conf = &config{
 	Base: &entity.Base{
 		ID: "secure",
 	},
 }
-
-func init() {
-	entity.Register(conf, "config")
-}
-
-type secureDB struct{}
 
 func (s *secureDB) Fetch(dst *secure.Config) (err error) {
 	if e := conf.Read(conf); e != nil {
