@@ -67,6 +67,12 @@
 			"revisionTime": "2015-07-08T21:54:00Z"
 		},
 		{
+			"checksumSHA1": "FQ5l6rMM2Zr3txypifE/vtnqzBc=",
+			"path": "github.com/wscherphof/certs",
+			"revision": "991f4ebba8374ddcef3c56fcc7dd53635cb1cdc5",
+			"revisionTime": "2016-10-06T14:10:24Z"
+		},
+		{
 			"checksumSHA1": "70rAlhGzgdtI/FXgp/v2mzemQog=",
 			"path": "github.com/wscherphof/entity",
 			"revision": "abb6a0db00a778aa04e9d755ae1680c3188a465d",
