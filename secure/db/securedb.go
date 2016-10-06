@@ -1,4 +1,4 @@
-package secure
+package db
 
 import (
 	"github.com/wscherphof/entity"
@@ -15,7 +15,11 @@ func init() {
 	entity.Register(&config{}, "config")
 }
 
-type secureDB struct{}
+func New() *db {
+	return &db{}
+}
+
+type db struct{}
 
 var conf = &config{
 	Base: &entity.Base{
@@ -23,7 +27,7 @@ var conf = &config{
 	},
 }
 
-func (s *secureDB) Fetch(dst *secure.Config) (err error) {
+func (*db) Fetch(dst *secure.Config) (err error) {
 	if e := conf.Read(conf); e != nil {
 		err = e
 		log.Println("WARNING: SecureDB.Fetch():", err)
@@ -33,7 +37,7 @@ func (s *secureDB) Fetch(dst *secure.Config) (err error) {
 	return
 }
 
-func (s *secureDB) Upsert(src *secure.Config) (err error) {
+func (*db) Upsert(src *secure.Config) (err error) {
 	conf.Config = src
 	if err = conf.Update(conf); err != nil {
 		log.Println("WARNING: SecureDB.Upsert():", err)
