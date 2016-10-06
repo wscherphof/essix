@@ -3,8 +3,8 @@ package ratelimit
 import (
 	"errors"
 	"github.com/julienschmidt/httprouter"
+	"github.com/wscherphof/essix/entity"
 	"github.com/wscherphof/essix/template"
-	db "github.com/wscherphof/rethinkdb"
 	"github.com/wscherphof/secure"
 	"log"
 	"net/http"
@@ -18,33 +18,33 @@ var (
 )
 
 const (
-	table         = "ratelimit"
-	index         = "Clear"
-	pk            = "IP"
 	clearInterval = time.Hour
 )
 
+type requests map[path]time.Time
+
+type client struct {
+	*entity.Base
+	Clear    int64
+	Requests requests
+}
+
 func init() {
-	if _, err := db.TableCreatePK(table, pk); err == nil {
-		log.Println("INFO: table created:", table)
-		if _, err := db.IndexCreate(table, index); err != nil {
-			log.Println("ERROR: failed to create index:", table, index, err)
-		} else {
-			log.Println("INFO: index created:", table, index)
-		}
-	}
+	entity.Register(&client{}).Index("Clear")
+	secure.RegisterRequestTokenData(token{})
 	go func() {
 		for {
 			time.Sleep(clearInterval)
 			limit := time.Now().Unix()
-			if resp, err := db.DeleteTerm(db.Between(table, index, nil, limit, true, true)); err != nil {
+			index := entity.Index(&client{}, "Clear")
+			selection := index.Between(nil, limit, true, true)
+			if deleted, err := selection.Delete(); err != nil {
 				log.Printf("WARNING: rate limit clearing failed: %v", err)
 			} else {
-				log.Printf("INFO: %v rate limit records cleared", resp.Deleted)
+				log.Printf("INFO: %v rate limit records cleared", deleted)
 			}
 		}
 	}()
-	secure.RegisterRequestTokenData(token{})
 }
 
 type path string
@@ -67,29 +67,16 @@ func NewToken(r *http.Request) (string, error) {
 	})
 }
 
-type requests map[path]time.Time
-
-type client struct {
-	IP       string
-	Clear    int64
-	Requests requests
-}
-
 func getClient(ip string) (c *client) {
-	c = new(client)
-	if err := db.Get(table, ip, c); err != nil {
-		if err == db.ErrEmptyResult {
-			c.IP = ip
+	c = &client{Base: &entity.Base{ID: ip}}
+	if err := c.Read(c); err != nil {
+		if err == entity.ErrEmptyResult {
+			c.ID = ip
 			c.Requests = make(requests)
 		} else {
-			log.Printf("WARNING: error getting from table %v: %v", table, err)
+			log.Printf("WARNING: error reading from ratelimit table: %v", err)
 		}
 	}
-	return
-}
-
-func (c *client) save() (err error) {
-	_, err = db.InsertUpdate(table, c)
 	return
 }
 
@@ -117,15 +104,14 @@ func Handle(handle httprouter.Handle, seconds int) httprouter.Handle {
 				"Window": window,
 			}, "ratelimit", "toomanyrequests")
 		} else {
-			handle(w, r, ps)
 			c.Requests[p] = time.Now()
-			clear := time.Now().Add(window).Unix()
-			if clear > c.Clear {
+			if clear := time.Now().Add(window).Unix(); clear > c.Clear {
 				c.Clear = clear
 			}
-			if e := c.save(); e != nil {
-				log.Printf("WARNING: error saving to table %v: %v", table, e)
+			if e := c.Update(c); e != nil {
+				log.Printf("WARNING: error updating ratelimit record: %v", e)
 			}
+			handle(w, r, ps)
 		}
 		return
 	}
