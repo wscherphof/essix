@@ -21,6 +21,8 @@ const (
 	clearInterval = time.Hour
 )
 
+type path string
+
 type requests map[path]time.Time
 
 type client struct {
@@ -46,8 +48,6 @@ func init() {
 		}
 	}()
 }
-
-type path string
 
 type token struct {
 	IP        string
