@@ -3,6 +3,7 @@ package model
 import (
 	"errors"
 	"github.com/wscherphof/essix/entity"
+	"github.com/wscherphof/essix/util"
 	"golang.org/x/crypto/bcrypt"
 	"strings"
 )
@@ -35,7 +36,7 @@ func initAccount(uid string) *Account {
 
 func NewAccount(uid, pwd1, pwd2 string) (account *Account, err error, conflict bool) {
 	acc := initAccount(uid)
-	acc.ActivationCode = entity.Token()
+	acc.ActivationCode = util.NewToken()
 	if acc.PWD, err, conflict = newPassword(pwd1, pwd2); err == nil {
 		if err, conflict = acc.Create(acc); err != nil {
 			if conflict {
