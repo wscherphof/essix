@@ -108,11 +108,6 @@ func (b *Base) Delete(record interface{}) (err error) {
 	return
 }
 
-// TODO: check if this type can be private
-type Term struct {
-	term db.Term
-}
-
 type indexType struct {
 	table  string
 	column string
@@ -122,11 +117,15 @@ func Index(record interface{}, column string) *indexType {
 	return &indexType{tbl(record), column}
 }
 
-func (i *indexType) Between(low, high interface{}, includeLeft, includeRight bool) *Term {
-	return &Term{db.Between(i.table, i.column, low, high, includeLeft, includeRight)}
+func (i *indexType) Between(low, high interface{}, includeLeft, includeRight bool) *term {
+	return &term{db.Between(i.table, i.column, low, high, includeLeft, includeRight)}
 }
 
-func (t *Term) Delete() (err error) {
-	_, err = db.DeleteTerm(t.term)
-	return
+type term struct {
+	term db.Term
+}
+
+func (t *term) Delete() (int, error) {
+	resp, e := db.DeleteTerm(t.term)
+	return resp.Deleted, e
 }
