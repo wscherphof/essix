@@ -14,30 +14,7 @@ var (
 	ErrEmptyResult         = db.ErrEmptyResult
 	ErrDuplicatePrimaryKey = errors.New("ErrDuplicatePrimaryKey")
 	typeReplacer           = strings.NewReplacer("*", "", ".", "_")
-	tables                 = make(map[string]string, 100)
 )
-
-func getType(record interface{}) string {
-	tpe := fmt.Sprintf("%T", record)
-	return typeReplacer.Replace(tpe)
-}
-
-func Register(record interface{}, table ...string) {
-	tpe := getType(record)
-	tbl := tpe
-	if len(table) == 1 {
-		tbl = table[0]
-	}
-	tables[tpe] = tbl
-	if _, err := db.TableCreate(tbl); err == nil {
-		log.Println("INFO: table created:", tbl)
-	}
-}
-
-func tbl(record interface{}) string {
-	tpe := getType(record)
-	return tables[tpe]
-}
 
 func Token() string {
 	return string(util.URLEncode(util.Random()))
@@ -51,6 +28,30 @@ type Base struct {
 	ID       string `gorethink:"id,omitempty"`
 	Created  time.Time
 	Modified time.Time
+}
+
+var tables = make(map[string]string, 100)
+
+func Register(record interface{}, table ...string) {
+	tpe := getType(record)
+	tbl := tpe
+	if len(table) == 1 {
+		tbl = table[0]
+	}
+	tables[tpe] = tbl
+	if _, err := db.TableCreate(tbl); err == nil {
+		log.Println("INFO: table created:", tbl)
+	}
+}
+
+func getType(record interface{}) string {
+	tpe := fmt.Sprintf("%T", record)
+	return typeReplacer.Replace(tpe)
+}
+
+func tbl(record interface{}) string {
+	tpe := getType(record)
+	return tables[tpe]
 }
 
 func (b *Base) Create(record interface{}) (err error, conflict bool) {
