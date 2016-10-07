@@ -52,7 +52,7 @@ func (a *Account) CreatePasswordCode() error {
 }
 
 func ClearPasswordCode(uid, code string) {
-	if acc, _, _ := getAccount(uid); acc != nil {
+	if acc, _, _ := GetAccount(uid); acc != nil {
 		if acc.PasswordCode.Value == code {
 			acc.PasswordCode = nil
 			acc.Update(acc)

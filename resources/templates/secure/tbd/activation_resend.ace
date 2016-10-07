@@ -4,7 +4,7 @@ body
     h1 {{ Msg "Resend activation code" }}
   main.flex
     form method=POST action=/account/activationcode
-      input type=hidden name=_rate value={{ .RateLimitToken }}
+      input type=hidden name=_ratelimit value={{ .RateLimitToken }}
       .p
         label {{ Msg "Email" }}*
           input#uid.right type=email name=uid autocomplete=username value={{ .UID }} placeholder=email@provider.com required=

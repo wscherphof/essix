@@ -18,3 +18,12 @@ func URLDecode(value []byte) ([]byte, error) {
 	}
 	return decoded[:b], nil
 }
+
+func URLEncodeString(value string) string {
+	return string(URLEncode([]byte(value)))
+}
+
+func URLDecodeString(value string) (string, error) {
+	decoded, err := URLDecode([]byte(value))
+	return string(decoded), err
+}

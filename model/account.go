@@ -24,7 +24,7 @@ type Account struct {
 	*entity.Base
 	Email            string
 	Password         *password
-	ActivationCode   string
+	ActivateCode     string
 	PasswordCode     *passwordCode
 	EmailAddressCode string
 	NewEmail         string
@@ -52,7 +52,7 @@ func initAccount(id ...string) (account *Account) {
 
 func NewAccount(address, pwd1, pwd2 string) (account *Account, err error, conflict bool) {
 	account = initAccount()
-	account.ActivationCode = util.NewToken()
+	account.ActivateCode = util.NewToken()
 	if account.Password, err, conflict = newPassword(pwd1, pwd2); err != nil {
 		return
 	}
@@ -73,19 +73,19 @@ func (a *Account) Name() (name string) {
 }
 
 func (a *Account) IsActive() bool {
-	return len(a.ActivationCode) == 0
+	return a.ActivateCode == ""
 }
 
 // Refresh updates the account's field values & returns the validity of the session
 func (a *Account) Refresh() (current bool) {
-	if saved, err, _ := getAccount(a.ID); err == nil {
+	if saved, err, _ := GetAccount(a.ID); err == nil {
 		*a = *saved
 		current = a.Password.Created.Equal(saved.Password.Created)
 	}
 	return
 }
 
-func getAccount(id string) (account *Account, err error, conflict bool) {
+func GetAccount(id string) (account *Account, err error, conflict bool) {
 	account = initAccount(id)
 	if err = account.Read(account); err != nil {
 		if err == entity.ErrEmptyResult {

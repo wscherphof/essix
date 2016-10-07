@@ -1,0 +1,19 @@
+= include ../includes/top .
+body
+  header
+    h1 {{Msg "Activate subject"}}
+  main.flex
+    form.envelope method=POST action=/account/activate
+      input type=hidden name=_method value=PUT
+      input type=hidden name=id value={{.id}}
+      .p
+        label {{Msg "Activate code"}}*{{" "}}
+          input#code.right type=text name=code autocomplete=off value={{.code}} placeholder=zc-968YEX3VYu_YmdA7ynBp_d2cydmR1MRRqmglh1R0= required=
+      .p
+        input.right type=submit
+  {{if eq .code ""}}
+    footer
+      p {{Msg "Activate code source"}}
+        br
+        a href=/account/activate/request?email={{.email}} {{Msg "Resend activate code"}}
+  {{end}}

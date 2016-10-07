@@ -84,10 +84,10 @@ func Handle(handle httprouter.Handle, seconds int) httprouter.Handle {
 	window := time.Duration(seconds) * time.Second
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		t, ip, p := new(token), ip(r), path(r.URL.Path)
-		if rate := r.FormValue("_rate"); rate == "" {
+		if formToken := r.FormValue("_ratelimit"); formToken == "" {
 			template.Error(w, r, ErrInvalidRequest, true)
 			log.Printf("SUSPICIOUS: rate limit token missing %v %v", ip, p)
-		} else if e := secure.RequestToken(rate).Read(t); e != nil {
+		} else if e := secure.RequestToken(formToken).Read(t); e != nil {
 			template.Error(w, r, ErrInvalidRequest, true)
 			log.Printf("SUSPICIOUS: rate limit token unreadable %v %v", ip, p)
 		} else if t.IP != ip {

@@ -62,19 +62,19 @@ func init() {
 		Set("nl", "Bedankt voor het aanmelden bij Essix! Voordat je kan inloggen moet je account nog geactiveerd worden; we hebben je een e-mail gestuurd met de activatiecode.").
 		Set("en", "Thanks for signing up with Essix! Before you can log in, your account needs to be activated; we've sent you an email containing the activation code.")
 
-	msg.Key("activation subject").
+	msg.Key("Activate subject").
 		Set("nl", "Je account activeren").
 		Set("en", "Activate your account")
 
-	msg.Key("Activation code").
+	msg.Key("Activate code").
 		Set("nl", "Activeringscode").
 		Set("en", "Activation code")
 
-	msg.Key("Activation code source").
+	msg.Key("Activate code source").
 		Set("nl", "De activeringscode is je per e-mail toegestuurd").
 		Set("en", "The activation code was sent to you by email")
 
-	msg.Key("Resend activation code").
+	msg.Key("Resend activate code").
 		Set("nl", "Stuur me de activeringscode opnieuw").
 		Set("en", "Resend me the activation code")
 

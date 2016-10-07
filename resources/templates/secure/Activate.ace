@@ -1,0 +1,7 @@
+= include ../includes/top .
+body
+  p {{Msg "Activate successful"}}
+  p
+    a href=/session {{Msg "Log in"}}
+  p
+    a href=/ {{Msg "Take me home"}}
