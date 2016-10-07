@@ -73,7 +73,7 @@ func (a *Account) ChangePassword(code, pwd1, pwd2 string) (err error, conflict b
 		err, conflict = e, c
 	} else {
 		a.PasswordCode = nil
-		a.PWD = pwd
+		a.Password = pwd
 		err = a.Update(a)
 	}
 	return

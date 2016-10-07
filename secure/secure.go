@@ -41,11 +41,10 @@ func init() {
 	var secureDB = db.New()
 	// The validate function will test whether the session still valid
 	var validate = func(src interface{}) (dst interface{}, valid bool) {
-		if src != nil {
-			acc := src.(model.Account)
-			// Refresh updates the account's field values & returns the validity of the session
-			valid = acc.Refresh()
-			dst = acc
+		switch account := src.(type) {
+		case model.Account:
+			valid = account.Refresh()
+			dst = account
 		}
 		return
 	}
