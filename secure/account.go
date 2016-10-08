@@ -19,7 +19,6 @@ func AccountForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 }
 
 func NewAccount(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	// TODO see why ID isn't set
 	if account, err, conflict := model.NewAccount(r.FormValue("email"),
 		r.FormValue("pwd1"), r.FormValue("pwd2"),
 	); err != nil {
