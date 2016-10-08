@@ -4,18 +4,22 @@ usage ()
 {
 	echo
 	echo "Usage:"
-	echo "  $(basename $0) [OPTIONS] build SOURCEDIR IMAGE [SERVICE SWARM]"
-	echo "  $(basename $0) [OPTIONS] run IMAGE SERVICE SWARM"
 	echo
-	echo "Formats & compile go sources, and build a Docker image"
+	echo "$(basename $0) [OPTIONS] build SOURCEDIR IMAGE [SERVICE SWARM]"
+	echo "  Format & compile go sources, build a Docker image, either"
+	echo "  locally, and push it to the repository,"
+	echo "  or remotely on the swarm's nodes, and run the service there."
+	echo
+	echo "$(basename $0) [OPTIONS] run IMAGE SERVICE SWARM"
+	echo "  Run a service from an image on a swarm."
+	echo
+	echo "$(basename $0) help"
+	echo "  Display this message."
 	echo
 	echo "SOURCEDIR  directory containing the sources to compile"
 	echo "IMAGE      repo/name:tag identifying the image"
 	echo "SERVICE    name for the service to run"
 	echo "SWARM      name of the swarm where to run the service"
-	echo "Specifying SERVICE and SWARM for the build command, will build the image"
-	echo "on each of the swarm's nodes - instead of building locally, then pushing"
-	echo "to repository - and run the service there with the new image."
 	echo
 	echo "Options:"
     echo "  -e key=value ...  environment variables"
@@ -69,7 +73,7 @@ if [ "$COMMAND" = "build" ]; then
 
 	pushd "$SOURCEDIR" 1>/dev/null
 	continue
-	
+
 	mkdir -p ./.merge/resources
 	continue
 	essix="$(dirname $0)"
@@ -100,6 +104,8 @@ elif [ "$COMMAND" = "run" ]; then
 	else
 		usage; exit 1
 	fi
+elif [ "$COMMAND" = "help" ]; then
+	usage; exit
 else
 	usage; exit 1
 fi
