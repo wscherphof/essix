@@ -63,6 +63,11 @@ if [ "$COMMAND" = "build" ]; then
 	SERVICE="$4"
 	SWARM="$5"
 
+	essix="$(dirname $0)"
+	if [ "$essix" = "." ]; then
+		essix="$PWD"
+	fi
+
 	continue ()
 	{
 		code="${1-$?}"
@@ -76,10 +81,6 @@ if [ "$COMMAND" = "build" ]; then
 
 	mkdir -p ./.merge/resources
 	continue
-	essix="$(dirname $0)"
-	if [ "$essix" = "." ]; then
-		essix="$PWD"
-	fi
 	cp -rf ${essix}/resources/ ./.merge/resources/
 	continue
 	cp -rf ./resources/ ./.merge/resources/
