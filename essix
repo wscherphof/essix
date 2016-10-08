@@ -59,35 +59,36 @@ if [ "$COMMAND" = "build" ]; then
 	SERVICE="$4"
 	SWARM="$5"
 
-	ESSIX="$(dirname $0)"
-	if [ "$ESSIX" = "." ]; then
-		ESSIX="$PWD"
-	fi
-
 	continue ()
 	{
-		if [ "$?" != "0" ]; then
-			exit $?
+		code="${1-$?}"
+		if [ "$code" != "0" ]; then
+			exit $code
 		fi
 	}
 
 	pushd "$SOURCEDIR" 1>/dev/null
 	continue
-
+	
 	mkdir -p ./.merge/resources
 	continue
-	cp -rf ${ESSIX}/resources/ ./.merge/resources/
+	essix="$(dirname $0)"
+	if [ "$essix" = "." ]; then
+		essix="$PWD"
+	fi
+	cp -rf ${essix}/resources/ ./.merge/resources/
 	continue
 	cp -rf ./resources/ ./.merge/resources/
 	continue
 
 	${BUILD} -p 80 -p 443 -a ./.merge/resources . ${TAG} ${SWARM}
+	code="$?"
 
 	rm -rf ./.merge 2>/dev/null
-
 	popd 1>/dev/null
 
 	if [ "$SERVICE" -a "$SWARM" ]; then
+		continue $code
 		run
 	fi
 elif [ "$COMMAND" = "run" ]; then
