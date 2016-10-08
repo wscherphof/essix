@@ -71,8 +71,12 @@ func tbl(record interface{}) string {
 func (b *Base) Create(record interface{}) (err error, conflict bool) {
 	b.Created = time.Now()
 	b.Modified = b.Created
-	if _, err, conflict = db.Insert(tbl(record), record); conflict {
-		err = ErrDuplicatePrimaryKey
+	if response, e, c := db.Insert(tbl(record), record); c {
+		err, conflict = ErrDuplicatePrimaryKey, true
+	} else if e != nil {
+		err = e
+	} else if b.ID == "" {
+		b.ID = response.GeneratedKeys[0]
 	}
 	return
 }
@@ -94,7 +98,11 @@ func (b *Base) Update(record interface{}) (err error) {
 		b.Created = time.Now()
 	}
 	b.Modified = time.Now()
-	_, err = db.InsertUpdate(tbl(record), record)
+	if response, e := db.InsertUpdate(tbl(record), record); e != nil {
+		err = e
+	} else if b.ID == "" {
+		b.ID = response.GeneratedKeys[0]
+	}
 	return
 }
 
