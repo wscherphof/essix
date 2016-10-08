@@ -85,12 +85,16 @@ func (a *Account) Refresh() (current bool) {
 	return
 }
 
-func GetAccount(id string) (account *Account, err error, conflict bool) {
+func GetAccount(id string, email ...string) (account *Account, err error, conflict bool) {
 	account = initAccount(id)
-	if err = account.Read(account); err != nil {
-		if err == entity.ErrEmptyResult {
-			err, conflict = ErrInvalidCredentials, true
-		}
+	if len(email) == 1 && id == "" {
+		index := entity.Index(account, "Email")
+		err = index.Read(email[0], account)
+	} else {
+		err = account.Read(account)
+	}
+	if err == entity.ErrEmptyResult {
+		err, conflict = ErrInvalidCredentials, true
 	}
 	return
 }

@@ -14,6 +14,9 @@ body
   {{if eq .code ""}}
     footer
       p {{Msg "Activate code source"}}
-        br
-        a href=/account/activate/request?email={{.email}} {{Msg "Resend activate code"}}
+      form method=POST action=/account/activate/resend
+        input type=hidden name=_method value=PUT
+        input type=hidden name=_ratelimit value={{.ratelimit}}
+        input type=hidden name=id value={{.id}}
+        input type=submit value={{Msg "Resend activate code"}}
   {{end}}

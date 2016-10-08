@@ -28,8 +28,7 @@ var conf = &config{
 }
 
 func (*db) Fetch(dst *secure.Config) (err error) {
-	if e := conf.Read(conf); e != nil {
-		err = e
+	if err = conf.Read(conf); err != nil {
 		log.Println("WARNING: SecureDB.Fetch():", err)
 	} else {
 		*dst = *conf.Config

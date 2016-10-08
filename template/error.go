@@ -42,5 +42,5 @@ func errorTemplate(w http.ResponseWriter, r *http.Request, err error, conflict b
 	// Set the Content-Type to prevent CompressHandler from doing so after our WriteHeader()
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(code)
-	Run(w, r, "router", "error", inner, data)
+	Run(w, r, "template", "error", inner, data)
 }

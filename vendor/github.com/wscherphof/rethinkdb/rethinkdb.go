@@ -62,35 +62,35 @@ func Insert(table string, record interface{}) (response r.WriteResponse, err err
 	return insert(table, record)
 }
 
-func Get(table, key string, result interface{}) (err error) {
-	cursor, e := r.DB(DB).Table(table).Get(key).Run(Session)
-	if cursor != nil {
-		defer cursor.Close()
+func one(cursor *r.Cursor, err error, result interface{}) error {
+	if err != nil {
+		return err
 	}
-	if e != nil {
-		err = e
-	} else if err = cursor.One(result); err == r.ErrEmptyResult {
-		err = ErrEmptyResult
+	defer cursor.Close()
+	if cursor.IsNil() {
+		return ErrEmptyResult
 	}
-	return
+	return cursor.One(result)
 }
 
-func One(table string, result interface{}) (err error) {
-	cursor, e := r.DB(DB).Table(table).Run(Session)
-	if cursor != nil {
-		defer cursor.Close()
-	}
-	if e != nil {
-		err = e
-	} else if err = cursor.One(result); err == r.ErrEmptyResult {
-		err = ErrEmptyResult
-	}
-	return
+func Get(table, key string, result interface{}) error {
+	cursor, err := r.DB(DB).Table(table).Get(key).Run(Session)
+	return one(cursor, err, result)
+}
+
+func GetIndex(table, index string, value, result interface{}) error {
+	cursor, err := r.DB(DB).Table(table).GetAllByIndex(index, value).Run(Session)
+	return one(cursor, err, result)
+}
+
+func One(table string, result interface{}) error {
+	cursor, err := r.DB(DB).Table(table).Run(Session)
+	return one(cursor, err, result)
 }
 
 func All(table string) (*Cursor, error) {
-	c, e := r.DB(DB).Table(table).Run(Session)
-	return &Cursor{Cursor: c}, e
+	cursor, err := r.DB(DB).Table(table).Run(Session)
+	return &Cursor{Cursor: cursor}, err
 }
 
 func InsertUpdate(table string, record interface{}, id ...string) (response r.WriteResponse, err error) {

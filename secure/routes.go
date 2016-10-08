@@ -14,9 +14,8 @@ func init() {
 
 	router.GET("/account/activate", ActivateForm)
 	router.PUT("/account/activate", Activate)
-	// router.GET("/account/activationcode/:uid", ActivationCodeForm)
-	// router.GET("/account/activationcode", ActivationCodeForm)
-	// router.POST("/account/activationcode", ratelimit.Handle(ActivationCode, limit))
+	router.GET("/account/activate/resend", ActivateResendForm)
+	router.PUT("/account/activate/resend", ratelimit.Handle(ActivateResend, limit))
 
 	// router.GET("/session", LogInForm)
 	// router.POST("/session", ratelimit.Handle(LogIn, limit))

@@ -13,9 +13,16 @@ func AccountForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		template.Error(w, r, err, false)
 	} else {
 		template.Run(w, r, "secure", "AccountForm", "", map[string]interface{}{
-			"RateLimitToken": token,
+			"ratelimit": token,
 		})
 	}
+}
+
+func activateEmail(r *http.Request, account *model.Account) (error, string) {
+	return sendEmail(r, account.Email,
+		"Activate",
+		"/account/activate?code="+account.ActivateCode+"&id="+account.ID,
+	)
 }
 
 func NewAccount(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
@@ -23,10 +30,7 @@ func NewAccount(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		r.FormValue("pwd1"), r.FormValue("pwd2"),
 	); err != nil {
 		template.Error(w, r, err, conflict)
-	} else if err, remark := sendEmail(r, account.Email,
-		"Activate",
-		"/account/activate?code="+account.ActivateCode+"&id="+account.ID,
-	); err != nil {
+	} else if err, remark := activateEmail(r, account); err != nil {
 		template.Error(w, r, err, false)
 	} else {
 		template.Run(w, r, "secure", "NewAccount", "", map[string]interface{}{

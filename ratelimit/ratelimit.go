@@ -59,12 +59,17 @@ func ip(r *http.Request) string {
 	return strings.Split(r.RemoteAddr, ":")[0]
 }
 
-func NewToken(r *http.Request) (string, error) {
-	return secure.NewRequestToken(&token{
+func NewToken(r *http.Request, differentPath ...string) (string, error) {
+	t := &token{
 		IP:        ip(r),
-		Path:      path(r.URL.Path),
 		Timestamp: time.Now(),
-	})
+	}
+	if len(differentPath) == 1 {
+		t.Path = path(differentPath[0])
+	} else {
+		t.Path = path(r.URL.Path)
+	}
+	return secure.NewRequestToken(t)
 }
 
 func getClient(ip string) (c *client) {

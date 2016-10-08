@@ -124,6 +124,10 @@ func (i *indexType) Between(low interface{}, includeLow bool, high interface{}, 
 	return &term{db.Between(i.table, i.column, low, includeLow, high, includeHigh)}
 }
 
+func (i *indexType) Read(value, result interface{}) (err error) {
+	return db.GetIndex(i.table, i.column, value, result)
+}
+
 type term struct {
 	term db.Term
 }
