@@ -3,7 +3,7 @@ body
   header
     h1 {{Msg "Activate subject"}}
   main.flex
-    form.envelope method=POST action=/account/activate
+    form.flex method=POST action=/account/activate
       input type=hidden name=_method value=PUT
       input type=hidden name=id value={{.id}}
       .p

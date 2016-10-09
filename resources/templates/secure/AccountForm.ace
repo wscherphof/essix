@@ -3,7 +3,7 @@ body
   header
     h1 {{Msg "Sign up"}}
   main.flex
-    form method=POST action=/account onsubmit="return validatePassword(this['pwd1'], this['pwd2'], '{{Msg "Passwords not equal"}}')"
+    form.flex method=POST action=/account onsubmit="return validatePassword(this['pwd1'], this['pwd2'], '{{Msg "Passwords not equal"}}')"
       input type=hidden name=_ratelimit value={{.ratelimit}}
       .p
         label {{Msg "Email"}}*
