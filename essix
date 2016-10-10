@@ -6,9 +6,11 @@ usage ()
 	echo "Usage:"
 	echo
 	echo "$(basename $0) [OPTIONS] build SOURCEDIR IMAGE [SERVICE SWARM]"
-	echo "  Format & compile go sources, build a Docker image, either"
-	echo "  locally, and push it to the repository,"
-	echo "  or remotely on the swarm's nodes, and run the service there."
+	echo "  Format & compile go sources, and build a Docker image."
+	echo "  Without the SERVICE and SWARM arguments, the image is built locally,"
+	echo "  and pushed to the repository."
+	echo "  With the SERVICE and SWARM arguments, the image is built remotely"
+	echo "  on each of the swarm's nodes, and the service is run there."
 	echo
 	echo "$(basename $0) [OPTIONS] run IMAGE SERVICE SWARM"
 	echo "  Run a service from an image on a swarm."
@@ -24,7 +26,6 @@ usage ()
 	echo "Options:"
     echo "  -e key=value ...  environment variables"
     echo "  -r replicas       number of replicas to run (default: 1)"
-	echo "  -s swarmmode      path to the local github.com/wscherphof/rethinkswarmmode repo (default=$GOPATH/src/github.com/wscherphof/rethinkswarmmode)"
 	echo
 }
 
@@ -32,7 +33,6 @@ while getopts "e:r:s:h" opt; do
     case $opt in
         e  ) ENVS+=("$OPTARG");;
         r  ) REPLICAS="$OPTARG";;
-        s  ) SWARMMODE="$OPTARG";;
         h  ) usage; exit;;
         \? ) echo "Unknown option: -$OPTARG" >&2; exit 1;;
         :  ) echo "Missing option argument for -$OPTARG" >&2; exit 1;;
@@ -41,19 +41,22 @@ while getopts "e:r:s:h" opt; do
 done
 shift $((OPTIND -1))
 
-go get github.com/wscherphof/rethinkswarmmode &>/dev/null
-SWARMMODE="${SWARMMODE-${GOPATH}/src/github.com/wscherphof/rethinkswarmmode}"
-BUILD="${SWARMMODE}/go/build"
-APP="${SWARMMODE}/app"
 REPLICAS="${REPLICAS-1}"
+
+essix="$(dirname $0)"
+if [ "$essix" = "." ]; then
+	essix="$PWD"
+fi
+build="${essix}/vendor/github.com/wscherphof/rethinkswarmmode/go/build"
+app="${essix}/vendor/github.com/wscherphof/rethinkswarmmode/app"
 
 run ()
 {
-    ENVIRONMENT=""
+    environment=""
     for env in "${ENVS[@]}"; do
-        ENVIRONMENT="${ENVIRONMENT} -e ${env}"
+        environment="${environment} -e ${env}"
     done
-	${APP} -p 80 -p 443 ${ENVIRONMENT} -r ${REPLICAS} ${SERVICE} ${TAG} ${SWARM}
+	${app} -p 80 -p 443 ${environment} -r ${REPLICAS} ${SERVICE} ${TAG} ${SWARM}
 }
 
 COMMAND="$1"
@@ -63,12 +66,7 @@ if [ "$COMMAND" = "build" ]; then
 	SERVICE="$4"
 	SWARM="$5"
 
-	essix="$(dirname $0)"
-	if [ "$essix" = "." ]; then
-		essix="$PWD"
-	fi
-
-	continue ()
+	succeed ()
 	{
 		code="${1-$?}"
 		if [ "$code" != "0" ]; then
@@ -77,23 +75,23 @@ if [ "$COMMAND" = "build" ]; then
 	}
 
 	pushd "$SOURCEDIR" 1>/dev/null
-	continue
+	succeed
 
 	mkdir -p ./.merge/resources
-	continue
+	succeed
 	cp -rf ${essix}/resources/ ./.merge/resources/
-	continue
+	succeed
 	cp -rf ./resources/ ./.merge/resources/
-	continue
+	succeed
 
-	${BUILD} -p 80 -p 443 -a ./.merge/resources . ${TAG} ${SWARM}
-	code="$?"
+	${build} -p 80 -p 443 -a ./.merge/resources . ${TAG} ${SWARM}
+	build_code="$?"
 
 	rm -rf ./.merge 2>/dev/null
 	popd 1>/dev/null
 
 	if [ "$SERVICE" -a "$SWARM" ]; then
-		continue $code
+		succeed $build_code
 		run
 	fi
 elif [ "$COMMAND" = "run" ]; then
