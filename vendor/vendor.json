@@ -6,22 +6,22 @@
 			"checksumSHA1": "2avCvSn0XonfApKKuTMyiQmk7s0=",
 			"origin": "github.com/wscherphof/rethinkdb/vendor/github.com/Sirupsen/logrus",
 			"path": "github.com/Sirupsen/logrus",
-			"revision": "cc8ae4d9daa85517d3e818200d565d7360c3492f",
-			"revisionTime": "2016-10-08T20:46:33Z"
+			"revision": "02989d7b3f95019007973047a713aeb4c80d00ef",
+			"revisionTime": "2016-10-10T10:43:17Z"
 		},
 		{
 			"checksumSHA1": "uQzoJ70PJvWwIFPvMeshNTAu3t4=",
 			"origin": "github.com/wscherphof/rethinkdb/vendor/github.com/cenk/backoff",
 			"path": "github.com/cenk/backoff",
-			"revision": "cc8ae4d9daa85517d3e818200d565d7360c3492f",
-			"revisionTime": "2016-10-08T20:46:33Z"
+			"revision": "02989d7b3f95019007973047a713aeb4c80d00ef",
+			"revisionTime": "2016-10-10T10:43:17Z"
 		},
 		{
 			"checksumSHA1": "qjr2SKQanbmna221z0Ce2n0hnDE=",
 			"origin": "github.com/wscherphof/rethinkdb/vendor/github.com/golang/protobuf/proto",
 			"path": "github.com/golang/protobuf/proto",
-			"revision": "cc8ae4d9daa85517d3e818200d565d7360c3492f",
-			"revisionTime": "2016-10-08T20:46:33Z"
+			"revision": "02989d7b3f95019007973047a713aeb4c80d00ef",
+			"revisionTime": "2016-10-10T10:43:17Z"
 		},
 		{
 			"checksumSHA1": "iIUYZyoanCQQTUaWsu8b+iOSPt4=",
@@ -51,8 +51,8 @@
 			"checksumSHA1": "O0r0hj4YL+jSRNjnshkeH4GY+4s=",
 			"origin": "github.com/wscherphof/rethinkdb/vendor/github.com/hailocab/go-hostpool",
 			"path": "github.com/hailocab/go-hostpool",
-			"revision": "cc8ae4d9daa85517d3e818200d565d7360c3492f",
-			"revisionTime": "2016-10-08T20:46:33Z"
+			"revision": "02989d7b3f95019007973047a713aeb4c80d00ef",
+			"revisionTime": "2016-10-10T10:43:17Z"
 		},
 		{
 			"checksumSHA1": "Fs9Xiy7Ilfyd68NRfn6j88etvgI=",
@@ -73,10 +73,10 @@
 			"revisionTime": "2016-10-06T14:10:24Z"
 		},
 		{
-			"checksumSHA1": "y3qcCg1f9wswD4xt2swXI1Ya8MM=",
+			"checksumSHA1": "FBNrxKSiv9dgFb0yEs4ICprpHs0=",
 			"path": "github.com/wscherphof/entity",
-			"revision": "c3ca0497af3ae1eb9073c13596c70915e7bef2c7",
-			"revisionTime": "2016-10-09T18:49:30Z"
+			"revision": "1c152430fe19ab9303c3be88e300eb6c0ba97221",
+			"revisionTime": "2016-10-10T10:45:02Z"
 		},
 		{
 			"checksumSHA1": "Ooa7czCOyL14R2vES1GsIthtneo=",
@@ -93,14 +93,14 @@
 		{
 			"checksumSHA1": "PflaVA4ML45Ypa3FsGorX2Pv9FQ=",
 			"path": "github.com/wscherphof/rethinkdb",
-			"revision": "cc8ae4d9daa85517d3e818200d565d7360c3492f",
-			"revisionTime": "2016-10-08T20:46:33Z"
+			"revision": "02989d7b3f95019007973047a713aeb4c80d00ef",
+			"revisionTime": "2016-10-10T10:43:17Z"
 		},
 		{
-			"checksumSHA1": "XcNTJjmlgnfU94LPkGXhnC7xQSI=",
+			"checksumSHA1": "Bm6v9m8Hx2SFOAu+5uHzC4qhGKY=",
 			"path": "github.com/wscherphof/rethinkswarmmode",
-			"revision": "3c240c65e1e0bb0a09f96ed7ce9898354cc549bb",
-			"revisionTime": "2016-10-10T08:38:53Z",
+			"revision": "b4c6151843566e60550930107d23079996a994e7",
+			"revisionTime": "2016-10-10T21:02:17Z",
 			"tree": true
 		},
 		{
@@ -131,50 +131,50 @@
 			"checksumSHA1": "1MGpGDQqnUoRpv7VEcQrXOBydXE=",
 			"origin": "github.com/wscherphof/rethinkdb/vendor/golang.org/x/crypto/pbkdf2",
 			"path": "golang.org/x/crypto/pbkdf2",
-			"revision": "cc8ae4d9daa85517d3e818200d565d7360c3492f",
-			"revisionTime": "2016-10-08T20:46:33Z"
+			"revision": "02989d7b3f95019007973047a713aeb4c80d00ef",
+			"revisionTime": "2016-10-10T10:43:17Z"
 		},
 		{
 			"checksumSHA1": "vu7njn8O4vhFtmgGWntwjA2NAbk=",
 			"origin": "github.com/wscherphof/rethinkdb/vendor/golang.org/x/sys/unix",
 			"path": "golang.org/x/sys/unix",
-			"revision": "cc8ae4d9daa85517d3e818200d565d7360c3492f",
-			"revisionTime": "2016-10-08T20:46:33Z"
+			"revision": "02989d7b3f95019007973047a713aeb4c80d00ef",
+			"revisionTime": "2016-10-10T10:43:17Z"
 		},
 		{
 			"checksumSHA1": "3pCF5pACsyUkXP2NMulNXyfGoBY=",
 			"origin": "github.com/wscherphof/rethinkdb/vendor/gopkg.in/dancannon/gorethink.v2",
 			"path": "gopkg.in/dancannon/gorethink.v2",
-			"revision": "cc8ae4d9daa85517d3e818200d565d7360c3492f",
-			"revisionTime": "2016-10-08T20:46:33Z"
+			"revision": "02989d7b3f95019007973047a713aeb4c80d00ef",
+			"revisionTime": "2016-10-10T10:43:17Z"
 		},
 		{
 			"checksumSHA1": "N5RTTLfsBGd3eIIP8xVWQJYu3XU=",
 			"origin": "github.com/wscherphof/rethinkdb/vendor/gopkg.in/dancannon/gorethink.v2/encoding",
 			"path": "gopkg.in/dancannon/gorethink.v2/encoding",
-			"revision": "cc8ae4d9daa85517d3e818200d565d7360c3492f",
-			"revisionTime": "2016-10-08T20:46:33Z"
+			"revision": "02989d7b3f95019007973047a713aeb4c80d00ef",
+			"revisionTime": "2016-10-10T10:43:17Z"
 		},
 		{
 			"checksumSHA1": "fjbclzTrJJT+pawuU3idWDX1Bws=",
 			"origin": "github.com/wscherphof/rethinkdb/vendor/gopkg.in/dancannon/gorethink.v2/ql2",
 			"path": "gopkg.in/dancannon/gorethink.v2/ql2",
-			"revision": "cc8ae4d9daa85517d3e818200d565d7360c3492f",
-			"revisionTime": "2016-10-08T20:46:33Z"
+			"revision": "02989d7b3f95019007973047a713aeb4c80d00ef",
+			"revisionTime": "2016-10-10T10:43:17Z"
 		},
 		{
 			"checksumSHA1": "6bj8J83HYu6fYqwpwRbHAOQ6Leo=",
 			"origin": "github.com/wscherphof/rethinkdb/vendor/gopkg.in/dancannon/gorethink.v2/types",
 			"path": "gopkg.in/dancannon/gorethink.v2/types",
-			"revision": "cc8ae4d9daa85517d3e818200d565d7360c3492f",
-			"revisionTime": "2016-10-08T20:46:33Z"
+			"revision": "02989d7b3f95019007973047a713aeb4c80d00ef",
+			"revisionTime": "2016-10-10T10:43:17Z"
 		},
 		{
 			"checksumSHA1": "412N7e7+ueRP9ej8IOl5khpYyoY=",
 			"origin": "github.com/wscherphof/rethinkdb/vendor/gopkg.in/fatih/pool.v2",
 			"path": "gopkg.in/fatih/pool.v2",
-			"revision": "cc8ae4d9daa85517d3e818200d565d7360c3492f",
-			"revisionTime": "2016-10-08T20:46:33Z"
+			"revision": "02989d7b3f95019007973047a713aeb4c80d00ef",
+			"revisionTime": "2016-10-10T10:43:17Z"
 		}
 	],
 	"rootPath": "github.com/wscherphof/essix"

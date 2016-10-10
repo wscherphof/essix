@@ -37,37 +37,32 @@ SOURCEDIR="$1"
 TAG="$2"
 SWARM="$3"
 
-succeed ()
+force ()
 {
+	$*
 	code=$?
 	if [ "$code" != "0" ]; then
 		exit $code
 	fi
 }
 
-go get github.com/kardianos/govendor
-succeed
+force go get github.com/kardianos/govendor
 
-pushd "$SOURCEDIR" 1>/dev/null
-succeed
+force pushd "$SOURCEDIR" 1>/dev/null
 
 echo "* updating dependencies..."
-govendor update +external
-govendor update +vendor
-succeed
+force govendor update +vendor
+force govendor update +external
 
 echo "* formatting..."
-govendor fmt +local +external
-succeed
+force govendor fmt +local +external
 
 echo "* vetting..."
-govendor vet +local +external
-succeed
+force govendor vet +local +external
 
 echo "* compiling..."
 # cf. https://medium.com/@kelseyhightower/optimizing-docker-images-for-static-binaries-b5696e26eb07#.wmlq1nj3d
-CGO_ENABLED=0 GOOS=linux go build -a -tags netgo -ldflags '-w' .
-succeed
+force CGO_ENABLED=0 GOOS=linux go build -a -tags netgo -ldflags '-w' .
 
 binary="$(pwd | awk -F "/" '{print $NF}')" # go build names the binary after the source's subdirectory
 
