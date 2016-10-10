@@ -13,14 +13,14 @@ func LogInForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	if token, err := ratelimit.NewToken(r); err != nil {
 		template.Error(w, r, err, false)
 	} else {
-		template.Run(w, r, "secure", "LogInForm", "", map[string]interface{}{
+		template.Run(w, r, "session", "LogInForm", "", map[string]interface{}{
 			"ratelimit": token,
 		})
 	}
 }
 
 func logInError(w http.ResponseWriter, r *http.Request, err error, conflict bool, id string) {
-	template.ErrorTail(w, r, err, conflict, "secure", "LogIn", map[string]interface{}{
+	template.ErrorTail(w, r, err, conflict, "session", "LogIn", map[string]interface{}{
 		"id": id,
 	})
 }

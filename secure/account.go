@@ -12,7 +12,7 @@ func AccountForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	if token, err := ratelimit.NewToken(r); err != nil {
 		template.Error(w, r, err, false)
 	} else {
-		template.Run(w, r, "secure", "AccountForm", "", map[string]interface{}{
+		template.Run(w, r, "account", "AccountForm", "", map[string]interface{}{
 			"ratelimit": token,
 		})
 	}
@@ -33,7 +33,7 @@ func NewAccount(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	} else if err, remark := activateEmail(r, account); err != nil {
 		template.Error(w, r, err, false)
 	} else {
-		template.Run(w, r, "secure", "NewAccount", "", map[string]interface{}{
+		template.Run(w, r, "account", "NewAccount", "", map[string]interface{}{
 			"id":     account.ID,
 			"remark": remark,
 		})
