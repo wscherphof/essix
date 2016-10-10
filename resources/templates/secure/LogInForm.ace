@@ -20,4 +20,4 @@ body
           li
             a href=/account {{Msg "Sign up"}}
           li
-            a href=/account/passwordcode {{Msg "Forgot password"}}
+            a href=/account/password/token {{Msg "Forgot password"}}

@@ -4,16 +4,14 @@ import (
 	"errors"
 	"github.com/wscherphof/entity"
 	"github.com/wscherphof/essix/util"
-	"golang.org/x/crypto/bcrypt"
 	"strings"
 )
 
 var (
 	ErrInvalidCredentials = errors.New("ErrInvalidCredentials")
 	ErrEmailTaken         = errors.New("ErrEmailTaken")
-	ErrNotActivated       = errors.New("ErrNotActivated")
-	ErrCodeUnset          = errors.New("ErrCodeUnset")
-	ErrCodeIncorrect      = errors.New("ErrCodeIncorrect")
+	ErrTokenUnset          = errors.New("ErrTokenUnset")
+	ErrTokenIncorrect      = errors.New("ErrTokenIncorrect")
 )
 
 type Email struct {
@@ -24,11 +22,11 @@ type Account struct {
 	*entity.Base
 	Email            string
 	Password         *password
-	ActivateCode     string
-	PasswordCode     *passwordCode
-	EmailAddressCode string
+	ActivateToken     string
+	PasswordToken     *passwordToken
+	EmailToken string
 	NewEmail         string
-	TerminateCode    string
+	TerminateToken    string
 }
 
 func init() {
@@ -52,7 +50,7 @@ func initAccount(id ...string) (account *Account) {
 
 func NewAccount(address, pwd1, pwd2 string) (account *Account, err error, conflict bool) {
 	account = initAccount()
-	account.ActivateCode = util.NewToken()
+	account.ActivateToken = util.NewToken()
 	if account.Password, err, conflict = newPassword(pwd1, pwd2); err != nil {
 		return
 	}
@@ -73,7 +71,7 @@ func (a *Account) Name() (name string) {
 }
 
 func (a *Account) IsActive() bool {
-	return a.ActivateCode == ""
+	return a.ActivateToken == ""
 }
 
 // Refresh updates the account's field values & returns the validity of the session
@@ -94,18 +92,6 @@ func GetAccount(id string, email ...string) (account *Account, err error, confli
 		err = account.Read(account)
 	}
 	if err == entity.ErrEmptyResult {
-		err, conflict = ErrInvalidCredentials, true
-	}
-	return
-}
-
-func Challenge(email string, password string) (account *Account, err error, conflict bool) {
-	if account, err, conflict = GetAccount("", email); err != nil {
-		return
-	}
-	if !account.IsActive() {
-		err, conflict = ErrNotActivated, true
-	} else if err = bcrypt.CompareHashAndPassword(account.Password.Value, []byte(password)); err != nil {
 		err, conflict = ErrInvalidCredentials, true
 	}
 	return

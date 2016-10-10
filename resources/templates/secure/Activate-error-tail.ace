@@ -1,5 +1,5 @@
 = content tail
   p
-    a href=/account/activate {{Msg "Try again"}}
+    a href=/account/activate?id={{.id}} {{Msg "Try again"}}
   p
     a href=/ {{Msg "Take me home"}}

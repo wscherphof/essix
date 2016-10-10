@@ -8,13 +8,13 @@ var (
 	ErrAlreadyActivated = errors.New("ErrAlreadyActivated")
 )
 
-func (a *Account) Activate(code string) (err error, conflict bool) {
+func (a *Account) Activate(token string) (err error, conflict bool) {
 	if a.IsActive() {
 		return ErrAlreadyActivated, true
 	}
-	if code != a.ActivateCode {
+	if token != a.ActivateToken {
 		return ErrInvalidCredentials, true
 	}
-	a.ActivateCode = ""
+	a.ActivateToken = ""
 	return a.Update(a), false
 }

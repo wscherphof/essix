@@ -14,12 +14,12 @@ func init() {
 
 	router.GET("/account/activate", ActivateForm)
 	router.PUT("/account/activate", Activate)
-	router.GET("/account/activate/resend", ActivateResendForm)
-	router.PUT("/account/activate/resend", ratelimit.Handle(ActivateResend, limit))
+	router.GET("/account/activate/token", ActivateTokenForm)
+	router.PUT("/account/activate/token", ratelimit.Handle(ActivateToken, limit))
 
 	router.GET("/session", LogInForm)
 	router.PUT("/session", ratelimit.Handle(LogIn, limit))
-	// router.DELETE("/session", LogOut)
+	router.DELETE("/session", LogOut)
 
 	// router.GET("/account/passwordcode/:uid", PasswordCodeForm)
 	// router.GET("/account/passwordcode", PasswordCodeForm)

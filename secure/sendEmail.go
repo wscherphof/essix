@@ -18,10 +18,8 @@ func sendEmail(r *http.Request, recipient, templateName, path string, extra ...s
 	}
 	body := template.Write(r, "secure", templateName+"-email", "lang", data)
 	subject := msg.Msg(r)(templateName + " subject")
-	if err = email.Send(subject, body, recipient); err != nil {
-		if err == email.ErrNotSentImmediately {
-			remark = err.Error()
-		}
+	if err = email.Send(subject, body, recipient); err == email.ErrNotSentImmediately {
+		remark = err.Error()
 	}
 	return
 }

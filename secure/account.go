@@ -21,7 +21,7 @@ func AccountForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 func activateEmail(r *http.Request, account *model.Account) (error, string) {
 	return sendEmail(r, account.Email,
 		"Activate",
-		"/account/activate?code="+account.ActivateCode+"&id="+account.ID,
+		"/account/activate?token="+account.ActivateToken+"&id="+account.ID,
 	)
 }
 

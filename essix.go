@@ -28,8 +28,8 @@ func Run() {
 
 	// Template for home page, depending on login status
 	router.GET("/", secure.IfSecureHandle(
-		template.Handle("essix", "home", "home_loggedin", nil),
-		template.Handle("essix", "home", "home_loggedout", nil)))
+		template.Handle("essix", "Home", "Home-LoggedIn", nil),
+		template.Handle("essix", "Home", "Home-LoggedOut", nil)))
 
 	log.Println("INFO: starting secure application server for " + domain)
 	// Use the domain's proper certificates

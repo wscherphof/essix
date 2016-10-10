@@ -105,9 +105,9 @@ func Handle(handle httprouter.Handle, seconds int) httprouter.Handle {
 			template.Error(w, r, ErrInvalidRequest, true)
 			log.Printf("SUSPICIOUS: rate limit token reuse: %v %v, token %v, previous request %v", ip, p, t.Timestamp, c.Requests[p])
 		} else if c.Requests[p].After(time.Now().Add(-window)) {
-			template.DataError(w, r, ErrTooManyRequests, map[string]interface{}{
-				"Window": window,
-			}, "ratelimit", "toomanyrequests")
+			template.ErrorTail(w, r, ErrTooManyRequests, true, "ratelimit", "TooManyRequests", map[string]interface{}{
+				"window": window,
+			})
 		} else {
 			c.Requests[p] = time.Now()
 			if clear := time.Now().Add(window).Unix(); clear > c.Clear {
