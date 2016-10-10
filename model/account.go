@@ -4,7 +4,7 @@ import (
 	"errors"
 	"github.com/wscherphof/entity"
 	"github.com/wscherphof/essix/util"
-	// "golang.org/x/crypto/bcrypt"
+	"golang.org/x/crypto/bcrypt"
 	"strings"
 )
 
@@ -99,20 +99,14 @@ func GetAccount(id string, email ...string) (account *Account, err error, confli
 	return
 }
 
-// func GetAccount(uid, pwd string) (account *Account, err error, conflict bool) {
-// 	if acc, e, c := getAccount(uid); e != nil {
-// 		err, conflict = e, c
-// 	} else if !acc.IsActive() {
-// 		err, conflict = ErrNotActivated, true
-// 	} else if e := bcrypt.CompareHashAndPassword(acc.PWD.Value, []byte(pwd)); e != nil {
-// 		err, conflict = ErrInvalidCredentials, true
-// 	} else {
-// 		pwd = ""
-// 		account = acc
-// 	}
-// 	return
-// }
-
-// func GetAccountInsecure(uid string) (account *Account, err error, conflict bool) {
-// 	return getAccount(uid)
-// }
+func Challenge(email string, password string) (account *Account, err error, conflict bool) {
+	if account, err, conflict = GetAccount("", email); err != nil {
+		return
+	}
+	if !account.IsActive() {
+		err, conflict = ErrNotActivated, true
+	} else if err = bcrypt.CompareHashAndPassword(account.Password.Value, []byte(password)); err != nil {
+		err, conflict = ErrInvalidCredentials, true
+	}
+	return
+}

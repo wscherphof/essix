@@ -2,7 +2,7 @@
 body
   header
     h1 {{Msg "Resend activate code"}}
-  main.flex
+  main.wrap
     form.flex method=POST action=/account/activate/resend
       input type=hidden name=_method value=PUT
       input type=hidden name=_ratelimit value={{.ratelimit}}

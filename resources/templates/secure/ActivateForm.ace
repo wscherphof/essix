@@ -2,7 +2,7 @@
 body
   header
     h1 {{Msg "Activate subject"}}
-  main.flex
+  main.wrap
     form.flex method=POST action=/account/activate
       input type=hidden name=_method value=PUT
       input type=hidden name=id value={{.id}}

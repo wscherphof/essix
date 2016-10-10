@@ -17,8 +17,8 @@ func init() {
 	router.GET("/account/activate/resend", ActivateResendForm)
 	router.PUT("/account/activate/resend", ratelimit.Handle(ActivateResend, limit))
 
-	// router.GET("/session", LogInForm)
-	// router.POST("/session", ratelimit.Handle(LogIn, limit))
+	router.GET("/session", LogInForm)
+	router.PUT("/session", ratelimit.Handle(LogIn, limit))
 	// router.DELETE("/session", LogOut)
 
 	// router.GET("/account/passwordcode/:uid", PasswordCodeForm)
