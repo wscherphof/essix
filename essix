@@ -27,6 +27,18 @@ usage ()
     echo "  -e key=value ...  environment variables"
     echo "  -r replicas       number of replicas to run (default: 1)"
 	echo
+	echo "Examples:"
+    echo "  \$ $(basename $0) -e DOMAIN=dev.wscherphof.nl build ../s6app wscherphof/s6app:0.2 s6app dev"
+    echo "      Builds a 0.2 version of the wscherphof/s6app image on swarm dev's"
+    echo "      nodes, and runs the s6app service on dev, with the DOMAIN variable"
+    echo "      set to the given value."
+    echo "  \$ $(basename $0) build ../s6app wscherphof/s6app:0.2 s6app"
+    echo "      Locally builds a 0.2 version of the wscherphof/s6app image,"
+    echo "      and pushes it to the repository."
+    echo "  \$ $(basename $0) run wscherphof/s6app:0.2 s6app prd"
+    echo "      Runs the s6app service on swarm prd, using the specified image,"
+    echo "      which is downloaded from the repository, if not found locally."
+	echo
 }
 
 while getopts "e:r:s:h" opt; do
