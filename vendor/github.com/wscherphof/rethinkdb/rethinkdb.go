@@ -1,7 +1,6 @@
 package rethinkdb
 
 import (
-	"github.com/wscherphof/env"
 	r "gopkg.in/dancannon/gorethink.v2"
 	"log"
 )
@@ -20,9 +19,8 @@ type Term struct {
 	*r.Term
 }
 
-func init() {
-	DB = env.Get("DB_NAME", "essix")
-	address := env.Get("DB_ADDRESS", "db1")
+func Connect(db, address string) {
+	DB = db
 	var err error
 	if Session, err = r.Connect(r.ConnectOpts{Address: address}); err != nil {
 		log.Fatalln("ERROR:", err)

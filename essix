@@ -101,7 +101,7 @@ if [ "$COMMAND" = "build" ]; then
 
 	succeed ()
 	{
-		code="${1-$?}"
+		code=$?
 		if [ "$code" != "0" ]; then
 			exit $code
 		fi
@@ -118,13 +118,12 @@ if [ "$COMMAND" = "build" ]; then
 	succeed
 
 	${build} -p 80 -p 443 -a ./.merge/resources . ${TAG} ${SWARM}
-	build_code="$?"
+	succeed
 
 	rm -rf ./.merge 2>/dev/null
 	popd 1>/dev/null
 
 	if [ "$SERVICE" -a "$SWARM" ]; then
-		succeed $build_code
 		run
 	fi
 elif [ "$COMMAND" = "run" ]; then

@@ -73,7 +73,7 @@
 			"revisionTime": "2016-10-06T14:10:24Z"
 		},
 		{
-			"checksumSHA1": "HNQzbxZGozsnbRWiyJ1yXQ9YbPk=",
+			"checksumSHA1": "y3qcCg1f9wswD4xt2swXI1Ya8MM=",
 			"path": "github.com/wscherphof/entity",
 			"revision": "c3ca0497af3ae1eb9073c13596c70915e7bef2c7",
 			"revisionTime": "2016-10-09T18:49:30Z"
@@ -91,16 +91,16 @@
 			"revisionTime": "2016-10-03T23:26:38Z"
 		},
 		{
-			"checksumSHA1": "1jIGn2naCCtg9/hPQxNt9Yw+IoU=",
+			"checksumSHA1": "PflaVA4ML45Ypa3FsGorX2Pv9FQ=",
 			"path": "github.com/wscherphof/rethinkdb",
 			"revision": "cc8ae4d9daa85517d3e818200d565d7360c3492f",
 			"revisionTime": "2016-10-08T20:46:33Z"
 		},
 		{
-			"checksumSHA1": "zDQxvXpPFHMb24YhRKeFHWtur6A=",
+			"checksumSHA1": "XcNTJjmlgnfU94LPkGXhnC7xQSI=",
 			"path": "github.com/wscherphof/rethinkswarmmode",
-			"revision": "bae478618f1538e0d11740600938be70af94bb01",
-			"revisionTime": "2016-10-10T07:45:38Z",
+			"revision": "3c240c65e1e0bb0a09f96ed7ce9898354cc549bb",
+			"revisionTime": "2016-10-10T08:38:53Z",
 			"tree": true
 		},
 		{

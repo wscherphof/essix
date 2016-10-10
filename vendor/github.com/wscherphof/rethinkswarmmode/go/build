@@ -39,8 +39,9 @@ SWARM="$3"
 
 succeed ()
 {
-	if [ "$?" != "0" ]; then
-		exit $?
+	code=$?
+	if [ "$code" != "0" ]; then
+		exit $code
 	fi
 }
 
@@ -51,7 +52,8 @@ pushd "$SOURCEDIR" 1>/dev/null
 succeed
 
 echo "* updating dependencies..."
-govendor update +external +vendor
+govendor update +external
+govendor update +vendor
 succeed
 
 echo "* formatting..."

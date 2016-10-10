@@ -10,6 +10,7 @@ import (
 )
 
 var (
+	Connect                = db.Connect
 	Session                = db.Session
 	DB                     = db.DB
 	ErrEmptyResult         = db.ErrEmptyResult
