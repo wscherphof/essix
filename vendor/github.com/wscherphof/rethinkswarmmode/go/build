@@ -50,11 +50,15 @@ succeed
 pushd "$SOURCEDIR" 1>/dev/null
 succeed
 
-echo "* formatting source code..."
+echo "* updating dependencies..."
+govendor update +external +vendor
+succeed
+
+echo "* formatting..."
 govendor fmt +local +external
 succeed
 
-echo "* vetting source code..."
+echo "* vetting..."
 govendor vet +local +external
 succeed
 
