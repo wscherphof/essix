@@ -37,7 +37,7 @@ SOURCEDIR="$1"
 TAG="$2"
 SWARM="$3"
 
-continue ()
+succeed ()
 {
 	if [ "$?" != "0" ]; then
 		exit $?
@@ -45,22 +45,23 @@ continue ()
 }
 
 pushd "$SOURCEDIR" 1>/dev/null
-continue
+succeed
 
 echo "* formatting source code..."
-gofmt -s -w .
-continue
+go get github.com/kardianos/govendor
+govendor fmt +local +external
+succeed
 
 echo "* compiling..."
 # cf. https://medium.com/@kelseyhightower/optimizing-docker-images-for-static-binaries-b5696e26eb07#.wmlq1nj3d
 CGO_ENABLED=0 GOOS=linux go build -a -tags netgo -ldflags '-w' .
-continue
+succeed
 
-BINARY="$(pwd | awk -F "/" '{print $NF}')" # go build names the binary after the source's subdirectory
+binary="$(pwd | awk -F "/" '{print $NF}')" # go build names the binary after the source's subdirectory
 
 echo "FROM scratch" > ./Dockerfile
-echo "ADD ${BINARY} /" >> ./Dockerfile
-echo "ENTRYPOINT [\"/${BINARY}\"]" >> ./Dockerfile
+echo "ADD ${binary} /" >> ./Dockerfile
+echo "ENTRYPOINT [\"/${binary}\"]" >> ./Dockerfile
 
 if [ "${ENVS}" ]; then
 	echo "ENV ${ENVS[@]}" >> ./Dockerfile
@@ -93,18 +94,18 @@ if [ "${SWARM}" ]; then
 				echo "* WARNING: $node is not running"
 			else
 				echo "* building image on $node..."
-				docker-machine ssh $node mkdir ${BINARY}
-				dir="$(docker-machine ssh $node pwd)/${BINARY}"
+				docker-machine ssh $node mkdir ${binary}
+				dir="$(docker-machine ssh $node pwd)/${binary}"
 				if [ "${TREEISH}" ]; then
 					docker-machine scp ./archive.tar.gz ${node}:${dir} 1>/dev/null
 				fi
-				docker-machine scp ./${BINARY} ${node}:${dir} 1>/dev/null
+				docker-machine scp ./${binary} ${node}:${dir} 1>/dev/null
 				docker-machine scp ./Dockerfile ${node}:${dir} 1>/dev/null
 				for add in "${ADDS[@]}"; do
 					docker-machine scp -r "${add}" ${node}:${dir} 1>/dev/null
 				done
 				docker-machine ssh $node sudo docker build -t ${TAG} ${dir}
-				docker-machine ssh $node rm -rf ${BINARY}
+				docker-machine ssh $node rm -rf ${binary}
 			fi
 		done
 	done
@@ -119,6 +120,6 @@ else
 	echo "* pushing image..."
 	docker push ${TAG}
 fi
-rm ./${BINARY} ./Dockerfile ./archive.tar.gz 2>/dev/null
+rm ./${binary} ./Dockerfile ./archive.tar.gz 2>/dev/null
 
 popd 1>/dev/null
