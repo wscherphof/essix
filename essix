@@ -59,8 +59,29 @@ essix="$(dirname $0)"
 if [ "$essix" = "." ]; then
 	essix="$PWD"
 fi
-build="${essix}/vendor/github.com/wscherphof/rethinkswarmmode/go/build"
-app="${essix}/vendor/github.com/wscherphof/rethinkswarmmode/app"
+
+swarmmode="${essix}/../rethinkswarmmode"
+if [ ! -e "$swarmmode" ]; then
+	swarmmode="${GOPATH}/src/github.com/wscherphof/rethinkswarmmode"
+	if [ ! -e "$swarmmode" ]; then
+		if [ -e "${essix}/../../../vendor" ]; then
+			pushd "${essix}/../../../.." &>/dev/null
+			govendor fetch github.com/wscherphof/rethinkswarmmode/^ &>/dev/null
+			swarmmode="${essix}/../rethinkswarmmode"
+			popd &>/dev/null
+		else
+			go get github.com/wscherphof/rethinkswarmmode &>/dev/null
+		fi
+	fi
+fi
+if [ -e "$swarmmode" ]; then
+	echo "* using ${swarmmode}"
+else
+	echo "Failed to locate github.com/wscherphof/rethinkswarmmode"
+	exit 1
+fi
+build="${swarmmode}/go/build"
+app="${swarmmode}/app"
 
 run ()
 {
