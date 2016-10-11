@@ -1,0 +1,10 @@
+= include ../includes/top .
+body
+  header
+    h1 {{Msg "Change email address"}}
+  main
+    p {{Msg "Want replace"}} "{{.account.email}}" {{Msg "Replace with"}} "{{.account.NewEmail}}"
+    form method=POST action=/account/email
+      input type=hidden name=_method value=PUT
+      input type=hidden name=token value={{.account.EmailToken}}
+      input type=submit value={{Msg "Confirm"}}

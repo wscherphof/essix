@@ -1,0 +1,7 @@
+= include ../includes/top .
+body
+  p..
+    {{Msg "Email token successful"}}
+    {{Msg .remark}}
+  p
+    a href=/ {{Msg "Take me home"}}

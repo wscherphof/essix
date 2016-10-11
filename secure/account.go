@@ -32,3 +32,10 @@ func NewAccount(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		})
 	}
 }
+
+func Account(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	account := Authentication(w, r)
+	template.Run(w, r, "account", "Account", "", map[string]interface{}{
+		"email": account.Email,
+	})
+}

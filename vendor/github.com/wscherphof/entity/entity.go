@@ -82,9 +82,9 @@ func (b *Base) Create(record interface{}) (err error, conflict bool) {
 	return
 }
 
-func (b *Base) Read(result interface{}) (err error) {
+func (b *Base) Read(result interface{}) (err error, empty bool) {
 	if err = db.Get(tbl(result), b.ID, result); err == db.ErrEmptyResult {
-		err = ErrEmptyResult
+		err, empty = ErrEmptyResult, true
 	}
 	return
 }
@@ -125,8 +125,11 @@ func (i *indexType) Between(low interface{}, includeLow bool, high interface{}, 
 	return &term{db.Between(i.table, i.column, low, includeLow, high, includeHigh)}
 }
 
-func (i *indexType) Read(value, result interface{}) (err error) {
-	return db.GetIndex(i.table, i.column, value, result)
+func (i *indexType) Read(value, result interface{}) (err error, empty bool) {
+	if err = db.GetIndex(i.table, i.column, value, result); err == db.ErrEmptyResult {
+		err, empty = ErrEmptyResult, true
+	}
+	return
 }
 
 type term struct {

@@ -74,9 +74,8 @@ func NewToken(r *http.Request, differentPath ...string) (string, error) {
 
 func getClient(ip string) (c *client) {
 	c = &client{Base: &entity.Base{ID: ip}}
-	if err := c.Read(c); err != nil {
-		if err == entity.ErrEmptyResult {
-			c.ID = ip
+	if err, empty := c.Read(c); err != nil {
+		if empty {
 			c.Requests = make(requests)
 		} else {
 			log.Printf("WARNING: error reading from ratelimit table: %v", err)

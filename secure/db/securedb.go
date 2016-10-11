@@ -28,8 +28,13 @@ var conf = &config{
 }
 
 func (*db) Fetch(dst *secure.Config) (err error) {
-	if err = conf.Read(conf); err != nil {
-		log.Println("WARNING: SecureDB.Fetch():", err)
+	var empty bool
+	if err, empty = conf.Read(conf); err != nil {
+		if empty {
+			log.Println("WARNING: SecureDB.Fetch():", err)
+		} else {
+			log.Println("ERROR: SecureDB.Fetch():", err)
+		}
 	} else {
 		*dst = *conf.Config
 	}
@@ -39,7 +44,7 @@ func (*db) Fetch(dst *secure.Config) (err error) {
 func (*db) Upsert(src *secure.Config) (err error) {
 	conf.Config = src
 	if err = conf.Update(conf); err != nil {
-		log.Println("WARNING: SecureDB.Upsert():", err)
+		log.Println("ERROR: SecureDB.Upsert():", err)
 	}
 	return
 }

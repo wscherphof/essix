@@ -114,11 +114,11 @@ func init() {
 		Set("nl", "Geldig tot").
 		Set("en", "Expires")
 
-	msg.Key("emailaddress subject").
+	msg.Key("EmailToken subject").
 		Set("nl", "Mijn e-mailadres wijzigen").
 		Set("en", "Change my email address")
 
-	msg.Key("Change email address").
+	msg.Key("Change email").
 		Set("nl", "Je e-mailadres wijzigen").
 		Set("en", "Change your email address")
 
@@ -130,15 +130,15 @@ func init() {
 		Set("nl", "vervangen door").
 		Set("en", "with")
 
-	msg.Key("Email address token successful").
+	msg.Key("Email token successful").
 		Set("nl", "Dank voor je aanvraag om je e-mailadres te wijzigen. Je krijgt op het nieuwe adres een e-mail van ons met verdere instructies.").
 		Set("en", "Thanks for your request to change your email address. For further instructions, please check your email on the new address.")
 
-	msg.Key("Email address token cancelled").
+	msg.Key("Email token cancelled").
 		Set("nl", "Wijzigen e-mailadres is geannuleerd.").
 		Set("en", "Changing email address is cancelled.")
 
-	msg.Key("Change email address successful").
+	msg.Key("Change email  successful").
 		Set("nl", "Je nieuwe e-mailadres is nu actief.").
 		Set("en", "Your new email address is activated.")
 

@@ -15,7 +15,7 @@ func sendEmail(r *http.Request, recipient, templateName, path string, extra ...s
 	if len(extra) == 1 {
 		data["extra"] = extra[0]
 	}
-	body := template.Write(r, "email", templateName+"-email", "lang", data)
+	body := template.Write(r, "sendEmail", templateName+"-email", "lang", data)
 	subject := msg.Msg(r)(templateName + " subject")
 	if err = email.Send(subject, body, recipient); err == email.ErrNotSentImmediately {
 		remark = err.Error()

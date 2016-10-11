@@ -1,0 +1,15 @@
+= include ../includes/top .
+body
+  header
+    h1 {{Msg "EmailToken subject"}}
+  main.flex
+    form method=POST action=/account/email/token
+      input type=hidden name=_method value=PUT
+      .p
+        label {{Msg "Current"}}:
+          span.right {{.email}}
+      .p
+        label {{Msg "New"}}*
+          input#newuid.right type=email name=newemail autocomplete=username placeholder=email.address@provider.com required=
+      .p
+        input.right type=submit

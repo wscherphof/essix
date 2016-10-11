@@ -9,7 +9,7 @@ import (
 func init() {
 	var limit = env.GetInt("RATELIMIT", 60)
 
-	router.GET("/account", NewAccountForm)
+	router.GET("/account", IfHandle(Account, NewAccountForm))
 	router.POST("/account", ratelimit.Handle(NewAccount, limit))
 
 	router.GET("/account/activate", ActivateForm)
@@ -26,13 +26,13 @@ func init() {
 	router.GET("/account/password", ChangePasswordForm)
 	router.PUT("/account/password", ChangePassword)
 
-	// router.GET("/account/emailaddresscode", SecureHandle(EmailAddressCodeForm))
-	// router.POST("/account/emailaddresscode", SecureHandle(EmailAddressCode))
-	// router.GET("/account/emailaddress/*filepath", SecureHandle(EmailAddressForm))
-	// router.PUT("/account/emailaddress", SecureHandle(ChangeEmailAddress))
+	router.GET("/account/email/token", Handle(EmailTokenForm))
+	router.PUT("/account/email/token", Handle(EmailToken))
+	router.GET("/account/email", Handle(ChangeEmailForm))
+	router.PUT("/account/email", Handle(ChangeEmail))
 
-	// router.GET("/account/terminatecode", SecureHandle(TerminateCodeForm))
-	// router.POST("/account/terminatecode", SecureHandle(TerminateCode))
-	// router.GET("/account/terminate/*filepath", SecureHandle(TerminateForm))
-	// router.DELETE("/account", SecureHandle(Terminate))
+	// router.GET("/account/terminatecode", Handle(TerminateCodeForm))
+	// router.POST("/account/terminatecode", Handle(TerminateCode))
+	// router.GET("/account/terminate/*filepath", Handle(TerminateForm))
+	// router.DELETE("/account", Handle(Terminate))
 }

@@ -16,7 +16,7 @@ func Authentication(w http.ResponseWriter, r *http.Request, optional ...bool) (r
 	return
 }
 
-func SecureHandle(handle httprouter.Handle) httprouter.Handle {
+func Handle(handle httprouter.Handle) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		if secure.Authentication(w, r, false) != nil {
 			handle(w, r, ps)
@@ -24,7 +24,7 @@ func SecureHandle(handle httprouter.Handle) httprouter.Handle {
 	}
 }
 
-func IfSecureHandle(authenticated httprouter.Handle, unauthenticated httprouter.Handle) httprouter.Handle {
+func IfHandle(authenticated httprouter.Handle, unauthenticated httprouter.Handle) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		if secure.Authentication(w, r, true) != nil {
 			authenticated(w, r, ps)
