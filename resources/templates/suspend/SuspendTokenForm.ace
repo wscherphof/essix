@@ -1,0 +1,13 @@
+= include ../includes/top .
+body
+  header
+    h1 {{Msg "SuspendToken subject" }}
+  main
+    .p {{Msg "Suspend sure"}}
+    form method=POST action=/account/suspend/token
+      input type=hidden name=_method value=PUT
+      .p
+        label {{Msg "Yes, that's what I want"}}
+          input#sure type=checkbox name=sure value=affirmative
+      .p
+        input type=submit

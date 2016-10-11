@@ -10,8 +10,6 @@ import (
 var (
 	ErrInvalidCredentials = errors.New("ErrInvalidCredentials")
 	ErrEmailTaken         = errors.New("ErrEmailTaken")
-	ErrTokenUnset         = errors.New("ErrTokenUnset")
-	ErrTokenIncorrect     = errors.New("ErrTokenIncorrect")
 )
 
 type Email struct {
@@ -26,7 +24,7 @@ type Account struct {
 	PasswordToken  *passwordToken
 	EmailToken     string
 	NewEmail       string
-	TerminateToken string
+	SuspendToken string
 }
 
 func init() {

@@ -1,0 +1,15 @@
+= include ../includes/top .
+body
+  header
+    h1 {{Msg "Terminate account"}}
+  main
+    .p {{Msg "Email" }}: {{.account.Email}}
+    .p {{Msg "Terminate sure"}}
+    form method=POST action=/account
+      input type=hidden name=_method value=DELETE
+      input type=hidden name=token value={{.account.Suspendtoken}}
+      .p
+        label {{Msg "Yes, that's what I want"}}
+          input#sure type=checkbox name=sure value=affirmative
+      .p
+        input type=submit value={{Msg "Confirm"}}

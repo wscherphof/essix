@@ -1,10 +1,9 @@
 = content main
-  p Hoi {{ .name }},
   p Er is een aanvraag gedaan om je account bij Essix op te zeggen.
     br
-    a href={{ .action }} Klik op deze link om te bevestigen
+    a href={{.link}} Klik op deze link om te bevestigen
   p Als je je account wil houden, {{ "" }}
-    a href={{ .cancel }} klik dan s.v.p. op deze link om de aanvraag te annuleren
+    a href={{.link}}&cancel=true klik dan s.v.p. op deze link om de aanvraag te annuleren
   p..
     Dank,
     Met vriendelijke groet,
@@ -12,5 +11,5 @@
   p
     small..
       Als de link niet werkt, plak dan onderstaande URL in de adresbalk van je webbrowser:
-      Bevestigen: {{ .action }}
-      Annuleren: {{ .cancel }}
+      Bevestigen: {{.link}}
+      Annuleren: {{.link}}&cancel=true

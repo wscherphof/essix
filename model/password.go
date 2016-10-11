@@ -71,14 +71,12 @@ func ClearPasswordToken(id, token string) {
 }
 
 func (a *Account) ChangePassword(token, pwd1, pwd2 string) (err error, conflict bool) {
-	if a.PasswordToken == nil {
-		err, conflict = ErrTokenUnset, true
+	if token == "" || a.PasswordToken == nil || token != a.PasswordToken.Value {
+		err, conflict = ErrInvalidCredentials, true
 	} else if time.Now().After(a.PasswordToken.Expires) {
 		a.PasswordToken = nil
 		a.Update(a)
 		err, conflict = ErrPasswordTokenTimedOut, true
-	} else if token == "" || token != a.PasswordToken.Value {
-		err, conflict = ErrTokenIncorrect, true
 	} else if pwd, e, c := newPassword(pwd1, pwd2); e != nil {
 		err, conflict = e, c
 	} else {

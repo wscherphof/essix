@@ -31,8 +31,8 @@ func init() {
 	router.GET("/account/email", Handle(ChangeEmailForm))
 	router.PUT("/account/email", Handle(ChangeEmail))
 
-	// router.GET("/account/terminatecode", Handle(TerminateCodeForm))
-	// router.POST("/account/terminatecode", Handle(TerminateCode))
-	// router.GET("/account/terminate/*filepath", Handle(TerminateForm))
-	// router.DELETE("/account", Handle(Terminate))
+	router.GET("/account/suspend/token", Handle(SuspendTokenForm))
+	router.PUT("/account/suspend/token", Handle(SuspendToken))
+	router.GET("/account/suspend", Handle(SuspendForm))
+	router.DELETE("/account", Handle(Suspend))
 }
