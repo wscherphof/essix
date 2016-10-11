@@ -3,8 +3,7 @@ package essix
 import (
 	"github.com/gorilla/context"
 	"github.com/gorilla/handlers"
-	"github.com/wscherphof/env"
-	"github.com/wscherphof/essix/messages"
+	"github.com/wscherphof/essix/bootstrap"
 	"github.com/wscherphof/essix/router"
 	"github.com/wscherphof/essix/secure"
 	"github.com/wscherphof/essix/template"
@@ -13,15 +12,9 @@ import (
 	"os"
 )
 
-var (
-	// Die without a domain
-	domain = env.Get("DOMAIN")
-)
+var domain = bootstrap.Domain()
 
-func init() {
-	// Load all messages
-	messages.Init()
-
+func Run() {
 	// Redirect http to https
 	go http.ListenAndServe(":80", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		url := r.URL
@@ -29,16 +22,14 @@ func init() {
 		url.Scheme = "https"
 		http.Redirect(w, r, url.String(), http.StatusMovedPermanently)
 	}))
-}
 
-func Run() {
 	// Serve files in /static
 	router.Router.ServeFiles("/static/*filepath", http.Dir("/resources/static"))
 
 	// Template for home page, depending on login status
-	router.GET("/", secure.IfSecureHandle(
-		template.Handle("essix", "home", "home_loggedin", nil),
-		template.Handle("essix", "home", "home_loggedout", nil)))
+	router.GET("/", secure.IfHandle(
+		template.Handle("essix", "Home", "Home-LoggedIn", nil),
+		template.Handle("essix", "Home", "Home-LoggedOut", nil)))
 
 	log.Println("INFO: starting secure application server for " + domain)
 	// Use the domain's proper certificates

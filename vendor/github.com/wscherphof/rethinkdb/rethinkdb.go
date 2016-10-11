@@ -1,7 +1,6 @@
 package rethinkdb
 
 import (
-	"github.com/wscherphof/env"
 	r "gopkg.in/dancannon/gorethink.v2"
 	"log"
 )
@@ -20,9 +19,8 @@ type Term struct {
 	*r.Term
 }
 
-func init() {
-	DB = env.Get("DB_NAME", "essix")
-	address := env.Get("DB_ADDRESS", "db1")
+func Connect(db, address string) {
+	DB = db
 	var err error
 	if Session, err = r.Connect(r.ConnectOpts{Address: address}); err != nil {
 		log.Fatalln("ERROR:", err)
@@ -62,45 +60,41 @@ func Insert(table string, record interface{}) (response r.WriteResponse, err err
 	return insert(table, record)
 }
 
-func Get(table, key string, result interface{}) (err error) {
-	cursor, e := r.DB(DB).Table(table).Get(key).Run(Session)
-	if cursor != nil {
-		defer cursor.Close()
+func one(cursor *r.Cursor, err error, result interface{}) error {
+	if err != nil {
+		return err
 	}
-	if e != nil {
-		err = e
-	} else if err = cursor.One(result); err == r.ErrEmptyResult {
-		err = ErrEmptyResult
+	defer cursor.Close()
+	if cursor.IsNil() {
+		return ErrEmptyResult
 	}
-	return
+	return cursor.One(result)
 }
 
-func One(table string, result interface{}) (err error) {
-	cursor, e := r.DB(DB).Table(table).Run(Session)
-	if cursor != nil {
-		defer cursor.Close()
-	}
-	if e != nil {
-		err = e
-	} else if err = cursor.One(result); err == r.ErrEmptyResult {
-		err = ErrEmptyResult
-	}
-	return
+func Get(table, key string, result interface{}) error {
+	cursor, err := r.DB(DB).Table(table).Get(key).Run(Session)
+	return one(cursor, err, result)
+}
+
+func GetIndex(table, index string, value, result interface{}) error {
+	cursor, err := r.DB(DB).Table(table).GetAllByIndex(index, value).Run(Session)
+	return one(cursor, err, result)
+}
+
+func One(table string, result interface{}) error {
+	cursor, err := r.DB(DB).Table(table).Run(Session)
+	return one(cursor, err, result)
 }
 
 func All(table string) (*Cursor, error) {
-	c, e := r.DB(DB).Table(table).Run(Session)
-	return &Cursor{Cursor: c}, e
+	cursor, err := r.DB(DB).Table(table).Run(Session)
+	return &Cursor{Cursor: cursor}, err
 }
 
-func InsertUpdate(table string, record interface{}, id ...string) (response r.WriteResponse, err error) {
-	if len(id) == 1 {
-		response, err = r.DB(DB).Table(table).Get(id[0]).Update(record).RunWrite(Session)
-	} else {
-		response, err, _ = insert(table, record, r.InsertOpts{
-			Conflict: "update",
-		})
-	}
+func InsertUpdate(table string, record interface{}) (response r.WriteResponse, err error) {
+	response, err, _ = insert(table, record, r.InsertOpts{
+		Conflict: "update",
+	})
 	return
 }
 func Delete(table, key string) (r.WriteResponse, error) {

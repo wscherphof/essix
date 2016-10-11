@@ -10,6 +10,7 @@ import (
 )
 
 var (
+	Connect                = db.Connect
 	Session                = db.Session
 	DB                     = db.DB
 	ErrEmptyResult         = db.ErrEmptyResult
@@ -71,15 +72,19 @@ func tbl(record interface{}) string {
 func (b *Base) Create(record interface{}) (err error, conflict bool) {
 	b.Created = time.Now()
 	b.Modified = b.Created
-	if _, err, conflict = db.Insert(tbl(record), record); conflict {
-		err = ErrDuplicatePrimaryKey
+	if response, e, c := db.Insert(tbl(record), record); c {
+		err, conflict = ErrDuplicatePrimaryKey, true
+	} else if e != nil {
+		err = e
+	} else if b.ID == "" {
+		b.ID = response.GeneratedKeys[0]
 	}
 	return
 }
 
-func (b *Base) Read(result interface{}) (err error) {
+func (b *Base) Read(result interface{}) (err error, empty bool) {
 	if err = db.Get(tbl(result), b.ID, result); err == db.ErrEmptyResult {
-		err = ErrEmptyResult
+		err, empty = ErrEmptyResult, true
 	}
 	return
 }
@@ -94,7 +99,11 @@ func (b *Base) Update(record interface{}) (err error) {
 		b.Created = time.Now()
 	}
 	b.Modified = time.Now()
-	_, err = db.InsertUpdate(tbl(record), record)
+	if response, e := db.InsertUpdate(tbl(record), record); e != nil {
+		err = e
+	} else if b.ID == "" {
+		b.ID = response.GeneratedKeys[0]
+	}
 	return
 }
 
@@ -114,6 +123,13 @@ func Index(record interface{}, column string) *indexType {
 
 func (i *indexType) Between(low interface{}, includeLow bool, high interface{}, includeHigh bool) *term {
 	return &term{db.Between(i.table, i.column, low, includeLow, high, includeHigh)}
+}
+
+func (i *indexType) Read(value, result interface{}) (err error, empty bool) {
+	if err = db.GetIndex(i.table, i.column, value, result); err == db.ErrEmptyResult {
+		err, empty = ErrEmptyResult, true
+	}
+	return
 }
 
 type term struct {

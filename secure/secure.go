@@ -16,7 +16,7 @@ func Authentication(w http.ResponseWriter, r *http.Request, optional ...bool) (r
 	return
 }
 
-func SecureHandle(handle httprouter.Handle) httprouter.Handle {
+func Handle(handle httprouter.Handle) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		if secure.Authentication(w, r, false) != nil {
 			handle(w, r, ps)
@@ -24,7 +24,7 @@ func SecureHandle(handle httprouter.Handle) httprouter.Handle {
 	}
 }
 
-func IfSecureHandle(authenticated httprouter.Handle, unauthenticated httprouter.Handle) httprouter.Handle {
+func IfHandle(authenticated httprouter.Handle, unauthenticated httprouter.Handle) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		if secure.Authentication(w, r, true) != nil {
 			authenticated(w, r, ps)
@@ -41,11 +41,10 @@ func init() {
 	var secureDB = db.New()
 	// The validate function will test whether the session still valid
 	var validate = func(src interface{}) (dst interface{}, valid bool) {
-		if src != nil {
-			acc := src.(model.Account)
-			// Refresh updates the account's field values & returns the validity of the session
-			valid = acc.Refresh()
-			dst = acc
+		switch account := src.(type) {
+		case model.Account:
+			valid = account.Refresh()
+			dst = account
 		}
 		return
 	}

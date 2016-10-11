@@ -8,26 +8,34 @@ import (
 	"net/http"
 )
 
-func SignUpForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	if token, e := ratelimit.NewToken(r); e != nil {
-		template.Error(w, r, e, false)
+func NewAccountForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	if token, err := ratelimit.NewToken(r); err != nil {
+		template.Error(w, r, err, false)
 	} else {
-		template.Run(w, r, "secure", "signup", "", map[string]interface{}{
-			"RateLimitToken": token,
+		template.Run(w, r, "account", "NewAccountForm", "", map[string]interface{}{
+			"ratelimit": token,
 		})
 	}
 }
 
-func SignUp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	if acc, e, conflict := model.NewAccount(r.FormValue("uid"), r.FormValue("pwd1"), r.FormValue("pwd2")); e != nil {
-		template.Error(w, r, e, conflict)
-	} else if e, remark := activationEmail(r, acc); e != nil {
-		template.Error(w, r, e, false)
+func NewAccount(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	if account, err, conflict := model.NewAccount(r.FormValue("email"),
+		r.FormValue("pwd1"), r.FormValue("pwd2"),
+	); err != nil {
+		template.Error(w, r, err, conflict)
+	} else if err, remark := activateEmail(r, account); err != nil {
+		template.Error(w, r, err, false)
 	} else {
-		template.Run(w, r, "secure", "signup_success", "", map[string]interface{}{
-			"uid":    acc.ID,
-			"name":   acc.Name(),
+		template.Run(w, r, "account", "NewAccount", "", map[string]interface{}{
+			"id":     account.ID,
 			"remark": remark,
 		})
 	}
+}
+
+func Account(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	account := Authentication(w, r)
+	template.Run(w, r, "account", "Account", "", map[string]interface{}{
+		"email": account.Email,
+	})
 }

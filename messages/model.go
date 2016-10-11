@@ -6,8 +6,8 @@ import (
 
 func init() {
 	msg.Key("ErrInvalidCredentials").
-		Set("nl", "E-mailadres onbekend of wachtwoord of activeringscode onjuist").
-		Set("en", "Unknown email address or incorrect password or activation code")
+		Set("nl", "E-mailadres onbekend of wachtwoord of beveiligingscode onjuist").
+		Set("en", "Unknown email address or incorrect password or security token")
 
 	msg.Key("ErrPasswordEmpty").
 		Set("nl", "Het wachtwoord mag niet leeg zijn").
@@ -29,15 +29,7 @@ func init() {
 		Set("nl", "Dit account is al geactiveerd").
 		Set("en", "This account is already activated")
 
-	msg.Key("ErrCodeUnset").
-		Set("nl", "Geen aanvraag bekend voor dit account").
-		Set("en", "No pending request for this account")
-
-	msg.Key("ErrCodeIncorrect").
-		Set("nl", "Ongeldige aanvraag").
-		Set("en", "Invalid request")
-
-	msg.Key("ErrPasswordCodeTimedOut").
+	msg.Key("ErrPasswordTokenTimedOut").
 		Set("nl", "De geldigheidstermijn van de aanvraag voor het opnieuw instellen van het wachtwoord is verstreken").
 		Set("en", "The request for a password reset is expired")
 }

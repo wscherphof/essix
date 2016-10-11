@@ -4,98 +4,94 @@ import (
 	"errors"
 	"github.com/wscherphof/entity"
 	"github.com/wscherphof/essix/util"
-	"golang.org/x/crypto/bcrypt"
 	"strings"
 )
 
 var (
 	ErrInvalidCredentials = errors.New("ErrInvalidCredentials")
 	ErrEmailTaken         = errors.New("ErrEmailTaken")
-	ErrNotActivated       = errors.New("ErrNotActivated")
-	ErrCodeUnset          = errors.New("ErrCodeUnset")
-	ErrCodeIncorrect      = errors.New("ErrCodeIncorrect")
 )
+
+type Email struct {
+	*entity.Base
+}
 
 type Account struct {
 	*entity.Base
-	PWD              *password
-	ActivationCode   string
-	PasswordCode     *passwordCode
-	EmailAddressCode string
-	NewUID           string
-	TerminateCode    string
+	Email          string
+	Password       *password
+	ActivateToken  string
+	PasswordToken  *passwordToken
+	EmailToken     string
+	NewEmail       string
+	SuspendToken string
 }
 
 func init() {
-	entity.Register(&Account{})
+	entity.Register(&Email{})
+	entity.Register(&Account{}).Index("Email")
 }
 
-func initAccount(uid string) *Account {
-	return &Account{Base: &entity.Base{ID: strings.ToLower(uid)}}
+func initEmail(address string) *Email {
+	return &Email{Base: &entity.Base{
+		ID: strings.ToLower(address),
+	}}
 }
 
-func NewAccount(uid, pwd1, pwd2 string) (account *Account, err error, conflict bool) {
-	acc := initAccount(uid)
-	acc.ActivationCode = util.NewToken()
-	if acc.PWD, err, conflict = newPassword(pwd1, pwd2); err == nil {
-		if err, conflict = acc.Create(acc); err != nil {
-			if conflict {
-				err = ErrEmailTaken
-			}
-		} else {
-			account = acc
+func initAccount(id ...string) (account *Account) {
+	account = &Account{Base: &entity.Base{}}
+	if len(id) == 1 {
+		account.ID = id[0]
+	}
+	return
+}
+
+func NewAccount(address, pwd1, pwd2 string) (account *Account, err error, conflict bool) {
+	account = initAccount()
+	account.ActivateToken = util.NewToken()
+	if account.Password, err, conflict = newPassword(pwd1, pwd2); err != nil {
+		return
+	}
+	email := initEmail(address)
+	if err, conflict = email.Create(email); err != nil {
+		if conflict {
+			err = ErrEmailTaken
 		}
+	} else {
+		account.Email = email.ID
+		err = account.Update(account)
 	}
 	return
 }
 
 func (a *Account) Name() (name string) {
-	return a.ID
+	return a.Email
 }
 
 func (a *Account) IsActive() bool {
-	return len(a.ActivationCode) == 0
+	return a.ActivateToken == ""
 }
 
+// Refresh updates the account's field values & returns the validity of the session
 func (a *Account) Refresh() (current bool) {
-	if a.Base == nil || a.ID == "" {
-		return false
-	}
-	if saved, e, _ := getAccount(a.ID); e == nil {
+	if saved, err, _ := GetAccount(a.ID); err == nil {
 		*a = *saved
-		current = a.PWD.Created.Equal(saved.PWD.Created)
+		current = a.Password.Created.Equal(saved.Password.Created)
 	}
 	return
 }
 
-func getAccount(uid string) (account *Account, err error, conflict bool) {
-	acc := initAccount(uid)
-	if e := acc.Read(acc); e != nil {
-		if e == entity.ErrEmptyResult {
-			err, conflict = ErrInvalidCredentials, true
-		} else {
-			err = e
-		}
+func GetAccount(id string, email ...string) (account *Account, err error, conflict bool) {
+	var empty bool
+	account = initAccount(id)
+	if len(email) == 1 && id == "" {
+		index := entity.Index(account, "Email")
+		err, empty = index.Read(email[0], account)
 	} else {
-		account = acc
+		err, empty = account.Read(account)
 	}
-	return
-}
-
-func GetAccount(uid, pwd string) (account *Account, err error, conflict bool) {
-	if acc, e, c := getAccount(uid); e != nil {
-		err, conflict = e, c
-	} else if !acc.IsActive() {
-		err, conflict = ErrNotActivated, true
-	} else if e := bcrypt.CompareHashAndPassword(acc.PWD.Value, []byte(pwd)); e != nil {
+	if empty {
 		err, conflict = ErrInvalidCredentials, true
-	} else {
-		pwd = ""
-		account = acc
 	}
 	return
-}
-
-func GetAccountInsecure(uid string) (account *Account, err error, conflict bool) {
-	return getAccount(uid)
 }

@@ -59,19 +59,23 @@ func ip(r *http.Request) string {
 	return strings.Split(r.RemoteAddr, ":")[0]
 }
 
-func NewToken(r *http.Request) (string, error) {
-	return secure.NewRequestToken(&token{
+func NewToken(r *http.Request, differentPath ...string) (string, error) {
+	t := &token{
 		IP:        ip(r),
-		Path:      path(r.URL.Path),
 		Timestamp: time.Now(),
-	})
+	}
+	if len(differentPath) == 1 {
+		t.Path = path(differentPath[0])
+	} else {
+		t.Path = path(r.URL.Path)
+	}
+	return secure.NewRequestToken(t)
 }
 
 func getClient(ip string) (c *client) {
 	c = &client{Base: &entity.Base{ID: ip}}
-	if err := c.Read(c); err != nil {
-		if err == entity.ErrEmptyResult {
-			c.ID = ip
+	if err, empty := c.Read(c); err != nil {
+		if empty {
 			c.Requests = make(requests)
 		} else {
 			log.Printf("WARNING: error reading from ratelimit table: %v", err)
@@ -84,10 +88,10 @@ func Handle(handle httprouter.Handle, seconds int) httprouter.Handle {
 	window := time.Duration(seconds) * time.Second
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		t, ip, p := new(token), ip(r), path(r.URL.Path)
-		if rate := r.FormValue("_rate"); rate == "" {
+		if formToken := r.FormValue("_ratelimit"); formToken == "" {
 			template.Error(w, r, ErrInvalidRequest, true)
 			log.Printf("SUSPICIOUS: rate limit token missing %v %v", ip, p)
-		} else if e := secure.RequestToken(rate).Read(t); e != nil {
+		} else if e := secure.RequestToken(formToken).Read(t); e != nil {
 			template.Error(w, r, ErrInvalidRequest, true)
 			log.Printf("SUSPICIOUS: rate limit token unreadable %v %v", ip, p)
 		} else if t.IP != ip {
@@ -100,9 +104,9 @@ func Handle(handle httprouter.Handle, seconds int) httprouter.Handle {
 			template.Error(w, r, ErrInvalidRequest, true)
 			log.Printf("SUSPICIOUS: rate limit token reuse: %v %v, token %v, previous request %v", ip, p, t.Timestamp, c.Requests[p])
 		} else if c.Requests[p].After(time.Now().Add(-window)) {
-			template.DataError(w, r, ErrTooManyRequests, map[string]interface{}{
-				"Window": window,
-			}, "ratelimit", "toomanyrequests")
+			template.ErrorTail(w, r, ErrTooManyRequests, true, "ratelimit", "TooManyRequests", map[string]interface{}{
+				"window": window,
+			})
 		} else {
 			c.Requests[p] = time.Now()
 			if clear := time.Now().Add(window).Unix(); clear > c.Clear {

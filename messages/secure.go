@@ -62,21 +62,21 @@ func init() {
 		Set("nl", "Bedankt voor het aanmelden bij Essix! Voordat je kan inloggen moet je account nog geactiveerd worden; we hebben je een e-mail gestuurd met de activatiecode.").
 		Set("en", "Thanks for signing up with Essix! Before you can log in, your account needs to be activated; we've sent you an email containing the activation code.")
 
-	msg.Key("activation subject").
+	msg.Key("ActivateToken subject").
 		Set("nl", "Je account activeren").
 		Set("en", "Activate your account")
 
-	msg.Key("Activation code").
+	msg.Key("Activate token").
 		Set("nl", "Activeringscode").
-		Set("en", "Activation code")
+		Set("en", "Activation token")
 
-	msg.Key("Activation code source").
+	msg.Key("Activate token source").
 		Set("nl", "De activeringscode is je per e-mail toegestuurd").
-		Set("en", "The activation code was sent to you by email")
+		Set("en", "The activation token was sent to you by email")
 
-	msg.Key("Resend activation code").
+	msg.Key("Resend activate token").
 		Set("nl", "Stuur me de activeringscode opnieuw").
-		Set("en", "Resend me the activation code")
+		Set("en", "Resend me the activation token")
 
 	msg.Key("Activate successful").
 		Set("nl", "Bedankt voor het activeren van je account bij Essix! Je registratie is compleet; je kan nu inloggen.").
@@ -84,9 +84,9 @@ func init() {
 
 	msg.Key("Resend successful").
 		Set("nl", "Dank voor je aanvraag. Controleer je e-mail voor de activatiecode.").
-		Set("en", "Thanks for your request. Check your email for the activation code.")
+		Set("en", "Thanks for your request. Check your email for the activation token.")
 
-	msg.Key("password subject").
+	msg.Key("PasswordToken subject").
 		Set("nl", "Mijn wachtwoord opnieuw instellen").
 		Set("en", "Reset my password")
 
@@ -94,11 +94,11 @@ func init() {
 		Set("nl", "Wachtwoord kwijt?").
 		Set("en", "Lost your password?")
 
-	msg.Key("Password code successful").
+	msg.Key("Password token successful").
 		Set("nl", "Dank voor je aanvraag om je wachtwoord opnieuw in te stellen. Je krijgt een e-mail van ons met verdere instructies.").
 		Set("en", "Thanks for your request to reset your password. Please check your email for further instructions.")
 
-	msg.Key("Password code cancelled").
+	msg.Key("Password token cancelled").
 		Set("nl", "Opnieuw instellen van het wachtwoord is geannuleerd.").
 		Set("en", "Password reset is cancelled.")
 
@@ -114,11 +114,11 @@ func init() {
 		Set("nl", "Geldig tot").
 		Set("en", "Expires")
 
-	msg.Key("emailaddress subject").
+	msg.Key("EmailToken subject").
 		Set("nl", "Mijn e-mailadres wijzigen").
 		Set("en", "Change my email address")
 
-	msg.Key("Change email address").
+	msg.Key("Change email").
 		Set("nl", "Je e-mailadres wijzigen").
 		Set("en", "Change your email address")
 
@@ -130,15 +130,15 @@ func init() {
 		Set("nl", "vervangen door").
 		Set("en", "with")
 
-	msg.Key("Email address code successful").
+	msg.Key("Email token successful").
 		Set("nl", "Dank voor je aanvraag om je e-mailadres te wijzigen. Je krijgt op het nieuwe adres een e-mail van ons met verdere instructies.").
 		Set("en", "Thanks for your request to change your email address. For further instructions, please check your email on the new address.")
 
-	msg.Key("Email address code cancelled").
+	msg.Key("Email token cancelled").
 		Set("nl", "Wijzigen e-mailadres is geannuleerd.").
 		Set("en", "Changing email address is cancelled.")
 
-	msg.Key("Change email address successful").
+	msg.Key("Change email  successful").
 		Set("nl", "Je nieuwe e-mailadres is nu actief.").
 		Set("en", "Your new email address is activated.")
 
@@ -154,33 +154,33 @@ func init() {
 		Set("nl", "Alleen de velden met een * zijn verplicht").
 		Set("en", "Only the fields with a * are required")
 
-	msg.Key("terminate subject").
+	msg.Key("SuspendToken subject").
 		Set("nl", "Mijn account opzeggen").
-		Set("en", "Terminate my account")
+		Set("en", "Suspend my account")
 
-	msg.Key("Terminate account").
+	msg.Key("Suspend account").
 		Set("nl", "Je account opzeggen").
-		Set("en", "Terminate your account")
+		Set("en", "Suspend your account")
 
-	msg.Key("Terminate sure").
+	msg.Key("Suspend sure").
 		Set("nl", `Weet je zeker dat je je account bij Essix wil opzeggen?
 			Je kan je later weliswaar weer opnieuw aanmelden, maar met het opzeggen gaan nu wel alle gekoppelde gegevens verloren.`).
-		Set("en", `Are you sure you want to terminate your account?
+		Set("en", `Are you sure you want to suspend your account?
 			Though you can always sign up again later, all data currently linked to your account would get lost now.`)
 
 	msg.Key("Yes, that's what I want").
 		Set("nl", "Ja, dat wil ik").
 		Set("en", "Yes, that's what I want")
 
-	msg.Key("Terminate code successful").
+	msg.Key("Suspend token successful").
 		Set("nl", "Je hebt een aanvraag ingediend om je account op te zeggen. Je krijgt een e-mail van ons met verdere instructies.").
-		Set("en", "You filed a request to terminate your account. For further instructions, please check your email.")
+		Set("en", "You filed a request to suspend your account. For further instructions, please check your email.")
 
-	msg.Key("Terminate code cancelled").
+	msg.Key("Suspend token cancelled").
 		Set("nl", "Opzeggen van het account is geannuleerd.").
 		Set("en", "Termination of the account is cancelled.")
 
-	msg.Key("Terminate successful").
+	msg.Key("Suspend successful").
 		Set("nl", "Je account is nu verwijderd.").
 		Set("en", "Your account has been deleted now.")
 }

@@ -51,8 +51,7 @@ input.right {
   flex-wrap: wrap;
 }
 
-form {
-  display: flex;
+form.flex {
   flex-direction: column;  
 }
 

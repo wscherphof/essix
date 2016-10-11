@@ -1,9 +1,0 @@
-= include ../includes/top .
-body
-  main
-    p {{ Msg .Error.Error }}
-    = yield tail
-    p
-      a href={{ .Path }} {{ Msg "Try again" }}
-    p
-      a href=/ {{ Msg "Take me home" }}

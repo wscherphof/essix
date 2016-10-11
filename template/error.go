@@ -8,14 +8,16 @@ import (
 
 var ErrInternalServerError = errors.New("ErrInternalServerError")
 
-// Error executes a template reporting on e
-func Error(w http.ResponseWriter, r *http.Request, err error, conflict bool, tail ...string) {
-	errorTemplate(w, r, err, conflict, nil, tail...)
+func Error(w http.ResponseWriter, r *http.Request, err error, conflict bool) {
+	errorTemplate(w, r, err, conflict, nil)
 }
 
-// DataError executes a template reporting on e & data
-func DataError(w http.ResponseWriter, r *http.Request, err error, data map[string]interface{}, tail ...string) {
-	errorTemplate(w, r, err, true, data, tail...)
+func ErrorTail(w http.ResponseWriter, r *http.Request, err error, conflict bool, dir, base string, data ...map[string]interface{}) {
+	if len(data) == 1 {
+		errorTemplate(w, r, err, conflict, data[0], dir, base)
+	} else {
+		errorTemplate(w, r, err, conflict, nil, dir, base)
+	}
 }
 
 func errorTemplate(w http.ResponseWriter, r *http.Request, err error, conflict bool, errData map[string]interface{}, tail ...string) {
@@ -27,8 +29,8 @@ func errorTemplate(w http.ResponseWriter, r *http.Request, err error, conflict b
 		err = ErrInternalServerError
 	}
 	data := map[string]interface{}{
-		"Error": err,
-		"Path":  r.URL.Path,
+		"error": err,
+		"url":  r.URL.String(),
 	}
 	if errData != nil {
 		for k, v := range errData {
@@ -37,10 +39,10 @@ func errorTemplate(w http.ResponseWriter, r *http.Request, err error, conflict b
 	}
 	inner := ""
 	if len(tail) == 2 {
-		inner = "../" + tail[0] + "/" + tail[1] + "_error-tail"
+		inner = "../" + tail[0] + "/" + tail[1] + "-error-tail"
 	}
 	// Set the Content-Type to prevent CompressHandler from doing so after our WriteHeader()
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(code)
-	Run(w, r, "router", "error", inner, data)
+	Run(w, r, "template", "Error", inner, data)
 }

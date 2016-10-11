@@ -1,5 +1,0 @@
-= include ../includes/top .
-body
-  p {{ Msg "Terminate code cancelled" }}
-  p
-    a href=/ {{ Msg "Take me home" }}

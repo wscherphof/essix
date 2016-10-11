@@ -1,5 +1,0 @@
-= content tail
-  p
-    a href=/account {{ Msg "Sign up" }}
-  p
-    a href=/account/activation {{ Msg "activation subject" }}

@@ -11,63 +11,63 @@ import (
 	"net/http"
 )
 
-func passwordEmail(r *http.Request, acc *model.Account) (error, string) {
-	format := msg.Msg(r)("Time format")
-	return sendEmail(r, acc.ID, acc.Name(), "password", acc.PasswordCode.Value, acc.PasswordCode.Expires.Format(format))
-}
-
-func PasswordCodeForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	if token, e := ratelimit.NewToken(r); e != nil {
-		template.Error(w, r, e, false)
+func PasswordTokenForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	if token, err := ratelimit.NewToken(r); err != nil {
+		template.Error(w, r, err, false)
 	} else {
-		template.Run(w, r, "secure", "passwordcode", "", map[string]interface{}{
-			"UID":            ps.ByName("uid"),
-			"RateLimitToken": token,
+		template.Run(w, r, "password", "PasswordTokenForm", "", map[string]interface{}{
+			"ratelimit": token,
 		})
 	}
 }
 
-func PasswordCode(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	uid := r.FormValue("uid")
-	if acc, e, conflict := model.GetAccountInsecure(uid); e != nil {
-		template.Error(w, r, e, conflict)
-	} else if !acc.IsActive() {
-		template.Error(w, r, model.ErrNotActivated, conflict, "secure", "activation_resend")
-	} else if e := acc.CreatePasswordCode(); e != nil {
-		template.Error(w, r, e, false)
-	} else if e, remark := passwordEmail(r, acc); e != nil {
-		template.Error(w, r, e, false)
+func PasswordToken(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	if account, err, conflict := model.GetAccount("", r.FormValue("email")); err != nil {
+		template.Error(w, r, err, conflict)
+	} else if !account.IsActive() {
+		template.Error(w, r, model.ErrNotActivated, conflict)
+	} else if err := account.CreatePasswordToken(); err != nil {
+		template.Error(w, r, err, false)
 	} else {
-		template.Run(w, r, "secure", "passwordcode_success", "", map[string]interface{}{
-			"Name":   acc.Name(),
-			"Remark": remark,
-		})
+		format := msg.Msg(r)("Time format")
+		expires := account.PasswordToken.Expires.Format(format)
+		path := "/account/password"
+		path += "?token=" + account.PasswordToken.Value
+		path += "&id=" + account.ID
+		path += "&expires=" + util.URLEncodeString(expires)
+		if err, remark := sendEmail(r, account.Email, "PasswordToken", path, expires); err != nil {
+			template.Error(w, r, err, false)
+		} else {
+			template.Run(w, r, "password", "PasswordToken", "", map[string]interface{}{
+				"remark": remark,
+			})
+		}
 	}
 }
 
-func PasswordForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	uid, code, extra, cancel := ps.ByName("uid"), r.FormValue("code"), r.FormValue("extra"), r.FormValue("cancel")
-	expires, _ := util.URLDecode([]byte(extra))
+func ChangePasswordForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	id, token, expires, cancel := r.FormValue("id"), r.FormValue("token"), r.FormValue("expires"), r.FormValue("cancel")
+	expires, _ = util.URLDecodeString(expires)
 	if cancel == "true" {
-		model.ClearPasswordCode(uid, code)
-		template.Run(w, r, "secure", "passwordcode_cancelled", "", nil)
+		model.ClearPasswordToken(id, token)
+		template.Run(w, r, "password", "ChangePassword-cancel", "", nil)
 	} else {
-		template.Run(w, r, "secure", "password", "", map[string]interface{}{
-			"UID":     uid,
-			"Code":    code,
-			"Expires": string(expires),
+		template.Run(w, r, "password", "ChangePasswordForm", "", map[string]interface{}{
+			"id":      id,
+			"token":   token,
+			"expires": expires,
 		})
 	}
 }
 
 func ChangePassword(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	uid, code, pwd1, pwd2 := r.FormValue("uid"), r.FormValue("code"), r.FormValue("pwd1"), r.FormValue("pwd2")
-	if acc, e, conflict := model.GetAccountInsecure(uid); e != nil {
-		template.Error(w, r, e, conflict)
-	} else if e, conflict := acc.ChangePassword(code, pwd1, pwd2); e != nil {
-		template.Error(w, r, e, conflict)
+	id, token, pwd1, pwd2 := r.FormValue("id"), r.FormValue("token"), r.FormValue("pwd1"), r.FormValue("pwd2")
+	if account, err, conflict := model.GetAccount(id); err != nil {
+		template.Error(w, r, err, conflict)
+	} else if err, conflict := account.ChangePassword(token, pwd1, pwd2); err != nil {
+		template.Error(w, r, err, conflict)
 	} else {
 		secure.LogOut(w, r, false)
-		template.Run(w, r, "secure", "password_success", "", nil)
+		template.Run(w, r, "password", "ChangePassword", "", nil)
 	}
 }

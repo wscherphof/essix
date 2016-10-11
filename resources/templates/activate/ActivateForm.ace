@@ -1,0 +1,22 @@
+= include ../includes/top .
+body
+  header
+    h1 {{Msg "ActivateToken subject"}}
+  main.wrap
+    form.flex method=POST action=/account/activate
+      input type=hidden name=_method value=PUT
+      input type=hidden name=id value={{.id}}
+      .p
+        label {{Msg "Activate token"}}*{{" "}}
+          input#token.right type=text name=token autocomplete=off value={{.token}} placeholder=zc-968YEX3VYu_YmdA7ynBp_d2cydmR1MRRqmglh1R0= required=
+      .p
+        input.right type=submit
+  {{if eq .token ""}}
+    footer
+      p {{Msg "Activate token source"}}
+      form method=POST action=/account/activate/token
+        input type=hidden name=_method value=PUT
+        input type=hidden name=_ratelimit value={{.ratelimit}}
+        input type=hidden name=id value={{.id}}
+        input type=submit value={{Msg "Resend activate token"}}
+  {{end}}

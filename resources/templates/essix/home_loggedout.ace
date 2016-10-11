@@ -1,4 +1,0 @@
-= content account
-  a href=/account {{ Msg "Sign up" }}
-= content session
-  a href=/session {{ Msg "Log in" }}

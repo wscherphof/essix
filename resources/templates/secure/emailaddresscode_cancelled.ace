@@ -1,5 +1,0 @@
-= include ../includes/top .
-body
-  p {{ Msg "Email address code cancelled" }}
-  p
-    a href=/ {{ Msg "Take me home" }}

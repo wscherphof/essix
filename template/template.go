@@ -33,9 +33,9 @@ func Run(w io.Writer, r *http.Request, dir, base, inner string, data map[string]
 	}
 }
 
-// Write loads and executes a template, returning the output as a byte array
-func Write(r *http.Request, dir, base, inner string, data map[string]interface{}) []byte {
+// Write loads and executes a template, returning the output
+func Write(r *http.Request, dir, base, inner string, data map[string]interface{}) string {
 	var b bytes.Buffer
 	Run(&b, r, dir, base, inner, data)
-	return b.Bytes()
+	return string(b.Bytes())
 }
