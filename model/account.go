@@ -18,13 +18,13 @@ type Email struct {
 
 type Account struct {
 	*entity.Base
-	Email          string
-	Password       *password
-	ActivateToken  string
-	PasswordToken  *passwordToken
-	EmailToken     string
-	NewEmail       string
-	SuspendToken string
+	Email         string
+	Password      *password
+	ActivateToken string
+	PasswordToken *passwordToken
+	EmailToken    string
+	NewEmail      string
+	SuspendToken  string
 }
 
 func init() {

@@ -17,7 +17,7 @@ func SuspendToken(w http.ResponseWriter, r *http.Request, ps httprouter.Params) 
 	sure := r.FormValue("sure")
 	if err, conflict := account.CreateSuspendToken((sure == "affirmative")); err != nil {
 		template.Error(w, r, err, conflict)
-	} else if err, remark := sendEmail(r, account.Email, "SuspendToken", "/account/suspend?token=" + account.SuspendToken); err != nil {
+	} else if err, remark := sendEmail(r, account.Email, "SuspendToken", "/account/suspend?token="+account.SuspendToken); err != nil {
 		template.Error(w, r, err, false)
 	} else {
 		secure.Update(w, r, account)

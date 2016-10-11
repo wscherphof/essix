@@ -19,7 +19,7 @@ func EmailToken(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	newEmail := r.FormValue("newemail")
 	if err, conflict := account.CreateEmailToken(newEmail); err != nil {
 		template.Error(w, r, err, conflict)
-	} else if err, remark := sendEmail(r, account.NewEmail, "EmailToken", "/account/email?token=" + account.EmailToken); err != nil {
+	} else if err, remark := sendEmail(r, account.NewEmail, "EmailToken", "/account/email?token="+account.EmailToken); err != nil {
 		template.Error(w, r, err, false)
 	} else {
 		secure.Update(w, r, account)

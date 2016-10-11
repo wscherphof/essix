@@ -11,6 +11,7 @@ func init() {
 
 	router.GET("/account", IfHandle(Account, NewAccountForm))
 	router.POST("/account", ratelimit.Handle(NewAccount, limit))
+	router.GET("/account/post", NewAccount)
 
 	router.GET("/account/activate", ActivateForm)
 	router.PUT("/account/activate", Activate)
