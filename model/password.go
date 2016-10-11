@@ -8,9 +8,9 @@ import (
 )
 
 var (
-	ErrPasswordEmpty        = errors.New("ErrPasswordEmpty")
-	ErrPasswordsNotEqual    = errors.New("ErrPasswordsNotEqual")
-	ErrNotActivated       = errors.New("ErrNotActivated")
+	ErrPasswordEmpty         = errors.New("ErrPasswordEmpty")
+	ErrPasswordsNotEqual     = errors.New("ErrPasswordsNotEqual")
+	ErrNotActivated          = errors.New("ErrNotActivated")
 	ErrPasswordTokenTimedOut = errors.New("ErrPasswordTokenTimedOut")
 )
 
@@ -61,11 +61,11 @@ func (a *Account) CreatePasswordToken() error {
 	return a.Update(a)
 }
 
-func ClearPasswordCode(uid, token string) {
-	if acc, _, _ := GetAccount(uid); acc != nil {
-		if acc.PasswordToken.Value == token {
-			acc.PasswordToken = nil
-			acc.Update(acc)
+func ClearPasswordToken(id, token string) {
+	if account, err, _ := GetAccount(id); err == nil {
+		if account.PasswordToken.Value == token {
+			account.PasswordToken = nil
+			account.Update(account)
 		}
 	}
 }

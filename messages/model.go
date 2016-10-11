@@ -29,15 +29,15 @@ func init() {
 		Set("nl", "Dit account is al geactiveerd").
 		Set("en", "This account is already activated")
 
-	msg.Key("ErrCodeUnset").
+	msg.Key("ErrTokenUnset").
 		Set("nl", "Geen aanvraag bekend voor dit account").
 		Set("en", "No pending request for this account")
 
-	msg.Key("ErrCodeIncorrect").
+	msg.Key("ErrTokenIncorrect").
 		Set("nl", "Ongeldige aanvraag").
 		Set("en", "Invalid request")
 
-	msg.Key("ErrPasswordCodeTimedOut").
+	msg.Key("ErrPasswordTokenTimedOut").
 		Set("nl", "De geldigheidstermijn van de aanvraag voor het opnieuw instellen van het wachtwoord is verstreken").
 		Set("en", "The request for a password reset is expired")
 }

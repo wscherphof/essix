@@ -14,7 +14,7 @@ func ActivateForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) 
 	} else {
 		template.Run(w, r, "activate", "ActivateForm", "", map[string]interface{}{
 			"id":        r.FormValue("id"),
-			"token":      r.FormValue("token"),
+			"token":     r.FormValue("token"),
 			"ratelimit": token,
 		})
 	}
@@ -22,9 +22,9 @@ func ActivateForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) 
 
 func Activate(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	if account, err, conflict := model.GetAccount(r.FormValue("id")); err != nil {
-		template.ErrorTail(w, r, err, conflict, "activate", "Activate")
+		template.Error(w, r, err, conflict)
 	} else if err, conflict = account.Activate(r.FormValue("token")); err != nil {
-		template.ErrorTail(w, r, err, conflict, "activate", "Activate")
+		template.Error(w, r, err, conflict)
 	} else {
 		template.Run(w, r, "activate", "Activate", "", nil)
 	}
@@ -38,6 +38,13 @@ func ActivateTokenForm(w http.ResponseWriter, r *http.Request, ps httprouter.Par
 			"ratelimit": token,
 		})
 	}
+}
+
+func activateEmail(r *http.Request, account *model.Account) (error, string) {
+	return sendEmail(r, account.Email,
+		"ActivateToken",
+		"/account/activate?token="+account.ActivateToken+"&id="+account.ID,
+	)
 }
 
 func ActivateToken(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {

@@ -9,7 +9,7 @@ import (
 func init() {
 	var limit = env.GetInt("RATELIMIT", 60)
 
-	router.GET("/account", AccountForm)
+	router.GET("/account", NewAccountForm)
 	router.POST("/account", ratelimit.Handle(NewAccount, limit))
 
 	router.GET("/account/activate", ActivateForm)
@@ -21,11 +21,10 @@ func init() {
 	router.PUT("/session", ratelimit.Handle(LogIn, limit))
 	router.DELETE("/session", LogOut)
 
-	// router.GET("/account/passwordcode/:uid", PasswordCodeForm)
-	// router.GET("/account/passwordcode", PasswordCodeForm)
-	// router.POST("/account/passwordcode", ratelimit.Handle(PasswordCode, limit))
-	// router.GET("/account/password/:uid", PasswordForm)
-	// router.PUT("/account/password", ChangePassword)
+	router.GET("/account/password/token", PasswordTokenForm)
+	router.PUT("/account/password/token", ratelimit.Handle(PasswordToken, limit))
+	router.GET("/account/password", ChangePasswordForm)
+	router.PUT("/account/password", ChangePassword)
 
 	// router.GET("/account/emailaddresscode", SecureHandle(EmailAddressCodeForm))
 	// router.POST("/account/emailaddresscode", SecureHandle(EmailAddressCode))

@@ -91,14 +91,10 @@ func All(table string) (*Cursor, error) {
 	return &Cursor{Cursor: cursor}, err
 }
 
-func InsertUpdate(table string, record interface{}, id ...string) (response r.WriteResponse, err error) {
-	if len(id) == 1 {
-		response, err = r.DB(DB).Table(table).Get(id[0]).Update(record).RunWrite(Session)
-	} else {
-		response, err, _ = insert(table, record, r.InsertOpts{
-			Conflict: "update",
-		})
-	}
+func InsertUpdate(table string, record interface{}) (response r.WriteResponse, err error) {
+	response, err, _ = insert(table, record, r.InsertOpts{
+		Conflict: "update",
+	})
 	return
 }
 func Delete(table, key string) (r.WriteResponse, error) {

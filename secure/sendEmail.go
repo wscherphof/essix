@@ -3,7 +3,6 @@ package secure
 import (
 	"github.com/wscherphof/essix/email"
 	"github.com/wscherphof/essix/template"
-	"github.com/wscherphof/essix/util"
 	"github.com/wscherphof/msg"
 	"net/http"
 )
@@ -14,7 +13,7 @@ func sendEmail(r *http.Request, recipient, templateName, path string, extra ...s
 		"link": "https://" + r.Host + path,
 	}
 	if len(extra) == 1 {
-		data["extra"] = util.URLEncodeString(extra[0])
+		data["extra"] = extra[0]
 	}
 	body := template.Write(r, "email", templateName+"-email", "lang", data)
 	subject := msg.Msg(r)(templateName + " subject")

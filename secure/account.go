@@ -8,21 +8,14 @@ import (
 	"net/http"
 )
 
-func AccountForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func NewAccountForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	if token, err := ratelimit.NewToken(r); err != nil {
 		template.Error(w, r, err, false)
 	} else {
-		template.Run(w, r, "account", "AccountForm", "", map[string]interface{}{
+		template.Run(w, r, "account", "NewAccountForm", "", map[string]interface{}{
 			"ratelimit": token,
 		})
 	}
-}
-
-func activateEmail(r *http.Request, account *model.Account) (error, string) {
-	return sendEmail(r, account.Email,
-		"Activate",
-		"/account/activate?token="+account.ActivateToken+"&id="+account.ID,
-	)
 }
 
 func NewAccount(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {

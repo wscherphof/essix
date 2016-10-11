@@ -4,6 +4,6 @@ body
     p {{Msg .error.Error}}
     = yield tail
     p
-      a href={{.path }} {{Msg "Try again"}}
+      a href={{.url}} {{Msg "Try again"}}
     p
       a href=/ {{Msg "Take me home"}}

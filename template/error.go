@@ -30,7 +30,7 @@ func errorTemplate(w http.ResponseWriter, r *http.Request, err error, conflict b
 	}
 	data := map[string]interface{}{
 		"error": err,
-		"path":  r.URL.Path,
+		"url":  r.URL.String(),
 	}
 	if errData != nil {
 		for k, v := range errData {

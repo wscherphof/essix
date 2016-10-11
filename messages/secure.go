@@ -62,7 +62,7 @@ func init() {
 		Set("nl", "Bedankt voor het aanmelden bij Essix! Voordat je kan inloggen moet je account nog geactiveerd worden; we hebben je een e-mail gestuurd met de activatiecode.").
 		Set("en", "Thanks for signing up with Essix! Before you can log in, your account needs to be activated; we've sent you an email containing the activation code.")
 
-	msg.Key("Activate subject").
+	msg.Key("ActivateToken subject").
 		Set("nl", "Je account activeren").
 		Set("en", "Activate your account")
 
@@ -86,7 +86,7 @@ func init() {
 		Set("nl", "Dank voor je aanvraag. Controleer je e-mail voor de activatiecode.").
 		Set("en", "Thanks for your request. Check your email for the activation token.")
 
-	msg.Key("password subject").
+	msg.Key("PasswordToken subject").
 		Set("nl", "Mijn wachtwoord opnieuw instellen").
 		Set("en", "Reset my password")
 

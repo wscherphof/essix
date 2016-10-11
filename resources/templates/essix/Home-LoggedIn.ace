@@ -1,4 +1,5 @@
 = content account
+  a href=/account/password/token {{Msg "PasswordToken subject"}}
 = content session
   form action=/session method=POST
     input type=hidden name=_method value=DELETE

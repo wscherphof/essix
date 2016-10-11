@@ -10,8 +10,8 @@ import (
 var (
 	ErrInvalidCredentials = errors.New("ErrInvalidCredentials")
 	ErrEmailTaken         = errors.New("ErrEmailTaken")
-	ErrTokenUnset          = errors.New("ErrTokenUnset")
-	ErrTokenIncorrect      = errors.New("ErrTokenIncorrect")
+	ErrTokenUnset         = errors.New("ErrTokenUnset")
+	ErrTokenIncorrect     = errors.New("ErrTokenIncorrect")
 )
 
 type Email struct {
@@ -20,13 +20,13 @@ type Email struct {
 
 type Account struct {
 	*entity.Base
-	Email            string
-	Password         *password
-	ActivateToken     string
-	PasswordToken     *passwordToken
-	EmailToken string
-	NewEmail         string
-	TerminateToken    string
+	Email          string
+	Password       *password
+	ActivateToken  string
+	PasswordToken  *passwordToken
+	EmailToken     string
+	NewEmail       string
+	TerminateToken string
 }
 
 func init() {

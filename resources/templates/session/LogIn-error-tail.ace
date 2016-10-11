@@ -2,4 +2,4 @@
   p
     a href=/account {{Msg "Sign up"}}
   p
-    a href=/account/activate?id={{.id}} {{Msg "Activate subject"}}
+    a href=/account/activate?id={{.id}} {{Msg "ActivateToken subject"}}
