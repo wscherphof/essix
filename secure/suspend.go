@@ -43,7 +43,7 @@ func SuspendForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 
 func Suspend(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	account := Authentication(w, r)
-	token, sure := r.FormValue("code"), r.FormValue("sure")
+	token, sure := r.FormValue("token"), r.FormValue("sure")
 	if err, conflict := account.Suspend(token, (sure == "affirmative")); err != nil {
 		template.Error(w, r, err, conflict)
 	} else {

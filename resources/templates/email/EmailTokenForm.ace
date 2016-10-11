@@ -2,8 +2,8 @@
 body
   header
     h1 {{Msg "EmailToken subject"}}
-  main.flex
-    form method=POST action=/account/email/token
+  main.wrap
+    form.flex method=POST action=/account/email/token
       input type=hidden name=_method value=PUT
       .p
         label {{Msg "Current"}}:

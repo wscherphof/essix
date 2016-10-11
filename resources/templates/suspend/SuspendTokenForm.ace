@@ -2,9 +2,9 @@
 body
   header
     h1 {{Msg "SuspendToken subject" }}
-  main
+  main.wrap
     .p {{Msg "Suspend sure"}}
-    form method=POST action=/account/suspend/token
+    form.flex method=POST action=/account/suspend/token
       input type=hidden name=_method value=PUT
       .p
         label {{Msg "Yes, that's what I want"}}

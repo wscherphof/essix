@@ -1,9 +1,14 @@
 = include ../includes/top .
 body
-  p
-    {{Msg "Email"}}: {{.email}} {{""}}
-    a href=/account/email/token {{Msg "change"}}
-  p
-    a href=/account/password/token {{Msg "PasswordToken subject"}}
-  p
-    a href=/ {{Msg "Take me home"}}
+  header
+    h1 {{Msg "Edit account"}}
+  main
+    p
+      {{Msg "Email"}}: {{.email}} {{""}}
+      a href=/account/email/token {{Msg "change"}}
+    p
+      a href=/account/password/token {{Msg "PasswordToken subject"}}
+    p
+      a href=/account/suspend/token {{Msg "SuspendToken subject"}}
+    p
+      a href=/ {{Msg "Take me home"}}
