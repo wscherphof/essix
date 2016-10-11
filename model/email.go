@@ -15,12 +15,12 @@ func (a *Account) CreateEmailToken(newEmail string) (err error, conflict bool) {
 		}
 	} else {
 		err, conflict = ErrEmailTaken, true
-	} 
+	}
 	return
 }
 
 func (a *Account) ClearEmailToken(token string) (err error, conflict bool) {
-	if token =="" || a.EmailToken != token {
+	if token == "" || a.EmailToken != token {
 		err, conflict = ErrInvalidCredentials, true
 	} else {
 		a.NewEmail = ""
