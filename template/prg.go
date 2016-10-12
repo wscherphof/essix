@@ -12,27 +12,34 @@ type prgType struct {
 	r *http.Request
 }
 
-func (p *prgType) Redirect() {
-	path := p.r.URL.Path
-	path += "/" + strings.ToLower(p.r.Method)
-	path += "?" + p.Values.Encode()
-	http.Redirect(p.w, p.r, path, http.StatusSeeOther)
+func (t *prgType) Run() {
+	path := t.r.URL.Path
+	path += "/" + strings.ToLower(t.r.Method)
+	path += "?" + t.Values.Encode()
+	http.Redirect(t.w, t.r, path, http.StatusSeeOther)
 }
 
-func PRG(w http.ResponseWriter, r *http.Request, dir, base, inner string) (prg *prgType) {
+func inner(opt_inner ...string) (ret string) {
+	if len(opt_inner) == 1 {
+		ret = opt_inner[0]
+	}
+	return
+}
+
+func PRG(w http.ResponseWriter, r *http.Request, dir, base string, opt_inner ...string) (prg *prgType) {
 	switch r.Method {
 	case "GET":
 		data := make(map[string]interface{})
-		for key, _ := range r.URL.Query() {
+		for key := range r.URL.Query() {
 			data[key] = r.FormValue(key)
 		}
-		Run(w, r, dir, base, inner, data)
+		Run(w, r, dir, base, inner(opt_inner...), data)
 	case "PUT", "POST", "DELETE":
 		values, _ := url.ParseQuery("")
 		prg = &prgType{
 			Values: &values,
-			w: w,
-			r: r,
+			w:      w,
+			r:      r,
 		}
 	}
 	return
