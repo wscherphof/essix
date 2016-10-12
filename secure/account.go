@@ -4,7 +4,6 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/wscherphof/essix/model"
 	"github.com/wscherphof/essix/ratelimit"
-	"github.com/wscherphof/essix/router"
 	"github.com/wscherphof/essix/template"
 	"net/http"
 )
@@ -20,7 +19,7 @@ func NewAccountForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params
 }
 
 func NewAccount(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	if prg := router.PRG(w, r, "account", "NewAccount", "", "id", "remark"); prg == nil {
+	if prg := template.PRG(w, r, "account", "NewAccount", ""); prg == nil {
 		return
 	} else if account, err, conflict := model.NewAccount(
 		r.FormValue("email"),
@@ -31,7 +30,9 @@ func NewAccount(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	} else if err, remark := activateEmail(r, account); err != nil {
 		template.Error(w, r, err, false)
 	} else {
-		prg(account.ID, remark)
+		prg.Set("id", account.ID)
+		prg.Set("remark", remark)
+		prg.Redirect()
 	}
 }
 
