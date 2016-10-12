@@ -9,34 +9,52 @@ import (
 )
 
 func ActivateForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	t := template.GET(w, r, "account", "ActivateForm")
 	if token, err := ratelimit.NewToken(r, "/account/activate/token"); err != nil {
 		template.Error(w, r, err, false)
 	} else {
-		template.Run(w, r, "activate", "ActivateForm", "", map[string]interface{}{
-			"id":        r.FormValue("id"),
-			"token":     r.FormValue("token"),
-			"ratelimit": token,
-		})
+		t.Set("id", r.FormValue("id"))
+		t.Set("token", r.FormValue("token"))
+		t.Set("ratelimit", token)
+		t.Run()
 	}
 }
 
 func Activate(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	if account, err, conflict := model.GetAccount(r.FormValue("id")); err != nil {
+	if t := template.PRG(w, r, "activate", "Activate"); t == nil {
+		return
+	} else if account, err, conflict := model.GetAccount(r.FormValue("id")); err != nil {
 		template.Error(w, r, err, conflict)
 	} else if err, conflict = account.Activate(r.FormValue("token")); err != nil {
 		template.Error(w, r, err, conflict)
 	} else {
-		template.Run(w, r, "activate", "Activate", "", nil)
+		t.Run()
 	}
 }
 
 func ActivateTokenForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	t := template.GET(w, r, "account", "ActivateTokenForm")
 	if token, err := ratelimit.NewToken(r); err != nil {
 		template.Error(w, r, err, false)
 	} else {
-		template.Run(w, r, "activate", "ActivateTokenForm", "", map[string]interface{}{
-			"ratelimit": token,
-		})
+		t.Set("ratelimit", token)
+		t.Run()
+	}
+}
+
+func ActivateToken(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	if t := template.PRG(w, r, "activate", "ActivateToken"); t == nil {
+		return
+	} else if account, err, conflict := model.GetAccount(r.FormValue("id"), r.FormValue("email")); err != nil {
+		template.Error(w, r, err, conflict)
+	} else if account.IsActive() {
+		template.Error(w, r, model.ErrAlreadyActivated, true)
+	} else if err, remark := activateEmail(r, account); err != nil {
+		template.Error(w, r, err, false)
+	} else {
+		t.Set("id", account.ID)
+		t.Set("remark", remark)
+		t.Run()
 	}
 }
 
@@ -45,19 +63,4 @@ func activateEmail(r *http.Request, account *model.Account) (error, string) {
 		"ActivateToken",
 		"/account/activate?token="+account.ActivateToken+"&id="+account.ID,
 	)
-}
-
-func ActivateToken(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	if account, err, conflict := model.GetAccount(r.FormValue("id"), r.FormValue("email")); err != nil {
-		template.Error(w, r, err, conflict)
-	} else if account.IsActive() {
-		template.Error(w, r, model.ErrAlreadyActivated, true)
-	} else if err, remark := activateEmail(r, account); err != nil {
-		template.Error(w, r, err, false)
-	} else {
-		template.Run(w, r, "activate", "ActivateToken", "", map[string]interface{}{
-			"id":     account.ID,
-			"remark": remark,
-		})
-	}
 }

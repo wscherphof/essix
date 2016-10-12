@@ -12,17 +12,19 @@ import (
 )
 
 func PasswordTokenForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	t := template.GET(w, r, "password", "PasswordTokenForm")
 	if token, err := ratelimit.NewToken(r); err != nil {
 		template.Error(w, r, err, false)
 	} else {
-		template.Run(w, r, "password", "PasswordTokenForm", "", map[string]interface{}{
-			"ratelimit": token,
-		})
+		t.Set("ratelimit", token)
+		t.Run()
 	}
 }
 
 func PasswordToken(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	if account, err, conflict := model.GetAccount("", r.FormValue("email")); err != nil {
+	if t := template.PRG(w, r, "password", "PasswordToken"); t == nil {
+		return
+	} else if account, err, conflict := model.GetAccount("", r.FormValue("email")); err != nil {
 		template.Error(w, r, err, conflict)
 	} else if !account.IsActive() {
 		template.Error(w, r, model.ErrNotActivated, conflict)
@@ -38,36 +40,42 @@ func PasswordToken(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 		if err, remark := sendEmail(r, account.Email, "PasswordToken", path, expires); err != nil {
 			template.Error(w, r, err, false)
 		} else {
-			template.Run(w, r, "password", "PasswordToken", "", map[string]interface{}{
-				"remark": remark,
-			})
+			t.Set("remark", remark)
+			t.Run()
 		}
 	}
 }
 
 func ChangePasswordForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	t := template.GET(w, r, "password", "ChangePasswordForm")
 	id, token, expires, cancel := r.FormValue("id"), r.FormValue("token"), r.FormValue("expires"), r.FormValue("cancel")
 	expires, _ = util.URLDecodeString(expires)
 	if cancel == "true" {
 		model.ClearPasswordToken(id, token)
 		template.Run(w, r, "password", "ChangePassword-cancel", "", nil)
 	} else {
-		template.Run(w, r, "password", "ChangePasswordForm", "", map[string]interface{}{
-			"id":      id,
-			"token":   token,
-			"expires": expires,
-		})
+		t.Set("id", id)
+		t.Set("token", token)
+		t.Set("expires", expires)
+		t.Run()
 	}
 }
 
 func ChangePassword(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	id, token, pwd1, pwd2 := r.FormValue("id"), r.FormValue("token"), r.FormValue("pwd1"), r.FormValue("pwd2")
-	if account, err, conflict := model.GetAccount(id); err != nil {
+	if t := template.PRG(w, r, "password", "ChangePassword"); t == nil {
+		return
+	} else if account, err, conflict := model.GetAccount(
+		r.FormValue("id"),
+	); err != nil {
 		template.Error(w, r, err, conflict)
-	} else if err, conflict := account.ChangePassword(token, pwd1, pwd2); err != nil {
+	} else if err, conflict := account.ChangePassword(
+		r.FormValue("token"),
+		r.FormValue("pwd1"),
+		r.FormValue("pwd2"),
+	); err != nil {
 		template.Error(w, r, err, conflict)
 	} else {
 		secure.LogOut(w, r, false)
-		template.Run(w, r, "password", "ChangePassword", "", nil)
+		t.Run()
 	}
 }

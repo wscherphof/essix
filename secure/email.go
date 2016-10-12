@@ -9,28 +9,31 @@ import (
 
 func EmailTokenForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	account := Authentication(w, r)
-	template.Run(w, r, "email", "EmailTokenForm", "", map[string]interface{}{
-		"email": account.Email,
-	})
+	t := template.GET(w, r, "email", "EmailTokenForm")
+	t.Set("email", account.Email)
+	t.Run()
 }
 
 func EmailToken(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	account := Authentication(w, r)
-	newEmail := r.FormValue("newemail")
-	if err, conflict := account.CreateEmailToken(newEmail); err != nil {
+	if t := template.PRG(w, r, "email", "EmailToken"); t == nil {
+		return
+	} else if err, conflict := account.CreateEmailToken(
+		r.FormValue("newemail"),
+	); err != nil {
 		template.Error(w, r, err, conflict)
 	} else if err, remark := sendEmail(r, account.NewEmail, "EmailToken", "/account/email?token="+account.EmailToken); err != nil {
 		template.Error(w, r, err, false)
 	} else {
 		secure.Update(w, r, account)
-		template.Run(w, r, "email", "EmailToken", "", map[string]interface{}{
-			"remark": remark,
-		})
+		t.Set("remark", remark)
+		t.Run()
 	}
 }
 
 func ChangeEmailForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	account := Authentication(w, r)
+	t := template.GET(w, r, "email", "ChangeEmailForm")
 	token, cancel := r.FormValue("token"), r.FormValue("cancel")
 	if cancel == "true" {
 		if err, conflict := account.ClearEmailToken(token); err != nil {
@@ -40,19 +43,23 @@ func ChangeEmailForm(w http.ResponseWriter, r *http.Request, ps httprouter.Param
 			template.Run(w, r, "email", "ChangeEmail-cancel", "", nil)
 		}
 	} else {
-		template.Run(w, r, "email", "ChangeEmailForm", "", map[string]interface{}{
-			"account": account,
-		})
+		t.Set("email", account.Email)
+		t.Set("newemail", account.NewEmail)
+		t.Set("emailtoken", account.EmailToken)
+		t.Run()
 	}
 }
 
 func ChangeEmail(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	account := Authentication(w, r)
-	token := r.FormValue("token")
-	if err, conflict := account.ChangeEmail(token); err != nil {
+	if t := template.PRG(w, r, "email", "ChangeEmail"); t == nil {
+		return
+	} else if err, conflict := account.ChangeEmail(
+		r.FormValue("token"),
+	); err != nil {
 		template.Error(w, r, err, conflict)
 	} else {
 		secure.Update(w, r, account)
-		template.Run(w, r, "email", "ChangeEmail", "", nil)
+		t.Run()
 	}
 }
