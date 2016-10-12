@@ -60,6 +60,6 @@ func ActivateToken(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 
 func activateEmail(r *http.Request, account *model.Account) (error, string) {
 	email := template.Email(r, "activate", "ActivateToken-email", "lang")
-	email.Set("link", "/account/activate?token="+account.ActivateToken+"&id="+account.ID)
+	email.Set("link", "https://"+r.Host+"/account/activate?token="+account.ActivateToken+"&id="+account.ID)
 	return email.Run(account.Email, "Activate account")
 }

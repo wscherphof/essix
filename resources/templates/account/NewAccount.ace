@@ -3,7 +3,7 @@ body
 	main
     .p..
       {{Msg "Signup successful"}}
-      {{Msg .remark}}
+      {{Msg .message}}
     .p
       a href=/account/activate/?id={{.id}} {{Msg "ActivateToken subject"}}
     .p

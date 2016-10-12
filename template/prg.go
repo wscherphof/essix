@@ -6,10 +6,14 @@ import (
 	"strings"
 )
 
-type prgType struct {
+type baseType struct {
 	*url.Values
 	w http.ResponseWriter
 	r *http.Request
+}
+
+type prgType struct {
+	*baseType
 }
 
 func (t *prgType) Run() {
@@ -36,11 +40,7 @@ func PRG(w http.ResponseWriter, r *http.Request, dir, base string, opt_inner ...
 		Run(w, r, dir, base, inner(opt_inner...), data)
 	case "PUT", "POST", "DELETE":
 		values, _ := url.ParseQuery("")
-		prg = &prgType{
-			Values: &values,
-			w:      w,
-			r:      r,
-		}
+		prg = &prgType{&baseType{&values, w, r}}
 	}
 	return
 }

@@ -5,7 +5,7 @@ import (
 )
 
 func init() {
-	msg.Key("EmailToken subject").
+	msg.Key("Change email address").
 		Set("nl", "Mijn e-mailadres wijzigen").
 		Set("en", "Change my email address")
 

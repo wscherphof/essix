@@ -4,6 +4,7 @@ import (
 	"github.com/wscherphof/essix/email"
 	"github.com/wscherphof/msg"
 	"net/http"
+	"net/url"
 )
 
 type emailType getType
@@ -27,10 +28,9 @@ func (t *emailType) Run(recipient, subject string) (err error, message string) {
 func Email(r *http.Request, dir, base string, opt_inner ...string) *emailType {
 	values, _ := url.ParseQuery("")
 	return &emailType{
-		Values: &values,
-		r:      r,
-		dir:   dir,
-		base:  base,
-		inner: inner(opt_inner...),
+		baseType: &baseType{&values, nil, r},
+		dir:      dir,
+		base:     base,
+		inner:    inner(opt_inner...),
 	}
 }

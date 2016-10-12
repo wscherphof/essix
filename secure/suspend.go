@@ -20,12 +20,16 @@ func SuspendToken(w http.ResponseWriter, r *http.Request, ps httprouter.Params) 
 		ensure(r),
 	); err != nil {
 		template.Error(w, r, err, conflict)
-	} else if err, remark := sendEmail(r, account.Email, "SuspendToken", "/account/suspend?token="+account.SuspendToken); err != nil {
-		template.Error(w, r, err, false)
 	} else {
-		secure.Update(w, r, account)
-		t.Set("remark", remark)
-		t.Run()
+		email := template.Email(r, "suspend", "SuspendToken-email", "lang")
+		email.Set("link", "https://"+r.Host+"/account/suspend?token="+account.SuspendToken)
+		if err, message := email.Run(account.Email, "Suspend account"); err != nil {
+			template.Error(w, r, err, false)
+		} else {
+			secure.Update(w, r, account)
+			t.Set("message", message)
+			t.Run()
+		}
 	}
 }
 

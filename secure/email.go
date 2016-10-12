@@ -22,12 +22,16 @@ func EmailToken(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		r.FormValue("newemail"),
 	); err != nil {
 		template.Error(w, r, err, conflict)
-	} else if err, remark := sendEmail(r, account.NewEmail, "EmailToken", "/account/email?token="+account.EmailToken); err != nil {
-		template.Error(w, r, err, false)
 	} else {
-		secure.Update(w, r, account)
-		t.Set("remark", remark)
-		t.Run()
+		email := template.Email(r, "email", "EmailToken-email", "lang")
+		email.Set("link", "https://"+r.Host+"/account/email?token="+account.EmailToken)
+		if err, message := email.Run(account.NewEmail, "Change email address"); err != nil {
+			template.Error(w, r, err, false)
+		} else {
+			secure.Update(w, r, account)
+			t.Set("message", message)
+			t.Run()
+		}
 	}
 }
 
