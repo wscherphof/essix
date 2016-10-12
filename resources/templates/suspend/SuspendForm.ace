@@ -3,11 +3,11 @@ body
   header
     h1 {{Msg "Suspend account"}}
   main.wrap
-    .p {{Msg "Email" }}: {{.account.Email}}
+    .p {{Msg "Email" }}: {{.email}}
     .p {{Msg "Suspend sure"}}
     form.flex method=POST action=/account
       input type=hidden name=_method value=DELETE
-      input type=hidden name=token value={{.account.SuspendToken}}
+      input type=hidden name=token value={{.suspendtoken}}
       .p
         label {{Msg "Yes, that's what I want"}}
           input#sure type=checkbox name=sure value=affirmative

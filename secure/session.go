@@ -10,12 +10,12 @@ import (
 )
 
 func LogInForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	t := template.GET(w, r, "session", "LogInForm")
 	if token, err := ratelimit.NewToken(r); err != nil {
 		template.Error(w, r, err, false)
 	} else {
-		template.Run(w, r, "session", "LogInForm", "", map[string]interface{}{
-			"ratelimit": token,
-		})
+		t.Set("ratelimit", token)
+		t.Run()
 	}
 }
 
