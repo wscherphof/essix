@@ -36,9 +36,9 @@ func NewAccount(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	}
 }
 
-func Account(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func EditAccount(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	account := Authentication(w, r)
-	t := template.GET(w, r, "account", "Account")
+	t := template.GET(w, r, "account", "EditAccount")
 	t.Set("email", account.Email)
 	t.Run()
 }

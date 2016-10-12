@@ -1,9 +1,9 @@
 = include ../includes/top .
 body
   main
-    p {{Msg .error.Error}}
+    .p {{Msg .error.Error}}
     = yield tail
-    p
+    .p
       a href={{.url}} {{Msg "Try again"}}
-    p
+    .p
       a href=/ {{Msg "Take me home"}}

@@ -3,7 +3,7 @@ body
   header
     h1 {{Msg "Change email address"}}
   main.wrap
-    p {{Msg "Want replace"}} "{{.email}}" {{Msg "Replace with"}} "{{.newemail}}"
+    .p {{Msg "Want replace"}} "{{.email}}" {{Msg "Replace with"}} "{{.newemail}}"
     form.flex method=POST action=/account/email
       input type=hidden name=_method value=PUT
       input type=hidden name=token value={{.emailtoken}}

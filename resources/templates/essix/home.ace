@@ -1,6 +1,7 @@
 = include ../includes/top .
 body
-  p
-    = yield account
-  p
-    = yield session
+  main
+    .p
+      = yield account
+    .p
+      = yield session
