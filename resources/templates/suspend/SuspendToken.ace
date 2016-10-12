@@ -3,6 +3,6 @@ body
   main
     .p..
       {{Msg "Suspend token successful"}}
-      {{Msg .remark}}
+      {{Msg .message}}
     .p
       a href=/ {{Msg "Take me home"}}

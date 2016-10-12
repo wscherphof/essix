@@ -1,7 +1,7 @@
 = include ../includes/top .
 body
   header
-    h1 {{Msg "ActivateToken subject"}}
+    h1 {{Msg "Activate account"}}
   main.wrap
     form.flex method=POST action=/account/activate
       input type=hidden name=_method value=PUT

@@ -5,7 +5,7 @@ import (
 )
 
 func init() {
-	msg.Key("SuspendToken subject").
+	msg.Key("Suspend account").
 		Set("nl", "Mijn account opzeggen").
 		Set("en", "Suspend my account")
 

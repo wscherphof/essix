@@ -1,7 +1,7 @@
 = include ../includes/top .
 body
   header
-    h1 {{Msg "SuspendToken subject" }}
+    h1 {{Msg "Suspend account" }}
   main.wrap
     .p {{Msg "Suspend sure"}}
     form.flex method=POST action=/account/suspend/token

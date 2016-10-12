@@ -5,7 +5,7 @@ import (
 )
 
 type getType struct {
-	*prgType
+	*baseType
 	dir   string
 	base  string
 	inner string
@@ -22,13 +22,9 @@ func (t *getType) Run() {
 func GET(w http.ResponseWriter, r *http.Request, dir, base string, opt_inner ...string) *getType {
 	values := r.URL.Query()
 	return &getType{
-		prgType: &prgType{
-			Values: &values,
-			w:      w,
-			r:      r,
-		},
-		dir:   dir,
-		base:  base,
-		inner: inner(opt_inner...),
+		baseType: &baseType{&values, w, r},
+		dir:      dir,
+		base:     base,
+		inner:    inner(opt_inner...),
 	}
 }

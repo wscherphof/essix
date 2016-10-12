@@ -9,7 +9,7 @@ func init() {
 		Set("nl", "Wachtwoord kwijt?").
 		Set("en", "Lost your password?")
 
-	msg.Key("PasswordToken subject").
+	msg.Key("Reset password").
 		Set("nl", "Mijn wachtwoord opnieuw instellen").
 		Set("en", "Reset my password")
 

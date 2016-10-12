@@ -31,16 +31,19 @@ func PasswordToken(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 	} else if err := account.CreatePasswordToken(); err != nil {
 		template.Error(w, r, err, false)
 	} else {
+		email := template.Email(r, "passowrd", "PasswordToken-email", "lang")
 		format := msg.Msg(r)("Time format")
 		expires := account.PasswordToken.Expires.Format(format)
-		path := "/account/password"
-		path += "?token=" + account.PasswordToken.Value
-		path += "&id=" + account.ID
-		path += "&expires=" + util.URLEncodeString(expires)
-		if err, remark := sendEmail(r, account.Email, "PasswordToken", path, expires); err != nil {
+		email.Set("expires", expires)
+		link := "https://" + r.Host + "/account/password"
+		link += "?token=" + account.PasswordToken.Value
+		link += "&id=" + account.ID
+		link += "&expires=" + util.URLEncodeString(expires)
+		email.Set("link", link)
+		if err, message := email.Run(account.Email, "Reset password"); err != nil {
 			template.Error(w, r, err, false)
 		} else {
-			t.Set("remark", remark)
+			t.Set("message", message)
 			t.Run()
 		}
 	}
