@@ -19,7 +19,7 @@ func NewAccountForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params
 }
 
 func NewAccount(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	if prg := template.PRG(w, r, "account", "NewAccount", ""); prg == nil {
+	if t := template.PRG(w, r, "account", "NewAccount"); t == nil {
 		return
 	} else if account, err, conflict := model.NewAccount(
 		r.FormValue("email"),
@@ -30,15 +30,15 @@ func NewAccount(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	} else if err, remark := activateEmail(r, account); err != nil {
 		template.Error(w, r, err, false)
 	} else {
-		prg.Set("id", account.ID)
-		prg.Set("remark", remark)
-		prg.Redirect()
+		t.Set("id", account.ID)
+		t.Set("remark", remark)
+		t.Run()
 	}
 }
 
 func Account(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	account := Authentication(w, r)
-	template.Run(w, r, "account", "Account", "", map[string]interface{}{
-		"email": account.Email,
-	})
+	t := template.GET(w, r, "account", "Account")
+	t.Set("email", account.Email)
+	t.Run()
 }
