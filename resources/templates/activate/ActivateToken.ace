@@ -3,7 +3,7 @@ body
   main
     .p..
       {{Msg "Resend successful"}}
-      {{Msg .remark}}
+      {{Msg .message}}
     .p
       a href=/account/activate?id={{.id}} {{Msg "Activate subject"}}
     .p
