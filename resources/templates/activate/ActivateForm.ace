@@ -13,10 +13,10 @@ body
         input.right type=submit
   {{if eq .token ""}}
     footer
-      p {{Msg "Activate token source"}}
-      form method=POST action=/account/activate/token
-        input type=hidden name=_method value=PUT
-        input type=hidden name=_ratelimit value={{.ratelimit}}
-        input type=hidden name=id value={{.id}}
-        input type=submit value={{Msg "Resend activate token"}}
+      .p {{Msg "Activate token source"}}
+        form method=POST action=/account/activate/token
+          input type=hidden name=_method value=PUT
+          input type=hidden name=_ratelimit value={{.ratelimit}}
+          input type=hidden name=id value={{.id}}
+          input type=submit value={{Msg "Resend activate token"}}
   {{end}}

@@ -1,5 +1,6 @@
 = include ../includes/top .
 body
-  p {{Msg "Suspend successful"}}
-  p
-    a href=/ {{Msg "Take me home"}}
+  main
+    .p {{Msg "Suspend successful"}}
+    .p
+      a href=/ {{Msg "Take me home"}}

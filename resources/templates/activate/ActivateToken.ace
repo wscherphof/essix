@@ -1,9 +1,10 @@
 = include ../includes/top .
 body
-  p..
-    {{Msg "Resend successful"}}
-    {{Msg .remark}}
-  p
-    a href=/account/activate?id={{.id}} {{Msg "Activate subject"}}
-  p
-    a href=/ {{Msg "Take me home"}}
+  main
+    .p..
+      {{Msg "Resend successful"}}
+      {{Msg .remark}}
+    .p
+      a href=/account/activate?id={{.id}} {{Msg "Activate subject"}}
+    .p
+      a href=/ {{Msg "Take me home"}}

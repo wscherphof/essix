@@ -3,12 +3,16 @@ body
   header
     h1 {{Msg "Edit account"}}
   main
-    p
+    .p
       {{Msg "Email"}}: {{.email}} {{""}}
       a href=/account/email/token {{Msg "change"}}
-    p
+    .p
       a href=/account/password/token {{Msg "PasswordToken subject"}}
-    p
+    .p
       a href=/account/suspend/token {{Msg "SuspendToken subject"}}
-    p
+    .p
+      form action=/session method=POST
+        input type=hidden name=_method value=DELETE
+        input type=submit value={{Msg "Log out"}}
+    .p
       a href=/ {{Msg "Take me home"}}

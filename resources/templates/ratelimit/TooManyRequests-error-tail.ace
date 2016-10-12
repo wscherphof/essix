@@ -1,3 +1,3 @@
 = content tail
-  p
+  .p
     {{Msg "Limit is set to"}} {{.window}}

@@ -19,4 +19,6 @@ body
           input#pwd2.right type=password name=pwd2 autocomplete=new-password placeholder=******** required=
       .p
         input.right type=submit
+    .p
+      a href=/session {{Msg "Log in"}}
   script type=text/javascript src=/static/scripts/password.js
