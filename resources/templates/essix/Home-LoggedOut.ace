@@ -1,4 +1,4 @@
 = content account
-  a href=/account {{Msg "Sign up"}}
+  a href=/account {{Msg .r "Sign up"}}
 = content session
-  a href=/session {{Msg "Log in"}}
+  a href=/session {{Msg .r "Log in"}}

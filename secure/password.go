@@ -32,7 +32,7 @@ func PasswordToken(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 		template.Error(w, r, err, false)
 	} else {
 		email := template.Email(r, "password", "PasswordToken-email", "lang")
-		format := msg.Msg(r)("Time format")
+		format := msg.Msg(r, "Time format")
 		expires := account.PasswordToken.Expires.Format(format)
 		email.Set("expires", expires)
 		link := "https://" + r.Host + "/account/password"

@@ -139,29 +139,27 @@ func translate(key string, language *LanguageType) (translation string) {
 	return
 }
 
-// Msg returns a function to look up the translation for a message, using the
+// Msg looks up the translation for a message, using the
 // language matching the Accept-Language header in the request.
-func Msg(r *http.Request) func(key string) (translation string) {
+func Msg(r *http.Request, key string) (translation string) {
 	languages := headerLangs(r)
-	return func(key string) (translation string) {
-		if key == "" {
-			return ""
-		}
-		for _, language := range languages {
-			if translation = translate(key, language); translation != "" {
-				return
-			}
-		}
-		if translation = translate(key, defaultLanguage); translation != "" {
-			if !production {
-				translation = "D-" + translation
-			}
-		} else {
-			translation = key
-			if !production {
-				translation = "X-" + translation
-			}
-		}
-		return
+	if key == "" {
+		return ""
 	}
+	for _, language := range languages {
+		if translation = translate(key, language); translation != "" {
+			return
+		}
+	}
+	if translation = translate(key, defaultLanguage); translation != "" {
+		if !production {
+			translation = "D-" + translation
+		}
+	} else {
+		translation = key
+		if !production {
+			translation = "X-" + translation
+		}
+	}
+	return
 }
