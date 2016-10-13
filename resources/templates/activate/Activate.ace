@@ -1,8 +1,8 @@
 = include ../includes/top .
 body
   main
-    .p {{Msg .r "Activate successful"}}
+    .p {{.msg.Get "Activate successful"}}
     .p
-      a href=/session {{Msg .r "Log in"}}
+      a href=/session {{.msg.Get "Log in"}}
     .p
-      a href=/ {{Msg .r "Take me home"}}
+      a href=/ {{.msg.Get "Take me home"}}

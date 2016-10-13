@@ -29,7 +29,7 @@ func init() {
 		Set("nl", "Wijzigen e-mailadres is geannuleerd.").
 		Set("en", "Changing email address is cancelled.")
 
-	msg.Key("Change email  successful").
+	msg.Key("Change email successful").
 		Set("nl", "Je nieuwe e-mailadres is nu actief.").
 		Set("en", "Your new email address is activated.")
 }

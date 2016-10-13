@@ -57,5 +57,5 @@ func init() {
 	// Suspend account w/ token
 	router.GET("/account/suspend", Handle(SuspendForm))
 	router.DELETE("/account", Handle(Suspend))
-	router.GET("/account/delete", Handle(Suspend))
+	router.GET("/account/delete", Suspend)
 }

@@ -1,10 +1,11 @@
 = include ../includes/top .
 body
   header
-    h1 {{Msg .r "Change email address"}}
+    h1 {{.msg.Get "Change email address"}}
   main.wrap
-    .p {{Msg .r "Want replace"}} "{{.email}}" {{Msg .r "Replace with"}} "{{.newemail}}"
-    form.flex method=POST action=/account/email
-      input type=hidden name=_method value=PUT
-      input type=hidden name=token value={{.emailtoken}}
-      input type=submit value={{Msg .r "Confirm"}}
+    .p {{.msg.Get "Want replace"}} "{{.email}}" {{.msg.Get "Replace with"}} "{{.newemail}}"
+    .p
+      form.flex method=POST action=/account/email
+        input type=hidden name=_method value=PUT
+        input type=hidden name=token value={{.emailtoken}}
+        input type=submit value={{.msg.Get "Confirm"}}

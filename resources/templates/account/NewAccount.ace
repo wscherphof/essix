@@ -2,9 +2,9 @@
 body
   main
     .p..
-      {{Msg .r "Signup successful"}}
-      {{Msg .r .message}}
+      {{.msg.Get "Signup successful"}}
+      {{.msg.Get .message}}
     .p
-      a href=/account/activate/?id={{.id}} {{Msg .r "Activate account"}}
+      a href=/account/activate/?id={{.id}} {{.msg.Get "Activate account"}}
     .p
-      a href=/ {{Msg .r "Take me home"}}
+      a href=/ {{.msg.Get "Take me home"}}

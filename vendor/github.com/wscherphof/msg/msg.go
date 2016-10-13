@@ -98,34 +98,27 @@ func (l *LanguageType) Parse(s string) {
 	return
 }
 
-var languageCache = make(map[string][]*LanguageType, 100)
+var translatorCache = make(map[string]*translatorType, 100)
 
-func headerLangs(r *http.Request) []*LanguageType {
+type translatorType struct {
+	languages []*LanguageType
+}
+
+func Translator(r *http.Request) *translatorType {
 	acceptLanguage := strings.ToLower(r.Header.Get("Accept-Language"))
-	if cached, ok := languageCache[acceptLanguage]; ok {
+	if cached, ok := translatorCache[acceptLanguage]; ok {
 		return cached
 	}
 	langStrings := strings.Split(acceptLanguage, ",")
-	languageCache[acceptLanguage] = make([]*LanguageType, len(langStrings))
+	t := &translatorType{make([]*LanguageType, len(langStrings))}
 	for i, v := range langStrings {
 		langString := strings.Split(v, ";")[0] // cut the q parameter
 		lang := &LanguageType{}
 		lang.Parse(langString)
-		languageCache[acceptLanguage][i] = lang
+		t.languages[i] = lang
 	}
-	return languageCache[acceptLanguage]
-}
-
-// Language provides the first language in the "Accept-Language" header in the
-// given http request.
-func Language(r *http.Request) (language *LanguageType) {
-	languages := headerLangs(r)
-	if len(languages) > 0 {
-		language = languages[0]
-	} else {
-		language = defaultLanguage
-	}
-	return
+	translatorCache[acceptLanguage] = t
+	return t
 }
 
 func translate(key string, language *LanguageType) (translation string) {
@@ -139,14 +132,11 @@ func translate(key string, language *LanguageType) (translation string) {
 	return
 }
 
-// Msg looks up the translation for a message, using the
-// language matching the Accept-Language header in the request.
-func Msg(r *http.Request, key string) (translation string) {
-	languages := headerLangs(r)
+func (t *translatorType) Get(key string) (translation string) {
 	if key == "" {
 		return ""
 	}
-	for _, language := range languages {
+	for _, language := range t.languages {
 		if translation = translate(key, language); translation != "" {
 			return
 		}
@@ -160,6 +150,17 @@ func Msg(r *http.Request, key string) (translation string) {
 		if !production {
 			translation = "X-" + translation
 		}
+	}
+	return
+}
+
+// Language provides the first language in the "Accept-Language" header in the
+// given http request.
+func (t *translatorType) Language() (language *LanguageType) {
+	if len(t.languages) > 0 {
+		language = t.languages[0]
+	} else {
+		language = defaultLanguage
 	}
 	return
 }

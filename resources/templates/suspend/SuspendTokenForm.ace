@@ -1,13 +1,13 @@
 = include ../includes/top .
 body
   header
-    h1 {{Msg .r "Suspend account" }}
+    h1 {{.msg.Get "Suspend account" }}
   main.wrap
-    .p {{Msg .r "Suspend sure"}}
+    .p {{.msg.Get "Suspend sure"}}
     form.flex method=POST action=/account/suspend/token
       input type=hidden name=_method value=PUT
       .p
-        label {{Msg .r "Yes, that's what I want"}}
+        label {{.msg.Get "Yes, that's what I want"}}
           input#sure type=checkbox name=sure value=affirmative
       .p
         input type=submit

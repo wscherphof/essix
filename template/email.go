@@ -16,7 +16,7 @@ func (t *emailType) Run(recipient, subject string) (err error, message string) {
 	}
 	body := Write(t.r, t.dir, t.base, t.inner, data)
 	if err = email.Send(
-		msg.Msg(t.r, subject),
+		msg.Translator(t.r).Get(subject),
 		body,
 		recipient,
 	); err == email.ErrNotSentImmediately {

@@ -1,8 +1,8 @@
 = include ../includes/top .
 body
-	main
-	  .p..
-	    {{Msg .r "Email token successful"}}
-	    {{Msg .r .message}}
-	  .p
-	    a href=/ {{Msg .r "Take me home"}}
+  main
+    .p..
+      {{.msg.Get "Email token successful"}}
+      {{.msg.Get .message}}
+    .p
+      a href=/ {{.msg.Get "Take me home"}}
