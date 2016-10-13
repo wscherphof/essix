@@ -1,15 +1,15 @@
 = include ../includes/top .
 body
   header
-    h1 {{Msg .r "Suspend account"}}
+    h1 {{.msg.Get "Suspend account"}}
   main.wrap
-    .p {{Msg .r "Email" }}: {{.email}}
-    .p {{Msg .r "Suspend sure"}}
+    .p {{.msg.Get "Email" }}: {{.email}}
+    .p {{.msg.Get "Suspend sure"}}
     form.flex method=POST action=/account
       input type=hidden name=_method value=DELETE
       input type=hidden name=token value={{.suspendtoken}}
       .p
-        label {{Msg .r "Yes, that's what I want"}}
+        label {{.msg.Get "Yes, that's what I want"}}
           input#sure type=checkbox name=sure value=affirmative
       .p
-        input type=submit value={{Msg .r "Confirm"}}
+        input type=submit value={{.msg.Get "Confirm"}}

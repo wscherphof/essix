@@ -1,18 +1,18 @@
 = include ../includes/top .
 body
   header
-    h1 {{Msg .r "Edit account"}}
+    h1 {{.msg.Get "Edit account"}}
   main
     .p
-      {{Msg .r "Email"}}: {{.email}} {{""}}
-      a href=/account/email/token {{Msg .r "change"}}
+      {{.msg.Get "Email"}}: {{.email}} {{""}}
+      a href=/account/email/token {{.msg.Get "change"}}
     .p
-      a href=/account/password/token {{Msg .r "Reset password"}}
+      a href=/account/password/token {{.msg.Get "Reset password"}}
     .p
-      a href=/account/suspend/token {{Msg .r "Suspend account"}}
+      a href=/account/suspend/token {{.msg.Get "Suspend account"}}
     .p
       form action=/session method=POST
         input type=hidden name=_method value=DELETE
-        input type=submit value={{Msg .r "Log out"}}
+        input type=submit value={{.msg.Get "Log out"}}
     .p
-      a href=/ {{Msg .r "Take me home"}}
+      a href=/ {{.msg.Get "Take me home"}}

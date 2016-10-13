@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"github.com/wscherphof/msg"
 	"github.com/yosssi/ace"
-	"html/template"
 	"io"
 	"log"
 	"net/http"
@@ -15,18 +14,14 @@ func Run(w io.Writer, r *http.Request, dir, base, inner string, data map[string]
 	if data == nil {
 		data = map[string]interface{}{}
 	}
-	lang := msg.Language(r)
-	data["lang"] = lang.Full
-	data["r"] = r // for Msg
+	translator := msg.Translator(r)
+	data["msg"] = translator
 	var options = &ace.Options{
 		BaseDir: "/resources/templates/" + dir,
-		FuncMap: template.FuncMap{
-			"Msg": msg.Msg, // gets cached in the loaded template
-		},
 	}
 	// TODO: fix relying on first lang & template availabilty this much
 	if inner == "lang" {
-		inner = base + "-" + lang.Main
+		inner = base + "-" + translator.Language().Main
 	}
 	if template, err := ace.Load(base, inner, options); err != nil {
 		log.Panicln("ERROR: ace.Load:", err)

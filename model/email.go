@@ -41,7 +41,9 @@ func (a *Account) ChangeEmail(token string) (err error, conflict bool) {
 	} else {
 		a.Email = a.NewEmail
 		a.EmailToken = ""
-		err = a.Update(a)
+		if err = a.Update(a); err == nil {
+			err = email.Delete(email)
+		}
 	}
 	return
 }

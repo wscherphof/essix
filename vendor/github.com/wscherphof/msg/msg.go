@@ -10,28 +10,21 @@ New messages are defined like this:
 	  Set("en", "Hi").
 	  Set("nl", "Hoi")
 
-When you ask for the translation of a certain message key, the user's language
-is determined from the "Accept-Language" request header.
-Passing the http.Request pointer to Msg() renders a function to do the
-key-to-translation lookup:
-	translation := Msg(r)("Hi")
-
-You could include the function returned by Msg() to the FuncMap of your
-template:
-	template.FuncMap{
-		"Msg": msg.Msg(r),
-	},
-And then use the mapped Msg function inside the template:
-	{{Msg "Hi"}} {{.name}}
-
-If no translation is found, the message Key is used as a fallback.
+The user's language is determined from the "Accept-Language" request header.
+Pass the http.Request pointer to Translator():
+	t := msg.Translator(r)
+Then get the translation:
+	message := t.Get("Hi")
 
 Environment variables:
-MSG_DEFAULT: determines the default language to use, if no translation is found
+- MSG_DEFAULT: determines the default language to use, if no translation is found
 matching the Accept-Language header. The default value for MSG_DEFAULT is "en".
-GO_ENV: if not set to "production", then for testing purpoeses, translations
-that used the default language get prepended with "D-", and failed translations,
-that used the Key fallback, get prepended with "X-".
+- GO_ENV: if not set to "production", then translations that resorted to the
+default language get prepended with "D-", and failed translations, falling back
+to the message key, get prepended with "X-".
+
+Messages and Translators are stored in memory. Translators are cached on their
+Accept-Language header value.
 */
 package msg
 
@@ -43,43 +36,41 @@ import (
 
 var (
 	production      = (env.Get("GO_ENV", "") == "production")
-	defaultLanguage = &LanguageType{}
+	defaultLanguage = &languageType{}
 )
 
 func init() {
-	defaultLanguage.Parse(env.Get("MSG_DEFAULT", "en"))
+	defaultLanguage.parse(env.Get("MSG_DEFAULT", "en"))
 }
 
-// MessageType holds the translations for a message key.
-type MessageType map[string]string
+type messageType map[string]string
 
 // Set stores the translation of the message for the given language. Any old
 // value is overwritten.
-func (m MessageType) Set(language, translation string) MessageType {
+func (m messageType) Set(language, translation string) messageType {
 	language = strings.ToLower(language)
 	m[language] = translation
 	return m
 }
 
-var messageStore = make(map[string]MessageType, 500)
+var messageStore = make(map[string]messageType, 500)
 
 // NumLang sets the initial capacity for translations in a new message.
 var NumLang = 10
 
 // Key returns the message stored under the given key, if it doesn't exist yet,
 // it gets created.
-func Key(key string) (message MessageType) {
+func Key(key string) (message messageType) {
 	if m, ok := messageStore[key]; ok {
 		message = m
 	} else {
-		message = make(MessageType, NumLang)
+		message = make(messageType, NumLang)
 		messageStore[key] = message
 	}
 	return
 }
 
-// LanguageType defines a language.
-type LanguageType struct {
+type languageType struct {
 	// e.g. "en-gb"
 	Full string
 	// e.g. "en"
@@ -88,7 +79,7 @@ type LanguageType struct {
 	Sub string
 }
 
-func (l *LanguageType) Parse(s string) {
+func (l *languageType) parse(s string) {
 	parts := strings.Split(s, "-")
 	l.Full = s
 	l.Main = parts[0]
@@ -98,37 +89,32 @@ func (l *LanguageType) Parse(s string) {
 	return
 }
 
-var languageCache = make(map[string][]*LanguageType, 100)
+var translatorCache = make(map[string]*translatorType, 100)
 
-func headerLangs(r *http.Request) []*LanguageType {
+type translatorType struct {
+	languages []*languageType
+}
+
+// Translator returns an object that knows how to lookup the translation for a
+// message.
+func Translator(r *http.Request) *translatorType {
 	acceptLanguage := strings.ToLower(r.Header.Get("Accept-Language"))
-	if cached, ok := languageCache[acceptLanguage]; ok {
+	if cached, ok := translatorCache[acceptLanguage]; ok {
 		return cached
 	}
 	langStrings := strings.Split(acceptLanguage, ",")
-	languageCache[acceptLanguage] = make([]*LanguageType, len(langStrings))
+	t := &translatorType{make([]*languageType, len(langStrings))}
 	for i, v := range langStrings {
 		langString := strings.Split(v, ";")[0] // cut the q parameter
-		lang := &LanguageType{}
-		lang.Parse(langString)
-		languageCache[acceptLanguage][i] = lang
+		lang := &languageType{}
+		lang.parse(langString)
+		t.languages[i] = lang
 	}
-	return languageCache[acceptLanguage]
+	translatorCache[acceptLanguage] = t
+	return t
 }
 
-// Language provides the first language in the "Accept-Language" header in the
-// given http request.
-func Language(r *http.Request) (language *LanguageType) {
-	languages := headerLangs(r)
-	if len(languages) > 0 {
-		language = languages[0]
-	} else {
-		language = defaultLanguage
-	}
-	return
-}
-
-func translate(key string, language *LanguageType) (translation string) {
+func translate(key string, language *languageType) (translation string) {
 	if val, ok := messageStore[key][language.Full]; ok {
 		translation = val
 	} else if val, ok := messageStore[key][language.Sub]; ok {
@@ -139,14 +125,12 @@ func translate(key string, language *LanguageType) (translation string) {
 	return
 }
 
-// Msg looks up the translation for a message, using the
-// language matching the Accept-Language header in the request.
-func Msg(r *http.Request, key string) (translation string) {
-	languages := headerLangs(r)
+// Get returns the translation for a message.
+func (t *translatorType) Get(key string) (translation string) {
 	if key == "" {
 		return ""
 	}
-	for _, language := range languages {
+	for _, language := range t.languages {
 		if translation = translate(key, language); translation != "" {
 			return
 		}
@@ -160,6 +144,17 @@ func Msg(r *http.Request, key string) (translation string) {
 		if !production {
 			translation = "X-" + translation
 		}
+	}
+	return
+}
+
+// Language provides the first language in the "Accept-Language" header in the
+// given http request.
+func (t *translatorType) Language() (language *languageType) {
+	if len(t.languages) > 0 {
+		language = t.languages[0]
+	} else {
+		language = defaultLanguage
 	}
 	return
 }
