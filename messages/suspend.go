@@ -9,10 +9,6 @@ func init() {
 		Set("nl", "Mijn account opzeggen").
 		Set("en", "Suspend my account")
 
-	msg.Key("Suspend account").
-		Set("nl", "Je account opzeggen").
-		Set("en", "Suspend your account")
-
 	msg.Key("Suspend sure").
 		Set("nl", `Weet je zeker dat je je account bij Essix wil opzeggen?
 			Je kan je later weliswaar weer opnieuw aanmelden, maar met het opzeggen gaan nu wel alle gekoppelde gegevens verloren.`).

@@ -12,7 +12,7 @@ New messages are defined like this:
 
 When you ask for the translation of a certain message key, the user's language
 is determined from the "Accept-Language" request header.
-Passing the httprequest pointer to Msg() renders a function to do the
+Passing the http.Request pointer to Msg() renders a function to do the
 key-to-translation lookup:
 	translation := Msg(r)("Hi")
 
@@ -22,14 +22,33 @@ template:
 		"Msg": msg.Msg(r),
 	},
 And then use the mapped Msg function inside the template:
-	{{ Msg "Hi" }} {{ .Name }}
+	{{Msg "Hi"}} {{.name}}
+
+If no translation is found, the message Key is used as a fallback.
+
+Environment variables:
+MSG_DEFAULT: determines the default language to use, if no translation is found
+matching the Accept-Language header. The default value for MSG_DEFAULT is "en".
+GO_ENV: if not set to "production", then for testing purpoeses, translations
+that used the default language get prepended with "D-", and failed translations,
+that used the Key fallback, get prepended with "X-".
 */
 package msg
 
 import (
+	"github.com/wscherphof/env"
 	"net/http"
 	"strings"
 )
+
+var (
+	production      = (env.Get("GO_ENV", "") == "production")
+	defaultLanguage = &LanguageType{}
+)
+
+func init() {
+	defaultLanguage.Parse(env.Get("MSG_DEFAULT", "en"))
+}
 
 // MessageType holds the translations for a message key.
 type MessageType map[string]string
@@ -45,7 +64,7 @@ func (m MessageType) Set(language, translation string) MessageType {
 var messageStore = make(map[string]MessageType, 500)
 
 // NumLang sets the initial capacity for translations in a new message.
-var NumLang = 2
+var NumLang = 10
 
 // Key returns the message stored under the given key, if it doesn't exist yet,
 // it gets created.
@@ -69,45 +88,78 @@ type LanguageType struct {
 	Sub string
 }
 
-var languageCache = make(map[string]LanguageType, 100)
-
-// Language provides the first language in the "Accept-Language" header in the
-// given http request.
-func Language(r *http.Request) (language LanguageType) {
-	acceptLanguage := r.Header.Get("Accept-Language")
-	acceptLanguage = strings.ToLower(acceptLanguage)
-	if lang, ok := languageCache[acceptLanguage]; ok {
-		language = lang
-	} else {
-		firstLanguage := strings.Split(acceptLanguage, ",")[0] // cut other languages
-		firstLanguage = strings.Split(firstLanguage, ";")[0]   // cut the q parameter
-		parts := strings.Split(firstLanguage, "-")
-		lang = LanguageType{
-			Full: firstLanguage,
-			Main: parts[0],
-		}
-		if len(parts) > 1 {
-			lang.Sub = parts[1]
-		}
-		languageCache[acceptLanguage] = lang
-		language = lang
+func (l *LanguageType) Parse(s string) {
+	parts := strings.Split(s, "-")
+	l.Full = s
+	l.Main = parts[0]
+	if len(parts) > 1 {
+		l.Sub = parts[1]
 	}
 	return
 }
 
-// Msg...
-func Msg(r *http.Request) (translate func(string) string) {
-	language := Language(r)
-	return func(key string) (value string) {
-		if val, ok := messageStore[key][language.Full]; ok {
-			value = val
-		} else if val, ok := messageStore[key][language.Sub]; ok {
-			value = val
-		} else if val, ok := messageStore[key][language.Main]; ok {
-			value = val
-		} else {
-			value = "X-" + key
-		}
-		return
+var languageCache = make(map[string][]*LanguageType, 100)
+
+func headerLangs(r *http.Request) []*LanguageType {
+	acceptLanguage := strings.ToLower(r.Header.Get("Accept-Language"))
+	if cached, ok := languageCache[acceptLanguage]; ok {
+		return cached
 	}
+	langStrings := strings.Split(acceptLanguage, ",")
+	languageCache[acceptLanguage] = make([]*LanguageType, len(langStrings))
+	for i, v := range langStrings {
+		langString := strings.Split(v, ";")[0] // cut the q parameter
+		lang := &LanguageType{}
+		lang.Parse(langString)
+		languageCache[acceptLanguage][i] = lang
+	}
+	return languageCache[acceptLanguage]
+}
+
+// Language provides the first language in the "Accept-Language" header in the
+// given http request.
+func Language(r *http.Request) (language *LanguageType) {
+	languages := headerLangs(r)
+	if len(languages) > 0 {
+		language = languages[0]
+	} else {
+		language = defaultLanguage
+	}
+	return
+}
+
+func translate(key string, language *LanguageType) (translation string) {
+	if val, ok := messageStore[key][language.Full]; ok {
+		translation = val
+	} else if val, ok := messageStore[key][language.Sub]; ok {
+		translation = val
+	} else if val, ok := messageStore[key][language.Main]; ok {
+		translation = val
+	}
+	return
+}
+
+// Msg looks up the translation for a message, using the
+// language matching the Accept-Language header in the request.
+func Msg(r *http.Request, key string) (translation string) {
+	languages := headerLangs(r)
+	if key == "" {
+		return ""
+	}
+	for _, language := range languages {
+		if translation = translate(key, language); translation != "" {
+			return
+		}
+	}
+	if translation = translate(key, defaultLanguage); translation != "" {
+		if !production {
+			translation = "D-" + translation
+		}
+	} else {
+		translation = key
+		if !production {
+			translation = "X-" + translation
+		}
+	}
+	return
 }

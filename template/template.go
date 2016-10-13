@@ -16,15 +16,17 @@ func Run(w io.Writer, r *http.Request, dir, base, inner string, data map[string]
 		data = map[string]interface{}{}
 	}
 	lang := msg.Language(r)
-	if inner == "lang" {
-		inner = base + "-" + lang.Main
-	}
-	data["lang"] = lang
+	data["lang"] = lang.Full
+	data["r"] = r // for Msg
 	var options = &ace.Options{
 		BaseDir: "/resources/templates/" + dir,
 		FuncMap: template.FuncMap{
-			"Msg": msg.Msg(r),
+			"Msg": msg.Msg, // gets cached in the loaded template
 		},
+	}
+	// TODO: fix relying on first lang & template availabilty this much
+	if inner == "lang" {
+		inner = base + "-" + lang.Main
 	}
 	if template, err := ace.Load(base, inner, options); err != nil {
 		log.Panicln("ERROR: ace.Load:", err)

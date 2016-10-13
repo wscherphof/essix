@@ -75,20 +75,20 @@
 		{
 			"checksumSHA1": "Kcqz8LeF6T3R3SGNS3n+me+EsUU=",
 			"path": "github.com/wscherphof/entity",
-			"revision": "9ae071aab938c97047008769ba21b48aef7eb9f9",
-			"revisionTime": "2016-10-11T10:45:49Z"
+			"revision": "7b7d52c05b8f298e158198110488d6fe84137453",
+			"revisionTime": "2016-10-11T14:56:26Z"
 		},
 		{
-			"checksumSHA1": "Ooa7czCOyL14R2vES1GsIthtneo=",
+			"checksumSHA1": "R+QbbfJ3BiGOgwYr39Qwp48c/kA=",
 			"path": "github.com/wscherphof/env",
-			"revision": "a88230b55622fa6d292862f1667635d8598d902f",
-			"revisionTime": "2016-10-05T08:29:07Z"
+			"revision": "bdb952b3688f54d83429555f9986841aaa1117b9",
+			"revisionTime": "2016-10-13T09:00:11Z"
 		},
 		{
-			"checksumSHA1": "WzMZXGpDNM4HTE8G/bPDWaXNieY=",
+			"checksumSHA1": "M0oeaZuZ9KX/7C73emn96uWc5uc=",
 			"path": "github.com/wscherphof/msg",
-			"revision": "908e0d536f3b98f546be43f2f1104a4e4b50e4d1",
-			"revisionTime": "2016-10-03T23:26:38Z"
+			"revision": "46e2c43bffa8177e36152b5d8ad71d9aa1999a8b",
+			"revisionTime": "2016-10-13T13:07:34Z"
 		},
 		{
 			"checksumSHA1": "js5QsCWYFpZ3TUUevAidJr+VmJ4=",

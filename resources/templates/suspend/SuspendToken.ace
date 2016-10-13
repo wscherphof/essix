@@ -2,7 +2,7 @@
 body
   main
     .p..
-      {{Msg "Suspend token successful"}}
-      {{Msg .message}}
+      {{Msg .r "Suspend token successful"}}
+      {{Msg .r .message}}
     .p
-      a href=/ {{Msg "Take me home"}}
+      a href=/ {{Msg .r "Take me home"}}

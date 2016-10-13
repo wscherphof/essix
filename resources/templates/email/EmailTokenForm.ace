@@ -1,15 +1,15 @@
 = include ../includes/top .
 body
   header
-    h1 {{Msg "Change email address"}}
+    h1 {{Msg .r "Change email address"}}
   main.wrap
     form.flex method=POST action=/account/email/token
       input type=hidden name=_method value=PUT
       .p
-        label {{Msg "Current"}}:
+        label {{Msg .r "Current"}}:
           span.right {{.email}}
       .p
-        label {{Msg "New"}}*
+        label {{Msg .r "New"}}*
           input#newuid.right type=email name=newemail autocomplete=username placeholder=email.address@provider.com required=
       .p
         input.right type=submit
