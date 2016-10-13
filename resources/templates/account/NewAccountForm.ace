@@ -1,25 +1,25 @@
 = include ../includes/top .
 body
   header
-    h1 {{Msg "Sign up"}}
+    h1 {{Msg .r "Sign up"}}
   main.wrap
-    form.flex method=POST action=/account onsubmit="return validatePassword(this['pwd1'], this['pwd2'], '{{Msg "Passwords not equal"}}')"
+    form.flex method=POST action=/account onsubmit="return validatePassword(this['pwd1'], this['pwd2'], '{{Msg .r "Passwords not equal"}}')"
       input type=hidden name=_ratelimit value={{.ratelimit}}
       .p
-        label {{Msg "Email"}}*
+        label {{Msg .r "Email"}}*
           input#email.right type=email name=email autocomplete=username placeholder=email@provider.com required=
       .p
-        label {{Msg "Password"}}*
+        label {{Msg .r "Password"}}*
           span.right
             span#verdict
             span &nbsp;
             input#pwd1 type=password name=pwd1 autocomplete=new-password placeholder=******** required= oninput="judgePassword(this.value, 'verdict')"
       .p
-        label {{Msg "Repeat password"}}*
+        label {{Msg .r "Repeat password"}}*
           input#pwd2.right type=password name=pwd2 autocomplete=new-password placeholder=******** required=
       .p
         input.right type=submit
   footer
     .p
-      a href=/session {{Msg "Log in"}}
+      a href=/session {{Msg .r "Log in"}}
   script type=text/javascript src=/static/scripts/password.js

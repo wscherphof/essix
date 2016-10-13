@@ -1,13 +1,13 @@
 = include ../includes/top .
 body
   header
-    h1 {{Msg "Resend activate token"}}
+    h1 {{Msg .r "Resend activate token"}}
   main.wrap
     form.flex method=POST action=/account/activate/token
       input type=hidden name=_method value=PUT
       input type=hidden name=_ratelimit value={{.ratelimit}}
       .p
-        label {{Msg "Email"}}*
+        label {{Msg .r "Email"}}*
           input#uid.right type=email name=email autocomplete=username value={{.Email}} placeholder=email.address@provider.com required=
       .p
         input.right type=submit

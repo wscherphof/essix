@@ -1,6 +1,6 @@
 = include ../includes/top .
 body
   main
-    .p {{Msg "Suspend token cancelled" }}
+    .p {{Msg .r "Suspend token cancelled" }}
     .p
-      a href=/ {{Msg "Take me home"}}
+      a href=/ {{Msg .r "Take me home"}}

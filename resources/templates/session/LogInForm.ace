@@ -1,16 +1,16 @@
 = include ../includes/top .
 body
   header
-    h1 {{Msg "Log in"}}
+    h1 {{Msg .r "Log in"}}
   main.wrap
     form.flex method=POST action=/session
       input type=hidden name=_method value=PUT
       input type=hidden name=_ratelimit value={{.ratelimit}}
       .p
-        label {{Msg "Email"}}*
+        label {{Msg .r "Email"}}*
           input#uid.right type=email name=email autocomplete=username placeholder=email@provider.com required=
       .p
-        label {{Msg "Password"}}*
+        label {{Msg .r "Password"}}*
           input#pwd.right type=password name=password autocomplete=current-password placeholder=********** required=
       .p
         input.right type=submit
@@ -18,6 +18,6 @@ body
       nav
         ul
           li
-            a href=/account {{Msg "Sign up"}}
+            a href=/account {{Msg .r "Sign up"}}
           li
-            a href=/account/password/token {{Msg "Forgot password"}}
+            a href=/account/password/token {{Msg .r "Forgot password"}}
