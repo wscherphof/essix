@@ -9,11 +9,14 @@ import (
 // Get returns the value of the environment value named name,
 // or sets and returns the default value if given,
 // or else logs a fatal error.
+// Use "" as defaultValue to not set the environmet variable if missing.
 func Get(name string, defaultValue ...string) (value string) {
 	if value = os.Getenv(name); value == "" {
 		if len(defaultValue) == 1 {
 			value = defaultValue[0]
-			Set(name, value)
+			if value != "" {
+				Set(name, value)
+			}
 		} else {
 			log.Fatal("ERROR: Environment variable ", name, " not set")
 		}
@@ -21,7 +24,7 @@ func Get(name string, defaultValue ...string) (value string) {
 	return
 }
 
-// Set sets value as the value for the environment variable named name.
+// Set sets an environment variable.
 func Set(name, value string) {
 	os.Setenv(name, value)
 }
