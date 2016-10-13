@@ -23,6 +23,7 @@ func Run(w io.Writer, r *http.Request, dir, base, inner string, data map[string]
 	var options = &ace.Options{
 		BaseDir: "/resources/templates/" + dir,
 		FuncMap: template.FuncMap{
+			// TODO: this probably gets cached...
 			"Msg": msg.Msg(r),
 		},
 	}

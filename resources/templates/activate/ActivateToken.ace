@@ -5,6 +5,6 @@ body
       {{Msg "Resend successful"}}
       {{Msg .message}}
     .p
-      a href=/account/activate?id={{.id}} {{Msg "Activate subject"}}
+      a href=/account/activate?id={{.id}} {{Msg "Activate account"}}
     .p
       a href=/ {{Msg "Take me home"}}

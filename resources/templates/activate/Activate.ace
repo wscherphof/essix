@@ -1,6 +1,6 @@
 = include ../includes/top .
 body
-	main
+  main
     .p {{Msg "Activate successful"}}
     .p
       a href=/session {{Msg "Log in"}}

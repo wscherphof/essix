@@ -63,7 +63,7 @@ func (a *Account) CreatePasswordToken() error {
 
 func ClearPasswordToken(id, token string) {
 	if account, err, _ := GetAccount(id); err == nil {
-		if account.PasswordToken.Value == token {
+		if account.PasswordToken != nil && account.PasswordToken.Value == token {
 			account.PasswordToken = nil
 			account.Update(account)
 		}

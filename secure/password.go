@@ -31,7 +31,7 @@ func PasswordToken(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 	} else if err := account.CreatePasswordToken(); err != nil {
 		template.Error(w, r, err, false)
 	} else {
-		email := template.Email(r, "passowrd", "PasswordToken-email", "lang")
+		email := template.Email(r, "password", "PasswordToken-email", "lang")
 		format := msg.Msg(r)("Time format")
 		expires := account.PasswordToken.Expires.Format(format)
 		email.Set("expires", expires)

@@ -9,7 +9,7 @@ import (
 )
 
 func ActivateForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	t := template.GET(w, r, "account", "ActivateForm")
+	t := template.GET(w, r, "activate", "ActivateForm")
 	if token, err := ratelimit.NewToken(r, "/account/activate/token"); err != nil {
 		template.Error(w, r, err, false)
 	} else {
@@ -33,7 +33,7 @@ func Activate(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 }
 
 func ActivateTokenForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	t := template.GET(w, r, "account", "ActivateTokenForm")
+	t := template.GET(w, r, "activate", "ActivateTokenForm")
 	if token, err := ratelimit.NewToken(r); err != nil {
 		template.Error(w, r, err, false)
 	} else {

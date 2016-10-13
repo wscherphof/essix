@@ -43,11 +43,11 @@ import (
 
 var (
 	production      = (env.Get("GO_ENV", "") == "production")
-	defaultLanguage = parseLanguage(env.Get("MSG_DEFAULT", "en"))
+	defaultLanguage = &LanguageType{}
 )
 
 func init() {
-
+	defaultLanguage.Parse(env.Get("MSG_DEFAULT", "en"))
 }
 
 // MessageType holds the translations for a message key.
@@ -88,39 +88,37 @@ type LanguageType struct {
 	Sub string
 }
 
-func parseLanguage(language string) LanguageType {
-	parts := strings.Split(language, "-")
-	langType := LanguageType{
-		Full: language,
-		Main: parts[0],
-	}
+func (l *LanguageType) Parse(s string) {
+	parts := strings.Split(s, "-")
+	l.Full = s
+	l.Main = parts[0]
 	if len(parts) > 1 {
-		langType.Sub = parts[1]
+		l.Sub = parts[1]
 	}
-	return langType
+	return
 }
 
-var languageCache = make(map[string][]LanguageType, 100)
+var languageCache = make(map[string][]*LanguageType, 100)
 
-func headerLangs(r *http.Request) []LanguageType {
+func headerLangs(r *http.Request) []*LanguageType {
 	acceptLanguage := strings.ToLower(r.Header.Get("Accept-Language"))
-	if langTypes, ok := languageCache[acceptLanguage]; ok {
-		return langTypes
+	if cached, ok := languageCache[acceptLanguage]; ok {
+		return cached
 	}
 	langStrings := strings.Split(acceptLanguage, ",")
-	langTypes := make([]LanguageType, len(langStrings))
-	for _, v := range langStrings {
+	languageCache[acceptLanguage] = make([]*LanguageType, len(langStrings))
+	for i, v := range langStrings {
 		langString := strings.Split(v, ";")[0] // cut the q parameter
-		langType := parseLanguage(langString)
-		langTypes = append(langTypes, langType)
+		lang := &LanguageType{}
+		lang.Parse(langString)
+		languageCache[acceptLanguage][i] = lang
 	}
-	languageCache[acceptLanguage] = langTypes
-	return langTypes
+	return languageCache[acceptLanguage]
 }
 
 // Language provides the first language in the "Accept-Language" header in the
 // given http request.
-func Language(r *http.Request) (language LanguageType) {
+func Language(r *http.Request) (language *LanguageType) {
 	languages := headerLangs(r)
 	if len(languages) > 0 {
 		language = languages[0]
@@ -130,7 +128,7 @@ func Language(r *http.Request) (language LanguageType) {
 	return
 }
 
-func translate(key string, language LanguageType) (translation string) {
+func translate(key string, language *LanguageType) (translation string) {
 	if val, ok := messageStore[key][language.Full]; ok {
 		translation = val
 	} else if val, ok := messageStore[key][language.Sub]; ok {
@@ -146,6 +144,9 @@ func translate(key string, language LanguageType) (translation string) {
 func Msg(r *http.Request) func(key string) (translation string) {
 	languages := headerLangs(r)
 	return func(key string) (translation string) {
+		if key == "" {
+			return ""
+		}
 		for _, language := range languages {
 			if translation = translate(key, language); translation != "" {
 				return

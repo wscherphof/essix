@@ -81,14 +81,14 @@
 		{
 			"checksumSHA1": "R+QbbfJ3BiGOgwYr39Qwp48c/kA=",
 			"path": "github.com/wscherphof/env",
-			"revision": "a88230b55622fa6d292862f1667635d8598d902f",
-			"revisionTime": "2016-10-05T08:29:07Z"
+			"revision": "bdb952b3688f54d83429555f9986841aaa1117b9",
+			"revisionTime": "2016-10-13T09:00:11Z"
 		},
 		{
-			"checksumSHA1": "vCbP7pCGdKTaKO/WPf/92VSyL64=",
+			"checksumSHA1": "VDpggDl5tkRN18szUyEIMjQQcDk=",
 			"path": "github.com/wscherphof/msg",
-			"revision": "908e0d536f3b98f546be43f2f1104a4e4b50e4d1",
-			"revisionTime": "2016-10-03T23:26:38Z"
+			"revision": "f06a7f4e8fd8d6c952a291f7f8a435872c5b3e6c",
+			"revisionTime": "2016-10-13T10:33:03Z"
 		},
 		{
 			"checksumSHA1": "js5QsCWYFpZ3TUUevAidJr+VmJ4=",
