@@ -79,16 +79,16 @@
 			"revisionTime": "2016-10-11T14:56:26Z"
 		},
 		{
-			"checksumSHA1": "R+QbbfJ3BiGOgwYr39Qwp48c/kA=",
+			"checksumSHA1": "QlYuFD+iOr7Asvb/KOT9PrFGczE=",
 			"path": "github.com/wscherphof/env",
-			"revision": "bdb952b3688f54d83429555f9986841aaa1117b9",
-			"revisionTime": "2016-10-13T09:00:11Z"
+			"revision": "766b6de9922293be43d344413f1fd26ad93e8e2d",
+			"revisionTime": "2016-10-14T08:50:24Z"
 		},
 		{
-			"checksumSHA1": "9Ldw8oEjaI9dLdNqu95sbBZ+bKc=",
+			"checksumSHA1": "obpSzWOQNJoTsQZs4MTfp0uMZ/w=",
 			"path": "github.com/wscherphof/msg",
-			"revision": "bd5ccf50ea1f7704b02a818ec870b24198dbec29",
-			"revisionTime": "2016-10-13T21:42:19Z"
+			"revision": "49bce2d477f6d2cccbf1641b95808b14d3c67d05",
+			"revisionTime": "2016-10-14T08:37:06Z"
 		},
 		{
 			"checksumSHA1": "js5QsCWYFpZ3TUUevAidJr+VmJ4=",
