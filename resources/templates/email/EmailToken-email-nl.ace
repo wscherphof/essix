@@ -1,14 +1,14 @@
 = content main
-  .p Er is een aanvraag gedaan om het e-mailadres van je account bij Essix te wijzigen.
+  p Er is een aanvraag gedaan om het e-mailadres van je account bij Essix te wijzigen.
     br
     a href={{.link}} Klik op deze link om te bevestigen
-  .p Als je je huidige adres wil houden, {{ "" }}
+  p Als je je huidige adres wil houden, {{ "" }}
     a href={{.link}}&cancel=true klik dan s.v.p. op deze link om de aanvraag te annuleren
-  .p..
+  p..
     Dank,
     Met vriendelijke groet,
     Essix
-  .p
+  p
     small..
       Als de link niet werkt, plak dan onderstaande URL in de adresbalk van je webbrowser:
       Bevestigen: {{.link}}

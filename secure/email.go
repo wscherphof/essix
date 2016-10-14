@@ -44,7 +44,7 @@ func ChangeEmailForm(w http.ResponseWriter, r *http.Request, ps httprouter.Param
 			template.Error(w, r, err, conflict)
 		} else {
 			secure.Update(w, r, account)
-			template.Run(w, r, "email", "ChangeEmail-cancel", "", nil)
+			template.Run(w, r, "email", "ChangeEmail-cancel", "")
 		}
 	} else {
 		t.Set("email", account.Email)

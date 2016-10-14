@@ -34,7 +34,7 @@ func TestMsg(t *testing.T) {
 
 func template_test_run(t *testing.T, base, inner string, inputs []template_test_input) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		Run(w, r, "util", base, inner, nil)
+		Run(w, r, "util", base, inner)
 	}))
 	defer ts.Close()
 	client := &http.Client{}

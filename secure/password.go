@@ -55,7 +55,7 @@ func ChangePasswordForm(w http.ResponseWriter, r *http.Request, ps httprouter.Pa
 	expires, _ = util.URLDecodeString(expires)
 	if cancel == "true" {
 		model.ClearPasswordToken(id, token)
-		template.Run(w, r, "password", "ChangePassword-cancel", "", nil)
+		template.Run(w, r, "password", "ChangePassword-cancel", "")
 	} else {
 		t.Set("id", id)
 		t.Set("token", token)
