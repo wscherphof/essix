@@ -7,7 +7,7 @@ import (
 func init() {
 	msg.Key("Activate account").
 		Set("nl", "Je account activeren").
-		Set("en", "Activate your account")
+		Set("en", "Activating your account")
 
 	msg.Key("Activate token").
 		Set("nl", "Activeringscode").

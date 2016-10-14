@@ -10,8 +10,8 @@ func init() {
 		Set("en", "Lost your password?")
 
 	msg.Key("Reset password").
-		Set("nl", "Mijn wachtwoord opnieuw instellen").
-		Set("en", "Reset my password")
+		Set("nl", "Je wachtwoord opnieuw instellen").
+		Set("en", "Resetting your password")
 
 	msg.Key("Password token successful").
 		Set("nl", "Dank voor je aanvraag om je wachtwoord opnieuw in te stellen. Je krijgt een e-mail van ons met verdere instructies.").

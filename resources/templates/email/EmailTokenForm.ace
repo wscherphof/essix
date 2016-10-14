@@ -1,7 +1,7 @@
 = include ../includes/top .
 body
   header
-    h1 {{.msg.Get "Change email address"}}
+    h1 {{.msg.Get "Change email"}}
   main.wrap
     form.flex method=POST action=/account/email/token
       input type=hidden name=_method value=PUT

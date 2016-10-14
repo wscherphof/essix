@@ -1,7 +1,7 @@
 = include ../includes/top .
 body
   header
-    h1 {{.msg.Get "Change email address"}}
+    h1 {{.msg.Get "Change email"}}
   main.wrap
     .p {{.msg.Get "Want replace"}} "{{.email}}" {{.msg.Get "Replace with"}} "{{.newemail}}"
     .p
