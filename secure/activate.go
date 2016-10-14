@@ -8,6 +8,7 @@ import (
 	"net/http"
 )
 
+// ActivateForm renders a form to enter the activate token.
 func ActivateForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	t := template.GET(w, r, "activate", "ActivateForm")
 	if token, err := ratelimit.NewToken(r, "/account/activate/token"); err != nil {
@@ -20,6 +21,7 @@ func ActivateForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) 
 	}
 }
 
+// Activate activates the account with the given token.
 func Activate(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	if t := template.PRG(w, r, "activate", "Activate"); t == nil {
 		return
@@ -32,6 +34,7 @@ func Activate(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	}
 }
 
+// ActivateTokenForm renders a form to request sending a new activate token.
 func ActivateTokenForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	t := template.GET(w, r, "activate", "ActivateTokenForm")
 	if token, err := ratelimit.NewToken(r); err != nil {
@@ -42,6 +45,7 @@ func ActivateTokenForm(w http.ResponseWriter, r *http.Request, ps httprouter.Par
 	}
 }
 
+// ActivateToken sends the new activate token.
 func ActivateToken(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	if t := template.PRG(w, r, "activate", "ActivateToken"); t == nil {
 		return

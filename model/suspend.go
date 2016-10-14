@@ -5,8 +5,12 @@ import (
 	"log"
 )
 
-func (a *Account) CreateSuspendToken(sure bool) (err error, conflict bool) {
-	if !sure {
+/*
+CreateSuspendToken generates a token that is needed to suspend the Account, if
+sure is "affirmative".
+*/
+func (a *Account) CreateSuspendToken(sure string) (err error, conflict bool) {
+	if sure != "affirmative" {
 		err, conflict = ErrInvalidCredentials, true
 	} else {
 		a.SuspendToken = util.NewToken()
@@ -15,6 +19,9 @@ func (a *Account) CreateSuspendToken(sure bool) (err error, conflict bool) {
 	return
 }
 
+/*
+ClearSuspendToken clears the token to cancel the account suspending process.
+*/
 func (a *Account) ClearSuspendToken(token string) (err error) {
 	if a.SuspendToken == token {
 		a.SuspendToken = ""
@@ -23,8 +30,12 @@ func (a *Account) ClearSuspendToken(token string) (err error) {
 	return
 }
 
-func (a *Account) Suspend(token string, sure bool) (err error, conflict bool) {
-	if token == "" || a.SuspendToken != token {
+/*
+Suspend deletes the Account if the given token is correct and sure is
+"affirmative".
+*/
+func (a *Account) Suspend(token string, sure string) (err error, conflict bool) {
+	if sure != "affirmative" || token == "" || a.SuspendToken != token {
 		err, conflict = ErrInvalidCredentials, true
 	} else {
 		email := initEmail(a.Email)

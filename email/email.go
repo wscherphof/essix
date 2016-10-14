@@ -1,3 +1,13 @@
+/*
+Package email manages outgoing email traffic.
+
+It relies on a configuration item in the database, holding the credentials of
+the sending email account, and the smtp server address and port number.
+
+If the configuration item is missing, a template for it is created in the
+database. Update it with your account's details, then restart the server to load
+them.
+*/
 package email
 
 import (
@@ -55,6 +65,9 @@ func init() {
 	}
 }
 
+/*
+Send sends an eamil message, or enqueues it if it couldn't be sent at once.
+*/
 func Send(subject, message string, recipients ...string) (err error) {
 	if e := send(subject, message, recipients...); e != nil {
 		log.Println("INFO: error sending email, enqueueing...", e)

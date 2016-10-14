@@ -1,3 +1,10 @@
+/*
+Package db provides an implementation of github.com/wscherphof/secure.SecureDB.
+
+It stores a github.com/wscherphof/secure.Config item in the config table in the
+database. If it's not present on server start, a fully functional record is
+generated.
+*/
 package db
 
 import (
@@ -15,6 +22,9 @@ func init() {
 	entity.Register(&config{}, "config")
 }
 
+/*
+New returns an instance of the SecureDB implementation.
+*/
 func New() *db {
 	return &db{}
 }
@@ -27,6 +37,9 @@ var conf = &config{
 	},
 }
 
+/*
+Fetch implements github.com/wscherphof/secure.SecureDB.
+*/
 func (*db) Fetch(dst *secure.Config) (err error) {
 	var empty bool
 	if err, empty = conf.Read(conf); err != nil {
@@ -41,6 +54,9 @@ func (*db) Fetch(dst *secure.Config) (err error) {
 	return
 }
 
+/*
+Upsert implements github.com/wscherphof/secure.SecureDB.
+*/
 func (*db) Upsert(src *secure.Config) (err error) {
 	conf.Config = src
 	if err = conf.Update(conf); err != nil {

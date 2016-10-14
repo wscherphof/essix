@@ -39,6 +39,11 @@ func newPassword(pwd1, pwd2 string) (pwd *password, err error, conflict bool) {
 	return
 }
 
+/*
+ValidatePassword tests whether the given password is valid for the Account. It
+computes a cryptographic hash value that is compared to the hash stored in the
+database.
+*/
 func (a *Account) ValidatePassword(password string) (err error) {
 	if !a.IsActive() {
 		err = ErrNotActivated
@@ -53,6 +58,10 @@ type passwordToken struct {
 	Value   string
 }
 
+/*
+CreatePasswordToken generates a token that is needed to change the Account's
+password.
+*/
 func (a *Account) CreatePasswordToken() error {
 	a.PasswordToken = &passwordToken{
 		Expires: time.Now().Add(pwdTokenTimeOut),
@@ -61,6 +70,9 @@ func (a *Account) CreatePasswordToken() error {
 	return a.Update(a)
 }
 
+/*
+ClearPasswordToken clears the token to cancel the password changing process.
+*/
 func ClearPasswordToken(id, token string) {
 	if account, err, _ := GetAccount(id); err == nil {
 		if account.PasswordToken != nil && account.PasswordToken.Value == token {
@@ -70,6 +82,10 @@ func ClearPasswordToken(id, token string) {
 	}
 }
 
+/*
+ChangePassword sets the Account's Password to the new password, if the given
+token and old password are correct.
+*/
 func (a *Account) ChangePassword(token, pwd1, pwd2 string) (err error, conflict bool) {
 	if token == "" || a.PasswordToken == nil || token != a.PasswordToken.Value {
 		err, conflict = ErrInvalidCredentials, true

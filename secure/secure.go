@@ -1,3 +1,14 @@
+/*
+Package secure provides authentication for the application.
+
+Sign up, verify email address to activate account, resend activation email,
+reset password, log in, change email address verifying the new email address,
+suspend account through email confirmation.
+
+The account details are kept in the database (model.Account). On log in, a copy
+of the account data is stored in an encrypted session cookie to authenticate
+requests for secured resources.
+*/
 package secure
 
 import (
@@ -8,6 +19,10 @@ import (
 	"net/http"
 )
 
+/*
+Authentication returns the client's account data from the encrypted cookie,
+which is regularly validated with the account's record in the database.
+*/
 func Authentication(w http.ResponseWriter, r *http.Request, optional ...bool) (ret *model.Account) {
 	if auth := secure.Authentication(w, r, optional...); auth != nil {
 		acc := auth.(model.Account)
@@ -16,6 +31,11 @@ func Authentication(w http.ResponseWriter, r *http.Request, optional ...bool) (r
 	return
 }
 
+/*
+secure.Handle ensures the client is logged in when accessing a certian route,
+redirecting to the log in page if not. The given Handle function should call
+Authentication() to get the client's account details.
+*/
 func Handle(handle httprouter.Handle) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		if secure.Authentication(w, r, false) != nil {
@@ -24,6 +44,10 @@ func Handle(handle httprouter.Handle) httprouter.Handle {
 	}
 }
 
+/*
+secure.IfHandle calls one Hanlde function for logged-in clients, and another for
+logged-out clients.
+*/
 func IfHandle(authenticated httprouter.Handle, unauthenticated httprouter.Handle) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		if secure.Authentication(w, r, true) != nil {

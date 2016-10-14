@@ -17,7 +17,7 @@ func SuspendToken(w http.ResponseWriter, r *http.Request, ps httprouter.Params) 
 	if t := template.PRG(w, r, "suspend", "SuspendToken"); t == nil {
 		return
 	} else if err, conflict := account.CreateSuspendToken(
-		ensure(r),
+		r.FormValue("sure"),
 	); err != nil {
 		template.Error(w, r, err, conflict)
 	} else {
@@ -55,7 +55,7 @@ func Suspend(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		account := Authentication(w, r)
 		if err, conflict := account.Suspend(
 			r.FormValue("token"),
-			ensure(r),
+			r.FormValue("sure"),
 		); err != nil {
 			template.Error(w, r, err, conflict)
 		} else {
@@ -63,8 +63,4 @@ func Suspend(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 			t.Run()
 		}
 	}
-}
-
-func ensure(r *http.Request) bool {
-	return r.FormValue("sure") == "affirmative"
 }

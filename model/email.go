@@ -4,6 +4,10 @@ import (
 	"github.com/wscherphof/essix/util"
 )
 
+/*
+CreateEmailToken generates a token that is needed to change the Account's email
+address.
+*/
 func (a *Account) CreateEmailToken(newEmail string) (err error, conflict bool) {
 	var empty bool
 	email := initEmail(newEmail)
@@ -19,6 +23,9 @@ func (a *Account) CreateEmailToken(newEmail string) (err error, conflict bool) {
 	return
 }
 
+/*
+ClearEmailToken clears the token to cancel the email address changing process.
+*/
 func (a *Account) ClearEmailToken(token string) (err error, conflict bool) {
 	if token == "" || a.EmailToken != token {
 		err, conflict = ErrInvalidCredentials, true
@@ -30,6 +37,10 @@ func (a *Account) ClearEmailToken(token string) (err error, conflict bool) {
 	return
 }
 
+/*
+ChangeEmail sets the Account's Email to the NewEmail, if the given token is
+correct.
+*/
 func (a *Account) ChangeEmail(token string) (err error, conflict bool) {
 	email := initEmail(a.NewEmail)
 	if token == "" || a.EmailToken != token || a.NewEmail == "" {
