@@ -26,7 +26,17 @@ import (
 
 const location = "/resources/templates"
 
-// Run loads and executes a template, writing the output to w.
+/*
+Run loads and executes a template, writing the output to w.
+
+dir is a directory (one deep) under /resources/templates
+
+base in the template name (filename without extension) in dir
+
+inner is the inner template name (without extension) in dir
+
+Both base and inner may include paths relative to dir.
+*/
 func Run(w io.Writer, r *http.Request, dir, base, inner string, opt_data ...map[string]interface{}) {
 	var data map[string]interface{}
 	if len(opt_data) == 1 {

@@ -1,11 +1,11 @@
-package secure
+package account
 
 import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/wscherphof/essix/model"
 	"github.com/wscherphof/essix/ratelimit"
 	"github.com/wscherphof/essix/template"
-	"github.com/wscherphof/secure"
+	cookie "github.com/wscherphof/secure"
 	"net/http"
 )
 
@@ -20,7 +20,7 @@ func LogInForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 }
 
 func logInError(w http.ResponseWriter, r *http.Request, err error, conflict bool, id string) {
-	template.ErrorTail(w, r, err, conflict, "session", "LogIn", map[string]interface{}{
+	template.ErrorTail(w, r, err, conflict, "session", "LogIn-error-tail", map[string]interface{}{
 		"id": id,
 	})
 }
@@ -30,7 +30,7 @@ func LogIn(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		logInError(w, r, err, conflict, account.ID)
 	} else if err = account.ValidatePassword(r.FormValue("password")); err != nil {
 		logInError(w, r, err, true, account.ID)
-	} else if err = secure.LogIn(w, r, account); err != nil {
+	} else if err = cookie.LogIn(w, r, account); err != nil {
 		logInError(w, r, err, false, account.ID)
 	} else {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
@@ -38,5 +38,5 @@ func LogIn(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 }
 
 func LogOut(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	secure.LogOut(w, r, true)
+	cookie.LogOut(w, r, true)
 }

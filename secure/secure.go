@@ -1,10 +1,6 @@
 /*
 Package secure provides authentication for the application.
 
-Sign up, verify email address to activate account, resend activation email,
-reset password, log in, change email address verifying the new email address,
-suspend account through email confirmation.
-
 The account details are kept in the database (model.Account). On log in, a copy
 of the account data is stored in an encrypted session cookie to authenticate
 requests for secured resources.

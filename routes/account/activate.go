@@ -1,4 +1,4 @@
-package secure
+package account
 
 import (
 	"github.com/julienschmidt/httprouter"

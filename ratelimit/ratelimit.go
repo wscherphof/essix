@@ -16,6 +16,7 @@ import (
 	"errors"
 	"github.com/julienschmidt/httprouter"
 	"github.com/wscherphof/entity"
+	"github.com/wscherphof/env"
 	"github.com/wscherphof/essix/template"
 	"github.com/wscherphof/secure"
 	"log"
@@ -27,6 +28,7 @@ import (
 var (
 	ErrTooManyRequests = errors.New("ErrTooManyRequests")
 	ErrInvalidRequest  = errors.New("ErrInvalidRequest")
+	defaultLimit       = env.GetInt("RATELIMIT", 60)
 )
 
 const (
@@ -104,8 +106,15 @@ func getClient(ip string) (c *client) {
 ratelimit.Handle returns a httprouter.Handle that denies a request if it's
 repeated from the same client within the given number of seconds, or handles it,
 and resets the timw window.
+
+Default limit is read from the RATELIMIT environment variable. The default value
+for RATELIMIT is 60 seconds.
 */
-func Handle(handle httprouter.Handle, seconds int) httprouter.Handle {
+func Handle(handle httprouter.Handle, opt_seconds ...int) httprouter.Handle {
+	seconds := defaultLimit
+	if len(opt_seconds) == 1 {
+		seconds = opt_seconds[0]
+	}
 	window := time.Duration(seconds) * time.Second
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		t, ip, p := new(token), ip(r), path(r.URL.Path)

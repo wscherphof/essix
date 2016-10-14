@@ -7,10 +7,10 @@ import (
 	"net/url"
 )
 
-type emailType getType
+type EmailType GetType
 
-func (t *emailType) Run(recipient, subject string) (err error, message string) {
-	data := make(map[string]interface{}, len(*(t.Values)) + 1)
+func (t *EmailType) Run(recipient, subject string) (err error, message string) {
+	data := make(map[string]interface{}, len(*(t.Values))+1)
 	for key := range *t.Values {
 		data[key] = t.Values.Get(key)
 	}
@@ -25,9 +25,9 @@ func (t *emailType) Run(recipient, subject string) (err error, message string) {
 	return
 }
 
-func Email(r *http.Request, dir, base string, inner ...string) *emailType {
+func Email(r *http.Request, dir, base string, inner ...string) *EmailType {
 	values, _ := url.ParseQuery("")
-	return &emailType{
+	return &EmailType{
 		baseType: &baseType{&values, nil, r},
 		dir:      dir,
 		base:     base,
