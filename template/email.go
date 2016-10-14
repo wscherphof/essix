@@ -25,12 +25,12 @@ func (t *emailType) Run(recipient, subject string) (err error, message string) {
 	return
 }
 
-func Email(r *http.Request, dir, base string, opt_inner ...string) *emailType {
+func Email(r *http.Request, dir, base string, inner ...string) *emailType {
 	values, _ := url.ParseQuery("")
 	return &emailType{
 		baseType: &baseType{&values, nil, r},
 		dir:      dir,
 		base:     base,
-		inner:    inner(opt_inner...),
+		inner:    opt(inner...),
 	}
 }
