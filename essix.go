@@ -34,8 +34,6 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/wscherphof/essix/bootstrap"
 	"github.com/wscherphof/essix/router"
-	"github.com/wscherphof/essix/secure"
-	"github.com/wscherphof/essix/template"
 	"log"
 	"net/http"
 	"os"
@@ -67,11 +65,6 @@ func Run() {
 
 	// Serve files in /static
 	router.Router.ServeFiles("/static/*filepath", http.Dir("/resources/static"))
-
-	// Template for home page, depending on login status
-	router.GET("/", secure.IfHandle(
-		template.Handle("essix", "Home", "Home-LoggedIn"),
-		template.Handle("essix", "Home", "Home-LoggedOut")))
 
 	log.Println("INFO: starting secure application server for " + domain)
 	// Use the domain's proper certificates

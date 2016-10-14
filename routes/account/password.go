@@ -1,4 +1,4 @@
-package secure
+package account
 
 import (
 	"github.com/julienschmidt/httprouter"
@@ -7,7 +7,7 @@ import (
 	"github.com/wscherphof/essix/template"
 	"github.com/wscherphof/essix/util"
 	"github.com/wscherphof/msg"
-	"github.com/wscherphof/secure"
+	cookie "github.com/wscherphof/secure"
 	"net/http"
 )
 
@@ -78,7 +78,7 @@ func ChangePassword(w http.ResponseWriter, r *http.Request, ps httprouter.Params
 	); err != nil {
 		template.Error(w, r, err, conflict)
 	} else {
-		secure.LogOut(w, r, false)
+		cookie.LogOut(w, r, false)
 		t.Run()
 	}
 }

@@ -8,15 +8,30 @@ import (
 
 var ErrInternalServerError = errors.New("ErrInternalServerError")
 
+/*
+Error renders a generic template with details about the given error.
+
+If conflict is true, the status code is http.StatusConflict. Otherwise, it's
+http.StatusInternalServerError.
+*/
 func Error(w http.ResponseWriter, r *http.Request, err error, conflict bool) {
 	errorTemplate(w, r, err, conflict, nil)
 }
 
-func ErrorTail(w http.ResponseWriter, r *http.Request, err error, conflict bool, dir, base string, data ...map[string]interface{}) {
+/*
+ErrorTail is like Error, but tails the generic error template with another, as an
+"inner" template.
+
+The tail template should start with:
+	= content tail
+
+Any data is passed to the tail template.
+*/
+func ErrorTail(w http.ResponseWriter, r *http.Request, err error, conflict bool, dir, tail string, data ...map[string]interface{}) {
 	if len(data) == 1 {
-		errorTemplate(w, r, err, conflict, data[0], dir, base)
+		errorTemplate(w, r, err, conflict, data[0], dir, tail)
 	} else {
-		errorTemplate(w, r, err, conflict, nil, dir, base)
+		errorTemplate(w, r, err, conflict, nil, dir, tail)
 	}
 }
 
@@ -39,7 +54,7 @@ func errorTemplate(w http.ResponseWriter, r *http.Request, err error, conflict b
 	}
 	inner := ""
 	if len(tail) == 2 {
-		inner = "../" + tail[0] + "/" + tail[1] + "-error-tail"
+		inner = "../" + tail[0] + "/" + tail[1]
 	}
 	// Set the Content-Type to prevent CompressHandler from doing so after our WriteHeader()
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
