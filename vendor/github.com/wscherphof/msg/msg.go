@@ -31,6 +31,7 @@ package msg
 import (
 	"github.com/wscherphof/env"
 	"net/http"
+	"os"
 	"strings"
 )
 
@@ -114,17 +115,6 @@ func Translator(r *http.Request) *translatorType {
 	return t
 }
 
-func translate(key string, language *languageType) (translation string) {
-	if val, ok := messageStore[key][language.Full]; ok {
-		translation = val
-	} else if val, ok := messageStore[key][language.Sub]; ok {
-		translation = val
-	} else if val, ok := messageStore[key][language.Main]; ok {
-		translation = val
-	}
-	return
-}
-
 // Get returns the translation for a message.
 func (t *translatorType) Get(key string) (translation string) {
 	if key == "" {
@@ -148,13 +138,57 @@ func (t *translatorType) Get(key string) (translation string) {
 	return
 }
 
-// Language provides the first language in the "Accept-Language" header in the
-// given http request.
-func (t *translatorType) Language() (language *languageType) {
-	if len(t.languages) > 0 {
-		language = t.languages[0]
-	} else {
-		language = defaultLanguage
+func translate(key string, language *languageType) (translation string) {
+	if val, ok := messageStore[key][language.Full]; ok {
+		translation = val
+	} else if val, ok := messageStore[key][language.Main]; ok {
+		translation = val
+	} else if val, ok := messageStore[key][language.Sub]; ok {
+		translation = val
+	}
+	return
+}
+
+/*
+File searches for an "inner" template fitting the "base" template, matching
+the user's accepted languages.
+
+Template names are without file name extension. The default extension is "ace".
+
+Example: if MSG_DEFAULT is "en", and the Accept-Languages header is empty,
+	msg.File("/resources/templates", "home", "HomePage", ".tpl")
+returns
+	"HomePage-en", nil
+if the file "/resources/templates/home/HomePage-en.tpl" exists.
+*/
+func (t *translatorType) File(location, dir, base string, extension ...string) (string, error) {
+	ext := ".ace"
+	if len(extension) == 1 {
+		ext = extension[0]
+	}
+	template := location + "/" + dir + "/" + base
+	for _, language := range t.languages {
+		if lang, err := exists(template, ext, language); err == nil {
+			return base + "-" + lang, nil
+		}
+	}
+	lang, err := exists(template, ext, defaultLanguage)
+	return base + "-" + lang, err
+}
+
+func exists(template, extension string, language *languageType) (lang string, err error) {
+	if lang, err = stat(template, extension, language.Full); err != nil {
+		if lang, err = stat(template, extension, language.Main); err != nil {
+			lang, err = stat(template, extension, language.Sub)
+		}
+	}
+	return
+}
+
+func stat(template, extension, searchLang string) (lang string, err error) {
+	path := template + "-" + searchLang + extension
+	if _, err = os.Stat(path); err == nil {
+		lang = searchLang
 	}
 	return
 }

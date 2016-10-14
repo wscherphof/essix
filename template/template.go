@@ -9,6 +9,8 @@ import (
 	"net/http"
 )
 
+const location = "/resources/templates"
+
 // Run loads and executes a template, writing the output to w
 func Run(w io.Writer, r *http.Request, dir, base, inner string, data map[string]interface{}) {
 	if data == nil {
@@ -17,11 +19,15 @@ func Run(w io.Writer, r *http.Request, dir, base, inner string, data map[string]
 	translator := msg.Translator(r)
 	data["msg"] = translator
 	var options = &ace.Options{
-		BaseDir: "/resources/templates/" + dir,
+		BaseDir: location + "/" + dir,
 	}
-	// TODO: fix relying on first lang & template availabilty this much
 	if inner == "lang" {
-		inner = base + "-" + translator.Language().Main
+		if file, err := translator.File(location, dir, base); err != nil {
+			log.Panicf("ERROR: no lang template found for %s/%s/%s %+v", location, dir, base, err)
+			return
+		} else {
+			inner = file
+		}
 	}
 	if template, err := ace.Load(base, inner, options); err != nil {
 		log.Panicln("ERROR: ace.Load:", err)
