@@ -5,13 +5,9 @@ import (
 )
 
 func init() {
-	msg.Key("Change email address").
-		Set("nl", "Mijn e-mailadres wijzigen").
-		Set("en", "Change my email address")
-
 	msg.Key("Change email").
 		Set("nl", "Je e-mailadres wijzigen").
-		Set("en", "Change your email address")
+		Set("en", "Changing your email address")
 
 	msg.Key("Want replace").
 		Set("nl", "Ik wil").

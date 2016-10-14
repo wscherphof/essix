@@ -8,7 +8,7 @@ body
       input type=hidden name=_ratelimit value={{.ratelimit}}
       .p
         label {{.msg.Get "Email"}}*
-          input#uid.right type=email name=email autocomplete=username placeholder=email@provider.com required=
+          input#uid.right type=email name=email autocomplete=username placeholder=email.address@provider.com required=
       .p
         label {{.msg.Get "Password"}}*
           input#pwd.right type=password name=password autocomplete=current-password placeholder=********** required=
