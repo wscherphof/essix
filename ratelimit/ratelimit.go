@@ -76,7 +76,7 @@ func getClient(ip string) (c *client) {
 	c = &client{Base: &entity.Base{ID: ip}}
 	if err, empty := c.Read(c); err != nil {
 		if empty {
-			c.Requests = make(requests)
+			c.Requests = make(requests, 20)
 		} else {
 			log.Printf("WARNING: error reading from ratelimit table: %v", err)
 		}
