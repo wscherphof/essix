@@ -1,5 +1,5 @@
 /*
-Package essix runs an essential super simple secure stable stateless server.
+Package essix runs an essential simple secure stable scalable stateless server.
 
 See github.com/wscherphof/s6app for the canonocal usage example.
 
