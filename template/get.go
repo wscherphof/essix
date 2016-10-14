@@ -19,12 +19,12 @@ func (t *getType) Run() {
 	Run(t.w, t.r, t.dir, t.base, t.inner, data)
 }
 
-func GET(w http.ResponseWriter, r *http.Request, dir, base string, opt_inner ...string) *getType {
+func GET(w http.ResponseWriter, r *http.Request, dir, base string, inner ...string) *getType {
 	values := r.URL.Query()
 	return &getType{
 		baseType: &baseType{&values, w, r},
 		dir:      dir,
 		base:     base,
-		inner:    inner(opt_inner...),
+		inner:    opt(inner...),
 	}
 }
