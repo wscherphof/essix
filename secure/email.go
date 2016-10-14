@@ -7,6 +7,7 @@ import (
 	"net/http"
 )
 
+// EmailTokenForm renders a form to request a token to change the account's email address.
 func EmailTokenForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	account := Authentication(w, r)
 	t := template.GET(w, r, "email", "EmailTokenForm")
@@ -14,6 +15,7 @@ func EmailTokenForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params
 	t.Run()
 }
 
+// EmailToken sends the token to change the account's email address.
 func EmailToken(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	account := Authentication(w, r)
 	if t := template.PRG(w, r, "email", "EmailToken"); t == nil {
@@ -35,6 +37,7 @@ func EmailToken(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	}
 }
 
+// ChangeEmailForm accepts the token sent to the new email address  to set for the account.
 func ChangeEmailForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	account := Authentication(w, r)
 	t := template.GET(w, r, "email", "ChangeEmailForm")
@@ -54,6 +57,7 @@ func ChangeEmailForm(w http.ResponseWriter, r *http.Request, ps httprouter.Param
 	}
 }
 
+// ChangeEmail sets the new email address for the acoount if the given token is correct.
 func ChangeEmail(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	account := Authentication(w, r)
 	if t := template.PRG(w, r, "email", "ChangeEmail"); t == nil {

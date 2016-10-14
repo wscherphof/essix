@@ -1,3 +1,18 @@
+/*
+Package template renders templates using github.com/yossi/ace, providing text
+translation through github.com/wscherphof/msg.
+
+It provides an httprouter.Handle to just render a template as the action for a route.
+
+It renders and sends email messages.
+
+It renders handled responses to GET requests.
+
+It renders errors from request handlers.
+
+It implements the Post-Redirect-Get pattern, redirecting to a GET request,
+rendering the template with data from a POST, PUT, or DELETE request
+*/
 package template
 
 import (
@@ -11,7 +26,7 @@ import (
 
 const location = "/resources/templates"
 
-// Run loads and executes a template, writing the output to w
+// Run loads and executes a template, writing the output to w.
 func Run(w io.Writer, r *http.Request, dir, base, inner string, opt_data ...map[string]interface{}) {
 	var data map[string]interface{}
 	if len(opt_data) == 1 {
@@ -39,7 +54,7 @@ func Run(w io.Writer, r *http.Request, dir, base, inner string, opt_data ...map[
 	}
 }
 
-// Write loads and executes a template, returning the output
+// Write loads and executes a template, returning the output.
 func Write(r *http.Request, dir, base, inner string, data ...map[string]interface{}) string {
 	var b bytes.Buffer
 	Run(&b, r, dir, base, inner, data...)

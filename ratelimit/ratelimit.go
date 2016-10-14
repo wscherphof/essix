@@ -1,3 +1,15 @@
+/*
+Package ratelimit manages rate limits for urls.
+
+It can be used instead of captchas, since breaking captchas is a commercial
+service, yielding a captcha to be nothing more than a rate limit.
+
+The rate limited requests for each client (ip address) are stored in the
+database, and subsequent requests from the same client are denied if they come
+within the set time window.
+
+Entries of non-returning clients are cleared from the database regularly.
+*/
 package ratelimit
 
 import (
@@ -59,6 +71,10 @@ func ip(r *http.Request) string {
 	return strings.Split(r.RemoteAddr, ":")[0]
 }
 
+/*
+NewToken returns an encrypted rate limit token to include in a rate limited
+request.
+*/
 func NewToken(r *http.Request, differentPath ...string) (string, error) {
 	t := &token{
 		IP:        ip(r),
@@ -84,6 +100,11 @@ func getClient(ip string) (c *client) {
 	return
 }
 
+/*
+ratelimit.Handle returns a httprouter.Handle that denies a request if it's
+repeated from the same client within the given number of seconds, or handles it,
+and resets the timw window.
+*/
 func Handle(handle httprouter.Handle, seconds int) httprouter.Handle {
 	window := time.Duration(seconds) * time.Second
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {

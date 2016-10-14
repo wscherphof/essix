@@ -1,3 +1,6 @@
+/*
+Package util provides some utility functions.
+*/
 package util
 
 import (
@@ -7,6 +10,7 @@ import (
 
 const length = 32
 
+// Random returns a 32 random bytes.
 func Random() []byte {
 	k := make([]byte, length)
 	if _, err := io.ReadFull(rand.Reader, k); err != nil {

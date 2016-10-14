@@ -1,3 +1,9 @@
+/*
+Package bootstrap bootstraps Essix.
+
+It reads the DOMAIN environment variable, and on initialisation connects to the
+entity database, and initialises the messages data.
+*/
 package bootstrap
 
 import (
@@ -11,6 +17,10 @@ func init() {
 	messages.Init()
 }
 
+/*
+Domain returns the DOMAIN environment variable. A fatal error is triggered if
+it's unset.
+*/
 func Domain() string {
 	// Die without a domain
 	return env.Get("DOMAIN")
