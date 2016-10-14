@@ -1,6 +1,5 @@
 /*
-Package msg provides a means to manage translations of text labels ("messages")
-in a web application.
+Package msg manages translations of text labels ("messages") in a web application.
 
 New messages are defined like this:
 	msg.Key("Hello").
@@ -17,9 +16,11 @@ Then get the translation:
 	message := t.Get("Hi")
 
 Environment variables:
-- MSG_DEFAULT: determines the default language to use, if no translation is found
+
+MSG_DEFAULT: determines the default language to use, if no translation is found
 matching the Accept-Language header. The default value for MSG_DEFAULT is "en".
-- GO_ENV: if not set to "production", then translations that resorted to the
+
+GO_ENV: if not set to "production", then translations that resorted to the
 default language get prepended with "D-", and failed translations, falling back
 to the message key, get prepended with "X-".
 
@@ -44,28 +45,37 @@ func init() {
 	defaultLanguage.parse(env.Get("MSG_DEFAULT", "en"))
 }
 
-type messageType map[string]string
+/*
+MessageType hold the translations for a message.
+*/
+type MessageType map[string]string
 
-// Set stores the translation of the message for the given language. Any old
-// value is overwritten.
-func (m messageType) Set(language, translation string) messageType {
+/*
+Set stores the translation of the message for the given language. Any old
+value is overwritten.
+*/
+func (m MessageType) Set(language, translation string) MessageType {
 	language = strings.ToLower(language)
 	m[language] = translation
 	return m
 }
 
-var messageStore = make(map[string]messageType, 500)
+var messageStore = make(map[string]MessageType, 500)
 
-// NumLang sets the initial capacity for translations in a new message.
+/*
+NumLang sets the initial capacity for translations in a new message.
+*/
 var NumLang = 10
 
-// Key returns the message stored under the given key, if it doesn't exist yet,
-// it gets created.
-func Key(key string) (message messageType) {
+/*
+Key returns the message stored under the given key, if it doesn't exist yet,
+it gets created.
+*/
+func Key(key string) (message MessageType) {
 	if m, ok := messageStore[key]; ok {
 		message = m
 	} else {
-		message = make(messageType, NumLang)
+		message = make(MessageType, NumLang)
 		messageStore[key] = message
 	}
 	return
@@ -90,21 +100,25 @@ func (l *languageType) parse(s string) {
 	return
 }
 
-var translatorCache = make(map[string]*translatorType, 100)
+var translatorCache = make(map[string]*TranslatorType, 100)
 
-type translatorType struct {
+/*
+TranslatorType knows about translations for the user's accepted languages.
+*/
+type TranslatorType struct {
 	languages []*languageType
 }
 
-// Translator returns an object that knows how to lookup the translation for a
-// message.
-func Translator(r *http.Request) *translatorType {
+/*
+Translator returns a (cached) TranslatorType.
+*/
+func Translator(r *http.Request) *TranslatorType {
 	acceptLanguage := strings.ToLower(r.Header.Get("Accept-Language"))
 	if cached, ok := translatorCache[acceptLanguage]; ok {
 		return cached
 	}
 	langStrings := strings.Split(acceptLanguage, ",")
-	t := &translatorType{make([]*languageType, len(langStrings))}
+	t := &TranslatorType{make([]*languageType, len(langStrings))}
 	for i, v := range langStrings {
 		langString := strings.Split(v, ";")[0] // cut the q parameter
 		lang := &languageType{}
@@ -115,8 +129,10 @@ func Translator(r *http.Request) *translatorType {
 	return t
 }
 
-// Get returns the translation for a message.
-func (t *translatorType) Get(key string) (translation string) {
+/*
+Get returns the translation for a message.
+*/
+func (t *TranslatorType) Get(key string) (translation string) {
 	if key == "" {
 		return ""
 	}
@@ -153,7 +169,7 @@ func translate(key string, language *languageType) (translation string) {
 File searches for an "inner" template fitting the "base" template, matching
 the user's accepted languages.
 
-Template names are without file name extension. The default extension is "ace".
+Template names are without file name extension. The default extension is ".ace".
 
 Example: if MSG_DEFAULT is "en", and the Accept-Languages header is empty,
 	msg.File("/resources/templates", "home", "HomePage", ".tpl")
@@ -161,7 +177,7 @@ returns
 	"HomePage-en", nil
 if the file "/resources/templates/home/HomePage-en.tpl" exists.
 */
-func (t *translatorType) File(location, dir, base string, extension ...string) (string, error) {
+func (t *TranslatorType) File(location, dir, base string, extension ...string) (string, error) {
 	ext := ".ace"
 	if len(extension) == 1 {
 		ext = extension[0]
