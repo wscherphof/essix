@@ -107,6 +107,7 @@ TranslatorType knows about translations for the user's accepted languages.
 */
 type TranslatorType struct {
 	languages []*languageType
+	files     map[string]string
 }
 
 /*
@@ -118,7 +119,10 @@ func Translator(r *http.Request) *TranslatorType {
 		return cached
 	}
 	langStrings := strings.Split(acceptLanguage, ",")
-	t := &TranslatorType{make([]*languageType, len(langStrings))}
+	t := &TranslatorType{
+		languages: make([]*languageType, len(langStrings)),
+		files:     make(map[string]string, 20),
+	}
 	for i, v := range langStrings {
 		langString := strings.Split(v, ";")[0] // cut the q parameter
 		lang := &languageType{}
@@ -177,19 +181,29 @@ returns
 	"HomePage-en", nil
 if the file "/resources/templates/home/HomePage-en.tpl" exists.
 */
-func (t *TranslatorType) File(location, dir, base string, extension ...string) (string, error) {
+func (t *TranslatorType) File(location, dir, base string, extension ...string) (inner string, err error) {
 	ext := ".ace"
 	if len(extension) == 1 {
 		ext = extension[0]
 	}
 	template := location + "/" + dir + "/" + base
+	if cached, ok := t.files[template]; ok {
+		return cached, nil
+	}
 	for _, language := range t.languages {
-		if lang, err := exists(template, ext, language); err == nil {
-			return base + "-" + lang, nil
+		if lang, e := exists(template, ext, language); e == nil {
+			inner = base + "-" + lang
+			t.files[template] = inner
+			return
 		}
 	}
-	lang, err := exists(template, ext, defaultLanguage)
-	return base + "-" + lang, err
+	if lang, e := exists(template, ext, defaultLanguage); e != nil {
+		err = e
+	} else {
+		inner = base + "-" + lang
+		t.files[template] = inner
+	}
+	return
 }
 
 func exists(template, extension string, language *languageType) (lang string, err error) {

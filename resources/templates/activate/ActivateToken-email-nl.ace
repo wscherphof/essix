@@ -1,16 +1,16 @@
 = content main
-  .p..
+  p..
     Bedankt voor het aanmelden bij Essix!
     Om te kunnen inloggen moet je nog één ding doen: je account activeren.
     (Als je je niet bij ons hebt aangemeld, dan bieden wij onze excuses aan en verzoeken we je dit bericht te beschouwen als niet verzonden)
-  .p 
+  p 
     a href={{.link}} Klik op deze link voor de activeringspagina
     |  - we hopen je gauw te zien!
-  .p..
+  p..
     Dank,
     Met vriendelijke groet,
     Essix
-  .p
+  p
     small..
       Als de link niet werkt, plak dan deze URL in de adresbalk van je webbrowser:
       {{.link}}
