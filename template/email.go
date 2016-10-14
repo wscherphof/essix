@@ -10,7 +10,7 @@ import (
 type emailType getType
 
 func (t *emailType) Run(recipient, subject string) (err error, message string) {
-	data := make(map[string]interface{})
+	data := make(map[string]interface{}, len(*(t.Values)) + 1)
 	for key := range *t.Values {
 		data[key] = t.Values.Get(key)
 	}

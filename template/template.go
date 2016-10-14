@@ -12,9 +12,12 @@ import (
 const location = "/resources/templates"
 
 // Run loads and executes a template, writing the output to w
-func Run(w io.Writer, r *http.Request, dir, base, inner string, data map[string]interface{}) {
-	if data == nil {
-		data = map[string]interface{}{}
+func Run(w io.Writer, r *http.Request, dir, base, inner string, opt_data ...map[string]interface{}) {
+	var data map[string]interface{}
+	if len(opt_data) == 1 {
+		data = opt_data[0]
+	} else {
+		data = make(map[string]interface{}, 1)
 	}
 	translator := msg.Translator(r)
 	data["msg"] = translator
@@ -37,8 +40,8 @@ func Run(w io.Writer, r *http.Request, dir, base, inner string, data map[string]
 }
 
 // Write loads and executes a template, returning the output
-func Write(r *http.Request, dir, base, inner string, data map[string]interface{}) string {
+func Write(r *http.Request, dir, base, inner string, data ...map[string]interface{}) string {
 	var b bytes.Buffer
-	Run(&b, r, dir, base, inner, data)
+	Run(&b, r, dir, base, inner, data...)
 	return string(b.Bytes())
 }

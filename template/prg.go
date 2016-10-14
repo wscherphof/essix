@@ -26,8 +26,9 @@ func (t *prgType) Run() {
 func PRG(w http.ResponseWriter, r *http.Request, dir, base string, inner ...string) (prg *prgType) {
 	switch r.Method {
 	case "GET":
-		data := make(map[string]interface{})
-		for key := range r.URL.Query() {
+		values := r.URL.Query()
+		data := make(map[string]interface{}, len(values) + 1)
+		for key := range values {
 			data[key] = r.FormValue(key)
 		}
 		Run(w, r, dir, base, opt(inner...), data)
