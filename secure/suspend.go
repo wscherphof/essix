@@ -49,17 +49,19 @@ func SuspendForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 }
 
 func Suspend(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	account := Authentication(w, r)
 	if t := template.PRG(w, r, "suspend", "Suspend"); t == nil {
 		return
-	} else if err, conflict := account.Suspend(
-		r.FormValue("token"),
-		ensure(r),
-	); err != nil {
-		template.Error(w, r, err, conflict)
 	} else {
-		secure.LogOut(w, r, false)
-		t.Run()
+		account := Authentication(w, r)
+		if err, conflict := account.Suspend(
+			r.FormValue("token"),
+			ensure(r),
+		); err != nil {
+			template.Error(w, r, err, conflict)
+		} else {
+			secure.LogOut(w, r, false)
+			t.Run()
+		}
 	}
 }
 
