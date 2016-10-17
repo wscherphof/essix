@@ -2,7 +2,7 @@ package rethinkdb
 
 import (
 	r "gopkg.in/dancannon/gorethink.v2"
-	"log"
+	"strings"
 )
 
 var (
@@ -19,17 +19,17 @@ type Term struct {
 	*r.Term
 }
 
-func Connect(db, address string) {
+func Connect(db, address string) (err error) {
 	DB = db
-	var err error
 	if Session, err = r.Connect(r.ConnectOpts{Address: address}); err != nil {
-		log.Fatalln("ERROR:", err)
+		return
 	}
-	if _, err := r.DBCreate(DB).RunWrite(Session); err == nil {
-		log.Println("INFO: created DB", DB, "@", address)
-	} else {
-		log.Println("INFO: connected to DB", DB, "@", address)
+	if _, err = r.DBCreate(DB).RunWrite(Session); err != nil {
+		if strings.HasPrefix(err.Error(), "gorethink: Database `"+DB+"` already exists") {
+			err = nil
+		}
 	}
+	return
 }
 
 func tableCreate(table string, opts ...r.TableCreateOpts) (r.WriteResponse, error) {
