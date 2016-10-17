@@ -27,12 +27,12 @@ and pushes it to the repository.
 Runs the s6app service on swarm prd, using the specified image,
 which is downloaded from the repository, if not found locally.
 */
-package essix
+package server
 
 import (
 	"github.com/gorilla/context"
 	"github.com/gorilla/handlers"
-	"github.com/wscherphof/essix/bootstrap"
+	"github.com/wscherphof/essix/server/bootstrap"
 	"github.com/wscherphof/essix/messages"
 	"github.com/wscherphof/essix/router"
 	"github.com/wscherphof/essix/routes"

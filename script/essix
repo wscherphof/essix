@@ -55,10 +55,11 @@ shift $((OPTIND -1))
 
 REPLICAS="${REPLICAS-1}"
 
-essix="$(dirname $0)"
+essix="$(dirname $0)" # .../essix/script
 if [ "$essix" = "." ]; then
 	essix="$PWD"
 fi
+essix="${essix}/.." # .../essix
 
 swarmmode="${essix}/../rethinkswarmmode"
 if [ ! -e "$swarmmode" ]; then
