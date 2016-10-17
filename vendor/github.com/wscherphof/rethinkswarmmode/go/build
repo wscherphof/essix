@@ -50,15 +50,17 @@ force go get github.com/kardianos/govendor
 
 force pushd "$SOURCEDIR" 1>/dev/null
 
-echo "* updating dependencies..."
-force govendor update +vendor
-force govendor update +external
+govendor status &>/dev/null
+if [ "$?" = "0" ]; then
+	echo "* updating dependencies..."
+	force govendor update +vendor
+fi
 
 echo "* formatting..."
-force govendor fmt +local +external
+force govendor fmt +local
 
 echo "* vetting..."
-force govendor vet +local +external
+force govendor vet +local
 
 echo "* compiling..."
 # cf. https://medium.com/@kelseyhightower/optimizing-docker-images-for-static-binaries-b5696e26eb07#.wmlq1nj3d

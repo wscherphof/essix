@@ -83,8 +83,8 @@
 		{
 			"checksumSHA1": "ZjIxVifXaZ3qavHhYAvIQRFx+dY=",
 			"path": "github.com/wscherphof/msg",
-			"revision": "b43e18b9446302ff4debef4eb07036d572839cf8",
-			"revisionTime": "2016-10-14T11:50:48Z"
+			"revision": "7c6b7bb14e07040249035b1809732073b02a65b3",
+			"revisionTime": "2016-10-14T11:50:31Z"
 		},
 		{
 			"checksumSHA1": "HAT72uD746MEVq/6H+rsdDKPUJg=",
@@ -93,7 +93,7 @@
 			"revisionTime": "2016-10-17T09:29:37Z"
 		},
 		{
-			"checksumSHA1": "ZWNNnfrE6OwW5tdyFT0ZjQ6qEzE=",
+			"checksumSHA1": "yNB5li0RHiiNWpbTbNpIZEkz59A=",
 			"path": "github.com/wscherphof/rethinkswarmmode",
 			"revision": "7a01dccbe8557fc8a22e6d52a0c8478251e3e687",
 			"revisionTime": "2016-10-17T08:08:48Z",
