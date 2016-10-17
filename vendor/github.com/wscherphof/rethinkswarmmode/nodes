@@ -13,7 +13,7 @@ usage ()
 	echo "    Options:"
 	echo "      -m managers  number of manager nodes to create"
 	echo "      -w workers   number of worker nodes to create"
-	echo "      -d driver    numberDocker Machine driver to use (default: virtualbox)"
+	echo "      -d driver    Docker Machine driver to use (default: virtualbox)"
 	echo "      -F           set up an UFW firewall on each node"
 	echo "      -D domain    configure SWARM.DOMAIN as a hostname in /etc/hosts (on creation of first manager node)"
 	echo "  stop"
@@ -161,7 +161,10 @@ elif [ "$COMMAND" = "rm" ]; then
 	fi
 	loop "rm -f"
 	finish 0
-elif [ "$COMMAND" = "create" ]; then
+elif [ "$COMMAND" != "create" ]; then
+	usage
+	finish 1
+else
 	total=$(expr "$MANAGERS" + "$WORKERS" 2>/dev/null)
 	if [ "$?" != "0" -o "$total" -lt 1 ]; then
 		usage
@@ -188,7 +191,7 @@ elif [ "$COMMAND" = "create" ]; then
 			if [ "${type}" = "manager" -a "$new" = "1" ]; then
 				create $type $new
 				if [ "$DOMAIN" ]; then
-					echo "Root password possibly requested to edit /etc/hosts..."
+					echo "* Root password possibly requested to edit /etc/hosts..."
 					if [ "$(grep "${ENV}.${DOMAIN}" /etc/hosts)" = "" ]; then
 						echo "${MANAGER_IP} ${ENV}.${DOMAIN}" | sudo tee -a /etc/hosts >/dev/null
 					else
@@ -200,10 +203,6 @@ elif [ "$COMMAND" = "create" ]; then
 			fi
 		done
 	done
-else
-	usage
-	finish 1
+	finish 0
 fi
-
-finish
 

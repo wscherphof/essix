@@ -2,21 +2,25 @@
 Package bootstrap bootstraps Essix.
 
 It reads the DOMAIN environment variable, and on initialisation connects to the
-entity database, and initialises application routes and the messages data.
+entity database, using the DB_NAME and DB_ADDRESS environment variables, or
+their default values.
 */
 package bootstrap
 
 import (
 	"github.com/wscherphof/entity"
 	"github.com/wscherphof/env"
-	"github.com/wscherphof/essix/messages"
-	"github.com/wscherphof/essix/routes"
+	"log"
 )
 
 func init() {
-	entity.Connect(env.Get("DB_NAME", "essix"), env.Get("DB_ADDRESS", "db1"))
-	messages.Init()
-	routes.Init()
+	var db = env.Get("DB_NAME", "essix")
+	var address = env.Get("DB_ADDRESS", "db1")
+	if err := entity.Connect(db, address); err != nil {
+		log.Fatalf("ERROR: connecting to DB %s@%s failed. %T %s", db, address, err, err)
+	} else {
+		log.Printf("INFO: connected to DB %s@%s", db, address)
+	}
 }
 
 /*

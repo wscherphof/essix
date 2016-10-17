@@ -87,20 +87,20 @@
 		{
 			"checksumSHA1": "ZjIxVifXaZ3qavHhYAvIQRFx+dY=",
 			"path": "github.com/wscherphof/msg",
-			"revision": "49bce2d477f6d2cccbf1641b95808b14d3c67d05",
-			"revisionTime": "2016-10-14T08:37:06Z"
+			"revision": "7c6b7bb14e07040249035b1809732073b02a65b3",
+			"revisionTime": "2016-10-14T11:50:31Z"
 		},
 		{
-			"checksumSHA1": "js5QsCWYFpZ3TUUevAidJr+VmJ4=",
+			"checksumSHA1": "HAT72uD746MEVq/6H+rsdDKPUJg=",
 			"path": "github.com/wscherphof/rethinkdb",
 			"revision": "37f9265ad2dd0f884572e95ddc9299949e9de4f8",
 			"revisionTime": "2016-10-11T10:45:28Z"
 		},
 		{
-			"checksumSHA1": "896n4bkL8TETshn40aUIzo0kXyQ=",
+			"checksumSHA1": "ZWNNnfrE6OwW5tdyFT0ZjQ6qEzE=",
 			"path": "github.com/wscherphof/rethinkswarmmode",
-			"revision": "9bf5216666bdc7c5c04474d7678be965d65a7dca",
-			"revisionTime": "2016-10-10T21:18:45Z",
+			"revision": "7a01dccbe8557fc8a22e6d52a0c8478251e3e687",
+			"revisionTime": "2016-10-17T08:08:48Z",
 			"tree": true
 		},
 		{

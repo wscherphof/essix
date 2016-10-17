@@ -33,13 +33,22 @@ import (
 	"github.com/gorilla/context"
 	"github.com/gorilla/handlers"
 	"github.com/wscherphof/essix/bootstrap"
+	"github.com/wscherphof/essix/messages"
 	"github.com/wscherphof/essix/router"
+	"github.com/wscherphof/essix/routes"
 	"log"
 	"net/http"
 	"os"
 )
 
-var domain = bootstrap.Domain()
+var (
+	domain = bootstrap.Domain()
+)
+
+func init() {
+	messages.Init()
+	routes.Init()
+}
 
 /*
 Run runs the application server. HTTP traffic on port 80 is redirected to HTTPS
