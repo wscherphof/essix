@@ -1,9 +1,16 @@
 #!/bin/bash
+set -x
 
 usage ()
 {
 	echo
+	echo "Command:"
+	echo "$(basename $0) $*"
+	echo
 	echo "Usage:"
+	echo
+	echo "$(basename $0) init PACKAGE"
+	echo "  Initialise a new essix app in the given new directory."
 	echo
 	echo "$(basename $0) [OPTIONS] build REPO TAG [SWARM]"
 	echo "  Format & compile go sources in the current directory, and build a"
@@ -22,7 +29,7 @@ usage ()
 	echo
 	echo "Options:"
     echo "  -e key=value ...  environment variables"
-    echo "  -r replicas       number of replicas to run (default: 1)"
+    echo "  -r replicas       number of replicas to run (default=1)"
 	echo
 	echo "Examples:"
     echo "  \$ $(basename $0) -e DOMAIN=dev.essix.com build essix 0.2 dev"
@@ -52,6 +59,7 @@ shift $((OPTIND -1))
 REPLICAS="${REPLICAS-1}"
 
 COMMAND="${1}"
+PACKAGE="${2}"
 REPO="${2}"
 TAG="${3}"
 SWARM="${4}"
@@ -60,6 +68,7 @@ SERVICE="$(pwd | awk -F "/" '{print $NF}')"
 IMAGE="${REPO}/${SERVICE}:${TAG}"
 
 essix="${GOPATH}/src/github.com/wscherphof/essix"
+swarmmode="${essix}/vendor/github.com/wscherphof/rethinkswarmmode"
 build="${swarmmode}/go/build"
 app="${swarmmode}/app"
 
@@ -72,7 +81,15 @@ run ()
 	${app} -p 80 -p 443 ${environment} -r ${REPLICAS} ${SERVICE} ${IMAGE} ${SWARM}
 }
 
-if [ "$COMMAND" = "build" ]; then
+if [ "$COMMAND" = "init" ]; then
+	if [ -e "${GOPATH}/src/${PACKAGE}" ]; then
+		echo "Directory \"${GOPATH}/src/${PACKAGE}\" already exists."
+		exit 1
+	fi
+	cp -rf "${essix}/app" "${GOPATH}/src/${PACKAGE}"
+	escaped=$(echo "${PACKAGE}" | sed -E 's/\/+/\\\//g')
+	sed -i.bak "s/.*\"<messages>\"/\"${escaped}\/messages\"/" "${GOPATH}/src/${PACKAGE}/main.go"
+elif [ "$COMMAND" = "build" ]; then
 	force ()
 	{
 		$*

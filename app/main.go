@@ -2,7 +2,7 @@ package main
 
 import (
 	essix "github.com/wscherphof/essix/server"
-	"<app_package>/messages"
+	"<messages>"
 )
 
 func init() {
