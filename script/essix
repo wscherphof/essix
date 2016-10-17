@@ -5,38 +5,34 @@ usage ()
 	echo
 	echo "Usage:"
 	echo
-	echo "$(basename $0) [OPTIONS] build SOURCEDIR IMAGE [SERVICE SWARM]"
-	echo "  Format & compile go sources, and build a Docker image."
-	echo "  Without the SERVICE and SWARM arguments, the image is built locally,"
+	echo "$(basename $0) [OPTIONS] build REPO TAG [SWARM]"
+	echo "  Format & compile go sources in the current directory, and build a"
+	echo "  Docker image named REPO/APP:TAG, where APP is the current directory's"
+	echo "  name, which is also used to name the service."
+	echo "  Without the SWARM argument, the image is built locally,"
 	echo "  and pushed to the repository."
-	echo "  With the SERVICE and SWARM arguments, the image is built remotely"
+	echo "  With the SWARM argument, the image is built remotely"
 	echo "  on each of the swarm's nodes, and the service is run there."
 	echo
-	echo "$(basename $0) [OPTIONS] run IMAGE SERVICE SWARM"
+	echo "$(basename $0) [OPTIONS] run REPO TAG SWARM"
 	echo "  Run a service from an image on a swarm."
 	echo
 	echo "$(basename $0) help"
 	echo "  Display this message."
-	echo
-	echo "SOURCEDIR  directory containing the sources to compile"
-	echo "IMAGE      repo/name:tag identifying the image"
-	echo "SERVICE    name for the service to run"
-	echo "SWARM      name of the swarm where to run the service"
 	echo
 	echo "Options:"
     echo "  -e key=value ...  environment variables"
     echo "  -r replicas       number of replicas to run (default: 1)"
 	echo
 	echo "Examples:"
-    echo "  \$ $(basename $0) -e DOMAIN=dev.wscherphof.nl build ../s6app wscherphof/s6app:0.2 s6app dev"
-    echo "      Builds a 0.2 version of the wscherphof/s6app image on swarm dev's"
-    echo "      nodes, and runs the s6app service on dev, with the DOMAIN variable"
-    echo "      set to the given value."
-    echo "  \$ $(basename $0) build ../s6app wscherphof/s6app:0.2 s6app"
-    echo "      Locally builds a 0.2 version of the wscherphof/s6app image,"
+    echo "  \$ $(basename $0) -e DOMAIN=dev.essix.com build essix 0.2 dev"
+    echo "      Builds image essix/APP:0.2 on swarm dev's nodes, and runs"
+    echo "      service on dev, with the given environment variable set."
+    echo "  \$ $(basename $0) -e DOMAIN=www.essix.com build essix 0.2"
+    echo "      Locally builds the essix/APP:0.2 image,"
     echo "      and pushes it to the repository."
-    echo "  \$ $(basename $0) run wscherphof/s6app:0.2 s6app prd"
-    echo "      Runs the s6app service on swarm prd, using the specified image,"
+    echo "  \$ $(basename $0) run -r 6 essix 0.2 www"
+    echo "      Starts 6 replicas of the service on swarm www, using image essix/APP:0.2,"
     echo "      which is downloaded from the repository, if not found locally."
 	echo
 }
@@ -55,32 +51,15 @@ shift $((OPTIND -1))
 
 REPLICAS="${REPLICAS-1}"
 
-essix="$(dirname $0)" # .../essix/script
-if [ "$essix" = "." ]; then
-	essix="$PWD"
-fi
-essix="${essix}/.." # .../essix
+COMMAND="${1}"
+REPO="${2}"
+TAG="${3}"
+SWARM="${4}"
 
-swarmmode="${essix}/../rethinkswarmmode"
-if [ ! -e "$swarmmode" ]; then
-	swarmmode="${GOPATH}/src/github.com/wscherphof/rethinkswarmmode"
-	if [ ! -e "$swarmmode" ]; then
-		if [ -e "${essix}/../../../vendor" ]; then
-			pushd "${essix}/../../../.." &>/dev/null
-			govendor fetch github.com/wscherphof/rethinkswarmmode/^ &>/dev/null
-			swarmmode="${essix}/../rethinkswarmmode"
-			popd &>/dev/null
-		else
-			go get github.com/wscherphof/rethinkswarmmode &>/dev/null
-		fi
-	fi
-fi
-if [ -e "$swarmmode" ]; then
-	echo "* using ${swarmmode}"
-else
-	echo "Failed to locate github.com/wscherphof/rethinkswarmmode"
-	exit 1
-fi
+SERVICE="$(pwd | awk -F "/" '{print $NF}')"
+IMAGE="${REPO}/${SERVICE}:${TAG}"
+
+essix="${GOPATH}/src/github.com/wscherphof/essix"
 build="${swarmmode}/go/build"
 app="${swarmmode}/app"
 
@@ -90,16 +69,10 @@ run ()
     for env in "${ENVS[@]}"; do
         environment="${environment} -e ${env}"
     done
-	${app} -p 80 -p 443 ${environment} -r ${REPLICAS} ${SERVICE} ${TAG} ${SWARM}
+	${app} -p 80 -p 443 ${environment} -r ${REPLICAS} ${SERVICE} ${IMAGE} ${SWARM}
 }
 
-COMMAND="$1"
 if [ "$COMMAND" = "build" ]; then
-	SOURCEDIR="$2"
-	TAG="$3"
-	SERVICE="$4"
-	SWARM="$5"
-
 	force ()
 	{
 		$*
@@ -109,25 +82,19 @@ if [ "$COMMAND" = "build" ]; then
 		fi
 	}
 
-	force pushd "$SOURCEDIR" 1>/dev/null
-
 	force mkdir -p ./.merge/resources
 	force cp -rf ${essix}/resources/ ./.merge/resources/
 	force cp -rf ./resources/ ./.merge/resources/
 
-	force ${build} -p 80 -p 443 -a ./.merge/resources . ${TAG} ${SWARM}
+	force ${build} -p 80 -p 443 -a ./.merge/resources . ${IMAGE} ${SWARM}
 
 	rm -rf ./.merge 2>/dev/null
-	popd 1>/dev/null
 
-	if [ "$SERVICE" -a "$SWARM" ]; then
+	if [ "$SWARM" ]; then
 		run
 	fi
 elif [ "$COMMAND" = "run" ]; then
-	TAG="$2"
-	SERVICE="$3"
-	SWARM="$4"
-	if [ "$TAG" -a "$SERVICE" -a "$SWARM" ]; then
+	if [ "$TAG" -a "$SWARM" ]; then
 		run
 	else
 		usage; exit 1

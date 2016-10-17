@@ -1,0 +1,208 @@
+#!/bin/bash
+
+usage ()
+{
+	echo
+	echo "Usage: $(basename $0) [OPTIONS] COMMAND SWARM"
+	echo
+	echo "Manage nodes in a swarm"
+	echo
+	echo "Commands:"
+	echo "  create"
+	echo "    Create manager and/or worker nodes in swarm SWARM - for a new swarm, specify at least 1 manager"
+	echo "    Options:"
+	echo "      -m managers  number of manager nodes to create"
+	echo "      -w workers   number of worker nodes to create"
+	echo "      -d driver    Docker Machine driver to use (default: virtualbox)"
+	echo "      -F           set up an UFW firewall on each node"
+	echo "      -D domain    configure SWARM.DOMAIN as a hostname in /etc/hosts (on creation of first manager node)"
+	echo "  stop"
+	echo "    Stop all nodes swarm SWARM"
+	echo "  start"
+	echo "    Start all nodes swarm SWARM"
+	echo "  rm"
+	echo "    Remove all nodes swarm SWARM"
+	echo "    Options:"
+	echo "      -f           skip the confirmation question"
+	echo
+}
+
+while getopts "m:w:d:D:fFh" opt; do
+    case $opt in
+        m  ) MANAGERS="$OPTARG";;
+        w  ) WORKERS="$OPTARG";;
+        d  ) DRIVER="$OPTARG";;
+        f  ) FORCE="y";;
+        F  ) FIREWALL="$(mktemp)";;
+        D  ) DOMAIN="$OPTARG";;
+        h  ) usage; exit;;
+        \? ) echo "Unknown option: -$OPTARG" >&2; exit 1;;
+        :  ) echo "Missing option argument for -$OPTARG" >&2; exit 1;;
+        *  ) echo "Unimplemented option: -$OPTARG" >&2; exit 1;;
+    esac
+done
+shift $((OPTIND -1))
+
+MANAGERS="${MANAGERS-0}"
+WORKERS="${WORKERS-0}"
+DRIVER="${DRIVER-virtualbox}"
+COMMAND="$1"
+ENV="$2"
+
+if [ "$COMMAND" = "" -o "$ENV" = "" ]; then
+	usage
+	exit 1
+fi
+
+if [ "$COMMAND" = "help" -o "$COMMAND" = "--help" ]; then
+	usage
+	exit
+fi
+
+finish ()
+{
+	wait
+	rm "${FIREWALL}" 2>/dev/null
+	exit $1
+}
+
+loop ()
+{
+	command="$1"
+	for type in worker manager
+	do
+		for (( i=1; ; i++ ))
+		do
+			docker-machine status ${ENV}-${type}-${i} &>/dev/null
+			if [ "$?" = "0" ]; then
+				docker-machine $command ${ENV}-${type}-${i} &
+			else
+				break
+			fi
+		done
+	done
+}
+
+create ()
+{
+	type="$1"
+	number="$2"
+	node="${ENV}-${type}-${number}"
+	if [ "${type}-${number}" != "manager-1" ]; then
+		status=$(docker-machine status ${ENV}-manager-1 2>/dev/null)
+		if [ "$?" != "0" ]; then
+			echo "* create at least 1 manager"
+			finish 1
+		elif [ "$status" != "Running" ]; then
+			echo "* Waiting for ${ENV}-manager-1 to start..."
+			docker-machine start ${ENV}-manager-1
+		fi
+	fi
+	docker-machine create --driver $DRIVER $node
+	if [ "$?" != "0" ]; then
+		echo "* $node create failed"
+		if [ "${type}-${number}" = "manager-1" ]; then
+			finish 1
+		else
+			return 1
+		fi
+	fi
+	MANAGER_IP="$(docker-machine ip ${ENV}-manager-1)"
+	if [ "$type" = "manager" ]; then
+		if [ "$number" = "1" ]; then
+			docker-machine ssh ${ENV}-manager-1 sudo docker swarm init --advertise-addr $MANAGER_IP
+		else	
+			TOKEN="$(docker-machine ssh ${ENV}-manager-1 sudo docker swarm join-token --quiet manager)"
+			docker-machine ssh ${ENV}-manager-$number sudo docker swarm join --token $TOKEN $MANAGER_IP:2377
+		fi
+	else
+		TOKEN="$(docker-machine ssh ${ENV}-manager-1 sudo docker swarm join-token --quiet worker)"
+		docker-machine ssh ${ENV}-worker-$number sudo docker swarm join --token $TOKEN $MANAGER_IP:2377
+	fi
+	if [ "$FIREWALL" ]; then
+		dir="$(docker-machine ssh $node pwd)"
+		docker-machine scp ${FIREWALL} ${node}:${dir}/firewall
+		docker-machine ssh $node . ./firewall
+	fi
+	docker-machine restart $node
+	if [ "$?" != "0" ]; then
+		echo "* $node restart failed"
+		return 1
+	else
+		echo "* $node ready"
+	fi
+}
+
+cat 2>/dev/null 1> "${FIREWALL}" << EOF
+	sudo ufw default deny incoming
+	sudo ufw default allow outgoing
+	sudo ufw allow ssh/tcp
+	sudo ufw allow http/tcp
+	sudo ufw allow https/tcp
+	sudo ufw allow 2376/tcp # docker api
+	sudo ufw allow 2377/tcp # docker swarm mode
+	sudo ufw allow 7946     # docker overlay network
+	sudo ufw allow 4789/udp # vxlan
+	sudo ufw --force enable
+EOF
+
+if [ "$COMMAND" = "stop" ]; then
+	loop "stop"
+	finish 0
+elif [ "$COMMAND" = "start" ]; then
+	loop "start"
+	finish 0
+elif [ "$COMMAND" = "rm" ]; then
+	if [ ! "$FORCE" ]; then
+		read -p "Type Y to remove ALL nodes in swarm '${ENV}'... " answer
+		if [ "$answer" != "Y" ]; then
+			finish 0
+		fi
+	fi
+	loop "rm -f"
+	finish 0
+elif [ "$COMMAND" != "create" ]; then
+	usage
+	finish 1
+else
+	total=$(expr "$MANAGERS" + "$WORKERS" 2>/dev/null)
+	if [ "$?" != "0" -o "$total" -lt 1 ]; then
+		usage
+		finish 1
+	fi
+	for type in manager worker
+	do
+		for (( i=1; ; i++ ))
+		do
+			docker-machine status ${ENV}-${type}-${i} &>/dev/null
+			if [ "$?" != "0" ]; then
+				next="$i"
+				break
+			fi
+		done
+		if [ "${type}" = "manager" ]; then
+			number="$MANAGERS"
+		else
+			number="$WORKERS"
+		fi
+		for (( i=0; i<"$number" ; i++ ))
+		do
+			new=$(expr $next + $i)
+			if [ "${type}" = "manager" -a "$new" = "1" ]; then
+				create $type $new
+				if [ "$DOMAIN" ]; then
+					echo "* Root password possibly requested to edit /etc/hosts..."
+					if [ "$(grep "${ENV}.${DOMAIN}" /etc/hosts)" = "" ]; then
+						echo "${MANAGER_IP} ${ENV}.${DOMAIN}" | sudo tee -a /etc/hosts >/dev/null
+					else
+						sudo sed -i.bak "s/.*${ENV}.${DOMAIN}/${MANAGER_IP} ${ENV}.${DOMAIN}/" /etc/hosts
+					fi
+				fi
+			else
+				create $type $new &
+			fi
+		done
+	done
+	finish 0
+fi
+

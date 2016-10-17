@@ -1,0 +1,32 @@
+#!/bin/bash
+
+ENV="$1"
+REMOTE="$2"
+BROWSEPATH="${3}"
+PROTOCOL="${4-http}"
+BROWSER="${5-open}"
+
+portsdir="${HOME}/.rethinkswarmmode/ports/"
+mkdir -p ${portsdir}
+if [ -e "${portsdir}${ENV}" ]; then
+	PORT="$(cat ${portsdir}${ENV})"
+else
+	PORT="0"
+	if [ -e "${portsdir}latest" ]; then
+		PORT="$(expr $(cat ${portsdir}latest) + 1)"
+	fi
+	echo "${PORT}" > "${portsdir}${ENV}"
+	echo "${PORT}" > "${portsdir}latest"
+fi
+PORT="$(expr $PORT + $REMOTE)"
+
+docker-machine ssh ${ENV}-manager-1 -fNL ${PORT}:localhost:${REMOTE}
+echo "localhost:${PORT} -> ${ENV}:${REMOTE}"
+sleep 2
+
+if [ "${BROWSEPATH}" ]; then
+	if [ "${BROWSER}" = "open" -a "$(which xdg-open)" ]; then
+		BROWSER="xdg-open"
+	fi
+	${BROWSER} ${PROTOCOL}://localhost:${PORT}${BROWSEPATH}
+fi
