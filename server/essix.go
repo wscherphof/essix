@@ -30,9 +30,7 @@ on port 443.
 
 Set the DOMAIN environment variable to the domain name to serve
 HTTPS for; the certificates <DOMAIN>.crt & <DOMAIN>.key are expected in
-/resources/certificates.
-
-See <future blogpost> for an easy way to obtain a certificate for your server.
+/resources/certificates. `essix cert` generates certificates.
 
 Set the DB_NAME & DB_ADDRESS environment variables for the RethinkDB connection.
 Defaults: DB_NAME=essix, DB_ADDRESS=db1.
