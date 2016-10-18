@@ -61,6 +61,9 @@ usage ()
     echo "      Initialises a base structure for an Essix app in"
     echo "      ${GOPATH}/github.com/essix/newapp."
 	echo
+    echo "  \$ $(basename $0) cert essix@appsite.com dev.appsite.com"
+    echo "      Generates a TLS certificate for dev.appsite.com."
+	echo
     echo "  \$ $(basename $0) nodes -m 1 -w 2 -H dev.appsite.com create dev"
     echo "      Creates swarm dev on VirtualBox, with one manager node, and 2 worker"
     echo "      nodes. Adds hostname dev.appsite.com to /etc/hosts, resolving to the"
