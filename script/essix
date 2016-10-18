@@ -9,37 +9,45 @@ usage ()
 	echo "Usage:"
 	echo
 	echo "$(basename $0) init PACKAGE"
-	echo "  Initialise a new essix app in the given new directory."
+	echo "  Initialise a new essix app in the given new directory under \$GOPATH."
+	echo
+	echo "$(basename $0) nodes [OPTIONS] COMMAND SWARM"
+	echo "  Manage nodes in a swarm."
+	echo "  Run '$(basename $0) nodes help' for more information."
+	echo
+	echo "$(basename $0) r [OPTIONS] [COMMAND] SWARM"
+	echo "  Create a RethinkDB cluster on a swarm, and/or start its web admin."
+	echo "  Run '$(basename $0) r help' for more information."
 	echo
 	echo "$(basename $0) [OPTIONS] build REPO TAG [SWARM]"
 	echo "  Format & compile go sources in the current directory, and build a"
 	echo "  Docker image named REPO/APP:TAG, where APP is the current directory's"
 	echo "  name, which is also used to name the service."
-	echo "  Without the SWARM argument, the image is built locally,"
-	echo "  and pushed to the repository."
-	echo "  With the SWARM argument, the image is built remotely"
-	echo "  on each of the swarm's nodes, and the service is run there."
+	echo "  Without SWARM, the OPTIONS are ignored, and the image is built locally,"
+	echo "  then pushed to the repository. Default repository is Docker Hub."
+	echo "  With SWARM, the image is built remotely on each of the swarm's nodes,"
+	echo "  and the service is run there, with the given OPTIONS."
 	echo
 	echo "$(basename $0) [OPTIONS] run REPO TAG SWARM"
 	echo "  Run a service from an image on a swarm."
+	echo "    Options:"
+    echo "      -e key=value ...  environment variables"
+    echo "      -r replicas       number of replicas to run (default=1)"
+	echo
+	echo "Examples:"
+    echo "  \$ $(basename $0) init github.com/essix/newapp"
+    echo "      Initialises a base structure for an Essix app in ${GOPATH}/github.com/essix/newapp."
+    echo "  \$ $(basename $0) build essix 0.2"
+    echo "      Locally builds the essix/APP:0.2 image, and pushes it to the repository."
+    echo "  \$ $(basename $0) run -e DOMAIN=www.essix.com -r 6 essix 0.2 www"
+    echo "      Starts 6 replicas of the service on swarm www, using image essix/APP:0.2,"
+    echo "      which is downloaded from the repository, if not found locally."
+    echo "  \$ $(basename $0) -e DOMAIN=dev.essix.com build essix 0.2 dev"
+    echo "      Builds image essix/APP:0.2 on swarm dev's nodes, and runs"
+    echo "      service on dev, with the given DOMAIN environment variable set."
 	echo
 	echo "$(basename $0) help"
 	echo "  Display this message."
-	echo
-	echo "Options:"
-    echo "  -e key=value ...  environment variables"
-    echo "  -r replicas       number of replicas to run (default=1)"
-	echo
-	echo "Examples:"
-    echo "  \$ $(basename $0) -e DOMAIN=dev.essix.com build essix 0.2 dev"
-    echo "      Builds image essix/APP:0.2 on swarm dev's nodes, and runs"
-    echo "      service on dev, with the given environment variable set."
-    echo "  \$ $(basename $0) -e DOMAIN=www.essix.com build essix 0.2"
-    echo "      Locally builds the essix/APP:0.2 image,"
-    echo "      and pushes it to the repository."
-    echo "  \$ $(basename $0) run -r 6 essix 0.2 www"
-    echo "      Starts 6 replicas of the service on swarm www, using image essix/APP:0.2,"
-    echo "      which is downloaded from the repository, if not found locally."
 	echo
 }
 
@@ -58,17 +66,18 @@ shift $((OPTIND -1))
 REPLICAS="${REPLICAS-1}"
 
 COMMAND="${1}"
-PACKAGE="${2}"
+
 REPO="${2}"
 TAG="${3}"
 SWARM="${4}"
-
 SERVICE="$(pwd | awk -F "/" '{print $NF}')"
 IMAGE="${REPO}/${SERVICE}:${TAG}"
 
 essix="${GOPATH}/src/github.com/wscherphof/essix"
 swarmmode="${essix}/vendor/github.com/wscherphof/rethinkswarmmode"
 build="${swarmmode}/go/build"
+nodes="${swarmmode}/nodes"
+r="${swarmmode}/rethinkdb/r"
 app="${swarmmode}/app"
 
 run ()
@@ -81,13 +90,20 @@ run ()
 }
 
 if [ "$COMMAND" = "init" ]; then
+	PACKAGE="${2}"
 	if [ -e "${GOPATH}/src/${PACKAGE}" ]; then
 		echo "Directory \"${GOPATH}/src/${PACKAGE}\" already exists."
 		exit 1
 	fi
 	cp -rf "${essix}/app" "${GOPATH}/src/${PACKAGE}"
 	escaped=$(echo "${PACKAGE}" | sed -E 's/\/+/\\\//g')
-	sed -i.bak "s/.*\"<messages>\"/\"${escaped}\/messages\"/" "${GOPATH}/src/${PACKAGE}/main.go"
+	sed "s/.*\"<messages>\"/\"${escaped}\/messages\"/" "${GOPATH}/src/${PACKAGE}/main.go"
+elif [ "$COMMAND" = "nodes" ]; then
+	shift 1
+	${nodes} $*
+elif [ "$COMMAND" = "r" ]; then
+	shift 1
+	${r} $*
 elif [ "$COMMAND" = "build" ]; then
 	force ()
 	{
@@ -116,7 +132,7 @@ elif [ "$COMMAND" = "run" ]; then
 		usage; exit 1
 	fi
 elif [ "$COMMAND" = "help" ]; then
-	usage; exit
+	usage; exit 0
 else
 	usage; exit 1
 fi
