@@ -13,10 +13,14 @@ import (
 	"log"
 )
 
+var (
+	db = env.Get("DB_NAME", "essix")
+	address = env.Get("DB_ADDRESS", "db1")
+	err = entity.Connect(db, address)
+)
+
 func init() {
-	var db = env.Get("DB_NAME", "essix")
-	var address = env.Get("DB_ADDRESS", "db1")
-	if err := entity.Connect(db, address); err != nil {
+	if err != nil {
 		log.Fatalf("ERROR: connecting to DB %s@%s failed. %T %s", db, address, err, err)
 	} else {
 		log.Printf("INFO: connected to DB %s@%s", db, address)

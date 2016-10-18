@@ -1,9 +1,19 @@
 package main
 
 import (
-	"log"
+	"github.com/wscherphof/env"
+	"os/exec"
+	"os"
+)
+
+var (
+	gopath = env.Get("GOPATH")
 )
 
 func main() {
-	log.Println("Ohai")
+	script := gopath + "/src/github.com/wscherphof/essix/script/essix"
+	cmd := exec.Command(script, os.Args[1:]...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Run()
 }

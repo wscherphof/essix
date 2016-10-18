@@ -5,39 +5,86 @@ usage ()
 	echo
 	echo "Usage:"
 	echo
-	echo "$(basename $0) [OPTIONS] build SOURCEDIR IMAGE [SERVICE SWARM]"
-	echo "  Format & compile go sources, and build a Docker image."
-	echo "  Without the SERVICE and SWARM arguments, the image is built locally,"
-	echo "  and pushed to the repository."
-	echo "  With the SERVICE and SWARM arguments, the image is built remotely"
-	echo "  on each of the swarm's nodes, and the service is run there."
+	echo "$(basename $0) init PACKAGE"
+	echo "  Initialise a new essix app in the given new directory under \$GOPATH."
 	echo
-	echo "$(basename $0) [OPTIONS] run IMAGE SERVICE SWARM"
+	echo "$(basename $0) cert EMAIL DOMAIN"
+	echo "  Generate a TLS certificate for the given domain, using the given email"
+	echo "  address in the request to Let's Encrypt."
+	echo "  Certificate gets saved in ./resources/certificates"
+	echo "  Currently relies on a DigitalOcean DNS configuration, and requires the"
+	echo "  DIGITALOCEAN_ACCESS_TOKEN environment variable."
+	echo
+	echo "$(basename $0) nodes [OPTIONS] COMMAND SWARM"
+	echo "  Manage nodes in a swarm."
+	echo "  Run '$(basename $0) nodes help' for more information."
+	echo
+	echo "$(basename $0) r [OPTIONS] [COMMAND] SWARM"
+	echo "  Create a RethinkDB cluster on a swarm, and/or start its web admin."
+	echo "  Run '$(basename $0) r help' for more information."
+	echo
+	echo "$(basename $0) [OPTIONS] build REPO TAG [SWARM]"
+	echo "  Format & compile go sources in the current directory, and build a Docker"
+	echo "  image named REPO/APP:TAG, where APP is the current directory's name, which"
+	echo "  is also used to name the service."
+	echo "  Without SWARM, the OPTIONS are ignored, and the image is built locally,"
+	echo "  then pushed to the repository. Default repository is Docker Hub."
+	echo "  With SWARM, the image is built remotely on each of the swarm's nodes,"
+	echo "  and the service is run there, with the given OPTIONS."
+	echo
+	echo "$(basename $0) [OPTIONS] run REPO TAG SWARM"
 	echo "  Run a service from an image on a swarm."
+	echo "  Options:"
+    echo "    -e key=value ...  environment variables"
+    echo "    -r replicas       number of replicas to run (default=1)"
 	echo
 	echo "$(basename $0) help"
 	echo "  Display this message."
 	echo
-	echo "SOURCEDIR  directory containing the sources to compile"
-	echo "IMAGE      repo/name:tag identifying the image"
-	echo "SERVICE    name for the service to run"
-	echo "SWARM      name of the swarm where to run the service"
 	echo
-	echo "Options:"
-    echo "  -e key=value ...  environment variables"
-    echo "  -r replicas       number of replicas to run (default: 1)"
+	echo "You'll want to have these baseline tools ready:"
+	echo "  - Go"
+	echo "  - Docker"
+	echo "  - Docker Machine"
+	echo "  - VirtualBox"
+	echo "  - An account with Docker Hub"
+	echo "  - An account with DigitalOcean"
+	echo
+	echo "\$GOPATH environment variable is set to: '${GOPATH}'"
+	echo
 	echo
 	echo "Examples:"
-    echo "  \$ $(basename $0) -e DOMAIN=dev.wscherphof.nl build ../s6app wscherphof/s6app:0.2 s6app dev"
-    echo "      Builds a 0.2 version of the wscherphof/s6app image on swarm dev's"
-    echo "      nodes, and runs the s6app service on dev, with the DOMAIN variable"
-    echo "      set to the given value."
-    echo "  \$ $(basename $0) build ../s6app wscherphof/s6app:0.2 s6app"
-    echo "      Locally builds a 0.2 version of the wscherphof/s6app image,"
-    echo "      and pushes it to the repository."
-    echo "  \$ $(basename $0) run wscherphof/s6app:0.2 s6app prd"
-    echo "      Runs the s6app service on swarm prd, using the specified image,"
+	echo
+    echo "  \$ $(basename $0) init github.com/essix/newapp"
+    echo "      Initialises a base structure for an Essix app in"
+    echo "      ${GOPATH}/github.com/essix/newapp."
+	echo
+    echo "  \$ $(basename $0) nodes -m 1 -w 2 -H dev.appsite.com create dev"
+    echo "      Creates swarm dev on VirtualBox, with one manager node, and 2 worker"
+    echo "      nodes. Adds hostname dev.appsite.com to /etc/hosts, resolving to the"
+    echo "      manager node's ip address."
+	echo
+    echo "  \$ $(basename $0) nodes -m 1 -d digitalocean -F create www"
+    echo "      Creates a one-node swarm www on DigitalOcean, and enables a firewall on it."
+    echo "  \$ $(basename $0) nodes -w 1 -d digitalocean -F create www"
+    echo "      Adds a worker node (with firewall) to swarm www on DigitalOcean."
+	echo
+    echo "  \$ $(basename $0) r create dev"
+    echo "      Creates a RethinkDB cluster on swarm dev, and opens the cluster's"
+    echo "      administrator web page."
+	echo
+    echo "  \$ $(basename $0) r dev"
+    echo "      Opens the dev swarm RethinkDB cluster's administrator web page."
+	echo
+    echo "  \$ $(basename $0) build essix 0.2"
+    echo "      Locally builds the essix/APP:0.2 image, and pushes it to the repository."
+    echo "  \$ $(basename $0) run -e DOMAIN=www.appsite.com -r 6 essix 0.2 www"
+    echo "      Starts 6 replicas of the service on swarm www, using image essix/APP:0.2,"
     echo "      which is downloaded from the repository, if not found locally."
+	echo
+    echo "  \$ $(basename $0) -e DOMAIN=dev.appsite.com build essix 0.2 dev"
+    echo "      Builds image essix/APP:0.2 on swarm dev's nodes, and runs the service"
+    echo "      on dev, with the given DOMAIN environment variable set."
 	echo
 }
 
@@ -55,33 +102,19 @@ shift $((OPTIND -1))
 
 REPLICAS="${REPLICAS-1}"
 
-essix="$(dirname $0)" # .../essix/script
-if [ "$essix" = "." ]; then
-	essix="$PWD"
-fi
-essix="${essix}/.." # .../essix
+COMMAND="${1}"
 
-swarmmode="${essix}/../rethinkswarmmode"
-if [ ! -e "$swarmmode" ]; then
-	swarmmode="${GOPATH}/src/github.com/wscherphof/rethinkswarmmode"
-	if [ ! -e "$swarmmode" ]; then
-		if [ -e "${essix}/../../../vendor" ]; then
-			pushd "${essix}/../../../.." &>/dev/null
-			govendor fetch github.com/wscherphof/rethinkswarmmode/^ &>/dev/null
-			swarmmode="${essix}/../rethinkswarmmode"
-			popd &>/dev/null
-		else
-			go get github.com/wscherphof/rethinkswarmmode &>/dev/null
-		fi
-	fi
-fi
-if [ -e "$swarmmode" ]; then
-	echo "* using ${swarmmode}"
-else
-	echo "Failed to locate github.com/wscherphof/rethinkswarmmode"
-	exit 1
-fi
+REPO="${2}"
+TAG="${3}"
+SWARM="${4}"
+SERVICE="$(pwd | awk -F "/" '{print $NF}')"
+IMAGE="${REPO}/${SERVICE}:${TAG}"
+
+essix="${GOPATH}/src/github.com/wscherphof/essix"
+swarmmode="${essix}/vendor/github.com/wscherphof/rethinkswarmmode"
 build="${swarmmode}/go/build"
+nodes="${swarmmode}/nodes"
+r="${swarmmode}/rethinkdb/r"
 app="${swarmmode}/app"
 
 run ()
@@ -90,16 +123,48 @@ run ()
     for env in "${ENVS[@]}"; do
         environment="${environment} -e ${env}"
     done
-	${app} -p 80 -p 443 ${environment} -r ${REPLICAS} ${SERVICE} ${TAG} ${SWARM}
+	${app} -p 80 -p 443 ${environment} -r ${REPLICAS} ${SERVICE} ${IMAGE} ${SWARM}
 }
 
-COMMAND="$1"
-if [ "$COMMAND" = "build" ]; then
-	SOURCEDIR="$2"
-	TAG="$3"
-	SERVICE="$4"
-	SWARM="$5"
-
+if [ "$COMMAND" = "init" ]; then
+	PACKAGE="${2}"
+	directory="${GOPATH}/src/${PACKAGE}"
+	if [ -e "${directory}" ]; then
+		echo "Path '${directory}' already exists."
+		exit 1
+	fi
+	cp -rf "${essix}/app" "${directory}"
+	escaped=$(echo "${PACKAGE}" | sed -E 's/\/+/\\\//g')
+	sed -i.bak "s/.*\"<messages>\"/\"${escaped}\/messages\"/" "${directory}/main.go"
+	rm "${directory}/main.go.bak" >/dev/null
+	echo "Package inited in '${directory}'"
+elif [ "$COMMAND" = "cert" ]; then
+	EMAIL="${2}"
+	DOMAIN="${3}"
+	resources="${PWD}/resources"
+	if [ ! "${EMAIL}" -o ! "${DOMAIN}" ]; then
+		usage; exit 1
+	elif [ ! -d "${resources}" ]; then
+		echo "Directory not found: '${resources}'"
+		exit 1
+	elif [ "${DIGITALOCEAN_ACCESS_TOKEN}" = "" ]; then
+		echo "Environment variable unset: DIGITALOCEAN_ACCESS_TOKEN"
+		echo "Run 'export DIGITALOCEAN_ACCESS_TOKEN=<yourtoken>'"
+		exit 1
+	fi
+	docker run --rm -v "${resources}:/.lego" \
+	-e "DO_AUTH_TOKEN=${DIGITALOCEAN_ACCESS_TOKEN}" \
+	xenolf/lego -a --dns=digitalocean \
+	--email="${EMAIL}" \
+	--domains="${DOMAIN}" \
+	run
+elif [ "$COMMAND" = "nodes" ]; then
+	shift 1
+	${nodes} $*
+elif [ "$COMMAND" = "r" ]; then
+	shift 1
+	${r} $*
+elif [ "$COMMAND" = "build" ]; then
 	force ()
 	{
 		$*
@@ -109,31 +174,25 @@ if [ "$COMMAND" = "build" ]; then
 		fi
 	}
 
-	force pushd "$SOURCEDIR" 1>/dev/null
-
 	force mkdir -p ./.merge/resources
 	force cp -rf ${essix}/resources/ ./.merge/resources/
 	force cp -rf ./resources/ ./.merge/resources/
 
-	force ${build} -p 80 -p 443 -a ./.merge/resources . ${TAG} ${SWARM}
+	force ${build} -p 80 -p 443 -a ./.merge/resources . ${IMAGE} ${SWARM}
 
 	rm -rf ./.merge 2>/dev/null
-	popd 1>/dev/null
 
-	if [ "$SERVICE" -a "$SWARM" ]; then
+	if [ "$SWARM" ]; then
 		run
 	fi
 elif [ "$COMMAND" = "run" ]; then
-	TAG="$2"
-	SERVICE="$3"
-	SWARM="$4"
-	if [ "$TAG" -a "$SERVICE" -a "$SWARM" ]; then
+	if [ "$TAG" -a "$SWARM" ]; then
 		run
 	else
 		usage; exit 1
 	fi
 elif [ "$COMMAND" = "help" ]; then
-	usage; exit
+	usage; exit 0
 else
 	usage; exit 1
 fi
