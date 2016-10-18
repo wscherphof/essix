@@ -30,7 +30,8 @@ func (t *PRGType) Run() {
 	path += "/" + strings.ToLower(t.r.Method)
 	path += "?"
 	for k, v := range t.data {
-		path += k + "=" + url.QueryEscape(v) + "&"
+		s := v.(string)
+		path += k + "=" + url.QueryEscape(s) + "&"
 	}
 	http.Redirect(t.w, t.r, path, http.StatusSeeOther)
 }
