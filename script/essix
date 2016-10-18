@@ -3,13 +3,17 @@
 usage ()
 {
 	echo
-	echo "Command:"
-	echo "$(basename $0) $*"
-	echo
 	echo "Usage:"
 	echo
 	echo "$(basename $0) init PACKAGE"
 	echo "  Initialise a new essix app in the given new directory under \$GOPATH."
+	echo
+	echo "$(basename $0) cert EMAIL DOMAIN"
+	echo "  Generate a TLS certificate for the given domain, using the given email"
+	echo "  address in the request to Let's Encrypt."
+	echo "  Certificate gets saved in ./resources/certificates"
+	echo "  Currently relies on a DigitalOcean DNS configuration, and requires the"
+	echo "  DIGITALOCEAN_ACCESS_TOKEN environment variable."
 	echo
 	echo "$(basename $0) nodes [OPTIONS] COMMAND SWARM"
 	echo "  Manage nodes in a swarm."
@@ -20,9 +24,9 @@ usage ()
 	echo "  Run '$(basename $0) r help' for more information."
 	echo
 	echo "$(basename $0) [OPTIONS] build REPO TAG [SWARM]"
-	echo "  Format & compile go sources in the current directory, and build a"
-	echo "  Docker image named REPO/APP:TAG, where APP is the current directory's"
-	echo "  name, which is also used to name the service."
+	echo "  Format & compile go sources in the current directory, and build a Docker"
+	echo "  image named REPO/APP:TAG, where APP is the current directory's name, which"
+	echo "  is also used to name the service."
 	echo "  Without SWARM, the OPTIONS are ignored, and the image is built locally,"
 	echo "  then pushed to the repository. Default repository is Docker Hub."
 	echo "  With SWARM, the image is built remotely on each of the swarm's nodes,"
@@ -30,24 +34,57 @@ usage ()
 	echo
 	echo "$(basename $0) [OPTIONS] run REPO TAG SWARM"
 	echo "  Run a service from an image on a swarm."
-	echo "    Options:"
-    echo "      -e key=value ...  environment variables"
-    echo "      -r replicas       number of replicas to run (default=1)"
-	echo
-	echo "Examples:"
-    echo "  \$ $(basename $0) init github.com/essix/newapp"
-    echo "      Initialises a base structure for an Essix app in ${GOPATH}/github.com/essix/newapp."
-    echo "  \$ $(basename $0) build essix 0.2"
-    echo "      Locally builds the essix/APP:0.2 image, and pushes it to the repository."
-    echo "  \$ $(basename $0) run -e DOMAIN=www.essix.com -r 6 essix 0.2 www"
-    echo "      Starts 6 replicas of the service on swarm www, using image essix/APP:0.2,"
-    echo "      which is downloaded from the repository, if not found locally."
-    echo "  \$ $(basename $0) -e DOMAIN=dev.essix.com build essix 0.2 dev"
-    echo "      Builds image essix/APP:0.2 on swarm dev's nodes, and runs"
-    echo "      service on dev, with the given DOMAIN environment variable set."
+	echo "  Options:"
+    echo "    -e key=value ...  environment variables"
+    echo "    -r replicas       number of replicas to run (default=1)"
 	echo
 	echo "$(basename $0) help"
 	echo "  Display this message."
+	echo
+	echo
+	echo "You'll want to have these baseline tools ready:"
+	echo "  - Go"
+	echo "  - Docker"
+	echo "  - Docker Machine"
+	echo "  - VirtualBox"
+	echo "  - An account with Docker Hub"
+	echo "  - An account with DigitalOcean"
+	echo
+	echo "\$GOPATH environment variable is set to: '${GOPATH}'"
+	echo
+	echo
+	echo "Examples:"
+	echo
+    echo "  \$ $(basename $0) init github.com/essix/newapp"
+    echo "      Initialises a base structure for an Essix app in"
+    echo "      ${GOPATH}/github.com/essix/newapp."
+	echo
+    echo "  \$ $(basename $0) nodes -m 1 -w 2 -H dev.appsite.com create dev"
+    echo "      Creates swarm dev on VirtualBox, with one manager node, and 2 worker"
+    echo "      nodes. Adds hostname dev.appsite.com to /etc/hosts, resolving to the"
+    echo "      manager node's ip address."
+	echo
+    echo "  \$ $(basename $0) nodes -m 1 -d digitalocean -F create www"
+    echo "      Creates a one-node swarm www on DigitalOcean, and enables a firewall on it."
+    echo "  \$ $(basename $0) nodes -w 1 -d digitalocean -F create www"
+    echo "      Adds a worker node (with firewall) to swarm www on DigitalOcean."
+	echo
+    echo "  \$ $(basename $0) r create dev"
+    echo "      Creates a RethinkDB cluster on swarm dev, and opens the cluster's"
+    echo "      administrator web page."
+	echo
+    echo "  \$ $(basename $0) r dev"
+    echo "      Opens the dev swarm RethinkDB cluster's administrator web page."
+	echo
+    echo "  \$ $(basename $0) build essix 0.2"
+    echo "      Locally builds the essix/APP:0.2 image, and pushes it to the repository."
+    echo "  \$ $(basename $0) run -e DOMAIN=www.appsite.com -r 6 essix 0.2 www"
+    echo "      Starts 6 replicas of the service on swarm www, using image essix/APP:0.2,"
+    echo "      which is downloaded from the repository, if not found locally."
+	echo
+    echo "  \$ $(basename $0) -e DOMAIN=dev.appsite.com build essix 0.2 dev"
+    echo "      Builds image essix/APP:0.2 on swarm dev's nodes, and runs the service"
+    echo "      on dev, with the given DOMAIN environment variable set."
 	echo
 }
 
@@ -91,13 +128,36 @@ run ()
 
 if [ "$COMMAND" = "init" ]; then
 	PACKAGE="${2}"
-	if [ -e "${GOPATH}/src/${PACKAGE}" ]; then
-		echo "Directory \"${GOPATH}/src/${PACKAGE}\" already exists."
+	directory="${GOPATH}/src/${PACKAGE}"
+	if [ -e "${directory}" ]; then
+		echo "Path '${directory}' already exists."
 		exit 1
 	fi
-	cp -rf "${essix}/app" "${GOPATH}/src/${PACKAGE}"
+	cp -rf "${essix}/app" "${directory}"
 	escaped=$(echo "${PACKAGE}" | sed -E 's/\/+/\\\//g')
-	sed "s/.*\"<messages>\"/\"${escaped}\/messages\"/" "${GOPATH}/src/${PACKAGE}/main.go"
+	sed -i.bak "s/.*\"<messages>\"/\"${escaped}\/messages\"/" "${directory}/main.go"
+	rm "${directory}/main.go.bak" >/dev/null
+	echo "Package inited in '${directory}'"
+elif [ "$COMMAND" = "cert" ]; then
+	EMAIL="${2}"
+	DOMAIN="${3}"
+	resources="${PWD}/resources"
+	if [ ! "${EMAIL}" -o ! "${DOMAIN}" ]; then
+		usage; exit 1
+	elif [ ! -d "${resources}" ]; then
+		echo "Directory not found: '${resources}'"
+		exit 1
+	elif [ "${DIGITALOCEAN_ACCESS_TOKEN}" = "" ]; then
+		echo "Environment variable unset: DIGITALOCEAN_ACCESS_TOKEN"
+		echo "Run 'export DIGITALOCEAN_ACCESS_TOKEN=<yourtoken>'"
+		exit 1
+	fi
+	docker run --rm -v "${resources}:/.lego" \
+	-e "DO_AUTH_TOKEN=${DIGITALOCEAN_ACCESS_TOKEN}" \
+	xenolf/lego -a --dns=digitalocean \
+	--email="${EMAIL}" \
+	--domains="${DOMAIN}" \
+	run
 elif [ "$COMMAND" = "nodes" ]; then
 	shift 1
 	${nodes} $*
