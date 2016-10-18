@@ -43,6 +43,8 @@ usage ()
 	echo
 	echo
 	echo "You'll want to have these baseline tools ready:"
+	echo "  - Git"
+	echo "  - Bash"
 	echo "  - Go"
 	echo "  - Docker"
 	echo "  - Docker Machine"
@@ -136,7 +138,9 @@ if [ "$COMMAND" = "init" ]; then
 	cp -rf "${essix}/app" "${directory}"
 	escaped=$(echo "${PACKAGE}" | sed -E 's/\/+/\\\//g')
 	sed -i.bak "s/.*\"<messages>\"/\"${escaped}\/messages\"/" "${directory}/main.go"
-	rm "${directory}/main.go.bak" >/dev/null
+	cd ${directory}
+	rm main.go.bak
+	go fmt 1>/dev/null
 	echo "Package inited in '${directory}'"
 elif [ "$COMMAND" = "cert" ]; then
 	EMAIL="${2}"
