@@ -188,7 +188,7 @@ else
 			new=$(expr $next + $i)
 			if [ "${type}" = "manager" -a "$new" = "1" ]; then
 				create $type $new
-				if [ "$DOMAIN" ]; then
+				if [ "$HOSTNAME" ]; then
 					echo "* Root password possibly requested to edit /etc/hosts..."
 					if [ "$(grep "${HOSTNAME}" /etc/hosts)" = "" ]; then
 						echo "${MANAGER_IP} ${HOSTNAME}" | sudo tee -a /etc/hosts >/dev/null
