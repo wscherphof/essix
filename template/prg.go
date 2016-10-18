@@ -7,9 +7,17 @@ import (
 )
 
 type baseType struct {
-	*url.Values
 	w http.ResponseWriter
 	r *http.Request
+	data map[string]interface{}
+}
+
+func (b *baseType) Set(key string, value interface{}) {
+	b.data[key] = value
+}
+
+func newBaseType(w http.ResponseWriter, r *http.Request) *baseType {
+	return &baseType{w, r, make(map[string]interface{})}
 }
 
 type PRGType struct {
@@ -20,7 +28,10 @@ type PRGType struct {
 func (t *PRGType) Run() {
 	path := t.r.URL.Path
 	path += "/" + strings.ToLower(t.r.Method)
-	path += "?" + t.Values.Encode()
+	path += "?"
+	for k, v := range t.data {
+		path += k + "=" + url.QueryEscape(v) + "&"
+	}
 	http.Redirect(t.w, t.r, path, http.StatusSeeOther)
 }
 
@@ -61,8 +72,7 @@ func PRG(w http.ResponseWriter, r *http.Request, dir, base string, inner ...stri
 		}
 		Run(w, r, dir, base, opt(inner...), data)
 	case "PUT", "POST", "DELETE":
-		values, _ := url.ParseQuery("")
-		prg = &PRGType{&baseType{&values, w, r}}
+		prg = &PRGType{newBaseType(w, r)}
 	}
 	return
 }
