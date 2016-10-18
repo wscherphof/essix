@@ -15,7 +15,7 @@ usage ()
 	echo "      -w workers   number of worker nodes to create"
 	echo "      -d driver    Docker Machine driver to use (default=virtualbox)"
 	echo "      -F           set up an UFW firewall on each node"
-	echo "      -D domain    configure SWARM.DOMAIN as a hostname in /etc/hosts (on creation of first manager node)"
+	echo "      -H hostname  configure the hostname in /etc/hosts (on creation of first manager node)"
 	echo "  stop"
 	echo "    Stop all nodes swarm SWARM"
 	echo "  start"
@@ -29,14 +29,14 @@ usage ()
 	echo
 }
 
-while getopts "m:w:d:D:fFh" opt; do
+while getopts "m:w:d:H:fFh" opt; do
     case $opt in
         m  ) MANAGERS="$OPTARG";;
         w  ) WORKERS="$OPTARG";;
         d  ) DRIVER="$OPTARG";;
+        H  ) HOSTNAME="$OPTARG";;
         f  ) FORCE="y";;
         F  ) FIREWALL="$(mktemp)";;
-        D  ) DOMAIN="$OPTARG";;
         h  ) usage; exit;;
         \? ) echo "Unknown option: -$OPTARG" >&2; exit 1;;
         :  ) echo "Missing option argument for -$OPTARG" >&2; exit 1;;
@@ -190,10 +190,10 @@ else
 				create $type $new
 				if [ "$DOMAIN" ]; then
 					echo "* Root password possibly requested to edit /etc/hosts..."
-					if [ "$(grep "${ENV}.${DOMAIN}" /etc/hosts)" = "" ]; then
-						echo "${MANAGER_IP} ${ENV}.${DOMAIN}" | sudo tee -a /etc/hosts >/dev/null
+					if [ "$(grep "${HOSTNAME}" /etc/hosts)" = "" ]; then
+						echo "${MANAGER_IP} ${HOSTNAME}" | sudo tee -a /etc/hosts >/dev/null
 					else
-						sudo sed -i.bak "s/.*${ENV}.${DOMAIN}/${MANAGER_IP} ${ENV}.${DOMAIN}/" /etc/hosts
+						sudo sed -i.bak "s/.*${HOSTNAME}/${MANAGER_IP} ${HOSTNAME}/" /etc/hosts
 					fi
 				fi
 			else
