@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/wscherphof/env"
-	"log"
 	"os/exec"
 	"os"
 )
@@ -16,7 +15,5 @@ func main() {
 	cmd := exec.Command(script, os.Args[1:]...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
-	if err := cmd.Run(); err != nil {
-		log.Println(err)
-	}
+	cmd.Run()
 }
