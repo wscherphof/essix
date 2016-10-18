@@ -5,15 +5,17 @@ usage ()
     echo
     echo "Usage: $(basename $0) [OPTIONS] [COMMAND] SWARM"
     echo
-    echo "Create a RethinkDB cluster on a swarm, and/or start its web admin"
+    echo "Create a RethinkDB cluster on a swarm, and/or start its web admin."
     echo
     echo "Commands:"
     echo "  create"
     echo "    Create the cluster, or recreate (without deleting any data files)"
     echo "    Options:"
-    echo "      -n num  number of servers to run on each node (default: 1)"
+    echo "      -n num  number of servers to run on each node (default=1)"
+    echo "  help"
+    echo "    Display this message."
     echo
-    echo "Without command, just start the web admin for the cluster on SWARM"
+    echo "Without command, just start the web admin for the cluster on SWARM."
     echo
 }
 
@@ -28,7 +30,9 @@ while getopts "n:h" opt; do
 done
 shift $((OPTIND -1))
 
-if [ "$1" = "create" ]; then
+if [ "$1" = "help" ]; then
+	usage; exit
+elif [ "$1" = "create" ]; then
 	CREATE="y"
 	ENV="$2"
 else

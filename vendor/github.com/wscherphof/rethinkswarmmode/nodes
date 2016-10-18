@@ -5,15 +5,15 @@ usage ()
 	echo
 	echo "Usage: $(basename $0) [OPTIONS] COMMAND SWARM"
 	echo
-	echo "Manage nodes in a swarm"
+	echo "Manage nodes in a swarm."
 	echo
 	echo "Commands:"
 	echo "  create"
-	echo "    Create manager and/or worker nodes in swarm SWARM - for a new swarm, specify at least 1 manager"
+	echo "    Create manager and/or worker nodes in swarm SWARM - for a new swarm, specify at least 1 manager."
 	echo "    Options:"
 	echo "      -m managers  number of manager nodes to create"
 	echo "      -w workers   number of worker nodes to create"
-	echo "      -d driver    Docker Machine driver to use (default: virtualbox)"
+	echo "      -d driver    Docker Machine driver to use (default=virtualbox)"
 	echo "      -F           set up an UFW firewall on each node"
 	echo "      -D domain    configure SWARM.DOMAIN as a hostname in /etc/hosts (on creation of first manager node)"
 	echo "  stop"
@@ -24,6 +24,8 @@ usage ()
 	echo "    Remove all nodes swarm SWARM"
 	echo "    Options:"
 	echo "      -f           skip the confirmation question"
+	echo "  help"
+	echo "    Display this message."
 	echo
 }
 
@@ -49,14 +51,10 @@ DRIVER="${DRIVER-virtualbox}"
 COMMAND="$1"
 ENV="$2"
 
-if [ "$COMMAND" = "" -o "$ENV" = "" ]; then
-	usage
-	exit 1
-fi
-
 if [ "$COMMAND" = "help" -o "$COMMAND" = "--help" ]; then
-	usage
-	exit
+	usage; exit 0
+elif [ "$COMMAND" = "" -o "$ENV" = "" ]; then
+	usage; exit 1
 fi
 
 finish ()
