@@ -8,13 +8,6 @@ usage ()
 	echo "$(basename $0) init PACKAGE"
 	echo "  Initialise a new essix app in the given new directory under \$GOPATH."
 	echo
-	echo "$(basename $0) cert EMAIL DOMAIN"
-	echo "  Generate a TLS certificate for the given domain, using the given email"
-	echo "  address in the request to Let's Encrypt."
-	echo "  Certificate gets saved in ./resources/certificates"
-	echo "  Currently relies on a DigitalOcean DNS configuration, and requires the"
-	echo "  DIGITALOCEAN_ACCESS_TOKEN environment variable."
-	echo
 	echo "$(basename $0) nodes [OPTIONS] COMMAND SWARM"
 	echo "  Manage nodes in a swarm."
 	echo "  Run '$(basename $0) nodes help' for more information."
@@ -22,6 +15,13 @@ usage ()
 	echo "$(basename $0) r [OPTIONS] [COMMAND] SWARM"
 	echo "  Create a RethinkDB cluster on a swarm, and/or start its web admin."
 	echo "  Run '$(basename $0) r help' for more information."
+	echo
+	echo "$(basename $0) cert EMAIL DOMAIN"
+	echo "  Generate a TLS certificate for the given domain, using the given email"
+	echo "  address in the request to Let's Encrypt."
+	echo "  Certificate gets saved in ./resources/certificates"
+	echo "  Currently relies on a DigitalOcean DNS configuration, and requires the"
+	echo "  DIGITALOCEAN_ACCESS_TOKEN environment variable."
 	echo
 	echo "$(basename $0) [OPTIONS] build REPO TAG [SWARM]"
 	echo "  Format & compile go sources in the current directory, and build a Docker"
@@ -60,10 +60,6 @@ usage ()
     echo "  \$ $(basename $0) init github.com/essix/newapp"
     echo "      Initialises a base structure for an Essix app in ${GOPATH}/github.com/essix/newapp."
 	echo
-    echo "  \$ export DIGITALOCEAN_ACCESS_TOKEN=\"94dt7972b863497630s73012n10237xr1273trz92t1\""
-    echo "  \$ $(basename $0) cert essix@appsite.com dev.appsite.com"
-    echo "      Generates a TLS certificate for dev.appsite.com."
-	echo
     echo "  \$ $(basename $0) nodes -m 1 -w 2 -H dev.appsite.com create dev"
     echo "      Creates swarm dev on VirtualBox, with one manager node, and 2 worker"
     echo "      nodes. Adds hostname dev.appsite.com to /etc/hosts, resolving to the"
@@ -80,6 +76,10 @@ usage ()
 	echo
     echo "  \$ $(basename $0) r dev"
     echo "      Opens the dev swarm RethinkDB cluster's administrator web page."
+	echo
+    echo "  \$ export DIGITALOCEAN_ACCESS_TOKEN=\"94dt7972b863497630s73012n10237xr1273trz92t1\""
+    echo "  \$ $(basename $0) cert essix@appsite.com dev.appsite.com"
+    echo "      Generates a TLS certificate for dev.appsite.com."
 	echo
     echo "  \$ $(basename $0) build essix 0.2"
     echo "      Locally builds the essix/APP:0.2 image, and pushes it to the repository."
