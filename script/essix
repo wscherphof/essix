@@ -148,6 +148,7 @@ if [ "$COMMAND" = "init" ]; then
 		exit 1
 	fi
 	force go get github.com/kardianos/govendor
+	echo "* generating files..."
 	cp -rf "${essix}/app" "${directory}"
 	escaped=$(echo "${PACKAGE}" | sed -E 's/\/+/\\\//g')
 	sed -i.bak "s/.*\"<messages>\"/\"${escaped}\/messages\"/" "${directory}/main.go"
@@ -156,10 +157,11 @@ if [ "$COMMAND" = "init" ]; then
 	sed -i.bak "s/.*\"<model>\"/\"${escaped}\/model\"/" "${directory}/routes/example/profile.go"
 	cd ${directory}
 	rm $(find . -name '*.go.bak')
+	echo "* fetching dependencies..."
 	govendor init
 	govendor add +external
 	govendor fmt +local 1>/dev/null
-	echo "Package inited in '${directory}'"
+	echo "* package inited in '${directory}'"
 elif [ "$COMMAND" = "cert" ]; then
 	EMAIL="${2}"
 	DOMAIN="${3}"
