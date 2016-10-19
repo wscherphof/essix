@@ -8,13 +8,6 @@ usage ()
 	echo "$(basename $0) init PACKAGE"
 	echo "  Initialise a new essix app in the given new directory under \$GOPATH."
 	echo
-	echo "$(basename $0) cert EMAIL DOMAIN"
-	echo "  Generate a TLS certificate for the given domain, using the given email"
-	echo "  address in the request to Let's Encrypt."
-	echo "  Certificate gets saved in ./resources/certificates"
-	echo "  Currently relies on a DigitalOcean DNS configuration, and requires the"
-	echo "  DIGITALOCEAN_ACCESS_TOKEN environment variable."
-	echo
 	echo "$(basename $0) nodes [OPTIONS] COMMAND SWARM"
 	echo "  Manage nodes in a swarm."
 	echo "  Run '$(basename $0) nodes help' for more information."
@@ -22,6 +15,17 @@ usage ()
 	echo "$(basename $0) r [OPTIONS] [COMMAND] SWARM"
 	echo "  Create a RethinkDB cluster on a swarm, and/or start its web admin."
 	echo "  Run '$(basename $0) r help' for more information."
+	echo
+	echo "$(basename $0) cert DOMAIN [EMAIL]"
+	echo "  Generate a TLS certificate for the given domain."
+	echo "  Certificate gets saved in ./resources/certificates"
+	echo "  Without EMAIL, a self-signed certificate is produced."
+	echo "  With EMAIL, a trusted certificate is produced through LetsEncrypt."
+	echo "  The LetsEncrypt approach currently relies on a DigitalOcean DNS configuration,"
+	echo "  and requires the DIGITALOCEAN_ACCESS_TOKEN environment variable."
+	echo
+	echo "$(basename $0) -S cert DOMAIN"
+	echo "  Generate a self-signed TLS certificate for the given domain"
 	echo
 	echo "$(basename $0) [OPTIONS] build REPO TAG [SWARM]"
 	echo "  Format & compile go sources in the current directory, and build a Docker"
@@ -58,11 +62,7 @@ usage ()
 	echo "Examples:"
 	echo
     echo "  \$ $(basename $0) init github.com/essix/newapp"
-    echo "      Initialises a base structure for an Essix app in"
-    echo "      ${GOPATH}/github.com/essix/newapp."
-	echo
-    echo "  \$ $(basename $0) cert essix@appsite.com dev.appsite.com"
-    echo "      Generates a TLS certificate for dev.appsite.com."
+    echo "      Initialises a base structure for an Essix app in ${GOPATH}/github.com/essix/newapp."
 	echo
     echo "  \$ $(basename $0) nodes -m 1 -w 2 -H dev.appsite.com create dev"
     echo "      Creates swarm dev on VirtualBox, with one manager node, and 2 worker"
@@ -80,6 +80,13 @@ usage ()
 	echo
     echo "  \$ $(basename $0) r dev"
     echo "      Opens the dev swarm RethinkDB cluster's administrator web page."
+	echo
+    echo "  \$ $(basename $0) cert dev.appsite.com"
+    echo "      Generates a self-signed TLS certificate for the given domain."
+	echo
+    echo "  \$ export DIGITALOCEAN_ACCESS_TOKEN=\"94dt7972b863497630s73012n10237xr1273trz92t1\""
+    echo "  \$ $(basename $0) cert www.appsite.com essix@appsite.com"
+    echo "      Generates a trusted TLS certificate for the given domain."
 	echo
     echo "  \$ $(basename $0) build essix 0.2"
     echo "      Locally builds the essix/APP:0.2 image, and pushes it to the repository."
@@ -112,7 +119,7 @@ COMMAND="${1}"
 REPO="${2}"
 TAG="${3}"
 SWARM="${4}"
-SERVICE="$(pwd | awk -F "/" '{print $NF}')"
+SERVICE="$(basename ${PWD})"
 IMAGE="${REPO}/${SERVICE}:${TAG}"
 
 essix="${GOPATH}/src/github.com/wscherphof/essix"
@@ -148,6 +155,7 @@ if [ "$COMMAND" = "init" ]; then
 		exit 1
 	fi
 	force go get github.com/kardianos/govendor
+	echo "* generating files..."
 	cp -rf "${essix}/app" "${directory}"
 	escaped=$(echo "${PACKAGE}" | sed -E 's/\/+/\\\//g')
 	sed -i.bak "s/.*\"<messages>\"/\"${escaped}\/messages\"/" "${directory}/main.go"
@@ -156,30 +164,44 @@ if [ "$COMMAND" = "init" ]; then
 	sed -i.bak "s/.*\"<model>\"/\"${escaped}\/model\"/" "${directory}/routes/example/profile.go"
 	cd ${directory}
 	rm $(find . -name '*.go.bak')
+	echo "* fetching dependencies..."
 	govendor init
 	govendor add +external
 	govendor fmt +local 1>/dev/null
-	echo "Package inited in '${directory}'"
+	echo "* package inited in '${directory}'"
 elif [ "$COMMAND" = "cert" ]; then
-	EMAIL="${2}"
-	DOMAIN="${3}"
+	DOMAIN="${2}"
+	EMAIL="${3}"
 	resources="${PWD}/resources"
-	if [ ! "${EMAIL}" -o ! "${DOMAIN}" ]; then
+	if [ ! "${DOMAIN}" ]; then
 		usage; exit 1
 	elif [ ! -d "${resources}" ]; then
 		echo "Directory not found: '${resources}'"
 		exit 1
-	elif [ "${DIGITALOCEAN_ACCESS_TOKEN}" = "" ]; then
-		echo "Environment variable unset: DIGITALOCEAN_ACCESS_TOKEN"
-		echo "Run 'export DIGITALOCEAN_ACCESS_TOKEN=<yourtoken>'"
-		exit 1
+	elif [ "${EMAIL}" ]; then
+		if [ "${DIGITALOCEAN_ACCESS_TOKEN}" = "" ]; then
+			echo "Environment variable unset: DIGITALOCEAN_ACCESS_TOKEN"
+			echo "Run 'export DIGITALOCEAN_ACCESS_TOKEN=<yourtoken>'"
+			exit 1
+		fi
+		echo "* requesting trusted certificate for DOMAIN ${DOMAIN} ..."
+		docker run --rm -v "${resources}:/.lego" \
+		-e "DO_AUTH_TOKEN=${DIGITALOCEAN_ACCESS_TOKEN}" \
+		xenolf/lego -a --dns=digitalocean \
+		--email="${EMAIL}" \
+		--domains="${DOMAIN}" \
+		run
+	else
+		if [ ! "${GOROOT}" ]; then
+			GOROOT="$(dirname $(which go))/.."
+		fi
+		mkdir -p "${resources}/certificates"
+		cd "${resources}/certificates"
+		force go run ${GOROOT}/src/crypto/tls/generate_cert.go --host ${DOMAIN} &>/dev/null
+		mv cert.pem "$DOMAIN.crt"
+		mv key.pem "$DOMAIN.key"
+		echo "* saved self-signed certificate for DOMAIN ${DOMAIN}"
 	fi
-	docker run --rm -v "${resources}:/.lego" \
-	-e "DO_AUTH_TOKEN=${DIGITALOCEAN_ACCESS_TOKEN}" \
-	xenolf/lego -a --dns=digitalocean \
-	--email="${EMAIL}" \
-	--domains="${DOMAIN}" \
-	run
 elif [ "$COMMAND" = "nodes" ]; then
 	shift 1
 	${nodes} $*

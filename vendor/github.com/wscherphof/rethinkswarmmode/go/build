@@ -66,7 +66,7 @@ echo "* compiling..."
 # cf. https://medium.com/@kelseyhightower/optimizing-docker-images-for-static-binaries-b5696e26eb07#.wmlq1nj3d
 CGO_ENABLED=0 GOOS=linux force go build -a -tags netgo -ldflags '-w' .
 
-binary="$(pwd | awk -F "/" '{print $NF}')" # go build names the binary after the source's subdirectory
+binary="$(basename ${PWD})" # go build names the binary after the source's subdirectory
 
 echo "FROM scratch" > ./Dockerfile
 echo "ADD ${binary} /" >> ./Dockerfile
