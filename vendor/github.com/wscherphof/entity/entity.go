@@ -3,6 +3,7 @@ package entity
 import (
 	"errors"
 	"fmt"
+	"github.com/wscherphof/env"
 	db "github.com/wscherphof/rethinkdb"
 	"log"
 	"strings"
@@ -10,7 +11,6 @@ import (
 )
 
 var (
-	Connect                = db.Connect
 	Session                = db.Session
 	DB                     = db.DB
 	ErrEmptyResult         = db.ErrEmptyResult
@@ -18,8 +18,14 @@ var (
 	typeReplacer           = strings.NewReplacer("*", "", ".", "_")
 )
 
-type Cursor struct {
-	*db.Cursor
+func init() {
+	name := env.Get("DB_NAME")
+	address := env.Get("DB_ADDRESS")
+	if err := db.Connect(name, address); err != nil {
+		log.Fatalf("ERROR: connecting to DB %s@%s failed. %T %s", name, address, err, err)
+	} else {
+		log.Printf("INFO: connected to DB %s@%s", name, address)
+	}
 }
 
 type tableType struct {
@@ -89,9 +95,8 @@ func (b *Base) Read(result interface{}) (err error, empty bool) {
 	return
 }
 
-func ReadAll(record interface{}) (*Cursor, error) {
-	c, e := db.All(tbl(record))
-	return &Cursor{Cursor: c}, e
+func ReadAll(record interface{}) (*db.Cursor, error) {
+	return db.All(tbl(record))
 }
 
 func (b *Base) Update(record interface{}) (err error) {

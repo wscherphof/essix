@@ -9,14 +9,15 @@ import (
 	"github.com/wscherphof/essix/messages"
 	"github.com/wscherphof/essix/router"
 	"github.com/wscherphof/essix/routes"
-	"github.com/wscherphof/essix/server/bootstrap"
+	"github.com/wscherphof/env"
 	"log"
 	"net/http"
 	"os"
 )
 
 var (
-	domain = bootstrap.Domain()
+	// Die without a domain
+	domain = env.Get("DOMAIN")
 )
 
 func init() {
