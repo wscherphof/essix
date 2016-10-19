@@ -3,22 +3,18 @@ package account
 import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/wscherphof/essix/model"
-	"github.com/wscherphof/essix/ratelimit"
 	"github.com/wscherphof/essix/template"
+	"github.com/wscherphof/secure"
 	"net/http"
 )
 
 // ActivateForm renders a form to enter the activate token.
 func ActivateForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	t := template.GET(w, r, "activate", "ActivateForm")
-	if token, err := ratelimit.NewToken(r, "/account/activate/token"); err != nil {
-		template.Error(w, r, err, false)
-	} else {
-		t.Set("id", r.FormValue("id"))
-		t.Set("token", r.FormValue("token"))
-		t.Set("ratelimit", token)
-		t.Run()
-	}
+	t.Set("id", r.FormValue("id"))
+	t.Set("token", r.FormValue("token"))
+	t.Set("formtoken", secure.NewFormToken(r, "/account/activate/token"))
+	t.Run()
 }
 
 // Activate activates the account with the given token.
@@ -36,13 +32,7 @@ func Activate(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 
 // ActivateTokenForm renders a form to request sending a new activate token.
 func ActivateTokenForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	t := template.GET(w, r, "activate", "ActivateTokenForm")
-	if token, err := ratelimit.NewToken(r); err != nil {
-		template.Error(w, r, err, false)
-	} else {
-		t.Set("ratelimit", token)
-		t.Run()
-	}
+	template.GET(w, r, "activate", "ActivateTokenForm").Run()
 }
 
 // ActivateToken sends the new activate token.

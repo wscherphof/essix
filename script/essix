@@ -224,7 +224,7 @@ build)
 	force cp -rf ${essix}/resources/ ./.merge/resources/
 	force cp -rf ./resources/ ./.merge/resources/
 
-	force ${build} -p 80 -p 443 -a ./.merge/resources . ${IMAGE} ${SWARM}
+	force ${build} -e DB_NAME=essix -e DB_ADDRESS=db1 -p 80 -p 443 -a ./.merge/resources . ${IMAGE} ${SWARM}
 
 	rm -rf ./.merge 2>/dev/null
 

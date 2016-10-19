@@ -21,7 +21,6 @@ import (
 	"github.com/wscherphof/secure"
 	"log"
 	"net/http"
-	"strings"
 	"time"
 )
 
@@ -35,9 +34,7 @@ const (
 	clearInterval = time.Hour
 )
 
-type path string
-
-type requests map[path]time.Time
+type requests map[string]time.Time
 
 type client struct {
 	*entity.Base
@@ -47,7 +44,6 @@ type client struct {
 
 func init() {
 	entity.Register(&client{}).Index("Clear")
-	secure.RegisterRequestTokenData(token{})
 	go func() {
 		for {
 			time.Sleep(clearInterval)
@@ -61,33 +57,6 @@ func init() {
 			}
 		}
 	}()
-}
-
-type token struct {
-	IP        string
-	Path      path
-	Timestamp time.Time
-}
-
-func ip(r *http.Request) string {
-	return strings.Split(r.RemoteAddr, ":")[0]
-}
-
-/*
-NewToken returns an encrypted rate limit token to include in a rate limited
-request.
-*/
-func NewToken(r *http.Request, differentPath ...string) (string, error) {
-	t := &token{
-		IP:        ip(r),
-		Timestamp: time.Now(),
-	}
-	if len(differentPath) == 1 {
-		t.Path = path(differentPath[0])
-	} else {
-		t.Path = path(r.URL.Path)
-	}
-	return secure.NewRequestToken(t)
 }
 
 func getClient(ip string) (c *client) {
@@ -117,28 +86,28 @@ func Handle(handle httprouter.Handle, opt_seconds ...int) httprouter.Handle {
 	}
 	window := time.Duration(seconds) * time.Second
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-		t, ip, p := new(token), ip(r), path(r.URL.Path)
-		if formToken := r.FormValue("_ratelimit"); formToken == "" {
+		this, that := secure.NewFormToken(r), new(secure.FormToken)
+		if tokenString := r.FormValue("formtoken"); tokenString == "" {
 			template.Error(w, r, ErrInvalidRequest, true)
-			log.Printf("SUSPICIOUS: rate limit token missing %v %v", ip, p)
-		} else if e := secure.RequestToken(formToken).Read(t); e != nil {
+			log.Printf("SUSPICIOUS: rate limit token missing %v %v", this.IP, this.Path)
+		} else if e := that.Parse(tokenString); e != nil {
 			template.Error(w, r, ErrInvalidRequest, true)
-			log.Printf("SUSPICIOUS: rate limit token unreadable %v %v", ip, p)
-		} else if t.IP != ip {
+			log.Printf("SUSPICIOUS: rate limit token unreadable %v %v", this.IP, this.Path)
+		} else if that.IP != this.IP {
 			template.Error(w, r, ErrInvalidRequest, true)
-			log.Printf("SUSPICIOUS: rate limit token invalid address: %v, expected %v %v", t.IP, ip, p)
-		} else if t.Path != p {
+			log.Printf("SUSPICIOUS: rate limit token invalid address: %v, expected %v %v", that.IP, this.IP, this.Path)
+		} else if that.Path != this.Path {
 			template.Error(w, r, ErrInvalidRequest, true)
-			log.Printf("SUSPICIOUS: rate limit token invalid path: %v, token path %v, expected %v", ip, t.Path, p)
-		} else if c := getClient(ip); c.Requests[p].After(t.Timestamp) {
+			log.Printf("SUSPICIOUS: rate limit token invalid path: %v, token path %v, expected %v", this.IP, that.Path, this.Path)
+		} else if c := getClient(this.IP); c.Requests[this.Path].After(that.Timestamp) {
 			template.Error(w, r, ErrInvalidRequest, true)
-			log.Printf("SUSPICIOUS: rate limit token reuse: %v %v, token %v, previous request %v", ip, p, t.Timestamp, c.Requests[p])
-		} else if c.Requests[p].After(time.Now().Add(-window)) {
-			template.ErrorTail(w, r, ErrTooManyRequests, true, "ratelimit", "TooManyRequests", map[string]interface{}{
+			log.Printf("SUSPICIOUS: rate limit token reuse: %v %v, token %v, previous request %v", this.IP, this.Path, that.Timestamp, c.Requests[this.Path])
+		} else if c.Requests[this.Path].After(time.Now().Add(-window)) {
+			template.ErrorTail(w, r, ErrTooManyRequests, true, "ratelimit", "TooManyRequests-error-tail", map[string]interface{}{
 				"window": window,
 			})
 		} else {
-			c.Requests[p] = time.Now()
+			c.Requests[this.Path] = time.Now()
 			if clear := time.Now().Add(window).Unix(); clear > c.Clear {
 				c.Clear = clear
 			}

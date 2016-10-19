@@ -18,6 +18,7 @@ package template
 import (
 	"bytes"
 	"github.com/wscherphof/msg"
+	"github.com/wscherphof/secure"
 	"github.com/yosssi/ace"
 	"io"
 	"log"
@@ -46,6 +47,9 @@ func Run(w io.Writer, r *http.Request, dir, base, inner string, opt_data ...map[
 	}
 	translator := msg.Translator(r)
 	data["msg"] = translator
+	if data["formtoken"] == nil {
+		data["formtoken"] = secure.NewFormToken(r)
+	}
 	var options = &ace.Options{
 		BaseDir: location + "/" + dir,
 	}

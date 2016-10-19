@@ -3,20 +3,13 @@ package account
 import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/wscherphof/essix/model"
-	"github.com/wscherphof/essix/ratelimit"
 	"github.com/wscherphof/essix/template"
 	cookie "github.com/wscherphof/secure"
 	"net/http"
 )
 
 func LogInForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	t := template.GET(w, r, "session", "LogInForm")
-	if token, err := ratelimit.NewToken(r); err != nil {
-		template.Error(w, r, err, false)
-	} else {
-		t.Set("ratelimit", token)
-		t.Run()
-	}
+	template.GET(w, r, "session", "LogInForm").Run()
 }
 
 func logInError(w http.ResponseWriter, r *http.Request, err error, conflict bool, id string) {

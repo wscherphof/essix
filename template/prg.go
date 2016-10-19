@@ -7,8 +7,8 @@ import (
 )
 
 type baseType struct {
-	w http.ResponseWriter
-	r *http.Request
+	w    http.ResponseWriter
+	r    *http.Request
 	data map[string]interface{}
 }
 
