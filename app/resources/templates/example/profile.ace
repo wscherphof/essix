@@ -1,64 +1,47 @@
 = include ../includes/top .
 body
   header
-    {{ if .Initial }}
-      p {{ Msg "Hi" }} {{ .Account.Name }}{{ "," }}
-      p {{ Msg "Complete account" }}
-      small
-        p {{ Msg "Star is required" }}
-    {{ else }}
-      h1 {{ .Account.UID }}
-    {{ end }}
+    h1 {{.email}}
   main.wrap
-    form method=POST action=/account
+    form.flex method=POST action=/profile
       input type=hidden name=_method value=PUT
       .p
-        label {{ Msg "Country" }}*
+        label {{.msg.Get "Country"}}*
           select#country.right name=country autocomplete=off required=
-            {{ if .Initial }}
-              {{ $mainLang := .lang.Main }}
-              {{ $subLang := .lang.Sub }}
-              {{ range .Countries }}
-                {{ if or (eq .Code $mainLang) (eq .Code $subLang) }}
-                  option value={{ .Code }} selected= {{ .Name }}
-                {{ else }}
-                  option value={{ .Code }} {{ .Name }}
-                {{ end }}
-              {{ end }}
-            {{ else }}
-              {{ $setCountry := .Account.Country }}
-              {{ range .Countries }}
-                {{ if eq .Code $setCountry }}
-                  option value={{ .Code }} selected= {{ .Name }}
-                {{ else }}
-                  option value={{ .Code }} {{ .Name }}
-                {{ end }}
-              {{ end }}
-            {{ end }}
+            {{$profileCountry := .profile.Country}}
+            {{range .countries}}
+              {{if eq .Code $profileCountry}}
+                option value={{.Code}} selected= {{.Name}}
+              {{else}}
+                option value={{.Code}} {{.Name}}
+              {{end}}
+            {{end}}
       .p
-        label {{ Msg "Postcode" }}*
-          input#postcode.right type=text name=postcode autocomplete=postal-code value={{ .Account.Postcode }} placeholder="1200 JC" required= size=35
+        label {{.msg.Get "Postcode"}}*
+          input#postcode.right type=text name=postcode autocomplete=postal-code value={{.profile.Postcode}} placeholder="1200 JC" required= size=35
       .p
-        label {{ Msg "First name" }}
-          input#firstname.right type=text name=firstname autocomplete=given-name value={{ .Account.FirstName }} placeholder=John size=35
+        label {{.msg.Get "First name"}}
+          input#firstname.right type=text name=firstname autocomplete=given-name value={{.profile.FirstName}} placeholder=John size=35
       .p
-        label {{ Msg "Last name" }}
-          input#lastname.right type=text name=lastname autocomplete=family-name value={{ .Account.LastName }} placeholder=Doe size=35
+        label {{.msg.Get "Last name"}}
+          input#lastname.right type=text name=lastname autocomplete=family-name value={{.profile.LastName}} placeholder=Doe size=35
       .p
         input type=reset
-        input.right type=submit value={{ Msg "Save changes" }}
-    {{ if not .Initial }}
-      aside
-        nav
-          ul
-            li
-              a href=/account/passwordcode {{ Msg "password subject" }}
-            li
-              a href=/account/emailaddresscode {{ Msg "emailaddress subject" }}
-            li
-              a href=/account/terminatecode {{ Msg "terminate subject" }}
-    {{ end }}
-  {{ if not .Initial }}
-    footer
-      p {{ Msg "Last modified" }}: {{ .Account.Modified.Format (Msg "Time format") }}
-  {{ end }}
+        input.right type=submit value={{.msg.Get "Save changes"}}
+    aside
+      nav
+        ul
+          li
+            a href=/account/password/token {{.msg.Get "Reset password"}}
+          li
+            a href=/account/email/token {{.msg.Get "Change email"}}
+          li
+            a href=/account/suspend/token {{.msg.Get "Suspend account"}}
+          li
+            form action=/session method=POST
+              input type=hidden name=_method value=DELETE
+              input type=submit value={{.msg.Get "Log out"}}
+          li
+            a href=/ {{.msg.Get "Take me home"}}
+  footer
+    p {{.msg.Get "Last modified"}}: {{.profile.Modified.Format (.msg.Get "Time format")}}

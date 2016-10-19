@@ -1,0 +1,6 @@
+= content account
+  a href=/profile {{.msg.Get "Edit profile"}}
+= content session
+  form action=/session method=POST
+    input type=hidden name=_method value=DELETE
+    input type=submit value={{.msg.Get "Log out"}}

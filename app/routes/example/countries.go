@@ -17,7 +17,7 @@ var countries []Country
 func Countries() *[]Country {
 	if len(countries) == 0 {
 		countries = make([]Country, 250)
-		if data, err := ioutil.ReadFile("/resources/data/countries.json"); err != nil {
+		if data, err := ioutil.ReadFile("/resources/data/example/countries.json"); err != nil {
 			log.Panicln("ERROR:", err)
 		} else if err := json.Unmarshal(data, &countries); err != nil {
 			log.Panicln("ERROR:", err)

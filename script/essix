@@ -151,8 +151,11 @@ if [ "$COMMAND" = "init" ]; then
 	cp -rf "${essix}/app" "${directory}"
 	escaped=$(echo "${PACKAGE}" | sed -E 's/\/+/\\\//g')
 	sed -i.bak "s/.*\"<messages>\"/\"${escaped}\/messages\"/" "${directory}/main.go"
+	sed -i.bak "s/.*\"<routes>\"/\"${escaped}\/routes\"/" "${directory}/main.go"
+	sed -i.bak "s/.*\"<routes\/example>\"/\"${escaped}\/routes\/example\"/" "${directory}/routes/example.go"
+	sed -i.bak "s/.*\"<model>\"/\"${escaped}\/model\"/" "${directory}/routes/example/profile.go"
 	cd ${directory}
-	rm main.go.bak
+	rm $(find . -name '*.go.bak')
 	govendor init
 	govendor add +external
 	govendor fmt +local 1>/dev/null
