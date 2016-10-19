@@ -2,8 +2,8 @@ package main
 
 import (
 	"github.com/wscherphof/env"
-	"os/exec"
 	"os"
+	"os/exec"
 )
 
 var (

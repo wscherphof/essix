@@ -6,10 +6,10 @@ package server
 import (
 	"github.com/gorilla/context"
 	"github.com/gorilla/handlers"
-	"github.com/wscherphof/essix/router"
-	"github.com/wscherphof/essix/server/bootstrap"
 	"github.com/wscherphof/essix/messages"
+	"github.com/wscherphof/essix/router"
 	"github.com/wscherphof/essix/routes"
+	"github.com/wscherphof/essix/server/bootstrap"
 	"log"
 	"net/http"
 	"os"

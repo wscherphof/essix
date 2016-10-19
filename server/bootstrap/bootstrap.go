@@ -14,9 +14,9 @@ import (
 )
 
 var (
-	db = env.Get("DB_NAME", "essix")
+	db      = env.Get("DB_NAME", "essix")
 	address = env.Get("DB_ADDRESS", "db1")
-	err = entity.Connect(db, address)
+	err     = entity.Connect(db, address)
 )
 
 func init() {
