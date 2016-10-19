@@ -8,33 +8,34 @@ usage ()
 	echo "$(basename $0) init PACKAGE"
 	echo "  Initialise a new essix app in the given new directory under \$GOPATH."
 	echo
+	echo "$(basename $0) cert DOMAIN [EMAIL]"
+	echo "  Generate a TLS certificate for the given domain."
+	echo "  Certificate gets saved in ./resources/certificates"
+	echo "  Without EMAIL,"
+	echo "    a self-signed certificate is produced."
+	echo "  With EMAIL,"
+	echo "    a trusted certificate is produced through LetsEncrypt."
+	echo "    The current LetsEncrypt approach relies on a DNS configuration on DigitalOcean,"
+	echo "    and requires the DIGITALOCEAN_ACCESS_TOKEN environment variable."
+	echo
 	echo "$(basename $0) nodes [OPTIONS] COMMAND SWARM"
-	echo "  Manage nodes in a swarm."
+	echo "  Create a Docker Swarm Mode swarm, and manage its nodes."
 	echo "  Run '$(basename $0) nodes help' for more information."
 	echo
 	echo "$(basename $0) r [OPTIONS] [COMMAND] SWARM"
 	echo "  Create a RethinkDB cluster on a swarm, and/or start its web admin."
 	echo "  Run '$(basename $0) r help' for more information."
 	echo
-	echo "$(basename $0) cert DOMAIN [EMAIL]"
-	echo "  Generate a TLS certificate for the given domain."
-	echo "  Certificate gets saved in ./resources/certificates"
-	echo "  Without EMAIL, a self-signed certificate is produced."
-	echo "  With EMAIL, a trusted certificate is produced through LetsEncrypt."
-	echo "  The LetsEncrypt approach currently relies on a DigitalOcean DNS configuration,"
-	echo "  and requires the DIGITALOCEAN_ACCESS_TOKEN environment variable."
-	echo
-	echo "$(basename $0) -S cert DOMAIN"
-	echo "  Generate a self-signed TLS certificate for the given domain"
-	echo
 	echo "$(basename $0) [OPTIONS] build REPO TAG [SWARM]"
 	echo "  Format & compile go sources in the current directory, and build a Docker"
-	echo "  image named REPO/APP:TAG, where APP is the current directory's name, which"
-	echo "  is also used to name the service."
-	echo "  Without SWARM, the OPTIONS are ignored, and the image is built locally,"
-	echo "  then pushed to the repository. Default repository is Docker Hub."
-	echo "  With SWARM, the image is built remotely on each of the swarm's nodes,"
-	echo "  and the service is run there, with the given OPTIONS."
+	echo "  image named REPO/APP:TAG"
+	echo "  APP is the current directory's name, is also the service name."
+	echo "  Without SWARM,"
+	echo "    the OPTIONS are ignored, and the image is built locally,"
+	echo "    then pushed to the repository. Default repository is Docker Hub."
+	echo "  With SWARM,"
+	echo "    the image is built remotely on each of the swarm's nodes,"
+	echo "    and the service is run there, with the given OPTIONS."
 	echo
 	echo "$(basename $0) [OPTIONS] run REPO TAG SWARM"
 	echo "  Run a service from an image on a swarm."
@@ -47,8 +48,8 @@ usage ()
 	echo
 	echo
 	echo "You'll want to have these baseline tools ready:"
-	echo "  - Git"
 	echo "  - Bash"
+	echo "  - Git"
 	echo "  - Go"
 	echo "  - Docker"
 	echo "  - Docker Machine"
@@ -63,6 +64,13 @@ usage ()
 	echo
     echo "  \$ $(basename $0) init github.com/essix/newapp"
     echo "      Initialises a base structure for an Essix app in ${GOPATH}/github.com/essix/newapp."
+	echo
+    echo "  \$ $(basename $0) cert dev.appsite.com"
+    echo "      Generates a self-signed TLS certificate for the given domain."
+	echo
+    echo "  \$ export DIGITALOCEAN_ACCESS_TOKEN=\"94dt7972b863497630s73012n10237xr1273trz92t1\""
+    echo "  \$ $(basename $0) cert www.appsite.com essix@appsite.com"
+    echo "      Generates a trusted TLS certificate for the given domain."
 	echo
     echo "  \$ $(basename $0) nodes -m 1 -w 2 -H dev.appsite.com create dev"
     echo "      Creates swarm dev on VirtualBox, with one manager node, and 2 worker"
@@ -81,21 +89,14 @@ usage ()
     echo "  \$ $(basename $0) r dev"
     echo "      Opens the dev swarm RethinkDB cluster's administrator web page."
 	echo
-    echo "  \$ $(basename $0) cert dev.appsite.com"
-    echo "      Generates a self-signed TLS certificate for the given domain."
-	echo
-    echo "  \$ export DIGITALOCEAN_ACCESS_TOKEN=\"94dt7972b863497630s73012n10237xr1273trz92t1\""
-    echo "  \$ $(basename $0) cert www.appsite.com essix@appsite.com"
-    echo "      Generates a trusted TLS certificate for the given domain."
-	echo
     echo "  \$ $(basename $0) build essix 0.2"
     echo "      Locally builds the essix/APP:0.2 image, and pushes it to the repository."
     echo "  \$ $(basename $0) run -e DOMAIN=www.appsite.com -r 6 essix 0.2 www"
     echo "      Starts 6 replicas of the service on swarm www, using image essix/APP:0.2,"
     echo "      which is downloaded from the repository, if not found locally."
 	echo
-    echo "  \$ $(basename $0) -e DOMAIN=dev.appsite.com build essix 0.2 dev"
-    echo "      Builds image essix/APP:0.2 on swarm dev's nodes, and runs the service"
+    echo "  \$ $(basename $0) -e DOMAIN=dev.appsite.com build essix 0.3 dev"
+    echo "      Builds image essix/APP:0.3 on swarm dev's nodes, and runs the service"
     echo "      on dev, with the given DOMAIN environment variable set."
 	echo
 }
@@ -147,7 +148,9 @@ force ()
 	fi
 }
 
-if [ "$COMMAND" = "init" ]; then
+case "${COMMAND}" in
+
+init)
 	PACKAGE="${2}"
 	directory="${GOPATH}/src/${PACKAGE}"
 	if [ -e "${directory}" ]; then
@@ -169,7 +172,9 @@ if [ "$COMMAND" = "init" ]; then
 	govendor add +external
 	govendor fmt +local 1>/dev/null
 	echo "* package inited in '${directory}'"
-elif [ "$COMMAND" = "cert" ]; then
+;;
+
+cert)
 	DOMAIN="${2}"
 	EMAIL="${3}"
 	resources="${PWD}/resources"
@@ -202,13 +207,19 @@ elif [ "$COMMAND" = "cert" ]; then
 		mv key.pem "$DOMAIN.key"
 		echo "* saved self-signed certificate for DOMAIN ${DOMAIN}"
 	fi
-elif [ "$COMMAND" = "nodes" ]; then
+;;
+
+nodes)
 	shift 1
 	${nodes} $*
-elif [ "$COMMAND" = "r" ]; then
+;;
+
+r)
 	shift 1
 	${r} $*
-elif [ "$COMMAND" = "build" ]; then
+;;
+
+build)
 	force mkdir -p ./.merge/resources
 	force cp -rf ${essix}/resources/ ./.merge/resources/
 	force cp -rf ./resources/ ./.merge/resources/
@@ -220,14 +231,22 @@ elif [ "$COMMAND" = "build" ]; then
 	if [ "$SWARM" ]; then
 		run
 	fi
-elif [ "$COMMAND" = "run" ]; then
+;;
+
+run)
 	if [ "$TAG" -a "$SWARM" ]; then
 		run
 	else
 		usage; exit 1
 	fi
-elif [ "$COMMAND" = "help" ]; then
+;;
+
+help)
 	usage; exit 0
-else
+;;
+
+*)
 	usage; exit 1
-fi
+;;
+
+esac
