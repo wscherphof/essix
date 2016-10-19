@@ -58,8 +58,7 @@ usage ()
 	echo "Examples:"
 	echo
     echo "  \$ $(basename $0) init github.com/essix/newapp"
-    echo "      Initialises a base structure for an Essix app in"
-    echo "      ${GOPATH}/github.com/essix/newapp."
+    echo "      Initialises a base structure for an Essix app in ${GOPATH}/github.com/essix/newapp."
 	echo
     echo "  \$ export DIGITALOCEAN_ACCESS_TOKEN=\"94dt7972b863497630s73012n10237xr1273trz92t1\""
     echo "  \$ $(basename $0) cert essix@appsite.com dev.appsite.com"
