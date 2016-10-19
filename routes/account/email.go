@@ -38,7 +38,7 @@ func EmailToken(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	}
 }
 
-// ChangeEmailForm accepts the token sent to the new email address  to set for the account.
+// ChangeEmailForm accepts the token sent to the new email address to set for the account.
 func ChangeEmailForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	account := secure.Authentication(w, r)
 	t := template.GET(w, r, "email", "ChangeEmailForm")
