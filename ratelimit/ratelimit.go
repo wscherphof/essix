@@ -21,7 +21,6 @@ import (
 	"github.com/wscherphof/secure"
 	"log"
 	"net/http"
-	"strings"
 	"time"
 )
 
@@ -35,9 +34,7 @@ const (
 	clearInterval = time.Hour
 )
 
-type path string
-
-type requests map[path]time.Time
+type requests map[string]time.Time
 
 type client struct {
 	*entity.Base
@@ -47,7 +44,6 @@ type client struct {
 
 func init() {
 	entity.Register(&client{}).Index("Clear")
-	secure.RegisterRequestTokenData(token{})
 	go func() {
 		for {
 			time.Sleep(clearInterval)
@@ -63,33 +59,6 @@ func init() {
 	}()
 }
 
-type token struct {
-	IP        string
-	Path      path
-	Timestamp time.Time
-}
-
-func ip(r *http.Request) string {
-	return strings.Split(r.RemoteAddr, ":")[0]
-}
-
-/*
-NewToken returns an encrypted rate limit token to include in a rate limited
-request.
-*/
-func NewToken(r *http.Request, differentPath ...string) (string, error) {
-	t := &token{
-		IP:        ip(r),
-		Timestamp: time.Now(),
-	}
-	if len(differentPath) == 1 {
-		t.Path = path(differentPath[0])
-	} else {
-		t.Path = path(r.URL.Path)
-	}
-	return secure.NewRequestToken(t)
-}
-
 func getClient(ip string) (c *client) {
 	c = &client{Base: &entity.Base{ID: ip}}
 	if err, empty := c.Read(c); err != nil {
@@ -100,6 +69,14 @@ func getClient(ip string) (c *client) {
 		}
 	}
 	return
+}
+
+/*
+NewToken returns an encrypted rate limit token to include in a rate limited
+request.
+*/
+func NewToken(r *http.Request, opt_path ...string) (string, error) {
+	return secure.NewRequestToken(r, opt_path...)
 }
 
 /*
@@ -117,7 +94,7 @@ func Handle(handle httprouter.Handle, opt_seconds ...int) httprouter.Handle {
 	}
 	window := time.Duration(seconds) * time.Second
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-		t, ip, p := new(token), ip(r), path(r.URL.Path)
+		t, ip, p := new(secure.RequestTokenData), secure.IP(r), r.URL.Path
 		if formToken := r.FormValue("_ratelimit"); formToken == "" {
 			template.Error(w, r, ErrInvalidRequest, true)
 			log.Printf("SUSPICIOUS: rate limit token missing %v %v", ip, p)
