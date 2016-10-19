@@ -14,7 +14,6 @@ package account
 import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/wscherphof/essix/model"
-	"github.com/wscherphof/essix/ratelimit"
 	"github.com/wscherphof/essix/secure"
 	"github.com/wscherphof/essix/template"
 	"net/http"
@@ -24,13 +23,7 @@ import (
 NewAccountForm renders the form to create a new account.
 */
 func NewAccountForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	t := template.GET(w, r, "account", "NewAccountForm")
-	if token, err := ratelimit.NewToken(r); err != nil {
-		template.Error(w, r, err, false)
-	} else {
-		t.Set("ratelimit", token)
-		t.Run()
-	}
+	template.GET(w, r, "account", "NewAccountForm").Run()
 }
 
 /*
