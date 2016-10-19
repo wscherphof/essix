@@ -47,8 +47,9 @@ func Run(w io.Writer, r *http.Request, dir, base, inner string, opt_data ...map[
 	}
 	translator := msg.Translator(r)
 	data["msg"] = translator
-	if data["formtoken"] == nil {
-		data["formtoken"] = secure.NewFormToken(r)
+	if data["_formtoken"] == nil {
+		formtoken := secure.NewFormToken(r)
+		data["_formtoken"] = formtoken.String()
 	}
 	var options = &ace.Options{
 		BaseDir: location + "/" + dir,

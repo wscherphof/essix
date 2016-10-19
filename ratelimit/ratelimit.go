@@ -87,7 +87,7 @@ func Handle(handle httprouter.Handle, opt_seconds ...int) httprouter.Handle {
 	window := time.Duration(seconds) * time.Second
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		this, that := secure.NewFormToken(r), new(secure.FormToken)
-		if tokenString := r.FormValue("formtoken"); tokenString == "" {
+		if tokenString := r.FormValue("_formtoken"); tokenString == "" {
 			template.Error(w, r, ErrInvalidRequest, true)
 			log.Printf("SUSPICIOUS: rate limit token missing %v %v", this.IP, this.Path)
 		} else if e := that.Parse(tokenString); e != nil {

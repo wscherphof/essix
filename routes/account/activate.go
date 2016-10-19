@@ -13,7 +13,7 @@ func ActivateForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) 
 	t := template.GET(w, r, "activate", "ActivateForm")
 	t.Set("id", r.FormValue("id"))
 	t.Set("token", r.FormValue("token"))
-	t.Set("formtoken", secure.NewFormToken(r, "/account/activate/token"))
+	t.Set("_formtoken", secure.NewFormToken(r, "/account/activate/token"))
 	t.Run()
 }
 

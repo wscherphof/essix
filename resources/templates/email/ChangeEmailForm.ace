@@ -7,5 +7,6 @@ body
     .p
       form.flex method=POST action=/account/email
         input type=hidden name=_method value=PUT
+        input type=hidden name=_formtoken value={{._formtoken}}
         input type=hidden name=token value={{.emailtoken}}
         input type=submit value={{.msg.Get "Confirm"}}

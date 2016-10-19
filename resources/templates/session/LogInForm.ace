@@ -5,7 +5,7 @@ body
   main.wrap
     form.flex method=POST action=/session
       input type=hidden name=_method value=PUT
-      input type=hidden name=formtoken value={{.formtoken}}
+      input type=hidden name=_formtoken value={{._formtoken}}
       .p
         label {{.msg.Get "Email"}}*
           input#uid.right type=email name=email autocomplete=username placeholder=email.address@provider.com required=

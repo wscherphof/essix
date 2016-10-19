@@ -3,4 +3,5 @@
 = content session
   form action=/session method=POST
     input type=hidden name=_method value=DELETE
+    input type=hidden name=_formtoken value={{._formtoken}}
     input type=submit value={{.msg.Get "Log out"}}

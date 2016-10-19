@@ -4,7 +4,7 @@ body
     h1 {{.msg.Get "Sign up"}}
   main.wrap
     form.flex method=POST action=/account onsubmit="return validatePassword(this['pwd1'], this['pwd2'], '{{.msg.Get "Passwords not equal"}}')"
-      input type=hidden name=formtoken value={{.formtoken}}
+      input type=hidden name=_formtoken value={{._formtoken}}
       .p
         label {{.msg.Get "Email"}}*
           input#email.right type=email name=email autocomplete=username placeholder=email.address@provider.com required=

@@ -5,6 +5,7 @@ body
   main.wrap
     form.flex method=POST action=/account/activate
       input type=hidden name=_method value=PUT
+      input type=hidden name=_formtoken value={{._formtoken}}
       input type=hidden name=id value={{.id}}
       .p
         label {{.msg.Get "Activate token"}}*{{" "}}
@@ -16,7 +17,7 @@ body
       .p {{.msg.Get "Activate token source"}}
         form method=POST action=/account/activate/token
           input type=hidden name=_method value=PUT
-          input type=hidden name=formtoken value={{.formtoken}}
+          input type=hidden name=_formtoken value={{._formtoken}}
           input type=hidden name=id value={{.id}}
           input type=submit value={{.msg.Get "Resend activate token"}}
   {{end}}
