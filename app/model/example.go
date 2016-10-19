@@ -12,6 +12,10 @@ type Profile struct {
 	Postcode  string
 }
 
+func init() {
+	entity.Register(&Profile{})
+}
+
 func InitProfile(account string) (profile *Profile) {
 	profile = &Profile{Base: &entity.Base{ID: account}}
 	return
@@ -28,9 +32,6 @@ func (p *Profile) FullName() (name string) {
 		}
 		name = name + p.LastName
 	}
-	if len(name) == 0 {
-		name = p.Account
-	}
 	return
 }
 
@@ -39,8 +40,6 @@ func (p *Profile) Name() (name string) {
 		name = p.FirstName
 	} else if len(p.LastName) > 0 {
 		name = p.LastName
-	} else {
-		name = p.Account
 	}
 	return
 }
