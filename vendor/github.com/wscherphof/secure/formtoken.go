@@ -2,11 +2,13 @@ package secure
 
 import (
 	"encoding/gob"
+	"errors"
 	"github.com/gorilla/securecookie"
+	"log"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
-	"log"
 )
 
 type FormToken struct {
@@ -39,6 +41,24 @@ func (f *FormToken) String() (s string) {
 
 func (f *FormToken) Parse(s string) error {
 	return securecookie.DecodeMulti(formTokenName, s, f, requestTokenCodecs...)
+}
+
+func ValidateFormToken(r *http.Request, opt_name ...string) (err error) {
+	name := "_formtoken"
+	if len(opt_name) == 1 {
+		name = opt_name[0]
+	}
+	this, that := NewFormToken(r), new(FormToken)
+	if err = that.Parse(r.FormValue(name)); err == nil {
+		referer, _ := url.Parse(r.Referer())
+		if that.IP != this.IP || (that.Path != this.Path && that.Path != referer.Path) {
+			err = errors.New("Form token invalid")
+		}
+	}
+	if err != nil {
+		log.Printf("WARNING: %s %s %s", err, this.IP, this.Path)
+	}
+	return
 }
 
 func ip(r *http.Request) string {

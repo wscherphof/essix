@@ -5,6 +5,7 @@ body
   main.wrap
     form.flex method=POST action=/profile
       input type=hidden name=_method value=PUT
+      input type=hidden name=_formtoken value={{._formtoken}}
       .p
         label {{.msg.Get "Country"}}*
           select#country.right name=country autocomplete=off required=
@@ -40,6 +41,7 @@ body
           li
             form action=/session method=POST
               input type=hidden name=_method value=DELETE
+              input type=hidden name=_formtoken value={{._formtoken}}
               input type=submit value={{.msg.Get "Log out"}}
           li
             a href=/ {{.msg.Get "Take me home"}}

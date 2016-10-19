@@ -6,6 +6,7 @@ body
     .p {{.msg.Get "Suspend sure"}}
     form.flex method=POST action=/account/suspend/token
       input type=hidden name=_method value=PUT
+      input type=hidden name=_formtoken value={{._formtoken}}
       .p
         label {{.msg.Get "Yes, that's what I want"}}
           input#sure type=checkbox name=sure value=affirmative

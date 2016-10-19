@@ -67,7 +67,7 @@ func PRG(w http.ResponseWriter, r *http.Request, dir, base string, inner ...stri
 	switch r.Method {
 	case "GET":
 		values := r.URL.Query()
-		data := make(map[string]interface{}, len(values)+1)
+		data := make(map[string]interface{}, len(values)+2)
 		for key := range values {
 			data[key] = r.FormValue(key)
 		}

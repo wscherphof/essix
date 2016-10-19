@@ -5,6 +5,7 @@ body
   main.wrap
     form.flex method=POST action=/account/email/token
       input type=hidden name=_method value=PUT
+      input type=hidden name=_formtoken value={{._formtoken}}
       .p
         label {{.msg.Get "Current"}}:
           span.right {{.email}}

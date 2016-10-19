@@ -11,7 +11,7 @@ import (
 
 func ProfileForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	account := secure.Authentication(w, r)
-	t := template.GET(w, r, "example", "Profile")
+	t := template.GET(w, r, "example", "ProfileForm")
 	if profile := readProfile(w, r, account.ID); profile != nil {
 		t.Set("email", account.Email)
 		t.Set("profile", profile)

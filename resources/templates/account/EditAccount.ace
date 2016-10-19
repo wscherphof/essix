@@ -13,6 +13,7 @@ body
     .p
       form action=/session method=POST
         input type=hidden name=_method value=DELETE
+        input type=hidden name=_formtoken value={{._formtoken}}
         input type=submit value={{.msg.Get "Log out"}}
     .p
       a href=/ {{.msg.Get "Take me home"}}
