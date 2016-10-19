@@ -81,12 +81,12 @@ usage ()
     echo "  \$ $(basename $0) r dev"
     echo "      Opens the dev swarm RethinkDB cluster's administrator web page."
 	echo
-    echo "  \$ $(basename $0) cert localhost"
-    echo "      Generates a self-signed TLS certificate for domain 'localhost'"
+    echo "  \$ $(basename $0) cert dev.appsite.com"
+    echo "      Generates a self-signed TLS certificate for the given domain."
 	echo
     echo "  \$ export DIGITALOCEAN_ACCESS_TOKEN=\"94dt7972b863497630s73012n10237xr1273trz92t1\""
     echo "  \$ $(basename $0) cert www.appsite.com essix@appsite.com"
-    echo "      Generates a trusted TLS certificate for domain 'www.appsite.com'"
+    echo "      Generates a trusted TLS certificate for the given domain."
 	echo
     echo "  \$ $(basename $0) build essix 0.2"
     echo "      Locally builds the essix/APP:0.2 image, and pushes it to the repository."
@@ -119,7 +119,7 @@ COMMAND="${1}"
 REPO="${2}"
 TAG="${3}"
 SWARM="${4}"
-SERVICE="$(pwd | awk -F "/" '{print $NF}')"
+SERVICE="$(basename ${PWD})"
 IMAGE="${REPO}/${SERVICE}:${TAG}"
 
 essix="${GOPATH}/src/github.com/wscherphof/essix"
