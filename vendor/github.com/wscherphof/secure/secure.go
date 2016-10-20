@@ -1,13 +1,14 @@
 /*
-Package secure manages client side session cookies for stateless web
-applications.
+Package secure manages authentication cookies for stateless web applications,
+and form tokens for CSRF protection.
 
 An encrypted connection (https) is required.
 
 Call 'Configure()' once to provide the information for the package to operate,
 including the type of the authentication data that will be used. The actual
-configuration parameters are stored in a 'Config' type struct, which can be
-synced with an external database, through the 'DB' interface.
+configuration parameters are stored in a 'Config' type struct. The 'DB'
+interface syncs the Config to an external database, and automatically rotates
+security keys.
 
 Once configured, call 'Authentication()' to retrieve the data from the cookie.
 It will redirect to a login page if no valid cookie is present (unless the
@@ -165,9 +166,7 @@ type DB interface {
 // validation timestamp > config.SyncInterval
 type ValidateCookie func(src interface{}) (dst interface{}, valid bool)
 
-var validate = func(src interface{}) (dst interface{}, valid bool) {
-	return src, true
-}
+var validate ValidateCookie
 
 // Configure configures the package and must be called once before calling any
 // other function in this package.
@@ -178,16 +177,12 @@ var validate = func(src interface{}) (dst interface{}, valid bool) {
 // (encoding/gob).
 //
 // 'db' is the implementation of the DB interface to sync the configuration
-// parameters, or nil, in which case keys will not be rotated.
+// and rotate the keys.
 //
-// 'validate' is the function that regularly verifies the cookie data, or nil,
-// which would pose a significant security risk.
+// 'validate' is the function that regularly verifies the cookie data.
 //
 // 'optionalConfig' is the Config instance to start with. If omitted, the config
 // from the db or the default config is used.
-//
-// Early experiments can skip the call to Configure(), and use a string or an
-// int for the authentication data.
 func Configure(record interface{}, db DB, validateFunc ValidateCookie, optionalConfig ...*Config) {
 	gob.Register(record)
 	gob.Register(time.Now())
@@ -219,17 +214,13 @@ func Configure(record interface{}, db DB, validateFunc ValidateCookie, optionalC
 		}
 	}
 	setKeys()
-	if db != nil {
-		go func() {
-			for {
-				sync(db)
-				time.Sleep(config.SyncInterval)
-			}
-		}()
-	}
-	if validateFunc != nil {
-		validate = validateFunc
-	}
+	go func() {
+		for {
+			sync(db)
+			time.Sleep(config.SyncInterval)
+		}
+	}()
+	validate = validateFunc
 }
 
 func sync(db DB) {
