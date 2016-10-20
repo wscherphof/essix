@@ -3,10 +3,10 @@ body
   header
     h1 {{.msg.Get "Change email"}}
   main.wrap
-    .p {{.msg.Get "Want replace"}} "{{.email}}" {{.msg.Get "Replace with"}} "{{.newemail}}"
-    .p
-      form.flex method=POST action=/account/email
-        input type=hidden name=_method value=PUT
-        input type=hidden name=_formtoken value={{._formtoken}}
-        input type=hidden name=token value={{.emailtoken}}
-        input type=submit value={{.msg.Get "Confirm"}}
+    form.flex method=POST action=/account/email
+      input type=hidden name=_method value=PUT
+      input type=hidden name=_formtoken value={{._formtoken}}
+      input type=hidden name=token value={{.emailtoken}}
+      .p {{.msg.Get "Want replace"}} "{{.email}}" {{.msg.Get "Replace with"}} "{{.newemail}}"
+      .p
+        input.right type=submit value={{.msg.Get "Confirm"}}

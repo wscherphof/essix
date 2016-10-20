@@ -7,17 +7,12 @@ import (
 	"errors"
 	"github.com/wscherphof/entity"
 	"github.com/wscherphof/essix/util"
-	"strings"
 )
 
 var (
 	ErrInvalidCredentials = errors.New("ErrInvalidCredentials")
 	ErrEmailTaken         = errors.New("ErrEmailTaken")
 )
-
-type email struct {
-	*entity.Base
-}
 
 /*
 Account represents the user's tollgate to the application.
@@ -37,14 +32,7 @@ type Account struct {
 }
 
 func init() {
-	entity.Register(&email{})
 	entity.Register(&Account{}).Index("Email")
-}
-
-func initEmail(address string) *email {
-	return &email{Base: &entity.Base{
-		ID: strings.ToLower(address),
-	}}
 }
 
 func initAccount(id ...string) (account *Account) {
