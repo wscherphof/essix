@@ -28,7 +28,7 @@ func EmailToken(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	} else {
 		email := template.Email(r, "email", "EmailToken-email", "lang")
 		email.Set("link", "https://"+r.Host+"/account/email?token="+account.EmailToken)
-		if err, message := email.Run(account.NewEmail, "Change email address"); err != nil {
+		if err, message := email.Run(account.NewEmail, "Change email"); err != nil {
 			template.Error(w, r, err, false)
 		} else {
 			cookie.Update(w, r, account)
