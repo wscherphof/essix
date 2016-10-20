@@ -1,25 +1,24 @@
 /*
-Package secure manages client side session tokens for stateless web
+Package secure manages client side session cookies for stateless web
 applications.
 
-Tokens are stored as an http cookie. An encrypted connection (https) is
-required.
+An encrypted connection (https) is required.
 
 Call 'Configure()' once to provide the information for the package to operate,
 including the type of the authentication data that will be used. The actual
 configuration parameters are stored in a 'Config' type struct, which can be
 synced with an external database, through the 'DB' interface.
 
-Once configured, call 'Authentication()' to retrieve the data from the token.
-It will redirect to a login page if no valid token is present (unless the
-'optional' argument was 'true'). 'LogIn()' creates a new token, stores the
+Once configured, call 'Authentication()' to retrieve the data from the cookie.
+It will redirect to a login page if no valid cookie is present (unless the
+'optional' argument was 'true'). 'LogIn()' creates a new cookie, stores the
 provided data in it, and redirects back to the page that required the
 authentication.
-'Update()' updates the authentication data in the current token. 'LogOut()'
-deletes the token cookie.
+'Update()' updates the authentication data in the current cookie. 'LogOut()'
+deletes the cookie.
 
 You'll probably want to wrap 'Authentication()' in a function that converts the
-'interface{}' result to the type that you use for the token data.
+'interface{}' result to the type that you use for the cookie data.
 */
 package secure
 
@@ -35,7 +34,7 @@ import (
 var (
 
 	// ErrTokenNotSaved is returned by LogIn() if it couldn't set the cookie.
-	ErrTokenNotSaved = errors.New("secure: failed to save the session token")
+	ErrTokenNotSaved = errors.New("secure: failed to save the session cookie")
 
 	// ErrNoTLS is returned by LogIn() if the connection isn't encrypted
 	// (https)
@@ -68,66 +67,68 @@ type Config struct {
 	// Default value is "/".
 	LogOutPath string
 
-	// TimeOut is when a token expires (time after LogIn())
+	// CookieTimeOut is when a cookie expires (time after LogIn())
 	// Default value is 6 * 30 days.
-	TimeOut time.Duration
+	CookieTimeOut time.Duration
 
 	// SyncInterval is how often the configuration is synced with an external
 	// database. SyncInterval also determines whether it's time to have the
-	// token data checked by the Validate function.
+	// cookie data checked by the ValidateCookie function.
 	// Default value is 5 minutes.
 	SyncInterval time.Duration
 
-	// KeyPairs are 4 32-long byte arrays (two pairs of an authentication key
+	// CookieKeyPairs are 4 32-long byte arrays (two pairs of an authentication key
 	// and an encryption key); the 2nd pair is used for key rotation.
 	// Default value is newly generated keys.
-	// Keys get rotated on the first sync cycle after a TimeOut interval -
-	// new tokens use the new keys; existing tokens continue to use the old
+	// Keys get rotated on the first sync cycle after a CookieTimeOut interval -
+	// new cookies use the new keys; existing cookies continue to use the old
 	// keys.
-	KeyPairs [][]byte
+	CookieKeyPairs [][]byte
 
-	// TimeStamp is when the latest key pair was generated.
-	TimeStamp time.Time
+	// CookieTimeStamp is when the latest cookie key pair was generated.
+	CookieTimeStamp time.Time
 
-	RequestTokenKeyPairs [][]byte
+	// FormTokenKeyPairs are the rotating key pairs for the form tokens.
+	FormTokenKeyPairs [][]byte
 
-	RequestTokenTimeStamp time.Time
+	// FormTokenTimeStamp is when the latest form token key pair was generated.
+	FormTokenTimeStamp time.Time
 }
 
 var config = &Config{
-	LogInPath:    "/session",
-	LogOutPath:   "/",
-	TimeOut:      6 * 30 * 24 * time.Hour,
-	SyncInterval: 5 * time.Minute,
-	KeyPairs: [][]byte{
+	LogInPath:     "/session",
+	LogOutPath:    "/",
+	CookieTimeOut: 6 * 30 * 24 * time.Hour,
+	SyncInterval:  5 * time.Minute,
+	CookieKeyPairs: [][]byte{
 		securecookie.GenerateRandomKey(authKeyLen),
 		securecookie.GenerateRandomKey(encrKeyLen),
 		securecookie.GenerateRandomKey(authKeyLen),
 		securecookie.GenerateRandomKey(encrKeyLen),
 	},
-	TimeStamp: time.Now(),
-	RequestTokenKeyPairs: [][]byte{
+	CookieTimeStamp: time.Now(),
+	FormTokenKeyPairs: [][]byte{
 		securecookie.GenerateRandomKey(authKeyLen),
 		securecookie.GenerateRandomKey(encrKeyLen),
 		securecookie.GenerateRandomKey(authKeyLen),
 		securecookie.GenerateRandomKey(encrKeyLen),
 	},
-	RequestTokenTimeStamp: time.Now(),
+	FormTokenTimeStamp: time.Now(),
 }
 
 var (
-	store              *sessions.CookieStore
-	requestTokenCodecs []securecookie.Codec
+	store           *sessions.CookieStore
+	formTokenCodecs []securecookie.Codec
 )
 
 func setKeys() {
-	store = sessions.NewCookieStore(config.KeyPairs...)
+	store = sessions.NewCookieStore(config.CookieKeyPairs...)
 	store.Options = &sessions.Options{
-		MaxAge: int(config.TimeOut / time.Second),
+		MaxAge: int(config.CookieTimeOut / time.Second),
 		Secure: true,
 		Path:   "/",
 	}
-	requestTokenCodecs = securecookie.CodecsFromPairs(config.RequestTokenKeyPairs...)
+	formTokenCodecs = securecookie.CodecsFromPairs(config.FormTokenKeyPairs...)
 }
 
 // DB is the interface to implement for syncing the configuration parameters.
@@ -141,28 +142,28 @@ type DB interface {
 	Fetch(dst *Config) error
 
 	// Upsert inserts a Config instance into the database if none is present
-	// on Configure(). Upsert updates the KeyPairs and TimeStamp values on key
+	// on Configure(). Upsert updates the CookieKeyPairs and CookieTimeStamp values on key
 	// rotation time.
 	Upsert(src *Config) error
 }
 
-// Validate is the type of the function passed to Configure(), that gets called
-// to have the application test whether the token data is still valid (e.g. to
-// prevent continued access with a token that was created with an old password)
+// ValidateCookie is the type of the function passed to Configure(), that gets called
+// to have the application test whether the cookie data is still valid (e.g. to
+// prevent continued access with a cookie that was created with an old password)
 //
-// 'src' is the authentication data from the token.
+// 'src' is the authentication data from the cookie.
 //
-// 'dst' is the fresh authentication data to replace the token data with.
+// 'dst' is the fresh authentication data to replace the cookie data with.
 //
-// 'valid' is whether the old data was good enough to keep the current token.
+// 'valid' is whether the old data was good enough to keep the current cookie.
 //
-// Default implementation always returns the token data as is, and true, which
+// Default implementation always returns the cookie data as is, and true, which
 // is significantly insecure.
 //
 // Each successful validation stores a timestamp in
-// the cookie. Validate is called on Authentication, if the time since the
+// the cookie. ValidateCookie is called on Authentication, if the time since the
 // validation timestamp > config.SyncInterval
-type Validate func(src interface{}) (dst interface{}, valid bool)
+type ValidateCookie func(src interface{}) (dst interface{}, valid bool)
 
 var validate = func(src interface{}) (dst interface{}, valid bool) {
 	return src, true
@@ -172,14 +173,14 @@ var validate = func(src interface{}) (dst interface{}, valid bool) {
 // other function in this package.
 //
 // 'record' is an arbitrary (can be empty) instance of the type of the
-// authentication data that will be passed to Login() to store in the token.
+// authentication data that will be passed to Login() to store in the cookie.
 // It's needed to get its type registered with the serialisation package used
 // (encoding/gob).
 //
 // 'db' is the implementation of the DB interface to sync the configuration
 // parameters, or nil, in which case keys will not be rotated.
 //
-// 'validate' is the function that regularly verifies the token data, or nil,
+// 'validate' is the function that regularly verifies the cookie data, or nil,
 // which would pose a significant security risk.
 //
 // 'optionalConfig' is the Config instance to start with. If omitted, the config
@@ -187,7 +188,7 @@ var validate = func(src interface{}) (dst interface{}, valid bool) {
 //
 // Early experiments can skip the call to Configure(), and use a string or an
 // int for the authentication data.
-func Configure(record interface{}, db DB, validateFunc Validate, optionalConfig ...*Config) {
+func Configure(record interface{}, db DB, validateFunc ValidateCookie, optionalConfig ...*Config) {
 	gob.Register(record)
 	gob.Register(time.Now())
 	if len(optionalConfig) > 0 {
@@ -198,23 +199,23 @@ func Configure(record interface{}, db DB, validateFunc Validate, optionalConfig 
 		if len(opt.LogOutPath) > 0 {
 			config.LogOutPath = opt.LogOutPath
 		}
-		if opt.TimeOut > 0 {
-			config.TimeOut = opt.TimeOut
+		if opt.CookieTimeOut > 0 {
+			config.CookieTimeOut = opt.CookieTimeOut
 		}
 		if opt.SyncInterval > 0 {
 			config.SyncInterval = opt.SyncInterval
 		}
-		if len(opt.KeyPairs) == 4 {
-			config.KeyPairs = opt.KeyPairs
+		if len(opt.CookieKeyPairs) == 4 {
+			config.CookieKeyPairs = opt.CookieKeyPairs
 		}
-		if !opt.TimeStamp.IsZero() {
-			config.TimeStamp = opt.TimeStamp
+		if !opt.CookieTimeStamp.IsZero() {
+			config.CookieTimeStamp = opt.CookieTimeStamp
 		}
-		if len(opt.RequestTokenKeyPairs) == 4 {
-			config.RequestTokenKeyPairs = opt.RequestTokenKeyPairs
+		if len(opt.FormTokenKeyPairs) == 4 {
+			config.FormTokenKeyPairs = opt.FormTokenKeyPairs
 		}
-		if !opt.RequestTokenTimeStamp.IsZero() {
-			config.RequestTokenTimeStamp = opt.RequestTokenTimeStamp
+		if !opt.FormTokenTimeStamp.IsZero() {
+			config.FormTokenTimeStamp = opt.FormTokenTimeStamp
 		}
 	}
 	setKeys()
@@ -240,32 +241,32 @@ func sync(db DB) {
 		// Replace current config with the one from DB
 		config = dbConfig
 		// Rotate keys if timed out
-		if time.Now().Sub(config.TimeStamp) > config.TimeOut {
+		if time.Now().Sub(config.CookieTimeStamp) > config.CookieTimeOut {
 			rotateConfig := new(Config)
 			*rotateConfig = *config
-			rotateConfig.KeyPairs = [][]byte{
+			rotateConfig.CookieKeyPairs = [][]byte{
 				securecookie.GenerateRandomKey(authKeyLen),
 				securecookie.GenerateRandomKey(encrKeyLen),
-				config.KeyPairs[0],
-				config.KeyPairs[1],
+				config.CookieKeyPairs[0],
+				config.CookieKeyPairs[1],
 			}
-			rotateConfig.TimeStamp = time.Now()
+			rotateConfig.CookieTimeStamp = time.Now()
 			if err := db.Upsert(rotateConfig); err != nil {
 				config = rotateConfig
 				log.Println("INFO: Security keys rotated")
 			}
 		}
 		// Rotate RequestToken keys if timed out
-		if time.Now().Sub(config.RequestTokenTimeStamp) > config.SyncInterval {
+		if time.Now().Sub(config.FormTokenTimeStamp) > config.SyncInterval {
 			rotateConfig := new(Config)
 			*rotateConfig = *config
-			rotateConfig.RequestTokenKeyPairs = [][]byte{
+			rotateConfig.FormTokenKeyPairs = [][]byte{
 				securecookie.GenerateRandomKey(authKeyLen),
 				securecookie.GenerateRandomKey(encrKeyLen),
-				config.RequestTokenKeyPairs[0],
-				config.RequestTokenKeyPairs[1],
+				config.FormTokenKeyPairs[0],
+				config.FormTokenKeyPairs[1],
 			}
-			rotateConfig.RequestTokenTimeStamp = time.Now()
+			rotateConfig.FormTokenTimeStamp = time.Now()
 			if err := db.Upsert(rotateConfig); err != nil {
 				config = rotateConfig
 				log.Println("INFO: RequestToken keys rotated")

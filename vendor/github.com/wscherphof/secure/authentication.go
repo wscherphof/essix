@@ -6,13 +6,13 @@ import (
 	"time"
 )
 
-func getToken(r *http.Request) (session *sessions.Session) {
+func getCookie(r *http.Request) (session *sessions.Session) {
 	session, _ = store.Get(r, tokenName)
 	return
 }
 
 func create(w http.ResponseWriter, r *http.Request, record interface{}, redirect bool) (err error) {
-	session := getToken(r)
+	session := getCookie(r)
 	if session.Values[createdField] == nil {
 		session.Values[createdField] = time.Now()
 	}
@@ -32,16 +32,16 @@ func create(w http.ResponseWriter, r *http.Request, record interface{}, redirect
 	return
 }
 
-// LogIn creates the token and sets the cookie. It redirects back to the path
+// LogIn creates the cookie and sets the cookie. It redirects back to the path
 // where Authenticate() was called.
 //
-// 'record' is the authentication data to store in the token, as returned by
+// 'record' is the authentication data to store in the cookie, as returned by
 // Authentication()
 func LogIn(w http.ResponseWriter, r *http.Request, record interface{}) (err error) {
 	return create(w, r, record, true)
 }
 
-// Update updates the authentication data in the token.
+// Update updates the authentication data in the cookie.
 func Update(w http.ResponseWriter, r *http.Request, record interface{}) (err error) {
 	return create(w, r, record, false)
 }
@@ -49,7 +49,7 @@ func Update(w http.ResponseWriter, r *http.Request, record interface{}) (err err
 func sessionCurrent(session *sessions.Session) (current bool) {
 	if created := session.Values[createdField]; created == nil {
 	} else {
-		current = time.Since(created.(time.Time)) < config.TimeOut
+		current = time.Since(created.(time.Time)) < config.CookieTimeOut
 	}
 	return
 }
@@ -67,22 +67,22 @@ func accountCurrent(session *sessions.Session, w http.ResponseWriter, r *http.Re
 	return
 }
 
-// Authentication returns the data that was stored in the token on LogIn().
+// Authentication returns the data that was stored in the cookie on LogIn().
 //
-// Returns nil if the token is missing, the session has timed out, or the token
-// data is invalidated though the Validate function. Unless 'optional' is set to
-// 'true', the response then gets status 403 Forbidden, and the browser will
+// Returns nil if the cookie is missing, the session has timed out, or the cookie
+// data is invalidated though the ValidateCookie function. Unless 'optional' is
+// true, the response then gets status 403 Forbidden, and the browser will
 // redirect to config.LogInPath.
 func Authentication(w http.ResponseWriter, r *http.Request, optional ...bool) (record interface{}) {
 	enforce := true
 	if len(optional) > 0 {
 		enforce = !optional[0]
 	}
-	session := getToken(r)
+	session := getCookie(r)
 	if !session.IsNew && sessionCurrent(session) && accountCurrent(session, w, r) {
 		record = session.Values[recordField]
 	} else if enforce {
-		session = clearToken(r)
+		session = clearCookie(r)
 		session.Values[returnField] = r.URL.Path
 		_ = session.Save(r, w)
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
@@ -103,8 +103,8 @@ func Authentication(w http.ResponseWriter, r *http.Request, optional ...bool) (r
 	return
 }
 
-func clearToken(r *http.Request) (session *sessions.Session) {
-	session = getToken(r)
+func clearCookie(r *http.Request) (session *sessions.Session) {
+	session = getCookie(r)
 	delete(session.Values, recordField)
 	delete(session.Values, createdField)
 	delete(session.Values, validatedField)
@@ -114,7 +114,7 @@ func clearToken(r *http.Request) (session *sessions.Session) {
 // LogOut deletes the cookie. If 'redirect' is 'true', the request is redirected
 // to config.LogOutPath.
 func LogOut(w http.ResponseWriter, r *http.Request, redirect bool) {
-	session := clearToken(r)
+	session := clearCookie(r)
 	session.Options = &sessions.Options{
 		MaxAge: -1,
 	}
