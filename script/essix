@@ -220,6 +220,10 @@ r)
 ;;
 
 build)
+	if [ ! -e "vendor/github.com/wscherphof/essix" ]; then
+		echo "error: current directory doesn't look like an essix app package"
+		exit 1
+	fi
 	force mkdir -p ./.merge/resources
 	force cp -rf ${essix}/resources/ ./.merge/resources/
 	force cp -rf ./resources/ ./.merge/resources/
