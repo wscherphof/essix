@@ -1,8 +1,24 @@
 package model
 
 import (
+	"github.com/wscherphof/entity"
 	"github.com/wscherphof/essix/util"
+	"strings"
 )
+
+func init() {
+	entity.Register(&email{})
+}
+
+type email struct {
+	*entity.Base
+}
+
+func initEmail(address string) *email {
+	return &email{Base: &entity.Base{
+		ID: strings.ToLower(address),
+	}}
+}
 
 /*
 CreateEmailToken generates a token that is needed to change the Account's email
@@ -50,10 +66,13 @@ func (a *Account) ChangeEmail(token string) (err error, conflict bool) {
 			err = ErrEmailTaken
 		}
 	} else {
+		email.ID = a.Email
 		a.Email = a.NewEmail
 		a.EmailToken = ""
-		if err = a.Update(a); err == nil {
-			err = email.Delete(email)
+		if err = email.Delete(email); err == nil {
+			if err = a.Update(a); err != nil {
+				email.Create(email)
+			}
 		}
 	}
 	return
