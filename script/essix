@@ -148,6 +148,14 @@ force ()
 	fi
 }
 
+app ()
+{
+	if [ ! -e "vendor/github.com/wscherphof/essix" ]; then
+		echo "Current directory doesn't look like an essix app package"
+		exit 1
+	fi
+}
+
 case "${COMMAND}" in
 
 init)
@@ -175,6 +183,7 @@ init)
 ;;
 
 cert)
+	app
 	DOMAIN="${2}"
 	EMAIL="${3}"
 	resources="${PWD}/resources"
@@ -200,11 +209,10 @@ cert)
 		if [ ! "${GOROOT}" ]; then
 			GOROOT="$(dirname $(which go))/.."
 		fi
-		mkdir -p "${resources}/certificates"
-		cd "${resources}/certificates"
 		force go run ${GOROOT}/src/crypto/tls/generate_cert.go --host ${DOMAIN} &>/dev/null
-		mv cert.pem "$DOMAIN.crt"
-		mv key.pem "$DOMAIN.key"
+		mkdir -p "${resources}/certificates"
+		mv cert.pem "${resources}/certificates/$DOMAIN.crt"
+		mv key.pem  "${resources}/certificates/$DOMAIN.key"
 		echo "* saved self-signed certificate for DOMAIN ${DOMAIN}"
 	fi
 ;;
@@ -220,10 +228,7 @@ r)
 ;;
 
 build)
-	if [ ! -e "vendor/github.com/wscherphof/essix" ]; then
-		echo "error: current directory doesn't look like an essix app package"
-		exit 1
-	fi
+	app
 	force mkdir -p ./.merge/resources
 	force cp -rf ${essix}/resources/ ./.merge/resources/
 	force cp -rf ./resources/ ./.merge/resources/
@@ -238,6 +243,7 @@ build)
 ;;
 
 run)
+	app
 	if [ "$TAG" -a "$SWARM" ]; then
 		run
 	else
