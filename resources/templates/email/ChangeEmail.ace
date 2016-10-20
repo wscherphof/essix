@@ -3,6 +3,4 @@ body
   main
     .p {{.msg.Get "Change email successful"}}
     .p
-      a href=/account {{.msg.Get "Edit account"}}
-    .p
       a href=/ {{.msg.Get "Take me home"}}
