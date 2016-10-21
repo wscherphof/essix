@@ -10,7 +10,7 @@ import (
 )
 
 func ProfileForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	account := secure.Authentication(w, r)
+	account := secure.Authentication(r)
 	t := template.GET(w, r, "example", "ProfileForm")
 	if profile := readProfile(w, r, account.ID); profile != nil {
 		t.Set("email", account.Email)
@@ -21,7 +21,7 @@ func ProfileForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 }
 
 func Profile(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	account := secure.Authentication(w, r)
+	account := secure.Authentication(r)
 	if profile := readProfile(w, r, account.ID); profile != nil {
 		profile.Country = r.FormValue("country")
 		profile.Postcode = strings.ToUpper(r.FormValue("postcode"))

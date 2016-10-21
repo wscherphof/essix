@@ -1,6 +1,7 @@
 package secure
 
 import (
+	"github.com/gorilla/context"
 	"github.com/gorilla/sessions"
 	"net/http"
 	"time"
@@ -67,20 +68,19 @@ func accountCurrent(session *sessions.Session, w http.ResponseWriter, r *http.Re
 	return
 }
 
-// Authentication returns the data that was stored in the cookie on LogIn().
-//
-// Returns nil if the cookie is missing, the session has timed out, or the cookie
-// data is invalidated though the ValidateCookie function. Unless 'optional' is
-// true, the response then gets status 403 Forbidden, and the browser will
-// redirect to config.LogInPath.
-func Authentication(w http.ResponseWriter, r *http.Request, optional ...bool) (record interface{}) {
+type contextKey int
+
+const authKey contextKey = 0
+
+func authenticate(w http.ResponseWriter, r *http.Request, optional ...bool) (authenticated bool) {
 	enforce := true
 	if len(optional) > 0 {
 		enforce = !optional[0]
 	}
 	session := getCookie(r)
 	if !session.IsNew && sessionCurrent(session) && accountCurrent(session, w, r) {
-		record = session.Values[recordField]
+		context.Set(r, authKey, session.Values[recordField])
+		authenticated = true
 	} else if enforce {
 		session = clearCookie(r)
 		session.Values[returnField] = r.URL.Path
@@ -101,6 +101,15 @@ func Authentication(w http.ResponseWriter, r *http.Request, optional ...bool) (r
 		`))
 	}
 	return
+}
+
+/*
+Authentication returns the record that was stored in the cookie on LogIn().
+
+Call from a Handle wrapped in secure.Handle or secure.IfHandle.
+*/
+func Authentication(r *http.Request) interface{} {
+	return context.Get(r, authKey)
 }
 
 func clearCookie(r *http.Request) (session *sessions.Session) {

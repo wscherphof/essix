@@ -52,7 +52,7 @@ EditAccount renders a page with links and buttons to edit a logged-in client's
 account details.
 */
 func EditAccount(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	account := secure.Authentication(w, r)
+	account := secure.Authentication(r)
 	t := template.GET(w, r, "account", "EditAccount")
 	t.Set("email", account.Email)
 	t.Run()

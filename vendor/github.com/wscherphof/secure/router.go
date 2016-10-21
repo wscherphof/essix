@@ -69,10 +69,14 @@ func formTokenHandle(handle httprouter.Handle) httprouter.Handle {
 secure.Handle ensures the client is logged in when accessing a certian route,
 redirecting to the log in page if not. The given Handle function should call
 Authentication() to get the client's account details.
+
+If the cookie is missing, the session has timed out, or the cookie data is
+invalidated though the ValidateCookie function, the response then gets status
+403 Forbidden, and the browser will redirect to config.LogInPath.
 */
 func Handle(handle httprouter.Handle) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-		if Authentication(w, r, false) != nil {
+		if authenticate(w, r, false) {
 			handle(w, r, ps)
 		}
 	}
@@ -82,12 +86,12 @@ func Handle(handle httprouter.Handle) httprouter.Handle {
 secure.IfHandle calls the one Hanlde function for logged-in clients, and the
 other for logged-out clients.
 */
-func IfHandle(authenticated httprouter.Handle, unauthenticated httprouter.Handle) httprouter.Handle {
+func IfHandle(authenticatedHandle httprouter.Handle, unauthenticatedHandle httprouter.Handle) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-		if Authentication(w, r, true) != nil {
-			authenticated(w, r, ps)
+		if authenticate(w, r, true) {
+			authenticatedHandle(w, r, ps)
 		} else {
-			unauthenticated(w, r, ps)
+			unauthenticatedHandle(w, r, ps)
 		}
 	}
 }

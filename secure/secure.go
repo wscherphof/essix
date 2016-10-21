@@ -41,11 +41,11 @@ func validate(src interface{}) (dst interface{}, valid bool) {
 /*
 Authentication returns the client's account data from the encrypted cookie,
 which is regularly validated with the account's record in the database.
+
+Call from a Handle wrapped in secure.Handle or secure.IfHandle.
 */
-func Authentication(w http.ResponseWriter, r *http.Request, optional ...bool) (ret *model.Account) {
-	if auth := secure.Authentication(w, r, optional...); auth != nil {
-		acc := auth.(model.Account)
-		ret = &acc
-	}
-	return
+func Authentication(r *http.Request) *model.Account {
+	auth := secure.Authentication(r)
+	acc := auth.(model.Account)
+	return &acc
 }

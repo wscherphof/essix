@@ -9,12 +9,12 @@ import (
 )
 
 func SuspendTokenForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	_ = secure.Authentication(w, r)
+	_ = secure.Authentication(r)
 	template.GET(w, r, "suspend", "SuspendTokenForm").Run()
 }
 
 func SuspendToken(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	account := secure.Authentication(w, r)
+	account := secure.Authentication(r)
 	if t := template.PRG(w, r, "suspend", "SuspendToken"); t == nil {
 		return
 	} else if err, conflict := account.CreateSuspendToken(
@@ -35,7 +35,7 @@ func SuspendToken(w http.ResponseWriter, r *http.Request, ps httprouter.Params) 
 }
 
 func SuspendForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	account := secure.Authentication(w, r)
+	account := secure.Authentication(r)
 	t := template.GET(w, r, "suspend", "SuspendForm")
 	token, cancel := r.FormValue("token"), r.FormValue("cancel")
 	if cancel == "true" {
@@ -53,7 +53,7 @@ func Suspend(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	if t := template.PRG(w, r, "suspend", "Suspend"); t == nil {
 		return
 	} else {
-		account := secure.Authentication(w, r)
+		account := secure.Authentication(r)
 		if err, conflict := account.Suspend(
 			r.FormValue("token"),
 			r.FormValue("sure"),
