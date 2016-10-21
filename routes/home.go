@@ -1,9 +1,8 @@
 package routes
 
 import (
-	"github.com/wscherphof/essix/router"
-	"github.com/wscherphof/essix/secure"
 	"github.com/wscherphof/essix/template"
+	"github.com/wscherphof/secure"
 )
 
 func init() {

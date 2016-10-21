@@ -47,7 +47,7 @@ func Run(w io.Writer, r *http.Request, dir, base, inner string, opt_data ...map[
 	}
 	translator := msg.Translator(r)
 	data["msg"] = translator
-	if data["_formtoken"] == nil {
+	if r.Method == "GET" && data["_formtoken"] == nil {
 		formtoken := secure.NewFormToken(r)
 		data["_formtoken"] = formtoken.String()
 	}

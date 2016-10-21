@@ -2,9 +2,8 @@ package routes
 
 import (
 	"github.com/wscherphof/essix/ratelimit"
-	"github.com/wscherphof/essix/router"
 	"github.com/wscherphof/essix/routes/account"
-	"github.com/wscherphof/essix/secure"
+	"github.com/wscherphof/secure"
 )
 
 func init() {

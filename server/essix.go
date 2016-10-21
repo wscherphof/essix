@@ -8,8 +8,8 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/wscherphof/env"
 	"github.com/wscherphof/essix/messages"
-	"github.com/wscherphof/essix/router"
 	"github.com/wscherphof/essix/routes"
+	"github.com/wscherphof/secure"
 	"log"
 	"net/http"
 	"os"
@@ -18,6 +18,7 @@ import (
 var (
 	// Die without a domain
 	domain = env.Get("DOMAIN")
+	router = secure.Router
 )
 
 func init() {
@@ -30,7 +31,7 @@ Run runs the application server. HTTP traffic on port 80 is redirected to HTTPS
 on port 443.
 
 Set the DOMAIN environment variable to the domain name to serve
-HTTPS for; the certificates <DOMAIN>.crt & <DOMAIN>.key are expected in
+HTTPS for; the certificate files <DOMAIN>.crt & <DOMAIN>.key are expected in
 /resources/certificates. `essix cert` generates certificates.
 
 Set the DB_NAME & DB_ADDRESS environment variables for the RethinkDB connection.
@@ -46,7 +47,7 @@ func Run() {
 	}))
 
 	// Serve files in /static
-	router.Router.ServeFiles("/static/*filepath", http.Dir("/resources/static"))
+	router.ServeFiles("/static/*filepath", http.Dir("/resources/static"))
 
 	log.Println("INFO: starting secure application server for " + domain)
 	// Use the domain's proper certificates
@@ -60,5 +61,5 @@ func Run() {
 					// Log request info in Apache Combined Log Format
 					handlers.CombinedLoggingHandler(os.Stdout,
 						// Use our routes
-						router.Router))))))
+						router))))))
 }
