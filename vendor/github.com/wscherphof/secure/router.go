@@ -1,6 +1,7 @@
 package secure
 
 import (
+	"github.com/gorilla/context"
 	"github.com/julienschmidt/httprouter"
 	"log"
 	"net/http"
@@ -42,6 +43,28 @@ func (r *router) DELETE(path string, handle httprouter.Handle) {
 	r.Handle("DELETE", path, formTokenHandle(handle))
 }
 
+// GET registers a handler for a GET request to the given path.
+func (r *router) GET(path string, handle httprouter.Handle) {
+	r.Handle("GET", path, clearHandle(handle))
+}
+
+// HEAD registers a handler for a HEAD request to the given path.
+func (r *router) HEAD(path string, handle httprouter.Handle) {
+	r.Handle("HEAD", path, clearHandle(handle))
+}
+
+// OPTIONS registers a handler for a OPTIONS request to the given path.
+func (r *router) OPTIONS(path string, handle httprouter.Handle) {
+	r.Handle("OPTIONS", path, clearHandle(handle))
+}
+
+func clearHandle(handle httprouter.Handle) httprouter.Handle {
+	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+		handle(w, r, ps)
+		context.Clear(r)
+	}
+}
+
 /*
 FormValueName is the name of the FormValue that is checked in PUT, POST, PATCH,
 and DELETE handles.
@@ -49,7 +72,7 @@ and DELETE handles.
 const FormValueName = "_formtoken"
 
 func formTokenHandle(handle httprouter.Handle) httprouter.Handle {
-	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	return clearHandle(func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		this, that := NewFormToken(r), new(FormToken)
 		if err := that.Parse(r.FormValue(FormValueName)); err != nil {
 			log.Printf("WARNING: %s %s %s", err, this.IP, this.Path)
@@ -62,7 +85,7 @@ func formTokenHandle(handle httprouter.Handle) httprouter.Handle {
 				handle(w, r, ps)
 			}
 		}
-	}
+	})
 }
 
 /*

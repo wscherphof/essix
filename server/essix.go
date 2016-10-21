@@ -4,7 +4,6 @@ Package server runs the Essix server.
 package server
 
 import (
-	"github.com/gorilla/context"
 	"github.com/gorilla/handlers"
 	"github.com/wscherphof/env"
 	"github.com/wscherphof/essix/messages"
@@ -52,14 +51,12 @@ func Run() {
 	log.Println("INFO: starting secure application server for " + domain)
 	// Use the domain's proper certificates
 	log.Fatal(http.ListenAndServeTLS(":443", "/resources/certificates/"+domain+".crt", "/resources/certificates/"+domain+".key",
-		// Clear the context data created for the request, as per the "Important note" in https://godoc.org/github.com/gorilla/sessions
-		context.ClearHandler(
-			// Support PUT & DELTE through POST forms
-			handlers.HTTPMethodOverrideHandler(
-				// Zip responses
-				handlers.CompressHandler(
-					// Log request info in Apache Combined Log Format
-					handlers.CombinedLoggingHandler(os.Stdout,
-						// Use our routes
-						router))))))
+		// Support PUT & DELTE through POST forms
+		handlers.HTTPMethodOverrideHandler(
+			// Zip responses
+			handlers.CompressHandler(
+				// Log request info in Apache Combined Log Format
+				handlers.CombinedLoggingHandler(os.Stdout,
+					// Use our routes
+					router)))))
 }
