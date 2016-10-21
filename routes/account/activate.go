@@ -30,11 +30,6 @@ func Activate(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	}
 }
 
-// ActivateTokenForm renders a form to request sending a new activate token.
-func ActivateTokenForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	template.GET(w, r, "activate", "ActivateTokenForm").Run()
-}
-
 // ActivateToken sends the new activate token.
 func ActivateToken(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	if t := template.PRG(w, r, "activate", "ActivateToken"); t == nil {

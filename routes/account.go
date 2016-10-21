@@ -3,22 +3,26 @@ package routes
 import (
 	"github.com/wscherphof/essix/ratelimit"
 	"github.com/wscherphof/essix/routes/account"
+	"github.com/wscherphof/essix/template"
 	"github.com/wscherphof/secure"
 )
 
 func init() {
 	// LogIn & LogOut
-	router.GET("/session", account.LogInForm)
+	router.GET("/session", template.Handle("session", "LogInForm", ""))
 	router.PUT("/session", ratelimit.Handle(account.LogIn))
 	router.DELETE("/session", account.LogOut)
 
 	// Edit current, or create new account
-	router.GET("/account", secure.IfHandle(account.EditAccount, account.NewAccountForm))
+	router.GET("/account", secure.IfHandle(
+		account.EditAccount,
+		template.Handle("account", "NewAccountForm", ""),
+	))
 	router.POST("/account", ratelimit.Handle(account.NewAccount))
 	router.GET("/account/post", account.NewAccount)
 
 	// Resend activate token
-	router.GET("/account/activate/token", account.ActivateTokenForm)
+	router.GET("/account/activate/token", template.Handle("activate", "ActivateTokenForm", ""))
 	router.PUT("/account/activate/token", ratelimit.Handle(account.ActivateToken))
 	router.GET("/account/activate/token/put", account.ActivateToken)
 
@@ -28,7 +32,7 @@ func init() {
 	router.GET("/account/activate/put", account.Activate)
 
 	// Request password change token
-	router.GET("/account/password/token", account.PasswordTokenForm)
+	router.GET("/account/password/token", template.Handle("password", "PasswordTokenForm", ""))
 	router.PUT("/account/password/token", ratelimit.Handle(account.PasswordToken))
 	router.GET("/account/password/token/put", account.PasswordToken)
 
@@ -48,7 +52,7 @@ func init() {
 	router.GET("/account/email/put", secure.Handle(account.ChangeEmail))
 
 	// Request account suspension token
-	router.GET("/account/suspend/token", secure.Handle(account.SuspendTokenForm))
+	router.GET("/account/suspend/token", secure.Handle(template.Handle("suspend", "SuspendTokenForm", "")))
 	router.PUT("/account/suspend/token", secure.Handle(account.SuspendToken))
 	router.GET("/account/suspend/token/put", secure.Handle(account.SuspendToken))
 

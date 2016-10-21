@@ -8,11 +8,6 @@ import (
 	"net/http"
 )
 
-func SuspendTokenForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	_ = secure.Authentication(r)
-	template.GET(w, r, "suspend", "SuspendTokenForm").Run()
-}
-
 func SuspendToken(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	account := secure.Authentication(r)
 	if t := template.PRG(w, r, "suspend", "SuspendToken"); t == nil {
