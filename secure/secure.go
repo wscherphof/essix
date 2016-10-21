@@ -8,7 +8,6 @@ requests for secured resources.
 package secure
 
 import (
-	"github.com/julienschmidt/httprouter"
 	"github.com/wscherphof/entity"
 	"github.com/wscherphof/essix/model"
 	"github.com/wscherphof/secure"
@@ -49,31 +48,4 @@ func Authentication(w http.ResponseWriter, r *http.Request, optional ...bool) (r
 		ret = &acc
 	}
 	return
-}
-
-/*
-secure.Handle ensures the client is logged in when accessing a certian route,
-redirecting to the log in page if not. The given Handle function should call
-Authentication() to get the client's account details.
-*/
-func Handle(handle httprouter.Handle) httprouter.Handle {
-	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-		if secure.Authentication(w, r, false) != nil {
-			handle(w, r, ps)
-		}
-	}
-}
-
-/*
-secure.IfHandle calls one Hanlde function for logged-in clients, and another for
-logged-out clients.
-*/
-func IfHandle(authenticated httprouter.Handle, unauthenticated httprouter.Handle) httprouter.Handle {
-	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-		if secure.Authentication(w, r, true) != nil {
-			authenticated(w, r, ps)
-		} else {
-			unauthenticated(w, r, ps)
-		}
-	}
 }

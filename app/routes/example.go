@@ -1,8 +1,7 @@
 package routes
 
 import (
-	"github.com/wscherphof/essix/router"
-	"github.com/wscherphof/essix/secure"
+	"github.com/wscherphof/secure"
 	"<routes/example>"
 )
 
