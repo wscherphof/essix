@@ -10,10 +10,6 @@ import (
 	"net/http"
 )
 
-func PasswordTokenForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	template.GET(w, r, "password", "PasswordTokenForm").Run()
-}
-
 func PasswordToken(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	if t := template.PRG(w, r, "password", "PasswordToken"); t == nil {
 		return

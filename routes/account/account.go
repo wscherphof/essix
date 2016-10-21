@@ -20,13 +20,6 @@ import (
 )
 
 /*
-NewAccountForm renders the form to create a new account.
-*/
-func NewAccountForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	template.GET(w, r, "account", "NewAccountForm").Run()
-}
-
-/*
 NewAccount creates a new account in the database.
 */
 func NewAccount(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {

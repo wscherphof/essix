@@ -8,10 +8,6 @@ import (
 	"net/http"
 )
 
-func LogInForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	template.GET(w, r, "session", "LogInForm").Run()
-}
-
 func logInError(w http.ResponseWriter, r *http.Request, err error, conflict bool, id string) {
 	template.ErrorTail(w, r, err, conflict, "session", "LogIn-error-tail", map[string]interface{}{
 		"id": id,
