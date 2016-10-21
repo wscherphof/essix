@@ -81,6 +81,19 @@ func formTokenHandle(handle httprouter.Handle) httprouter.Handle {
 			// Timestamp not considered, since key rotation will outdate old tokens automatically
 			if that.IP != this.IP || (that.Path != this.Path && that.Path != referer.Path) {
 				log.Printf("WARNING: Form token invalid %s %s", this.IP, this.Path)
+				w.Header().Set("Content-Type", "text/html; charset=utf-8")
+				w.WriteHeader(http.StatusBadRequest)
+				w.Write([]byte(`<!DOCTYPE html>
+					<html>
+						<head>
+							<meta charset="utf-8">
+						</head>
+						<body>
+							<h2>Form token validation failed</h2>
+							<a id="location" href="` + referer.Path + `">Back</a>
+						</body>
+					</html>
+				`))
 			} else {
 				handle(w, r, ps)
 			}
