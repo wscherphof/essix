@@ -13,9 +13,9 @@ func init() {
 		Set("nl", "Land").
 		Set("en", "Country")
 
-	msg.Key("Postcode").
-		Set("nl", "Postcode").
-		Set("en", "Postal code")
+	msg.Key("Time zone").
+		Set("nl", "Tijdzone").
+		Set("en", "Time zone")
 
 	msg.Key("First name").
 		Set("nl", "Voornaam").

@@ -9,7 +9,7 @@ type Profile struct {
 	FirstName string
 	LastName  string
 	Country   string
-	Postcode  string
+	TimeZone  string
 }
 
 func init() {
