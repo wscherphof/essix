@@ -9,17 +9,25 @@ body
       .p
         label {{.msg.Get "Country"}}*
           select#country.right name=country autocomplete=off required=
-            {{$profileCountry := .profile.Country}}
-            {{range .countries}}
-              {{if eq .Code $profileCountry}}
-                option value={{.Code}} selected= {{.Name}}
+            {{$current := .profile.Country}}
+            {{range $v, $k := .countries}}
+              {{if eq $k $current}}
+                option value={{$k}} selected= {{$v}}
               {{else}}
-                option value={{.Code}} {{.Name}}
+                option value={{$k}} {{$v}}
               {{end}}
             {{end}}
       .p
-        label {{.msg.Get "Postcode"}}*
-          input#postcode.right type=text name=postcode autocomplete=postal-code value={{.profile.Postcode}} placeholder="1200 JC" required= size=35
+        label {{.msg.Get "Time zone"}}*
+          select#timezone.right name=timezone autocomplete=off required=
+            {{$current := .profile.TimeZone}}
+            {{range $v, $k := .timezones}}
+              {{if eq $k $current}}
+                option value={{$k}} selected= {{$v}}
+              {{else}}
+                option value={{$k}} {{$v}}
+              {{end}}
+            {{end}}
       .p
         label {{.msg.Get "First name"}}
           input#firstname.right type=text name=firstname autocomplete=given-name value={{.profile.FirstName}} placeholder=John size=35
@@ -46,4 +54,6 @@ body
           li
             a href=/ {{.msg.Get "Take me home"}}
   footer
-    p {{.msg.Get "Last modified"}}: {{.profile.Modified.Format (.msg.Get "Time format")}}
+    {{if ne .profile.TimeZone ""}}
+      p {{.msg.Get "Last modified"}}: {{.profile.Modified.Format (.msg.Get "Time format")}}
+    {{end}}

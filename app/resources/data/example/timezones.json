@@ -1,0 +1,1343 @@
+[
+  {
+    "Value": "Dateline Standard Time",
+    "Abbr": "DST",
+    "offset": -12,
+    "Isdst": false,
+    "Text": "(UTC-12:00) International Date Line West",
+    "Utc": [
+      "Etc/GMT+12"
+    ]
+  },
+  {
+    "Value": "UTC-11",
+    "Abbr": "U",
+    "offset": -11,
+    "Isdst": false,
+    "Text": "(UTC-11:00) Coordinated Universal Time-11",
+    "Utc": [
+      "Etc/GMT+11",
+      "Pacific/Midway",
+      "Pacific/Niue",
+      "Pacific/Pago_Pago"
+    ]
+  },
+  {
+    "Value": "Hawaiian Standard Time",
+    "Abbr": "HST",
+    "offset": -10,
+    "Isdst": false,
+    "Text": "(UTC-10:00) Hawaii",
+    "Utc": [
+      "Etc/GMT+10",
+      "Pacific/Honolulu",
+      "Pacific/Johnston",
+      "Pacific/Rarotonga",
+      "Pacific/Tahiti"
+    ]
+  },
+  {
+    "Value": "Alaskan Standard Time",
+    "Abbr": "AKDT",
+    "offset": -8,
+    "Isdst": true,
+    "Text": "(UTC-09:00) Alaska",
+    "Utc": [
+      "America/Anchorage",
+      "America/Juneau",
+      "America/Nome",
+      "America/Sitka",
+      "America/Yakutat"
+    ]
+  },
+  {
+    "Value": "Pacific Standard Time (Mexico)",
+    "Abbr": "PDT",
+    "offset": -7,
+    "Isdst": true,
+    "Text": "(UTC-08:00) Baja California",
+    "Utc": [
+      "America/Santa_Isabel"
+    ]
+  },
+  {
+    "Value": "Pacific Standard Time",
+    "Abbr": "PDT",
+    "offset": -7,
+    "Isdst": true,
+    "Text": "(UTC-08:00) Pacific Time (US & Canada)",
+    "Utc": [
+      "America/Dawson",
+      "America/Los_Angeles",
+      "America/Tijuana",
+      "America/Vancouver",
+      "America/Whitehorse",
+      "PST8PDT"
+    ]
+  },
+  {
+    "Value": "US Mountain Standard Time",
+    "Abbr": "UMST",
+    "offset": -7,
+    "Isdst": false,
+    "Text": "(UTC-07:00) Arizona",
+    "Utc": [
+      "America/Creston",
+      "America/Dawson_Creek",
+      "America/Hermosillo",
+      "America/Phoenix",
+      "Etc/GMT+7"
+    ]
+  },
+  {
+    "Value": "Mountain Standard Time (Mexico)",
+    "Abbr": "MDT",
+    "offset": -6,
+    "Isdst": true,
+    "Text": "(UTC-07:00) Chihuahua, La Paz, Mazatlan",
+    "Utc": [
+      "America/Chihuahua",
+      "America/Mazatlan"
+    ]
+  },
+  {
+    "Value": "Mountain Standard Time",
+    "Abbr": "MDT",
+    "offset": -6,
+    "Isdst": true,
+    "Text": "(UTC-07:00) Mountain Time (US & Canada)",
+    "Utc": [
+      "America/Boise",
+      "America/Cambridge_Bay",
+      "America/Denver",
+      "America/Edmonton",
+      "America/Inuvik",
+      "America/Ojinaga",
+      "America/Yellowknife",
+      "MST7MDT"
+    ]
+  },
+  {
+    "Value": "Central America Standard Time",
+    "Abbr": "CAST",
+    "offset": -6,
+    "Isdst": false,
+    "Text": "(UTC-06:00) Central America",
+    "Utc": [
+      "America/Belize",
+      "America/Costa_Rica",
+      "America/El_Salvador",
+      "America/Guatemala",
+      "America/Managua",
+      "America/Tegucigalpa",
+      "Etc/GMT+6",
+      "Pacific/Galapagos"
+    ]
+  },
+  {
+    "Value": "Central Standard Time",
+    "Abbr": "CDT",
+    "offset": -5,
+    "Isdst": true,
+    "Text": "(UTC-06:00) Central Time (US & Canada)",
+    "Utc": [
+      "America/Chicago",
+      "America/Indiana/Knox",
+      "America/Indiana/Tell_City",
+      "America/Matamoros",
+      "America/Menominee",
+      "America/North_Dakota/Beulah",
+      "America/North_Dakota/Center",
+      "America/North_Dakota/New_Salem",
+      "America/Rainy_River",
+      "America/Rankin_Inlet",
+      "America/Resolute",
+      "America/Winnipeg",
+      "CST6CDT"
+    ]
+  },
+  {
+    "Value": "Central Standard Time (Mexico)",
+    "Abbr": "CDT",
+    "offset": -5,
+    "Isdst": true,
+    "Text": "(UTC-06:00) Guadalajara, Mexico City, Monterrey",
+    "Utc": [
+      "America/Bahia_Banderas",
+      "America/Cancun",
+      "America/Merida",
+      "America/Mexico_City",
+      "America/Monterrey"
+    ]
+  },
+  {
+    "Value": "Canada Central Standard Time",
+    "Abbr": "CCST",
+    "offset": -6,
+    "Isdst": false,
+    "Text": "(UTC-06:00) Saskatchewan",
+    "Utc": [
+      "America/Regina",
+      "America/Swift_Current"
+    ]
+  },
+  {
+    "Value": "SA Pacific Standard Time",
+    "Abbr": "SPST",
+    "offset": -5,
+    "Isdst": false,
+    "Text": "(UTC-05:00) Bogota, Lima, Quito",
+    "Utc": [
+      "America/Bogota",
+      "America/Cayman",
+      "America/Coral_Harbour",
+      "America/Eirunepe",
+      "America/Guayaquil",
+      "America/Jamaica",
+      "America/Lima",
+      "America/Panama",
+      "America/Rio_Branco",
+      "Etc/GMT+5"
+    ]
+  },
+  {
+    "Value": "Eastern Standard Time",
+    "Abbr": "EDT",
+    "offset": -4,
+    "Isdst": true,
+    "Text": "(UTC-05:00) Eastern Time (US & Canada)",
+    "Utc": [
+      "America/Detroit",
+      "America/Havana",
+      "America/Indiana/Petersburg",
+      "America/Indiana/Vincennes",
+      "America/Indiana/Winamac",
+      "America/Iqaluit",
+      "America/Kentucky/Monticello",
+      "America/Louisville",
+      "America/Montreal",
+      "America/Nassau",
+      "America/New_York",
+      "America/Nipigon",
+      "America/Pangnirtung",
+      "America/Port-au-Prince",
+      "America/Thunder_Bay",
+      "America/Toronto",
+      "EST5EDT"
+    ]
+  },
+  {
+    "Value": "US Eastern Standard Time",
+    "Abbr": "UEDT",
+    "offset": -4,
+    "Isdst": true,
+    "Text": "(UTC-05:00) Indiana (East)",
+    "Utc": [
+      "America/Indiana/Marengo",
+      "America/Indiana/Vevay",
+      "America/Indianapolis"
+    ]
+  },
+  {
+    "Value": "Venezuela Standard Time",
+    "Abbr": "VST",
+    "offset": -4.5,
+    "Isdst": false,
+    "Text": "(UTC-04:30) Caracas",
+    "Utc": [
+      "America/Caracas"
+    ]
+  },
+  {
+    "Value": "Paraguay Standard Time",
+    "Abbr": "PST",
+    "offset": -4,
+    "Isdst": false,
+    "Text": "(UTC-04:00) Asuncion",
+    "Utc": [
+      "America/Asuncion"
+    ]
+  },
+  {
+    "Value": "Atlantic Standard Time",
+    "Abbr": "ADT",
+    "offset": -3,
+    "Isdst": true,
+    "Text": "(UTC-04:00) Atlantic Time (Canada)",
+    "Utc": [
+      "America/Glace_Bay",
+      "America/Goose_Bay",
+      "America/Halifax",
+      "America/Moncton",
+      "America/Thule",
+      "Atlantic/Bermuda"
+    ]
+  },
+  {
+    "Value": "Central Brazilian Standard Time",
+    "Abbr": "CBST",
+    "offset": -4,
+    "Isdst": false,
+    "Text": "(UTC-04:00) Cuiaba",
+    "Utc": [
+      "America/Campo_Grande",
+      "America/Cuiaba"
+    ]
+  },
+  {
+    "Value": "SA Western Standard Time",
+    "Abbr": "SWST",
+    "offset": -4,
+    "Isdst": false,
+    "Text": "(UTC-04:00) Georgetown, La Paz, Manaus, San Juan",
+    "Utc": [
+      "America/Anguilla",
+      "America/Antigua",
+      "America/Aruba",
+      "America/Barbados",
+      "America/Blanc-Sablon",
+      "America/Boa_Vista",
+      "America/Curacao",
+      "America/Dominica",
+      "America/Grand_Turk",
+      "America/Grenada",
+      "America/Guadeloupe",
+      "America/Guyana",
+      "America/Kralendijk",
+      "America/La_Paz",
+      "America/Lower_Princes",
+      "America/Manaus",
+      "America/Marigot",
+      "America/Martinique",
+      "America/Montserrat",
+      "America/Port_of_Spain",
+      "America/Porto_Velho",
+      "America/Puerto_Rico",
+      "America/Santo_Domingo",
+      "America/St_Barthelemy",
+      "America/St_Kitts",
+      "America/St_Lucia",
+      "America/St_Thomas",
+      "America/St_Vincent",
+      "America/Tortola",
+      "Etc/GMT+4"
+    ]
+  },
+  {
+    "Value": "Pacific SA Standard Time",
+    "Abbr": "PSST",
+    "offset": -4,
+    "Isdst": false,
+    "Text": "(UTC-04:00) Santiago",
+    "Utc": [
+      "America/Santiago",
+      "Antarctica/Palmer"
+    ]
+  },
+  {
+    "Value": "Newfoundland Standard Time",
+    "Abbr": "NDT",
+    "offset": -2.5,
+    "Isdst": true,
+    "Text": "(UTC-03:30) Newfoundland",
+    "Utc": [
+      "America/St_Johns"
+    ]
+  },
+  {
+    "Value": "E. South America Standard Time",
+    "Abbr": "ESAST",
+    "offset": -3,
+    "Isdst": false,
+    "Text": "(UTC-03:00) Brasilia",
+    "Utc": [
+      "America/Sao_Paulo"
+    ]
+  },
+  {
+    "Value": "Argentina Standard Time",
+    "Abbr": "AST",
+    "offset": -3,
+    "Isdst": false,
+    "Text": "(UTC-03:00) Buenos Aires",
+    "Utc": [
+      "America/Argentina/La_Rioja",
+      "America/Argentina/Rio_Gallegos",
+      "America/Argentina/Salta",
+      "America/Argentina/San_Juan",
+      "America/Argentina/San_Luis",
+      "America/Argentina/Tucuman",
+      "America/Argentina/Ushuaia",
+      "America/Buenos_Aires",
+      "America/Catamarca",
+      "America/Cordoba",
+      "America/Jujuy",
+      "America/Mendoza"
+    ]
+  },
+  {
+    "Value": "SA Eastern Standard Time",
+    "Abbr": "SEST",
+    "offset": -3,
+    "Isdst": false,
+    "Text": "(UTC-03:00) Cayenne, Fortaleza",
+    "Utc": [
+      "America/Araguaina",
+      "America/Belem",
+      "America/Cayenne",
+      "America/Fortaleza",
+      "America/Maceio",
+      "America/Paramaribo",
+      "America/Recife",
+      "America/Santarem",
+      "Antarctica/Rothera",
+      "Atlantic/Stanley",
+      "Etc/GMT+3"
+    ]
+  },
+  {
+    "Value": "Greenland Standard Time",
+    "Abbr": "GDT",
+    "offset": -2,
+    "Isdst": true,
+    "Text": "(UTC-03:00) Greenland",
+    "Utc": [
+      "America/Godthab"
+    ]
+  },
+  {
+    "Value": "Montevideo Standard Time",
+    "Abbr": "MST",
+    "offset": -3,
+    "Isdst": false,
+    "Text": "(UTC-03:00) Montevideo",
+    "Utc": [
+      "America/Montevideo"
+    ]
+  },
+  {
+    "Value": "Bahia Standard Time",
+    "Abbr": "BST",
+    "offset": -3,
+    "Isdst": false,
+    "Text": "(UTC-03:00) Salvador",
+    "Utc": [
+      "America/Bahia"
+    ]
+  },
+  {
+    "Value": "UTC-02",
+    "Abbr": "U",
+    "offset": -2,
+    "Isdst": false,
+    "Text": "(UTC-02:00) Coordinated Universal Time-02",
+    "Utc": [
+      "America/Noronha",
+      "Atlantic/South_Georgia",
+      "Etc/GMT+2"
+    ]
+  },
+  {
+    "Value": "Mid-Atlantic Standard Time",
+    "Abbr": "MDT",
+    "offset": -1,
+    "Isdst": true,
+    "Text": "(UTC-02:00) Mid-Atlantic - Old"
+  },
+  {
+    "Value": "Azores Standard Time",
+    "Abbr": "ADT",
+    "offset": 0,
+    "Isdst": true,
+    "Text": "(UTC-01:00) Azores",
+    "Utc": [
+      "America/Scoresbysund",
+      "Atlantic/Azores"
+    ]
+  },
+  {
+    "Value": "Cape Verde Standard Time",
+    "Abbr": "CVST",
+    "offset": -1,
+    "Isdst": false,
+    "Text": "(UTC-01:00) Cape Verde Is.",
+    "Utc": [
+      "Atlantic/Cape_Verde",
+      "Etc/GMT+1"
+    ]
+  },
+  {
+    "Value": "Morocco Standard Time",
+    "Abbr": "MDT",
+    "offset": 1,
+    "Isdst": true,
+    "Text": "(UTC) Casablanca",
+    "Utc": [
+      "Africa/Casablanca",
+      "Africa/El_Aaiun"
+    ]
+  },
+  {
+    "Value": "UTC",
+    "Abbr": "CUT",
+    "offset": 0,
+    "Isdst": false,
+    "Text": "(UTC) Coordinated Universal Time",
+    "Utc": [
+      "America/Danmarkshavn",
+      "Etc/GMT"
+    ]
+  },
+  {
+    "Value": "GMT Standard Time",
+    "Abbr": "GDT",
+    "offset": 1,
+    "Isdst": true,
+    "Text": "(UTC) Dublin, Edinburgh, Lisbon, London",
+    "Utc": [
+      "Atlantic/Canary",
+      "Atlantic/Faeroe",
+      "Atlantic/Madeira",
+      "Europe/Dublin",
+      "Europe/Guernsey",
+      "Europe/Isle_of_Man",
+      "Europe/Jersey",
+      "Europe/Lisbon",
+      "Europe/London"
+    ]
+  },
+  {
+    "Value": "Greenwich Standard Time",
+    "Abbr": "GST",
+    "offset": 0,
+    "Isdst": false,
+    "Text": "(UTC) Monrovia, Reykjavik",
+    "Utc": [
+      "Africa/Abidjan",
+      "Africa/Accra",
+      "Africa/Bamako",
+      "Africa/Banjul",
+      "Africa/Bissau",
+      "Africa/Conakry",
+      "Africa/Dakar",
+      "Africa/Freetown",
+      "Africa/Lome",
+      "Africa/Monrovia",
+      "Africa/Nouakchott",
+      "Africa/Ouagadougou",
+      "Africa/Sao_Tome",
+      "Atlantic/Reykjavik",
+      "Atlantic/St_Helena"
+    ]
+  },
+  {
+    "Value": "W. Europe Standard Time",
+    "Abbr": "WEDT",
+    "offset": 2,
+    "Isdst": true,
+    "Text": "(UTC+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna",
+    "Utc": [
+      "Arctic/Longyearbyen",
+      "Europe/Amsterdam",
+      "Europe/Andorra",
+      "Europe/Berlin",
+      "Europe/Busingen",
+      "Europe/Gibraltar",
+      "Europe/Luxembourg",
+      "Europe/Malta",
+      "Europe/Monaco",
+      "Europe/Oslo",
+      "Europe/Rome",
+      "Europe/San_Marino",
+      "Europe/Stockholm",
+      "Europe/Vaduz",
+      "Europe/Vatican",
+      "Europe/Vienna",
+      "Europe/Zurich"
+    ]
+  },
+  {
+    "Value": "Central Europe Standard Time",
+    "Abbr": "CEDT",
+    "offset": 2,
+    "Isdst": true,
+    "Text": "(UTC+01:00) Belgrade, Bratislava, Budapest, Ljubljana, Prague",
+    "Utc": [
+      "Europe/Belgrade",
+      "Europe/Bratislava",
+      "Europe/Budapest",
+      "Europe/Ljubljana",
+      "Europe/Podgorica",
+      "Europe/Prague",
+      "Europe/Tirane"
+    ]
+  },
+  {
+    "Value": "Romance Standard Time",
+    "Abbr": "RDT",
+    "offset": 2,
+    "Isdst": true,
+    "Text": "(UTC+01:00) Brussels, Copenhagen, Madrid, Paris",
+    "Utc": [
+      "Africa/Ceuta",
+      "Europe/Brussels",
+      "Europe/Copenhagen",
+      "Europe/Madrid",
+      "Europe/Paris"
+    ]
+  },
+  {
+    "Value": "Central European Standard Time",
+    "Abbr": "CEDT",
+    "offset": 2,
+    "Isdst": true,
+    "Text": "(UTC+01:00) Sarajevo, Skopje, Warsaw, Zagreb",
+    "Utc": [
+      "Europe/Sarajevo",
+      "Europe/Skopje",
+      "Europe/Warsaw",
+      "Europe/Zagreb"
+    ]
+  },
+  {
+    "Value": "W. Central Africa Standard Time",
+    "Abbr": "WCAST",
+    "offset": 1,
+    "Isdst": false,
+    "Text": "(UTC+01:00) West Central Africa",
+    "Utc": [
+      "Africa/Algiers",
+      "Africa/Bangui",
+      "Africa/Brazzaville",
+      "Africa/Douala",
+      "Africa/Kinshasa",
+      "Africa/Lagos",
+      "Africa/Libreville",
+      "Africa/Luanda",
+      "Africa/Malabo",
+      "Africa/Ndjamena",
+      "Africa/Niamey",
+      "Africa/Porto-Novo",
+      "Africa/Tunis",
+      "Etc/GMT-1"
+    ]
+  },
+  {
+    "Value": "Namibia Standard Time",
+    "Abbr": "NST",
+    "offset": 1,
+    "Isdst": false,
+    "Text": "(UTC+01:00) Windhoek",
+    "Utc": [
+      "Africa/Windhoek"
+    ]
+  },
+  {
+    "Value": "GTB Standard Time",
+    "Abbr": "GDT",
+    "offset": 3,
+    "Isdst": true,
+    "Text": "(UTC+02:00) Athens, Bucharest",
+    "Utc": [
+      "Asia/Nicosia",
+      "Europe/Athens",
+      "Europe/Bucharest",
+      "Europe/Chisinau"
+    ]
+  },
+  {
+    "Value": "Middle East Standard Time",
+    "Abbr": "MEDT",
+    "offset": 3,
+    "Isdst": true,
+    "Text": "(UTC+02:00) Beirut",
+    "Utc": [
+      "Asia/Beirut"
+    ]
+  },
+  {
+    "Value": "Egypt Standard Time",
+    "Abbr": "EST",
+    "offset": 2,
+    "Isdst": false,
+    "Text": "(UTC+02:00) Cairo",
+    "Utc": [
+      "Africa/Cairo"
+    ]
+  },
+  {
+    "Value": "Syria Standard Time",
+    "Abbr": "SDT",
+    "offset": 3,
+    "Isdst": true,
+    "Text": "(UTC+02:00) Damascus",
+    "Utc": [
+      "Asia/Damascus"
+    ]
+  },
+  {
+    "Value": "E. Europe Standard Time",
+    "Abbr": "EEDT",
+    "offset": 3,
+    "Isdst": true,
+    "Text": "(UTC+02:00) E. Europe"
+  },
+  {
+    "Value": "South Africa Standard Time",
+    "Abbr": "SAST",
+    "offset": 2,
+    "Isdst": false,
+    "Text": "(UTC+02:00) Harare, Pretoria",
+    "Utc": [
+      "Africa/Blantyre",
+      "Africa/Bujumbura",
+      "Africa/Gaborone",
+      "Africa/Harare",
+      "Africa/Johannesburg",
+      "Africa/Kigali",
+      "Africa/Lubumbashi",
+      "Africa/Lusaka",
+      "Africa/Maputo",
+      "Africa/Maseru",
+      "Africa/Mbabane",
+      "Etc/GMT-2"
+    ]
+  },
+  {
+    "Value": "FLE Standard Time",
+    "Abbr": "FDT",
+    "offset": 3,
+    "Isdst": true,
+    "Text": "(UTC+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius",
+    "Utc": [
+      "Europe/Helsinki",
+      "Europe/Kiev",
+      "Europe/Mariehamn",
+      "Europe/Riga",
+      "Europe/Sofia",
+      "Europe/Tallinn",
+      "Europe/Uzhgorod",
+      "Europe/Vilnius",
+      "Europe/Zaporozhye"
+    ]
+  },
+  {
+    "Value": "Turkey Standard Time",
+    "Abbr": "TDT",
+    "offset": 3,
+    "Isdst": true,
+    "Text": "(UTC+02:00) Istanbul",
+    "Utc": [
+      "Europe/Istanbul"
+    ]
+  },
+  {
+    "Value": "Israel Standard Time",
+    "Abbr": "JDT",
+    "offset": 3,
+    "Isdst": true,
+    "Text": "(UTC+02:00) Jerusalem",
+    "Utc": [
+      "Asia/Jerusalem"
+    ]
+  },
+  {
+    "Value": "Libya Standard Time",
+    "Abbr": "LST",
+    "offset": 2,
+    "Isdst": false,
+    "Text": "(UTC+02:00) Tripoli",
+    "Utc": [
+      "Africa/Tripoli"
+    ]
+  },
+  {
+    "Value": "Jordan Standard Time",
+    "Abbr": "JST",
+    "offset": 3,
+    "Isdst": false,
+    "Text": "(UTC+03:00) Amman",
+    "Utc": [
+      "Asia/Amman"
+    ]
+  },
+  {
+    "Value": "Arabic Standard Time",
+    "Abbr": "AST",
+    "offset": 3,
+    "Isdst": false,
+    "Text": "(UTC+03:00) Baghdad",
+    "Utc": [
+      "Asia/Baghdad"
+    ]
+  },
+  {
+    "Value": "Kaliningrad Standard Time",
+    "Abbr": "KST",
+    "offset": 3,
+    "Isdst": false,
+    "Text": "(UTC+03:00) Kaliningrad, Minsk",
+    "Utc": [
+      "Europe/Kaliningrad",
+      "Europe/Minsk"
+    ]
+  },
+  {
+    "Value": "Arab Standard Time",
+    "Abbr": "AST",
+    "offset": 3,
+    "Isdst": false,
+    "Text": "(UTC+03:00) Kuwait, Riyadh",
+    "Utc": [
+      "Asia/Aden",
+      "Asia/Bahrain",
+      "Asia/Kuwait",
+      "Asia/Qatar",
+      "Asia/Riyadh"
+    ]
+  },
+  {
+    "Value": "E. Africa Standard Time",
+    "Abbr": "EAST",
+    "offset": 3,
+    "Isdst": false,
+    "Text": "(UTC+03:00) Nairobi",
+    "Utc": [
+      "Africa/Addis_Ababa",
+      "Africa/Asmera",
+      "Africa/Dar_es_Salaam",
+      "Africa/Djibouti",
+      "Africa/Juba",
+      "Africa/Kampala",
+      "Africa/Khartoum",
+      "Africa/Mogadishu",
+      "Africa/Nairobi",
+      "Antarctica/Syowa",
+      "Etc/GMT-3",
+      "Indian/Antananarivo",
+      "Indian/Comoro",
+      "Indian/Mayotte"
+    ]
+  },
+  {
+    "Value": "Iran Standard Time",
+    "Abbr": "IDT",
+    "offset": 4.5,
+    "Isdst": true,
+    "Text": "(UTC+03:30) Tehran",
+    "Utc": [
+      "Asia/Tehran"
+    ]
+  },
+  {
+    "Value": "Arabian Standard Time",
+    "Abbr": "AST",
+    "offset": 4,
+    "Isdst": false,
+    "Text": "(UTC+04:00) Abu Dhabi, Muscat",
+    "Utc": [
+      "Asia/Dubai",
+      "Asia/Muscat",
+      "Etc/GMT-4"
+    ]
+  },
+  {
+    "Value": "Azerbaijan Standard Time",
+    "Abbr": "ADT",
+    "offset": 5,
+    "Isdst": true,
+    "Text": "(UTC+04:00) Baku",
+    "Utc": [
+      "Asia/Baku"
+    ]
+  },
+  {
+    "Value": "Russian Standard Time",
+    "Abbr": "RST",
+    "offset": 4,
+    "Isdst": false,
+    "Text": "(UTC+04:00) Moscow, St. Petersburg, Volgograd",
+    "Utc": [
+      "Europe/Moscow",
+      "Europe/Samara",
+      "Europe/Simferopol",
+      "Europe/Volgograd"
+    ]
+  },
+  {
+    "Value": "Mauritius Standard Time",
+    "Abbr": "MST",
+    "offset": 4,
+    "Isdst": false,
+    "Text": "(UTC+04:00) Port Louis",
+    "Utc": [
+      "Indian/Mahe",
+      "Indian/Mauritius",
+      "Indian/Reunion"
+    ]
+  },
+  {
+    "Value": "Georgian Standard Time",
+    "Abbr": "GST",
+    "offset": 4,
+    "Isdst": false,
+    "Text": "(UTC+04:00) Tbilisi",
+    "Utc": [
+      "Asia/Tbilisi"
+    ]
+  },
+  {
+    "Value": "Caucasus Standard Time",
+    "Abbr": "CST",
+    "offset": 4,
+    "Isdst": false,
+    "Text": "(UTC+04:00) Yerevan",
+    "Utc": [
+      "Asia/Yerevan"
+    ]
+  },
+  {
+    "Value": "Afghanistan Standard Time",
+    "Abbr": "AST",
+    "offset": 4.5,
+    "Isdst": false,
+    "Text": "(UTC+04:30) Kabul",
+    "Utc": [
+      "Asia/Kabul"
+    ]
+  },
+  {
+    "Value": "West Asia Standard Time",
+    "Abbr": "WAST",
+    "offset": 5,
+    "Isdst": false,
+    "Text": "(UTC+05:00) Ashgabat, Tashkent",
+    "Utc": [
+      "Antarctica/Mawson",
+      "Asia/Aqtau",
+      "Asia/Aqtobe",
+      "Asia/Ashgabat",
+      "Asia/Dushanbe",
+      "Asia/Oral",
+      "Asia/Samarkand",
+      "Asia/Tashkent",
+      "Etc/GMT-5",
+      "Indian/Kerguelen",
+      "Indian/Maldives"
+    ]
+  },
+  {
+    "Value": "Pakistan Standard Time",
+    "Abbr": "PST",
+    "offset": 5,
+    "Isdst": false,
+    "Text": "(UTC+05:00) Islamabad, Karachi",
+    "Utc": [
+      "Asia/Karachi"
+    ]
+  },
+  {
+    "Value": "India Standard Time",
+    "Abbr": "IST",
+    "offset": 5.5,
+    "Isdst": false,
+    "Text": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi",
+    "Utc": [
+      "Asia/Kolkata"
+    ]
+  },
+  {
+    "Value": "Sri Lanka Standard Time",
+    "Abbr": "SLST",
+    "offset": 5.5,
+    "Isdst": false,
+    "Text": "(UTC+05:30) Sri Jayawardenepura",
+    "Utc": [
+      "Asia/Colombo"
+    ]
+  },
+  {
+    "Value": "Nepal Standard Time",
+    "Abbr": "NST",
+    "offset": 5.75,
+    "Isdst": false,
+    "Text": "(UTC+05:45) Kathmandu",
+    "Utc": [
+      "Asia/Katmandu"
+    ]
+  },
+  {
+    "Value": "Central Asia Standard Time",
+    "Abbr": "CAST",
+    "offset": 6,
+    "Isdst": false,
+    "Text": "(UTC+06:00) Astana",
+    "Utc": [
+      "Antarctica/Vostok",
+      "Asia/Almaty",
+      "Asia/Bishkek",
+      "Asia/Qyzylorda",
+      "Asia/Urumqi",
+      "Etc/GMT-6",
+      "Indian/Chagos"
+    ]
+  },
+  {
+    "Value": "Bangladesh Standard Time",
+    "Abbr": "BST",
+    "offset": 6,
+    "Isdst": false,
+    "Text": "(UTC+06:00) Dhaka",
+    "Utc": [
+      "Asia/Dhaka",
+      "Asia/Thimphu"
+    ]
+  },
+  {
+    "Value": "Ekaterinburg Standard Time",
+    "Abbr": "EST",
+    "offset": 6,
+    "Isdst": false,
+    "Text": "(UTC+06:00) Ekaterinburg",
+    "Utc": [
+      "Asia/Yekaterinburg"
+    ]
+  },
+  {
+    "Value": "Myanmar Standard Time",
+    "Abbr": "MST",
+    "offset": 6.5,
+    "Isdst": false,
+    "Text": "(UTC+06:30) Yangon (Rangoon)",
+    "Utc": [
+      "Asia/Rangoon",
+      "Indian/Cocos"
+    ]
+  },
+  {
+    "Value": "SE Asia Standard Time",
+    "Abbr": "SAST",
+    "offset": 7,
+    "Isdst": false,
+    "Text": "(UTC+07:00) Bangkok, Hanoi, Jakarta",
+    "Utc": [
+      "Antarctica/Davis",
+      "Asia/Bangkok",
+      "Asia/Hovd",
+      "Asia/Jakarta",
+      "Asia/Phnom_Penh",
+      "Asia/Pontianak",
+      "Asia/Saigon",
+      "Asia/Vientiane",
+      "Etc/GMT-7",
+      "Indian/Christmas"
+    ]
+  },
+  {
+    "Value": "N. Central Asia Standard Time",
+    "Abbr": "NCAST",
+    "offset": 7,
+    "Isdst": false,
+    "Text": "(UTC+07:00) Novosibirsk",
+    "Utc": [
+      "Asia/Novokuznetsk",
+      "Asia/Novosibirsk",
+      "Asia/Omsk"
+    ]
+  },
+  {
+    "Value": "China Standard Time",
+    "Abbr": "CST",
+    "offset": 8,
+    "Isdst": false,
+    "Text": "(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi",
+    "Utc": [
+      "Asia/Hong_Kong",
+      "Asia/Macau",
+      "Asia/Shanghai"
+    ]
+  },
+  {
+    "Value": "North Asia Standard Time",
+    "Abbr": "NAST",
+    "offset": 8,
+    "Isdst": false,
+    "Text": "(UTC+08:00) Krasnoyarsk",
+    "Utc": [
+      "Asia/Krasnoyarsk"
+    ]
+  },
+  {
+    "Value": "Singapore Standard Time",
+    "Abbr": "MPST",
+    "offset": 8,
+    "Isdst": false,
+    "Text": "(UTC+08:00) Kuala Lumpur, Singapore",
+    "Utc": [
+      "Asia/Brunei",
+      "Asia/Kuala_Lumpur",
+      "Asia/Kuching",
+      "Asia/Makassar",
+      "Asia/Manila",
+      "Asia/Singapore",
+      "Etc/GMT-8"
+    ]
+  },
+  {
+    "Value": "W. Australia Standard Time",
+    "Abbr": "WAST",
+    "offset": 8,
+    "Isdst": false,
+    "Text": "(UTC+08:00) Perth",
+    "Utc": [
+      "Antarctica/Casey",
+      "Australia/Perth"
+    ]
+  },
+  {
+    "Value": "Taipei Standard Time",
+    "Abbr": "TST",
+    "offset": 8,
+    "Isdst": false,
+    "Text": "(UTC+08:00) Taipei",
+    "Utc": [
+      "Asia/Taipei"
+    ]
+  },
+  {
+    "Value": "Ulaanbaatar Standard Time",
+    "Abbr": "UST",
+    "offset": 8,
+    "Isdst": false,
+    "Text": "(UTC+08:00) Ulaanbaatar",
+    "Utc": [
+      "Asia/Choibalsan",
+      "Asia/Ulaanbaatar"
+    ]
+  },
+  {
+    "Value": "North Asia East Standard Time",
+    "Abbr": "NAEST",
+    "offset": 9,
+    "Isdst": false,
+    "Text": "(UTC+09:00) Irkutsk",
+    "Utc": [
+      "Asia/Irkutsk"
+    ]
+  },
+  {
+    "Value": "Tokyo Standard Time",
+    "Abbr": "TST",
+    "offset": 9,
+    "Isdst": false,
+    "Text": "(UTC+09:00) Osaka, Sapporo, Tokyo",
+    "Utc": [
+      "Asia/Dili",
+      "Asia/Jayapura",
+      "Asia/Tokyo",
+      "Etc/GMT-9",
+      "Pacific/Palau"
+    ]
+  },
+  {
+    "Value": "Korea Standard Time",
+    "Abbr": "KST",
+    "offset": 9,
+    "Isdst": false,
+    "Text": "(UTC+09:00) Seoul",
+    "Utc": [
+      "Asia/Pyongyang",
+      "Asia/Seoul"
+    ]
+  },
+  {
+    "Value": "Cen. Australia Standard Time",
+    "Abbr": "CAST",
+    "offset": 9.5,
+    "Isdst": false,
+    "Text": "(UTC+09:30) Adelaide",
+    "Utc": [
+      "Australia/Adelaide",
+      "Australia/Broken_Hill"
+    ]
+  },
+  {
+    "Value": "AUS Central Standard Time",
+    "Abbr": "ACST",
+    "offset": 9.5,
+    "Isdst": false,
+    "Text": "(UTC+09:30) Darwin",
+    "Utc": [
+      "Australia/Darwin"
+    ]
+  },
+  {
+    "Value": "E. Australia Standard Time",
+    "Abbr": "EAST",
+    "offset": 10,
+    "Isdst": false,
+    "Text": "(UTC+10:00) Brisbane",
+    "Utc": [
+      "Australia/Brisbane",
+      "Australia/Lindeman"
+    ]
+  },
+  {
+    "Value": "AUS Eastern Standard Time",
+    "Abbr": "AEST",
+    "offset": 10,
+    "Isdst": false,
+    "Text": "(UTC+10:00) Canberra, Melbourne, Sydney",
+    "Utc": [
+      "Australia/Melbourne",
+      "Australia/Sydney"
+    ]
+  },
+  {
+    "Value": "West Pacific Standard Time",
+    "Abbr": "WPST",
+    "offset": 10,
+    "Isdst": false,
+    "Text": "(UTC+10:00) Guam, Port Moresby",
+    "Utc": [
+      "Antarctica/DumontDUrville",
+      "Etc/GMT-10",
+      "Pacific/Guam",
+      "Pacific/Port_Moresby",
+      "Pacific/Saipan",
+      "Pacific/Truk"
+    ]
+  },
+  {
+    "Value": "Tasmania Standard Time",
+    "Abbr": "TST",
+    "offset": 10,
+    "Isdst": false,
+    "Text": "(UTC+10:00) Hobart",
+    "Utc": [
+      "Australia/Currie",
+      "Australia/Hobart"
+    ]
+  },
+  {
+    "Value": "Yakutsk Standard Time",
+    "Abbr": "YST",
+    "offset": 10,
+    "Isdst": false,
+    "Text": "(UTC+10:00) Yakutsk",
+    "Utc": [
+      "Asia/Chita",
+      "Asia/Khandyga",
+      "Asia/Yakutsk"
+    ]
+  },
+  {
+    "Value": "Central Pacific Standard Time",
+    "Abbr": "CPST",
+    "offset": 11,
+    "Isdst": false,
+    "Text": "(UTC+11:00) Solomon Is., New Caledonia",
+    "Utc": [
+      "Antarctica/Macquarie",
+      "Etc/GMT-11",
+      "Pacific/Efate",
+      "Pacific/Guadalcanal",
+      "Pacific/Kosrae",
+      "Pacific/Noumea",
+      "Pacific/Ponape"
+    ]
+  },
+  {
+    "Value": "Vladivostok Standard Time",
+    "Abbr": "VST",
+    "offset": 11,
+    "Isdst": false,
+    "Text": "(UTC+11:00) Vladivostok",
+    "Utc": [
+      "Asia/Sakhalin",
+      "Asia/Ust-Nera",
+      "Asia/Vladivostok"
+    ]
+  },
+  {
+    "Value": "New Zealand Standard Time",
+    "Abbr": "NZST",
+    "offset": 12,
+    "Isdst": false,
+    "Text": "(UTC+12:00) Auckland, Wellington",
+    "Utc": [
+      "Antarctica/McMurdo",
+      "Pacific/Auckland"
+    ]
+  },
+  {
+    "Value": "UTC+12",
+    "Abbr": "U",
+    "offset": 12,
+    "Isdst": false,
+    "Text": "(UTC+12:00) Coordinated Universal Time+12",
+    "Utc": [
+      "Etc/GMT-12",
+      "Pacific/Funafuti",
+      "Pacific/Kwajalein",
+      "Pacific/Majuro",
+      "Pacific/Nauru",
+      "Pacific/Tarawa",
+      "Pacific/Wake",
+      "Pacific/Wallis"
+    ]
+  },
+  {
+    "Value": "Fiji Standard Time",
+    "Abbr": "FST",
+    "offset": 12,
+    "Isdst": false,
+    "Text": "(UTC+12:00) Fiji",
+    "Utc": [
+      "Pacific/Fiji"
+    ]
+  },
+  {
+    "Value": "Magadan Standard Time",
+    "Abbr": "MST",
+    "offset": 12,
+    "Isdst": false,
+    "Text": "(UTC+12:00) Magadan",
+    "Utc": [
+      "Asia/Anadyr",
+      "Asia/Kamchatka",
+      "Asia/Magadan",
+      "Asia/Srednekolymsk"
+    ]
+  },
+  {
+    "Value": "Kamchatka Standard Time",
+    "Abbr": "KDT",
+    "offset": 13,
+    "Isdst": true,
+    "Text": "(UTC+12:00) Petropavlovsk-Kamchatsky - Old"
+  },
+  {
+    "Value": "Tonga Standard Time",
+    "Abbr": "TST",
+    "offset": 13,
+    "Isdst": false,
+    "Text": "(UTC+13:00) Nuku'alofa",
+    "Utc": [
+      "Etc/GMT-13",
+      "Pacific/Enderbury",
+      "Pacific/Fakaofo",
+      "Pacific/Tongatapu"
+    ]
+  },
+  {
+    "Value": "Samoa Standard Time",
+    "Abbr": "SST",
+    "offset": 13,
+    "Isdst": false,
+    "Text": "(UTC+13:00) Samoa",
+    "Utc": [
+      "Pacific/Apia"
+    ]
+  }
+]
