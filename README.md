@@ -4,7 +4,7 @@ Package essix runs an essential simple secure stable scalable stateless server.
 The `essix` [command](#essix-command) manages Essix apps, their TLS (https) certificates, their
 backend databases (RethinkDB), and their infrastructure (Docker Swarm Mode).
 
-Follow the [Quickstart](#quickstart) to get your first app running on a swarm within minutes.
+Follow the [Quickstart](#quickstart) to get your first app running within minutes, on a swarm near you.
 
 With `$essix init`, a new Essix app package is inititialised, much like
 https://github.com/wscherphof/essix/tree/master/app, where you would add your
