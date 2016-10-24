@@ -3,10 +3,7 @@ Package essix runs an essential simple secure stable scalable stateless server.
 
 ## Quickstart
 
-1. Install Essix:
-```
-go get -u github.com/wscherphof/essix
-```
+1. Install Essix: `go get -u github.com/wscherphof/essix`
 1. Initialise a new Essix app: `essix init github.com/you/yourapp`
 1. Create a self-signed TLS certificate: `cd $GOPATH/github.com/you/yourapp`, then: `essix cert dev.appsite.com`
 1. Create a local one-node Docker swarm: `essix nodes -H dev.appsite.com -m 1 create dev`
