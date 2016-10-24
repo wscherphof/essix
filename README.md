@@ -1,8 +1,6 @@
 # Essix
 Package essix runs an essential simple secure stable scalable stateless server.
 
-[![GoDoc](https://godoc.org/github.com/wscherphof/essix?status.svg)](https://godoc.org/github.com/wscherphof/essix)
-
 The `essix` command manages Essix apps, their TLS (https) certificates, their
 backend databases (RethinkDB), and their infrastructure (Docker Swarm Mode).
 
@@ -11,6 +9,8 @@ Follow the [Quickstart](#quickstart) to get your first app running on a swarm wi
 With `$essix init`, a new Essix app package is inititialised, much like
 https://github.com/wscherphof/essix/tree/master/app, where you would add your
 own functionality. It includes the Profile example of how things can be done.
+
+[![GoDoc](https://godoc.org/github.com/wscherphof/essix?status.svg)](https://godoc.org/github.com/wscherphof/essix)
 
 ## Features
 
@@ -74,3 +74,102 @@ Essix data is stored in [RethinkDB](https://www.rethinkdb.com/), which the
 After installing Essix with `$ go get -u github.com/wscherphof/essix`, the
 `essix` command relies on the `$GOPATH/github.com/wscherphof/essix` directory;
 leave it untouched.
+
+## Essix command
+```
+Usage:
+
+essix init PACKAGE
+  Initialise a new essix app in the given new directory under $GOPATH.
+
+essix cert DOMAIN [EMAIL]
+  Generate a TLS certificate for the given domain.
+  Certificate gets saved in ./resources/certificates
+  Without EMAIL,
+    a self-signed certificate is produced.
+  With EMAIL,
+    a trusted certificate is produced through LetsEncrypt.
+    The current LetsEncrypt approach relies on a DNS configuration on DigitalOcean,
+    and requires the DIGITALOCEAN_ACCESS_TOKEN environment variable.
+
+essix nodes [OPTIONS] COMMAND SWARM
+  Create a Docker Swarm Mode swarm, and manage its nodes.
+  Run 'essix nodes help' for more information.
+
+essix r [OPTIONS] [COMMAND] SWARM
+  Create a RethinkDB cluster on a swarm, and/or start its web admin.
+  Run 'essix r help' for more information.
+
+essix [OPTIONS] build REPO TAG [SWARM]
+  Format & compile go sources in the current directory, and build a Docker
+  image named REPO/APP:TAG
+  APP is the current directory's name, is also the service name.
+  Without SWARM,
+    the OPTIONS are ignored, and the image is built locally,
+    then pushed to the repository. Default repository is Docker Hub.
+  With SWARM,
+    the image is built remotely on each of the swarm's nodes,
+    and the service is run there, with the given OPTIONS.
+
+essix [OPTIONS] run REPO TAG SWARM
+  Run a service from an image on a swarm.
+  Options:
+    -e key=value ...  environment variables
+    -r replicas       number of replicas to run (default=1)
+
+essix help
+  Display this message.
+
+
+You'll want to have these baseline tools ready:
+  - Bash
+  - Git
+  - Go
+  - Docker
+  - Docker Machine
+  - VirtualBox
+  - An account with Docker Hub
+  - An account with DigitalOcean
+
+$GOPATH environment variable is set to: '/Users/wsf/go'
+
+
+Examples:
+
+  $ essix init github.com/essix/newapp
+      Initialises a base structure for an Essix app in /Users/wsf/go/github.com/essix/newapp.
+
+  $ essix cert dev.appsite.com
+      Generates a self-signed TLS certificate for the given domain.
+
+  $ export DIGITALOCEAN_ACCESS_TOKEN="94dt7972b863497630s73012n10237xr1273trz92t1"
+  $ essix cert www.appsite.com essix@appsite.com
+      Generates a trusted TLS certificate for the given domain.
+
+  $ essix nodes -m 1 -w 2 -H dev.appsite.com create dev
+      Creates swarm dev on VirtualBox, with one manager node, and 2 worker
+      nodes. Adds hostname dev.appsite.com to /etc/hosts, resolving to the
+      manager node's ip address.
+
+  $ essix nodes -m 1 -d digitalocean -F create www
+      Creates a one-node swarm www on DigitalOcean, and enables a firewall on it.
+  $ essix nodes -w 1 -d digitalocean -F create www
+      Adds a worker node (with firewall) to swarm www on DigitalOcean.
+
+  $ essix r create dev
+      Creates a RethinkDB cluster on swarm dev, and opens the cluster's
+      administrator web page.
+
+  $ essix r dev
+      Opens the dev swarm RethinkDB cluster's administrator web page.
+
+  $ essix build essix 0.2
+      Locally builds the essix/APP:0.2 image, and pushes it to the repository.
+  $ essix run -e DOMAIN=www.appsite.com -r 6 essix 0.2 www
+      Starts 6 replicas of the service on swarm www, using image essix/APP:0.2,
+      which is downloaded from the repository, if not found locally.
+
+  $ essix -e DOMAIN=dev.appsite.com build essix 0.3 dev
+      Builds image essix/APP:0.3 on swarm dev's nodes, and runs the service
+      on dev, with the given DOMAIN environment variable set.
+```
