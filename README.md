@@ -13,8 +13,8 @@ Package essix runs an essential simple secure stable scalable stateless server.
 
 ## Prerequisites
 
-.Essix apps are built in the Go language.
-.The canonical way of deploying Essix apps relies on Docker.
-.The `essix` command runs on bash.
-.Essix data is stored in RethinkDB, which the `essix` command completely manages
+-Essix apps are built in the Go language.
+-The canonical way of deploying Essix apps relies on Docker.
+-The `essix` command runs on bash.
+-Essix data is stored in RethinkDB, which the `essix` command completely manages
 inside Docker, avoiding any additional dependencies.
