@@ -18,7 +18,7 @@ Run `$ essix help` for some more elaborate usage examples.
 - The `essix` command runs on bash, which should be present on Mac or Linux.
 For Windows, [Git Bash](https://git-for-windows.github.io/) should work.
 - Deploying Essix apps with the `essix` command, relies on [Docker](https://www.docker.com/products/docker).
-And on Docker Machine, which is normally included in a Docker installation.
+As well as on Docker Machine & VirtualBox, which are normally included in a Docker installation.
 
 Essix data is stored in [RethinkDB](https://www.rethinkdb.com/), which the `essix` command completely manages
 within Docker, so not a prerequisite.
