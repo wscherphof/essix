@@ -7,31 +7,33 @@ import (
 	"strings"
 )
 
+/*
+A (value, key) map. In that order, so the template will sort on the values when
+ranging.
+*/
 type vk map[string]string
+
+var countries vk
 
 type jsonCountry struct {
 	Name string
 	Code string
 }
 
-var countries vk
-
 func Countries() vk {
 	if countries == nil {
-		jsonCountries := make([]jsonCountry, 250)
-		if data, err := ioutil.ReadFile("/resources/data/example/countries.json"); err != nil {
-			log.Panicln("ERROR:", err)
-		} else if err := json.Unmarshal(data, &jsonCountries); err != nil {
-			log.Panicln("ERROR:", err)
-		}
-		countries = make(vk, len(jsonCountries))
-		for _, v := range jsonCountries {
+		var data []jsonCountry
+		readJsonData(&data, "/resources/data/example/countries.json")
+		countries = make(vk, len(data))
+		for _, v := range data {
 			v.Code = strings.ToLower(v.Code)
 			countries[v.Name] = v.Code
 		}
 	}
 	return countries
 }
+
+var timeZones vk
 
 type jsonTimeZone struct {
 	Value string
@@ -42,22 +44,24 @@ type jsonTimeZone struct {
 	Utc []string
 }
 
-var timeZones vk
-
 func TimeZones() vk {
 	if timeZones == nil {
-		jsonTimeZones := make([]jsonTimeZone, 250)
-		if data, err := ioutil.ReadFile("/resources/data/example/timezones.json"); err != nil {
-			log.Panicln("ERROR:", err)
-		} else if err := json.Unmarshal(data, &jsonTimeZones); err != nil {
-			log.Panicln("ERROR:", err)
-		}
-		timeZones = make(vk, len(jsonTimeZones))
-		for _, v := range jsonTimeZones {
+		var data []jsonTimeZone
+		readJsonData(&data, "/resources/data/example/timezones.json")
+		timeZones = make(vk, len(data))
+		for _, v := range data {
 			if len(v.Utc) > 0 && v.Text != "" {
 				timeZones[v.Text] = v.Utc[0]
 			}
 		}
 	}
 	return timeZones
+}
+
+func readJsonData(dst interface{}, file string) {
+	if data, err := ioutil.ReadFile(file); err != nil {
+		log.Panicln("ERROR:", err)
+	} else if err := json.Unmarshal(data, dst); err != nil {
+		log.Panicln("ERROR:", err)
+	}
 }

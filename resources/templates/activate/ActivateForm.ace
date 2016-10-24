@@ -8,7 +8,7 @@ body
       input type=hidden name=_formtoken value={{._formtoken}}
       input type=hidden name=id value={{.id}}
       .p
-        label {{.msg.Get "Activate token"}}*{{" "}}
+        label {{.msg.Get "Activate token"}}*
           input#token.right type=text name=token autocomplete=off value={{.token}} placeholder=zc-968YEX3VYu_YmdA7ynBp_d2cydmR1MRRqmglh1R0= required=
       .p
         input.right type=submit
