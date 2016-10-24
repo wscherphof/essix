@@ -1,7 +1,7 @@
 # Essix
 Package essix runs an essential simple secure stable scalable stateless server.
 
-The `essix` command manages Essix apps, their TLS (https) certificates, their
+The `essix` [command](#essix-command) manages Essix apps, their TLS (https) certificates, their
 backend databases (RethinkDB), and their infrastructure (Docker Swarm Mode).
 
 Follow the [Quickstart](#quickstart) to get your first app running on a swarm within minutes.
@@ -18,6 +18,7 @@ Essix basically provides what you _need_ for running a reliable web application,
 cutting out the cruft, and aiming for a smooth and transparent developer
 experience whith the lowest possible rate of surprises.
 
+
 - [HTTP/2](https://en.wikipedia.org/wiki/HTTP/2)
 - Encrypted communication (https)
 - One-line commands for generating trusted server certificates using [LetsEncrypt](https://letsencrypt.org/)
@@ -27,7 +28,8 @@ experience whith the lowest possible rate of surprises.
 - One-line commands for scaling by ading/removing application server or database instances
 - One-line commands for scaling by ading/removing swarm computing nodes
 - Development environment identical to production environment
-- Transparent Swarm environment ranging from a one-node laptop to multi-continent clouds
+- Transparent Swarm environments ranging from a one-node laptop to multi-continent clouds
+
 
 - Secure user sessions (log in, log out)
 - Sign up with email address verification
@@ -36,13 +38,16 @@ experience whith the lowest possible rate of surprises.
 - Built-in email sending capability
 - Built-in i18n multi-language "messages" system
 
+
 - Automatic [CSRF](https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)) protection using form tokens
 - Built-in request route rate limiting (obsoleting the need for [captchas](https://www.owasp.org/index.php/Testing_for_Captcha_(OWASP-AT-012)#WARNING:_CAPTCHA_protection_is_an_ineffective_security_mechanism_and_should_be_perceived_as_a_.22rate_limiting.22_protection_only.21))
+
 
 - Straightforward business data entity modeling & manipulation
 - [Jade](http://jadelang.net/)-like HTML templating, using [Ace](https://github.com/yosssi/ace)
 - Built-in error handling
 - [Post/Redirect/Get](https://en.wikipedia.org/wiki/Post/Redirect/Get) made simple
+
 
 ## Quickstart
 
@@ -56,7 +61,7 @@ experience whith the lowest possible rate of surprises.
 1. Point your browser to https://dev.appsite.com/. It'll complain about not trusting your self-signed certificate, but you can instruct it to accept it anyway. The `essix` command can generate officially trusted certificates as well.
 1. Put your app `$GOPATH/github.com/you/yourapp` under [version control](https://guides.github.com/introduction/getting-your-project-on-github) & get creative.
 
-Run `$ essix help` for some more elaborate usage examples.
+Run `$ essix help` for some more elaborate [usage examples]((#essix-command)).
 
 ## Prerequisites
 
