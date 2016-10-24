@@ -1,6 +1,8 @@
 # Essix
 Package essix runs an essential simple secure stable scalable stateless server.
 
+[![GoDoc](https://godoc.org/github.com/wscherphof/essix?status.svg)](https://godoc.org/github.com/wscherphof/essix)
+
 The `essix` command manages Essix apps, their TLS (https) certificates, their
 backend databases (RethinkDB), and their infrastructure (Docker Swarm Mode).
 
