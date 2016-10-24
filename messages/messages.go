@@ -13,18 +13,6 @@ func init() {
 		Set("nl", "Hoi").
 		Set("en", "Hi")
 
-	msg.Key("Time format").
-		Set("nl", "2-1-2006, 15.04 u. (MST)").
-		Set("en", "1/2/2006 at 3:04pm (MST)")
-
-	msg.Key("Last modified").
-		Set("nl", "Laatste wijziging").
-		Set("en", "Last modified")
-
-	msg.Key("Save changes").
-		Set("nl", "Wijzigingen opslaan").
-		Set("en", "Save changes")
-
 	msg.Key("Current").
 		Set("nl", "Huidig").
 		Set("en", "Current")

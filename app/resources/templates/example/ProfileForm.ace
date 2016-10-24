@@ -7,8 +7,14 @@ body
       input type=hidden name=_method value=PUT
       input type=hidden name=_formtoken value={{._formtoken}}
       .p
+        label {{.msg.Get "First name"}}
+          input#firstname.right type=text name=firstname autocomplete=given-name value={{.profile.FirstName}} placeholder=John size=35
+      .p
+        label {{.msg.Get "Last name"}}
+          input#lastname.right type=text name=lastname autocomplete=family-name value={{.profile.LastName}} placeholder=Doe size=35
+      .p
         label {{.msg.Get "Country"}}*
-          select#country.right name=country autocomplete=off required=
+          select#country.right name=country required= autocomplete=country
             {{$current := .profile.Country}}
             {{range $v, $k := .countries}}
               {{if eq $k $current}}
@@ -19,7 +25,7 @@ body
             {{end}}
       .p
         label {{.msg.Get "Time zone"}}*
-          select#timezone.right name=timezone autocomplete=off required=
+          select#timezone.right name=timezone required= autocomplete=on
             {{$current := .profile.TimeZone}}
             {{range $v, $k := .timezones}}
               {{if eq $k $current}}
@@ -28,12 +34,6 @@ body
                 option value={{$k}} {{$v}}
               {{end}}
             {{end}}
-      .p
-        label {{.msg.Get "First name"}}
-          input#firstname.right type=text name=firstname autocomplete=given-name value={{.profile.FirstName}} placeholder=John size=35
-      .p
-        label {{.msg.Get "Last name"}}
-          input#lastname.right type=text name=lastname autocomplete=family-name value={{.profile.LastName}} placeholder=Doe size=35
       .p
         input type=reset
         input.right type=submit value={{.msg.Get "Save changes"}}

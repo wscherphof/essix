@@ -1,13 +1,13 @@
 package example
 
 import (
+	"app/model"
 	"github.com/julienschmidt/httprouter"
 	"github.com/wscherphof/essix/secure"
 	"github.com/wscherphof/essix/template"
-	"<model>"
+	"log"
 	"net/http"
 	"time"
-	"log"
 )
 
 func ProfileForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
