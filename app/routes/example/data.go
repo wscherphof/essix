@@ -36,12 +36,12 @@ func Countries() vk {
 var timeZones vk
 
 type jsonTimeZone struct {
-	Value string
-	Abbr string
+	Value  string
+	Abbr   string
 	Offset float32
-	Isdst bool
-	Text string
-	Utc []string
+	Isdst  bool
+	Text   string
+	Utc    []string
 }
 
 func TimeZones() vk {

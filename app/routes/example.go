@@ -1,8 +1,8 @@
 package routes
 
 import (
+	"app/routes/example"
 	"github.com/wscherphof/secure"
-	"<routes/example>"
 )
 
 func init() {
