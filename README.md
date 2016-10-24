@@ -136,8 +136,6 @@ You'll want to have these baseline tools ready:
   - An account with Docker Hub
   - An account with DigitalOcean
 
-$GOPATH environment variable is set to: '/Users/wsf/go'
-
 
 Examples:
 
