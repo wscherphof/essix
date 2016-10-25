@@ -20,8 +20,8 @@ import (
 	"github.com/wscherphof/msg"
 	"github.com/wscherphof/secure"
 	"github.com/yosssi/ace"
-	"io"
 	"log"
+	"io"
 	"net/http"
 )
 
@@ -37,13 +37,26 @@ base in the template name (filename without extension) in dir
 inner is the inner template name (without extension) in dir
 
 Both base and inner may include paths relative to dir.
+
+data is the pipeline data to pass to the template
+
+opt_status is the http status code to use; default is http.StatusOK
 */
-func Run(w io.Writer, r *http.Request, dir, base, inner string, opt_data ...map[string]interface{}) {
-	var data map[string]interface{}
-	if len(opt_data) == 1 {
-		data = opt_data[0]
-	} else {
-		data = make(map[string]interface{}, 1)
+func run(w io.Writer, r *http.Request, dir, base, inner string, data map[string]interface{}, opt_status ...int) {
+	status := http.StatusOK
+	if len(opt_status) == 1 {
+		status = opt_status[0]
+	}
+	switch w := w.(type) {
+	case http.ResponseWriter:
+		if w.Header().Get("Content-Type") == "" {
+			// Set the Content-Type to prevent CompressHandler from doing so after our WriteHeader()
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		}
+		w.WriteHeader(status)
+	}
+	if data == nil {
+		data = make(map[string]interface{}, 2)
 	}
 	translator := msg.Translator(r)
 	data["msg"] = translator
@@ -70,8 +83,8 @@ func Run(w io.Writer, r *http.Request, dir, base, inner string, opt_data ...map[
 }
 
 // Write loads and executes a template, returning the output.
-func Write(r *http.Request, dir, base, inner string, data ...map[string]interface{}) string {
+func write(r *http.Request, dir, base, inner string, data map[string]interface{}, opt_status ...int) string {
 	var b bytes.Buffer
-	Run(&b, r, dir, base, inner, data...)
+	run(&b, r, dir, base, inner, data, opt_status...)
 	return string(b.Bytes())
 }

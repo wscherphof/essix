@@ -10,14 +10,22 @@ type baseType struct {
 	w    http.ResponseWriter
 	r    *http.Request
 	data map[string]interface{}
+	Status int
 }
 
 func (b *baseType) Set(key string, value interface{}) {
+	if b.data == nil {
+		b.data = make(map[string]interface{})
+	}
 	b.data[key] = value
 }
 
 func newBaseType(w http.ResponseWriter, r *http.Request) *baseType {
-	return &baseType{w, r, make(map[string]interface{})}
+	return &baseType{
+		w: w,
+		r: r,
+		Status: http.StatusOK,
+	}
 }
 
 type PRGType struct {
@@ -71,7 +79,7 @@ func PRG(w http.ResponseWriter, r *http.Request, dir, base string, inner ...stri
 		for key := range values {
 			data[key] = r.FormValue(key)
 		}
-		Run(w, r, dir, base, opt(inner...), data)
+		run(w, r, dir, base, opt(inner...), data)
 	case "PUT", "POST", "DELETE":
 		prg = &PRGType{newBaseType(w, r)}
 	}

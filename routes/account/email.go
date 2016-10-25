@@ -48,7 +48,7 @@ func ChangeEmailForm(w http.ResponseWriter, r *http.Request, ps httprouter.Param
 			template.Error(w, r, err, conflict)
 		} else {
 			cookie.Update(w, r, account)
-			template.Run(w, r, "email", "ChangeEmail-cancel", "")
+			template.GET(w, r, "email", "ChangeEmail-cancel", "").Run()
 		}
 	} else {
 		t.Set("email", account.Email)

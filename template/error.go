@@ -56,8 +56,5 @@ func errorTemplate(w http.ResponseWriter, r *http.Request, err error, conflict b
 	if len(tail) == 2 {
 		inner = "../" + tail[0] + "/" + tail[1]
 	}
-	// Set the Content-Type to prevent CompressHandler from doing so after our WriteHeader()
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	w.WriteHeader(code)
-	Run(w, r, "template", "Error", inner, data)
+	run(w, r, "template", "Error", inner, data, code)
 }

@@ -13,7 +13,7 @@ type GetType struct {
 
 // Run executes the template, passing in the set data values.
 func (t *GetType) Run() {
-	Run(t.w, t.r, t.dir, t.base, t.inner, t.data)
+	run(t.w, t.r, t.dir, t.base, t.inner, t.data, t.Status)
 }
 
 /*
