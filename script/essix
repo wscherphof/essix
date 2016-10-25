@@ -63,7 +63,7 @@ usage ()
 	echo "Examples:"
 	echo
     echo "  \$ $(basename $0) init github.com/essix/newapp"
-    echo "      Initialises a base structure for an Essix app in ${GOPATH}/github.com/essix/newapp."
+    echo "      Initialises a base structure for an Essix app in ${GOPATH}/src/github.com/essix/newapp."
 	echo
     echo "  \$ $(basename $0) cert dev.appsite.com"
     echo "      Generates a self-signed TLS certificate for the given domain."

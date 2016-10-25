@@ -1,10 +1,14 @@
 # Essix
 Package essix runs an essential simple secure stable scalable stateless server.
 
-The `essix` [command](#essix-command) manages Essix apps, their TLS (https) certificates, their
-backend databases (RethinkDB), and their infrastructure (Docker Swarm Mode).
+`$ go get -u github.com/wscherphof/essix`
 
-Follow the [Quickstart](#quickstart) to get your first app running within minutes, on a swarm near you.
+The `essix` [command](#essix-command) manages Essix apps, their server
+certificates (TLS/HTTPS), their backend databases (RethinkDB), and their
+infrastructure (Docker Swarm Mode).
+
+Follow the [Quickstart](#quickstart) to get your first app running within
+minutes, on a swarm near you.
 
 With `$essix init`, a new Essix app package is inititialised, much like
 https://github.com/wscherphof/essix/tree/master/app, where you would add your
@@ -13,40 +17,73 @@ own functionality. It includes the Profile example of how things can be done.
 [![GoDoc](https://godoc.org/github.com/wscherphof/essix?status.svg)](https://godoc.org/github.com/wscherphof/essix)
 
 ## Features
+Essix basically provides what you _need_ for running a reliable web application.
 
-Essix basically provides what you _need_ for running a reliable web application,
-cutting out the cruft, and aiming for a smooth and transparent developer
-experience whith the lowest possible rate of surprises.
+### Dev
+Essix cuts out the cruft, and facilitates building directly on the excellent
+standards that created the web.
+
+The server runs [HTTP/2](https://en.wikipedia.org/wiki/HTTP/2) with
+[TLS](https://en.wikipedia.org/wiki/Transport_Layer_Security) (https).
+
+`$ essix cert` generates self-signed _TLS certificates_, and trusted certficates
+for domains you own, through [LetsEncrypt](https://letsencrypt.org/)
+
+Templates for [HTML](https://www.w3.org/html/) documents are defined with
+[Ace](https://github.com/yosssi/ace), a Go version of
+[Jade](http://jadelang.net/).
+[Progressively enhance](https://en.wikipedia.org/wiki/Progressive_enhancement)
+them with [CSS](https://www.w3.org/Style/CSS/) styles,
+[SVG](https://www.w3.org/Graphics/SVG/) graphics, and/or
+[JavaScript](https://www.w3.org/standards/webdesign/script) behaviours as you
+like. Default templates can be overridden.
+
+Business objects gain Create, Read, Update, and Delete operations from the
+_Entity_ base type, which manages their storage in a
+[RethinkDB](https://www.rethinkdb.com/) distributed database.
+
+Server errors are communicated through a customisable _error template_.
+
+The [Post/Redirect/Get](https://en.wikipedia.org/wiki/Post/Redirect/Get) pattern
+is a first class citizen.
+
+HTML _email_ is sent using using the same [Ace](https://github.com/yosssi/ace)
+templates. Failed emails are queued automatically to send later.
+
+Multi-language labels and text are managed through the simple definition of
+_messages_ with keys and translations. Default messages can be overridden.
 
 
-- [HTTP/2](https://en.wikipedia.org/wiki/HTTP/2)
-- Encrypted communication (https)
-- One-line commands for generating trusted server certificates using [LetsEncrypt](https://letsencrypt.org/)
-- Redundant distributed backend database using [RethinkDB](https://www.rethinkdb.com/)
-- [Stateless](https://en.wikipedia.org/wiki/Stateless_protocol) distributed application server
+### Security
+All communication between client and server is encrypted through
+[TLS](https://en.wikipedia.org/wiki/Transport_Layer_Security) (https).
+
+HTTP PUT, POST, PATCH, and DELETE requests are protected from
+[CSRF](https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF))
+attacks automatically, using encrypted form tokens.
+
+On sign up, the user's email address is verified before the new account is
+activated. User passwords are never stored; on sign in, the given password is
+verified through an encrypted hash value in the database. The processes for
+resetting the password, changing the email address, or suspending an account,
+include an email verification step.
+
+Specific request routes can be declaratively _rate limited_ (obsoleting the need
+for [captchas](https://www.owasp.org/index.php/Testing_for_Captcha_(OWASP-AT-012)#WARNING:_CAPTCHA_protection_is_an_ineffective_security_mechanism_and_should_be_perceived_as_a_.22rate_limiting.22_protection_only.21))
+
+
+### Ops
+Essix creates computing environments from scratch in a snap, scales
+transparently from a local laptop to a multi-continent cloud, and only knows how
+to run in fault tolerant mode.
+...
+- Database
+- Stateless
 - One-line commands for deploying on [Docker Swarm Mode](https://docs.docker.com/engine/swarm/) computing clusters
 - One-line commands for scaling by ading/removing application server or database instances
 - One-line commands for scaling by ading/removing swarm computing nodes
 - Development environment identical to production environment
 - Transparent Swarm environments ranging from a one-node laptop to multi-continent clouds
-
-
-- Secure user sessions (log in, log out)
-- Sign up with email address verification
-- Secure password reset
-- Secure email address changing process
-- Built-in email sending capability
-- Built-in i18n multi-language "messages" system
-
-
-- Automatic [CSRF](https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)) protection using form tokens
-- Built-in request route rate limiting (obsoleting the need for [captchas](https://www.owasp.org/index.php/Testing_for_Captcha_(OWASP-AT-012)#WARNING:_CAPTCHA_protection_is_an_ineffective_security_mechanism_and_should_be_perceived_as_a_.22rate_limiting.22_protection_only.21))
-
-
-- Straightforward business data entity modeling & manipulation
-- [Jade](http://jadelang.net/)-like HTML templating, using [Ace](https://github.com/yosssi/ace)
-- Built-in error handling
-- [Post/Redirect/Get](https://en.wikipedia.org/wiki/Post/Redirect/Get) made simple
 
 
 ## Quickstart
@@ -140,7 +177,7 @@ You'll want to have these baseline tools ready:
 Examples:
 
   $ essix init github.com/essix/newapp
-      Initialises a base structure for an Essix app in /Users/wsf/go/github.com/essix/newapp.
+      Initialises a base structure for an Essix app in $GOPATH/src/github.com/essix/newapp.
 
   $ essix cert dev.appsite.com
       Generates a self-signed TLS certificate for the given domain.
