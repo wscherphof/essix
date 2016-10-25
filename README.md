@@ -76,14 +76,26 @@ for [captchas](https://www.owasp.org/index.php/Testing_for_Captcha_(OWASP-AT-012
 Essix creates computing environments from scratch in a snap, scales
 transparently from a local laptop to a multi-continent cloud, and only knows how
 to run in fault tolerant mode.
-...
-- Database
-- Stateless
-- One-line commands for deploying on [Docker Swarm Mode](https://docs.docker.com/engine/swarm/) computing clusters
-- One-line commands for scaling by ading/removing application server or database instances
-- One-line commands for scaling by ading/removing swarm computing nodes
-- Development environment identical to production environment
-- Transparent Swarm environments ranging from a one-node laptop to multi-continent clouds
+
+`$ essix nodes` creates and manages
+[Docker Swarm Mode](https://docs.docker.com/engine/swarm/) swarms, either
+locally or in the cloud.
+
+`$ essix r` installs a [RethinkDB](https://www.rethinkdb.com/) cluster on a
+swarm's nodes.
+
+`$ essix build` compiles an Essix app's sources, and builds a
+[Docker](https://www.docker.com/) image for it.
+
+`$ essix run` creates a service on the swarm that runs any number of _replicas_
+of the app's image.
+
+The app server
+is [stateless](http://whatisrest.com/rest_constraints/stateless_profile)
+(resource data is kept in the database cluster, and user session data is kept
+client-side in a cookie), meaning each replica is the same as any of the others,
+every request can be handled by any of the replicas, and if one fails, the
+others can continue to serve.
 
 
 ## Quickstart
