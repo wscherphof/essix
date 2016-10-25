@@ -62,11 +62,11 @@ HTTP PUT, POST, PATCH, and DELETE requests are protected from
 [CSRF](https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF))
 attacks automatically, using encrypted form tokens.
 
-On sign up, the user's email address is verified before the new account is
-activated. User passwords are never stored; on sign in, the given password is
+On sign up, the user's _email address_ is verified before the new account is
+activated. User _passwords_ are never stored; on sign in, the given password is
 verified through an encrypted hash value in the database. The processes for
 resetting the password, changing the email address, or suspending an account,
-include an email verification step.
+include an email _verification_ step.
 
 Specific request routes can be declaratively _rate limited_ (obsoleting the need
 for [captchas](https://www.owasp.org/index.php/Testing_for_Captcha_(OWASP-AT-012)#WARNING:_CAPTCHA_protection_is_an_ineffective_security_mechanism_and_should_be_perceived_as_a_.22rate_limiting.22_protection_only.21))
@@ -161,17 +161,6 @@ essix [OPTIONS] run REPO TAG SWARM
 
 essix help
   Display this message.
-
-
-You'll want to have these baseline tools ready:
-  - Bash
-  - Git
-  - Go
-  - Docker
-  - Docker Machine
-  - VirtualBox
-  - An account with Docker Hub
-  - An account with DigitalOcean
 
 
 Examples:
