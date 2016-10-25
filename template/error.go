@@ -27,26 +27,25 @@ The tail template should start with:
 
 Any data is passed to the tail template.
 */
-func ErrorTail(w http.ResponseWriter, r *http.Request, err error, conflict bool, dir, tail string, data ...map[string]interface{}) {
+func ErrorTail(w http.ResponseWriter, r *http.Request, err error, conflict bool, dir, tail string, opt_data ...map[string]interface{}) {
+	var data map[string]interface{}
 	if len(data) == 1 {
-		errorTemplate(w, r, err, conflict, data[0], dir, tail)
-	} else {
-		errorTemplate(w, r, err, conflict, nil, dir, tail)
+		data = opt_data[0]
 	}
+	errorTemplate(w, r, err, conflict, data, dir, tail)
 }
 
 func errorTemplate(w http.ResponseWriter, r *http.Request, err error, conflict bool, errData map[string]interface{}, tail ...string) {
-	code := http.StatusInternalServerError
+	status := http.StatusInternalServerError
 	if conflict {
-		code = http.StatusConflict
+		status = http.StatusConflict
 	} else {
 		log.Printf("ERROR: %s %+v: %s %#v", r.Method, r.URL, err, err)
 		err = ErrInternalServerError
 	}
-	data := map[string]interface{}{
-		"error": err,
-		"url":   r.URL.String(),
-	}
+	data := make(map[string]interface{}, 2+len(errData))
+	data["error"] = err.Error()
+	data["url"] = r.URL.String()
 	if errData != nil {
 		for k, v := range errData {
 			data[k] = v
@@ -56,5 +55,5 @@ func errorTemplate(w http.ResponseWriter, r *http.Request, err error, conflict b
 	if len(tail) == 2 {
 		inner = "../" + tail[0] + "/" + tail[1]
 	}
-	run(w, r, "template", "Error", inner, data, code)
+	response(w, r, "template", "Error", inner, data, status)
 }

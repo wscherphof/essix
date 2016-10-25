@@ -12,6 +12,6 @@ func Handle(dir, base, inner string, opt_data ...map[string]interface{}) httprou
 		if len(opt_data) == 1 {
 			data = opt_data[0]
 		}
-		run(w, r, dir, base, inner, data)
+		response(w, r, dir, base, inner, data)
 	}
 }
