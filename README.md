@@ -37,8 +37,8 @@ them with [CSS](https://www.w3.org/Style/CSS/) styles,
 [JavaScript](https://www.w3.org/standards/webdesign/script) behaviours as you
 like. Custom templates may override core templates.
 - Business objects gain Create, Read, Update, and Delete operations from the
-_Entity base type_, which manages their storage in a
-[RethinkDB](https://www.rethinkdb.com/) cluster.
+[Entity](https://godoc.org/github.com/wscherphof/entity) base type, which
+manages their storage in a [RethinkDB](https://www.rethinkdb.com/) cluster.
 - Server errors are communicated through a customisable _error template_.
 - The [Post/Redirect/Get](https://en.wikipedia.org/wiki/Post/Redirect/Get)
 pattern is a first class citizen.
