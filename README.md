@@ -64,7 +64,9 @@ include an _email verification_ step.
 - Specific request routes can be declaratively _rate limited_ (obsoleting the
 need for
 [captchas](https://www.owasp.org/index.php/Testing_for_Captcha_(OWASP-AT-012)#WARNING:_CAPTCHA_protection_is_an_ineffective_security_mechanism_and_should_be_perceived_as_a_.22rate_limiting.22_protection_only.21))
-
+- A _firewall_ is included for cloud nodes, opening only ports 80, and 443 for
+the app (80 redirects to 443), 2376, 2377, 7946, and 4789 for Docker Swarm Mode,
+and 22 for `ssh`. An ssh tunnel provides access to the RethinkDB admin site.
 
 ### Ops
 Essix creates computing environments from scratch in a snap, scales
