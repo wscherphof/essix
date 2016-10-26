@@ -47,7 +47,7 @@ manages their storage in a [RethinkDB](https://www.rethinkdb.com/) cluster.
 _error template_.
 - The [Post/Redirect/Get](https://en.wikipedia.org/wiki/Post/Redirect/Get)
 pattern is a
-[first class citizen](https://github.com/wscherphof/essix/blob/master/template/prg.go).
+[first class citizen](https://godoc.org/github.com/wscherphof/essix/template#PRG).
 - HTML _email_ is sent using using the same [Ace](https://github.com/yosssi/ace)
 templates. Failed emails are queued automatically to send later.
 - Multi-language labels and text are managed through the simple definition of
@@ -63,16 +63,19 @@ session tokens are stored as a
 
 - HTTP PUT, POST, PATCH, and DELETE requests are protected from
 [CSRF](https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF))
-attacks automatically, using encrypted form tokens.
+attacks automatically, using encrypted
+[form tokens](https://godoc.org/github.com/wscherphof/secure#SecureRouter).
 - On sign up, the user's _email address_ is verified before the new account is
 activated. User _passwords_ are never stored; on sign in, the given password is
 verified through an encrypted hash value in the database. The processes for
 resetting the password, changing the email address, or suspending an account,
 include an _email verification_ step.
-- Specific request routes can be declaratively shielded from _unauthorised
-access_, e.g. `router.PUT("/account/email", secure.Handle(account.ChangeEmail))`
-- Specific request routes can be declaratively _rate limited_ (obsoleting the
-need for
+- Specific request routes can be declaratively shielded from
+[unauthorised access](https://godoc.org/github.com/wscherphof/secure#Handle),
+e.g. `router.PUT("/account/email", secure.Handle(account.ChangeEmail))`
+- Specific request routes can be declaratively
+[rate limited](https://godoc.org/github.com/wscherphof/essix/ratelimit#Handle)
+(obsoleting the need for
 [captchas](https://www.owasp.org/index.php/Testing_for_Captcha_(OWASP-AT-012)#WARNING:_CAPTCHA_protection_is_an_ineffective_security_mechanism_and_should_be_perceived_as_a_.22rate_limiting.22_protection_only.21))
 e.g. `router.PUT("/session", ratelimit.Handle(account.LogIn))`
 - A _firewall_ is included for cloud nodes, opening only ports 80, and 443 for

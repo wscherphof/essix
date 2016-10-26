@@ -17,7 +17,7 @@ import (
 var (
 	// Die without a domain
 	domain = env.Get("DOMAIN")
-	router = secure.Router
+	router = secure.Router()
 )
 
 func init() {

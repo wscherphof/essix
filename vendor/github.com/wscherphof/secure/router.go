@@ -8,53 +8,63 @@ import (
 	"net/url"
 )
 
+var router *SecureRouter
+
 /*
-Router is a new secured httprouter.
+Router returns the secure router.
+*/
+func Router() *SecureRouter {
+	if router == nil {
+		router = &SecureRouter{httprouter.New()}
+	}
+	return router
+}
+
+/*
+A SecureRouter is a secured httprouter.
 PUT, POST, PATCH, and DELETE handles check for a valid FormToken encrypted token
 string in the request's "_formtoken" FormValue.
 */
-var Router = &router{httprouter.New()}
-
-type router struct {
+type SecureRouter struct {
 	*httprouter.Router
 }
 
 // PUT registers a handler for a PUT request to the given path.
 // The handler is only run if the request carries a valid form token.
-func (r *router) PUT(path string, handle httprouter.Handle) {
+func (r *SecureRouter) PUT(path string, handle httprouter.Handle) {
 	r.Handle("PUT", path, formTokenHandle(handle))
 }
 
 // POST registers a handler for a POST request to the given path.
 // The handler is only run if the request carries a valid form token.
-func (r *router) POST(path string, handle httprouter.Handle) {
+func (r *SecureRouter) POST(path string, handle httprouter.Handle) {
 	r.Handle("POST", path, formTokenHandle(handle))
 }
 
 // PATCH registers a handler for a PATCH request to the given path.
 // The handler is only run if the request carries a valid form token.
-func (r *router) PATCH(path string, handle httprouter.Handle) {
+func (r *SecureRouter) PATCH(path string, handle httprouter.Handle) {
 	r.Handle("PATCH", path, formTokenHandle(handle))
 }
 
 // DELETE registers a handler for a DELETE request to the given path.
 // The handler is only run if the request carries a valid form token.
-func (r *router) DELETE(path string, handle httprouter.Handle) {
+func (r *SecureRouter) DELETE(path string, handle httprouter.Handle) {
 	r.Handle("DELETE", path, formTokenHandle(handle))
 }
 
 // GET registers a handler for a GET request to the given path.
-func (r *router) GET(path string, handle httprouter.Handle) {
+func (r *SecureRouter) GET(path string, handle httprouter.Handle) {
 	r.Handle("GET", path, clearHandle(handle))
 }
 
 // HEAD registers a handler for a HEAD request to the given path.
-func (r *router) HEAD(path string, handle httprouter.Handle) {
+func (r *SecureRouter) HEAD(path string, handle httprouter.Handle) {
 	r.Handle("HEAD", path, clearHandle(handle))
 }
 
 // OPTIONS registers a handler for a OPTIONS request to the given path.
-func (r *router) OPTIONS(path string, handle httprouter.Handle) {
+func (r *SecureRouter) OPTIONS(path string, handle httprouter.Handle) {
 	r.Handle("OPTIONS", path, clearHandle(handle))
 }
 
