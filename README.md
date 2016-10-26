@@ -40,9 +40,11 @@ like. Custom templates may override core templates.
 `https://<host>/static/...`
 - Request _routes_ are declared with their method, URL, and handler function,
 e.g. `router.GET("/account/activate", account.ActivateForm)`
-- Business objects gain Create, Read, Update, and Delete operations from the
-[Entity](https://godoc.org/github.com/wscherphof/entity) base type, which
-manages their storage in a [RethinkDB](https://www.rethinkdb.com/) cluster.
+- Business objects gain
+[CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) operations
+from the [Entity](https://godoc.org/github.com/wscherphof/entity) base type,
+which manages their storage in a [RethinkDB](https://www.rethinkdb.com/)
+cluster.
 - Server and user errors are communicated through a customisable
 _error template_.
 - The [Post/Redirect/Get](https://en.wikipedia.org/wiki/Post/Redirect/Get)
