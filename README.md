@@ -36,6 +36,10 @@ them with [CSS](https://www.w3.org/Style/CSS/) styles,
 [SVG](https://www.w3.org/Graphics/SVG/) graphics, and/or
 [JavaScript](https://www.w3.org/standards/webdesign/script) behaviours as you
 like. Custom templates may override core templates.
+- Every path in `<app>/resources/static/...` is _statically served_ as
+`https://<host>/static/...`
+- Request _routes_ are declared like with their method, URL, and handler
+function, e.g. `router.PUT("/account/password", account.ChangePassword)`
 - Business objects gain Create, Read, Update, and Delete operations from the
 [Entity](https://godoc.org/github.com/wscherphof/entity) base type, which
 manages their storage in a [RethinkDB](https://www.rethinkdb.com/) cluster.
@@ -61,9 +65,12 @@ activated. User _passwords_ are never stored; on sign in, the given password is
 verified through an encrypted hash value in the database. The processes for
 resetting the password, changing the email address, or suspending an account,
 include an _email verification_ step.
+- Specific request routes can be declaratively shielded from unauthorised
+access, e.g. `router.PUT("/account/email", secure.Handle(account.ChangeEmail))`
 - Specific request routes can be declaratively _rate limited_ (obsoleting the
 need for
 [captchas](https://www.owasp.org/index.php/Testing_for_Captcha_(OWASP-AT-012)#WARNING:_CAPTCHA_protection_is_an_ineffective_security_mechanism_and_should_be_perceived_as_a_.22rate_limiting.22_protection_only.21))
+e.g. `router.PUT("/session", ratelimit.Handle(account.LogIn))`
 - A _firewall_ is included for cloud nodes, opening only ports 80, and 443 for
 the app (80 redirects to 443), 2376, 2377, 7946, and 4789 for Docker Swarm Mode,
 and 22 for `ssh`. An ssh tunnel provides access to the RethinkDB admin site.
