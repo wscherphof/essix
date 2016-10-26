@@ -38,24 +38,28 @@ them with [CSS](https://www.w3.org/Style/CSS/) styles,
 like. Custom templates may override core templates.
 - Every path in `<app>/resources/static/...` is _statically served_ as
 `https://<host>/static/...`
-- Request _routes_ are declared like with their method, URL, and handler
-function, e.g. `router.PUT("/account/password", account.ChangePassword)`
+- Request _routes_ are declared with their method, URL, and handler function,
+e.g. `router.GET("/account/activate", account.ActivateForm)`
 - Business objects gain Create, Read, Update, and Delete operations from the
 [Entity](https://godoc.org/github.com/wscherphof/entity) base type, which
 manages their storage in a [RethinkDB](https://www.rethinkdb.com/) cluster.
-- Server errors are communicated through a customisable _error template_.
+- Server and user errors are communicated through a customisable
+_error template_.
 - The [Post/Redirect/Get](https://en.wikipedia.org/wiki/Post/Redirect/Get)
-pattern is a first class citizen.
+pattern is a
+[first class citizen](https://github.com/wscherphof/essix/blob/master/template/prg.go).
 - HTML _email_ is sent using using the same [Ace](https://github.com/yosssi/ace)
 templates. Failed emails are queued automatically to send later.
 - Multi-language labels and text are managed through the simple definition of
-_messages_ with keys and translations. Custom messages may override core
-messages.
+[messages](https://godoc.org/github.com/wscherphof/msg) with keys and
+accompanying translations. Custom messages may override core messages.
 
 
 ### Security
 All communication between client and server is encrypted through
-[TLS](https://en.wikipedia.org/wiki/Transport_Layer_Security) (https).
+[TLS](https://en.wikipedia.org/wiki/Transport_Layer_Security) (https). User
+session tokens are stored as a
+[secure cookie](http://www.gorillatoolkit.org/pkg/securecookie)
 
 - HTTP PUT, POST, PATCH, and DELETE requests are protected from
 [CSRF](https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF))
@@ -65,8 +69,8 @@ activated. User _passwords_ are never stored; on sign in, the given password is
 verified through an encrypted hash value in the database. The processes for
 resetting the password, changing the email address, or suspending an account,
 include an _email verification_ step.
-- Specific request routes can be declaratively shielded from unauthorised
-access, e.g. `router.PUT("/account/email", secure.Handle(account.ChangeEmail))`
+- Specific request routes can be declaratively shielded from _unauthorised
+access_, e.g. `router.PUT("/account/email", secure.Handle(account.ChangeEmail))`
 - Specific request routes can be declaratively _rate limited_ (obsoleting the
 need for
 [captchas](https://www.owasp.org/index.php/Testing_for_Captcha_(OWASP-AT-012)#WARNING:_CAPTCHA_protection_is_an_ineffective_security_mechanism_and_should_be_perceived_as_a_.22rate_limiting.22_protection_only.21))
