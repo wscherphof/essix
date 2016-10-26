@@ -10,7 +10,7 @@ infrastructure (Docker Swarm Mode).
 Follow the [Quickstart](#quickstart) to get your first app running within
 minutes, on a swarm near you.
 
-With `$essix init`, a new Essix app package is inititialised, much like
+With `$ essix init`, a new Essix app package is inititialised, much like
 https://github.com/wscherphof/essix/tree/master/app, where you would add your
 own functionality. It includes the Profile example of how things can be done.
 
