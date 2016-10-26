@@ -17,7 +17,7 @@ own functionality. It includes the Profile example of how things can be done.
 [![GoDoc](https://godoc.org/github.com/wscherphof/essix?status.svg)](https://godoc.org/github.com/wscherphof/essix)
 
 ## Features
-Essix basically provides just what you _need_ for running a reliable web
+Essix basically provides _just what you need_ for running a reliable web
 application.
 
 ### Dev
