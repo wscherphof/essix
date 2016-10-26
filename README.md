@@ -115,16 +115,16 @@ others continue to serve.
 1. Initialise a new Essix app: `$ essix init github.com/you/yourapp`
 1. Create a self-signed
 [TLS](https://en.wikipedia.org/wiki/Transport_Layer_Security) certificate:
-`$ cd $GOPATH/github.com/you/yourapp`, then: `$ essix cert dev.appsite.com`
+`$ cd $GOPATH/src/github.com/you/yourapp`, then: `$ essix cert dev.appsite.com`
 1. Create a local one-node Docker swarm: `$ essix nodes -H dev.appsite.com -m 1
 create dev`
 1. Install RethinkDB on the swarm: `$ essix r create dev`
-1. Run your app on the swarm: `$ cd $GOPATH/github.com/you/yourapp`, then:
+1. Run your app on the swarm: `$ cd $GOPATH/src/github.com/you/yourapp`, then:
 `$ essix -e DOMAIN=dev.appsite.com build you 0.1 dev`
 1. Point your browser to https://dev.appsite.com/. It'll complain about not
 trusting your self-signed certificate, but you can instruct it to accept it
 anyway. `$ essix cert` can generate officially trusted certificates as well.
-1. Put your app (`$GOPATH/github.com/you/yourapp`) under
+1. Put your app (`$GOPATH/src/github.com/you/yourapp`) under
 [version control](https://guides.github.com/introduction/getting-your-project-on-github)
 & get creative.
 
@@ -147,7 +147,7 @@ Essix data is stored in a [RethinkDB](https://www.rethinkdb.com/) cluster, which
 the `essix` command completely manages within Docker, so not a prerequisite.
 
 After installing Essix with `$ go get -u github.com/wscherphof/essix`, the
-`essix` command relies on the `$GOPATH/github.com/wscherphof/essix` directory;
+`essix` command relies on the `$GOPATH/src/github.com/wscherphof/essix` directory;
 leave it untouched.
 
 ## Essix command
