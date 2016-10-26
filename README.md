@@ -97,7 +97,7 @@ The app server is
 (resource data is kept in the database cluster, and user session data is kept
 client-side in a cookie), meaning each replica is the same as any of the others,
 every request can be handled by any of the replicas, and if one fails, the
-others can continue to serve.
+others continue to serve.
 
 
 ## Quickstart
@@ -115,9 +115,8 @@ create dev`
 `$ essix -e DOMAIN=dev.appsite.com build you 0.1 dev`
 1. Point your browser to https://dev.appsite.com/. It'll complain about not
 trusting your self-signed certificate, but you can instruct it to accept it
-anyway. The `essix` command can generate officially trusted certificates as
-well.
-1. Put your app `$GOPATH/github.com/you/yourapp` under
+anyway. `$ essix cert` can generate officially trusted certificates as well.
+1. Put your app (`$GOPATH/github.com/you/yourapp`) under
 [version control](https://guides.github.com/introduction/getting-your-project-on-github)
 & get creative.
 
@@ -130,9 +129,9 @@ Run `$ essix help` for some more elaborate [usage examples]((#essix-command)).
 [environment variable](https://golang.org/doc/install#testing) to point to it.
 1. The `go get` command relies on a version control system, e.g.
 [GitHub](https://github.com/).
-1. The `essix` command runs on bash, which should be present on Mac or Linux.
+1. The `essix` command runs on `bash`, which should be present on Mac or Linux.
 For Windows, [Git Bash](https://git-for-windows.github.io/) should work.
-1. Deploying Essix apps with the `essix` command, relies on
+1. Deploying apps with the `essix` command, relies on
 [Docker](https://www.docker.com/products/docker). Docker Machine & VirtualBox
 are normally included in the Docker installation.
 
