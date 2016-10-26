@@ -91,7 +91,9 @@ to run in fault tolerant mode.
 
 - `$ essix nodes` creates and manages
 [Docker Swarm Mode](https://docs.docker.com/engine/swarm/) swarms, either
-locally or in the cloud.
+locally or in the cloud. See the
+[blogpost](https://wscherphof.wordpress.com/2016/09/13/rethink-swarm-mode/)
+for the ins and outs.
 - `$ essix r` installs a [RethinkDB](https://www.rethinkdb.com/) cluster on a
 swarm's nodes.
 - `$ essix build` compiles an Essix app's sources, and builds a
