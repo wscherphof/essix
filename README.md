@@ -1,5 +1,5 @@
 # Essix
-Package essix runs an essential simple secure stable scalable stateless server.
+Essix runs an essential simple secure stable scalable stateless server.
 
 `$ go get -u github.com/wscherphof/essix`
 
@@ -17,7 +17,8 @@ own functionality. It includes the Profile example of how things can be done.
 [![GoDoc](https://godoc.org/github.com/wscherphof/essix?status.svg)](https://godoc.org/github.com/wscherphof/essix)
 
 ## Features
-Essix basically provides what you _need_ for running a reliable web application.
+Essix basically provides just what you _need_ for running a reliable web
+application.
 
 ### Dev
 Essix cuts out the cruft, and facilitates building directly on the excellent
@@ -36,11 +37,11 @@ Templates for [HTML](https://www.w3.org/html/) documents are defined with
 them with [CSS](https://www.w3.org/Style/CSS/) styles,
 [SVG](https://www.w3.org/Graphics/SVG/) graphics, and/or
 [JavaScript](https://www.w3.org/standards/webdesign/script) behaviours as you
-like. Default templates can be overridden.
+like. Custom templates may override core templates.
 
 Business objects gain Create, Read, Update, and Delete operations from the
-_Entity_ base type, which manages their storage in a
-[RethinkDB](https://www.rethinkdb.com/) distributed database.
+_Entity base type_, which manages their storage in a
+[RethinkDB](https://www.rethinkdb.com/) cluster.
 
 Server errors are communicated through a customisable _error template_.
 
@@ -51,7 +52,8 @@ HTML _email_ is sent using using the same [Ace](https://github.com/yosssi/ace)
 templates. Failed emails are queued automatically to send later.
 
 Multi-language labels and text are managed through the simple definition of
-_messages_ with keys and translations. Default messages can be overridden.
+_messages_ with keys and translations. Custom messages may override core
+messages.
 
 
 ### Security
@@ -66,7 +68,7 @@ On sign up, the user's _email address_ is verified before the new account is
 activated. User _passwords_ are never stored; on sign in, the given password is
 verified through an encrypted hash value in the database. The processes for
 resetting the password, changing the email address, or suspending an account,
-include an email _verification_ step.
+include an _email verification_ step.
 
 Specific request routes can be declaratively _rate limited_ (obsoleting the need
 for [captchas](https://www.owasp.org/index.php/Testing_for_Captcha_(OWASP-AT-012)#WARNING:_CAPTCHA_protection_is_an_ineffective_security_mechanism_and_should_be_perceived_as_a_.22rate_limiting.22_protection_only.21))
@@ -90,8 +92,8 @@ swarm's nodes.
 `$ essix run` creates a service on the swarm that runs any number of _replicas_
 of the app's image.
 
-The app server
-is [stateless](http://whatisrest.com/rest_constraints/stateless_profile)
+The app server is
+[stateless](http://whatisrest.com/rest_constraints/stateless_profile)
 (resource data is kept in the database cluster, and user session data is kept
 client-side in a cookie), meaning each replica is the same as any of the others,
 every request can be handled by any of the replicas, and if one fails, the
@@ -103,27 +105,39 @@ others can continue to serve.
 1. Verify the [Prerequisites](#prerequisites).
 1. Install Essix: `$ go get -u github.com/wscherphof/essix`
 1. Initialise a new Essix app: `$ essix init github.com/you/yourapp`
-1. Create a self-signed [TLS](https://en.wikipedia.org/wiki/Transport_Layer_Security) certificate: `$ cd $GOPATH/github.com/you/yourapp`, then: `$ essix cert dev.appsite.com`
-1. Create a local one-node Docker swarm: `$ essix nodes -H dev.appsite.com -m 1 create dev`
+1. Create a self-signed
+[TLS](https://en.wikipedia.org/wiki/Transport_Layer_Security) certificate:
+`$ cd $GOPATH/github.com/you/yourapp`, then: `$ essix cert dev.appsite.com`
+1. Create a local one-node Docker swarm: `$ essix nodes -H dev.appsite.com -m 1
+create dev`
 1. Install RethinkDB on the swarm: `$ essix r create dev`
-1. Run your app on the swarm: `$ cd $GOPATH/github.com/you/yourapp`, then: `$ essix -e DOMAIN=dev.appsite.com build you 0.1 dev`
-1. Point your browser to https://dev.appsite.com/. It'll complain about not trusting your self-signed certificate, but you can instruct it to accept it anyway. The `essix` command can generate officially trusted certificates as well.
-1. Put your app `$GOPATH/github.com/you/yourapp` under [version control](https://guides.github.com/introduction/getting-your-project-on-github) & get creative.
+1. Run your app on the swarm: `$ cd $GOPATH/github.com/you/yourapp`, then:
+`$ essix -e DOMAIN=dev.appsite.com build you 0.1 dev`
+1. Point your browser to https://dev.appsite.com/. It'll complain about not
+trusting your self-signed certificate, but you can instruct it to accept it
+anyway. The `essix` command can generate officially trusted certificates as
+well.
+1. Put your app `$GOPATH/github.com/you/yourapp` under
+[version control](https://guides.github.com/introduction/getting-your-project-on-github)
+& get creative.
 
 Run `$ essix help` for some more elaborate [usage examples]((#essix-command)).
 
 ## Prerequisites
 
 1. Essix apps are built in the [Go language](https://golang.org/doc/install).
-1. Do create a Go working directory & set the `$GOPATH` environment variable to point to it.
-1. The `go get` command relies on a [version control system]().
+1. Do create a Go working directory & set the `$GOPATH`
+[environment variable](https://golang.org/doc/install#testing) to point to it.
+1. The `go get` command relies on a version control system, e.g.
+[GitHub](https://github.com/).
 1. The `essix` command runs on bash, which should be present on Mac or Linux.
 For Windows, [Git Bash](https://git-for-windows.github.io/) should work.
-1. Deploying Essix apps with the `essix` command, relies on [Docker](https://www.docker.com/products/docker).
-As well as on Docker Machine & VirtualBox, which are normally included in a Docker installation.
+1. Deploying Essix apps with the `essix` command, relies on
+[Docker](https://www.docker.com/products/docker). Docker Machine & VirtualBox
+are normally included in the Docker installation.
 
-Essix data is stored in [RethinkDB](https://www.rethinkdb.com/), which the
-`essix` command completely manages within Docker, so not a prerequisite.
+Essix data is stored in a [RethinkDB](https://www.rethinkdb.com/) cluster, which
+the `essix` command completely manages within Docker, so not a prerequisite.
 
 After installing Essix with `$ go get -u github.com/wscherphof/essix`, the
 `essix` command relies on the `$GOPATH/github.com/wscherphof/essix` directory;
