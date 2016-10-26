@@ -26,8 +26,8 @@ standards that created the web.
 
 - The server runs [HTTP/2](https://en.wikipedia.org/wiki/HTTP/2) with
 [TLS](https://en.wikipedia.org/wiki/Transport_Layer_Security) (https).
-- `$ essix cert` generates self-signed _TLS certificates_, and trusted certficates
-for domains you own, through [LetsEncrypt](https://letsencrypt.org/)
+- `$ essix cert` generates self-signed _TLS certificates_, and trusted
+certficates for domains you own, through [LetsEncrypt](https://letsencrypt.org/)
 - Templates for [HTML](https://www.w3.org/html/) documents are defined with
 [Ace](https://github.com/yosssi/ace), a Go version of
 [Jade](http://jadelang.net/).
@@ -40,8 +40,8 @@ like. Custom templates may override core templates.
 _Entity base type_, which manages their storage in a
 [RethinkDB](https://www.rethinkdb.com/) cluster.
 - Server errors are communicated through a customisable _error template_.
-- The [Post/Redirect/Get](https://en.wikipedia.org/wiki/Post/Redirect/Get) pattern
-is a first class citizen.
+- The [Post/Redirect/Get](https://en.wikipedia.org/wiki/Post/Redirect/Get)
+pattern is a first class citizen.
 - HTML _email_ is sent using using the same [Ace](https://github.com/yosssi/ace)
 templates. Failed emails are queued automatically to send later.
 - Multi-language labels and text are managed through the simple definition of
@@ -61,8 +61,9 @@ activated. User _passwords_ are never stored; on sign in, the given password is
 verified through an encrypted hash value in the database. The processes for
 resetting the password, changing the email address, or suspending an account,
 include an _email verification_ step.
-- Specific request routes can be declaratively _rate limited_ (obsoleting the need
-for [captchas](https://www.owasp.org/index.php/Testing_for_Captcha_(OWASP-AT-012)#WARNING:_CAPTCHA_protection_is_an_ineffective_security_mechanism_and_should_be_perceived_as_a_.22rate_limiting.22_protection_only.21))
+- Specific request routes can be declaratively _rate limited_ (obsoleting the
+need for
+[captchas](https://www.owasp.org/index.php/Testing_for_Captcha_(OWASP-AT-012)#WARNING:_CAPTCHA_protection_is_an_ineffective_security_mechanism_and_should_be_perceived_as_a_.22rate_limiting.22_protection_only.21))
 
 
 ### Ops
@@ -77,8 +78,8 @@ locally or in the cloud.
 swarm's nodes.
 - `$ essix build` compiles an Essix app's sources, and builds a
 [Docker](https://www.docker.com/) image for it.
-- `$ essix run` creates a service on the swarm that runs any number of _replicas_
-of the app's image.
+- `$ essix run` creates a service on the swarm that runs any number of
+_replicas_ of the app's image.
 - The app server is
 [stateless](http://whatisrest.com/rest_constraints/stateless_profile)
 (resource data is kept in the database cluster, and user session data is kept
