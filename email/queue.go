@@ -49,7 +49,7 @@ func processQueue() {
 			processJob(j)
 		}
 		if cursor.Err() != nil {
-			log.Println("ERROR: looping through email queue:", err)
+			log.Println("ERROR: looping through email queue:", cursor.Err())
 		}
 	}
 }
