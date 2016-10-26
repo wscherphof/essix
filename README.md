@@ -24,13 +24,11 @@ application.
 Essix cuts out the cruft, and facilitates building directly on the excellent
 standards that created the web.
 
-The server runs [HTTP/2](https://en.wikipedia.org/wiki/HTTP/2) with
+- The server runs [HTTP/2](https://en.wikipedia.org/wiki/HTTP/2) with
 [TLS](https://en.wikipedia.org/wiki/Transport_Layer_Security) (https).
-
-`$ essix cert` generates self-signed _TLS certificates_, and trusted certficates
+- `$ essix cert` generates self-signed _TLS certificates_, and trusted certficates
 for domains you own, through [LetsEncrypt](https://letsencrypt.org/)
-
-Templates for [HTML](https://www.w3.org/html/) documents are defined with
+- Templates for [HTML](https://www.w3.org/html/) documents are defined with
 [Ace](https://github.com/yosssi/ace), a Go version of
 [Jade](http://jadelang.net/).
 [Progressively enhance](https://en.wikipedia.org/wiki/Progressive_enhancement)
@@ -38,20 +36,15 @@ them with [CSS](https://www.w3.org/Style/CSS/) styles,
 [SVG](https://www.w3.org/Graphics/SVG/) graphics, and/or
 [JavaScript](https://www.w3.org/standards/webdesign/script) behaviours as you
 like. Custom templates may override core templates.
-
-Business objects gain Create, Read, Update, and Delete operations from the
+- Business objects gain Create, Read, Update, and Delete operations from the
 _Entity base type_, which manages their storage in a
 [RethinkDB](https://www.rethinkdb.com/) cluster.
-
-Server errors are communicated through a customisable _error template_.
-
-The [Post/Redirect/Get](https://en.wikipedia.org/wiki/Post/Redirect/Get) pattern
+- Server errors are communicated through a customisable _error template_.
+- The [Post/Redirect/Get](https://en.wikipedia.org/wiki/Post/Redirect/Get) pattern
 is a first class citizen.
-
-HTML _email_ is sent using using the same [Ace](https://github.com/yosssi/ace)
+- HTML _email_ is sent using using the same [Ace](https://github.com/yosssi/ace)
 templates. Failed emails are queued automatically to send later.
-
-Multi-language labels and text are managed through the simple definition of
+- Multi-language labels and text are managed through the simple definition of
 _messages_ with keys and translations. Custom messages may override core
 messages.
 
@@ -60,17 +53,15 @@ messages.
 All communication between client and server is encrypted through
 [TLS](https://en.wikipedia.org/wiki/Transport_Layer_Security) (https).
 
-HTTP PUT, POST, PATCH, and DELETE requests are protected from
+- HTTP PUT, POST, PATCH, and DELETE requests are protected from
 [CSRF](https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF))
 attacks automatically, using encrypted form tokens.
-
-On sign up, the user's _email address_ is verified before the new account is
+- On sign up, the user's _email address_ is verified before the new account is
 activated. User _passwords_ are never stored; on sign in, the given password is
 verified through an encrypted hash value in the database. The processes for
 resetting the password, changing the email address, or suspending an account,
 include an _email verification_ step.
-
-Specific request routes can be declaratively _rate limited_ (obsoleting the need
+- Specific request routes can be declaratively _rate limited_ (obsoleting the need
 for [captchas](https://www.owasp.org/index.php/Testing_for_Captcha_(OWASP-AT-012)#WARNING:_CAPTCHA_protection_is_an_ineffective_security_mechanism_and_should_be_perceived_as_a_.22rate_limiting.22_protection_only.21))
 
 
@@ -79,20 +70,16 @@ Essix creates computing environments from scratch in a snap, scales
 transparently from a local laptop to a multi-continent cloud, and only knows how
 to run in fault tolerant mode.
 
-`$ essix nodes` creates and manages
+- `$ essix nodes` creates and manages
 [Docker Swarm Mode](https://docs.docker.com/engine/swarm/) swarms, either
 locally or in the cloud.
-
-`$ essix r` installs a [RethinkDB](https://www.rethinkdb.com/) cluster on a
+- `$ essix r` installs a [RethinkDB](https://www.rethinkdb.com/) cluster on a
 swarm's nodes.
-
-`$ essix build` compiles an Essix app's sources, and builds a
+- `$ essix build` compiles an Essix app's sources, and builds a
 [Docker](https://www.docker.com/) image for it.
-
-`$ essix run` creates a service on the swarm that runs any number of _replicas_
+- `$ essix run` creates a service on the swarm that runs any number of _replicas_
 of the app's image.
-
-The app server is
+- The app server is
 [stateless](http://whatisrest.com/rest_constraints/stateless_profile)
 (resource data is kept in the database cluster, and user session data is kept
 client-side in a cookie), meaning each replica is the same as any of the others,
