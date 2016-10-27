@@ -122,11 +122,13 @@ create dev`
 1. Point your browser to https://dev.appsite.com/. It'll complain about not
 trusting your self-signed certificate, but you can instruct it to accept it
 anyway. `$ essix cert` can generate officially trusted certificates as well.
+1. [Configure](#email-configuration) the server's email account details.
 1. Put your app (`$GOPATH/src/github.com/you/yourapp`) under
 [version control](https://guides.github.com/introduction/getting-your-project-on-github)
 & get creative.
 
 Run `$ essix help` for some more elaborate [usage examples]((#essix-command)).
+
 
 ## Prerequisites
 
@@ -233,3 +235,31 @@ Examples:
       Builds image essix/APP:0.3 on swarm dev's nodes, and runs the service
       on dev, with the given DOMAIN environment variable set.
 ```
+
+## Details
+
+### Email configuration
+The [email](https://godoc.org/github.com/wscherphof/essix/email) function needs
+email server & account details configured in the database. `$ essix r dev`
+brings up the administrator site of the RethinkDB cluster (assuming you target
+the `dev` swarm). Navigate to the Data Explorer, and paste this command:
+```
+r.db('essix').table('config').get('email').update({
+  EmailAddress: 'essix@gmail.com',
+  PWD: 'secret',
+  PortNumber: '587',
+  SmtpServer: 'smtp.gmail.com'
+}
+```
+Replace the values with what's appropriate for your account, then run the
+command. To get the app server to read the new config, restart it:
+```
+$ docker-machine ssh dev-manager-1 docker service scale myapp=0
+myapp scaled to 0
+$ docker-machine ssh dev-manager-1 docker service scale myapp=1
+myapp scaled to 1
+```
+
+Note that should you choose to use a Gmail account, you need to turn on 'Allow
+Less Secure Apps to Access Account' in the
+[account settings](https://myaccount.google.com/u/1/security)
