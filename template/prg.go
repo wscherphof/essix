@@ -7,7 +7,7 @@ import (
 )
 
 type PRGType struct {
-	*baseType
+	*BaseType
 }
 
 // Run redirects to path/method, including set values.
@@ -51,7 +51,7 @@ and
 Works with POST, as well as with PUT, and DELETE.
 */
 func PRG(w http.ResponseWriter, r *http.Request, dir, base string, opt_inner ...string) (prg *PRGType) {
-	prg = &PRGType{&baseType{w, r, dir, base, opt_inner, nil}}
+	prg = &PRGType{&BaseType{w, r, dir, base, opt_inner, nil}}
 	if r.Method == "GET" {
 		values := r.URL.Query()
 		data := make(map[string]interface{}, len(values)+2)
