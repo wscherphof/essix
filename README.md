@@ -50,9 +50,9 @@ _error template_.
 - The [Post/Redirect/Get](https://en.wikipedia.org/wiki/Post/Redirect/Get)
 pattern is a
 [first class citizen](https://godoc.org/github.com/wscherphof/essix/template#PRG).
-- HTML [email](https://godoc.org/github.com/wscherphof/essix/email) is sent
-using the same [Ace](https://github.com/yosssi/ace) templates. Failed emails
-are queued automatically to send later.
+- HTML _email_ is sent using the same [Ace](https://github.com/yosssi/ace)
+[templates](https://godoc.org/github.com/wscherphof/essix/template#Email). Failed
+emails are queued automatically to send later.
 - Multi-language labels and text are managed through the simple definition of
 [messages](https://godoc.org/github.com/wscherphof/msg) with keys and
 accompanying translations. Custom messages may override core messages.
