@@ -56,6 +56,28 @@ templates. Failed emails are queued automatically to send later.
 [messages](https://godoc.org/github.com/wscherphof/msg) with keys and
 accompanying translations. Custom messages may override core messages.
 
+### Ops
+Essix creates computing environments from scratch in a snap, scales
+transparently from a local laptop to a multi-continent cloud, and only knows how
+to run in fault tolerant mode.
+
+- `$ essix nodes` creates and manages
+[Docker Swarm Mode](https://docs.docker.com/engine/swarm/) swarms, either
+locally or in the cloud. See the
+[blogpost](https://wscherphof.wordpress.com/2016/09/13/rethink-swarm-mode/)
+for the ins and outs.
+- `$ essix r` installs a [RethinkDB](https://www.rethinkdb.com/) cluster on a
+swarm's nodes.
+- `$ essix build` compiles an Essix app's sources, and builds a
+[Docker](https://www.docker.com/) image for it.
+- `$ essix run` creates a service on the swarm that runs any number of
+_replicas_ of the app's image.
+- The app server is
+[stateless](http://whatisrest.com/rest_constraints/stateless_profile)
+(resource data is kept in the database cluster, and user session data is kept
+client-side in a cookie), meaning each replica is the same as any of the others,
+every request can be handled by any of the replicas, and if one fails, the
+others continue to serve.
 
 ### Security
 All communication between client and server is encrypted through
@@ -83,30 +105,6 @@ e.g. `router.PUT("/session", ratelimit.Handle(account.LogIn))`
 - A _firewall_ is included for cloud nodes, opening only ports 80, and 443 for
 the app (80 redirects to 443), 2376, 2377, 7946, and 4789 for Docker Swarm Mode,
 and 22 for `ssh`. An ssh tunnel provides access to the RethinkDB admin site.
-
-### Ops
-Essix creates computing environments from scratch in a snap, scales
-transparently from a local laptop to a multi-continent cloud, and only knows how
-to run in fault tolerant mode.
-
-- `$ essix nodes` creates and manages
-[Docker Swarm Mode](https://docs.docker.com/engine/swarm/) swarms, either
-locally or in the cloud. See the
-[blogpost](https://wscherphof.wordpress.com/2016/09/13/rethink-swarm-mode/)
-for the ins and outs.
-- `$ essix r` installs a [RethinkDB](https://www.rethinkdb.com/) cluster on a
-swarm's nodes.
-- `$ essix build` compiles an Essix app's sources, and builds a
-[Docker](https://www.docker.com/) image for it.
-- `$ essix run` creates a service on the swarm that runs any number of
-_replicas_ of the app's image.
-- The app server is
-[stateless](http://whatisrest.com/rest_constraints/stateless_profile)
-(resource data is kept in the database cluster, and user session data is kept
-client-side in a cookie), meaning each replica is the same as any of the others,
-every request can be handled by any of the replicas, and if one fails, the
-others continue to serve.
-
 
 ## Quickstart
 
