@@ -26,8 +26,8 @@ func (t *EmailType) Run(recipient, subject string) (err error, message string) {
 }
 
 /*
-Email sets the template to use for an email. Call Se() on the result to add data
-to the template's pipeline. Call Run() to send the email.
+Email sets the template to use for an email. Call Set() on the result to add
+data to the template's pipeline. Call Run() to send the email.
 */
 func Email(r *http.Request, dir, base string, opt_inner ...string) *EmailType {
 	return &EmailType{&BaseType{nil, r, dir, base, opt_inner, nil}}
