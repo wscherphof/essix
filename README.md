@@ -247,7 +247,7 @@ Examples:
 
 The `essix init` command renders this directory structure:
 
-![Essix init directory structure](https://wscherphof.files.wordpress.com/2016/11/essix-init-dir.png)
+![Essix init directory structure](https://wscherphof.files.wordpress.com/2016/11/essix-init-dir1.png)
 
 ### main.go
 Entry point for the service to initialise and run the app.
