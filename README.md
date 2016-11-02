@@ -10,9 +10,10 @@ infrastructure (Docker Swarm Mode).
 Follow the [Quickstart](#quickstart) to get your first app running within
 minutes, on a swarm near you.
 
-With `$ essix init`, a new Essix app package is inititialised, much like
-https://github.com/wscherphof/essix/tree/master/app, where you would add your
-own functionality. It includes the Profile example of how things can be done.
+With `$ essix init`, a new Essix
+[app package](#app-directory-and-profile-example) is inititialised, where you
+would add your own functionality. It includes the Profile example of how things
+can be done.
 
 [![GoDoc](https://godoc.org/github.com/wscherphof/essix?status.svg)](https://godoc.org/github.com/wscherphof/essix)
 
@@ -281,12 +282,33 @@ Certificate files resulting from `essix cert`
 Any data files the app needs. The Profile
 [example](https://github.com/wscherphof/essix/tree/master/app/resources/data/example)
 includes a list of contries, and a list of time zones.
+#### static
+Any static files to serve. The example just relies on the
+[defaults](https://github.com/wscherphof/essix/tree/master/resources/static)
+merged in on `essix build`.
 #### templates
+The [Ace](https://github.com/yosssi/ace) templates for HTML documents.
+[example](https://github.com/wscherphof/essix/tree/master/app/resources/templates/example)
+contains the example Profile form template, and
+[essix](https://github.com/wscherphof/essix/tree/master/app/resources/templates/essix)
+contains a customised version of the
+[default](https://github.com/wscherphof/essix/tree/master/resources/templates/essix)
+home page content.
 
 ### routes
+Package defining request routes and their handlers.
+[example.go](https://github.com/wscherphof/essix/blob/master/app/routes/example.go)
+defines the Profile example routes, and the
+[example package](https://github.com/wscherphof/essix/blob/master/app/routes/example)
+contains their handlers
+([profile.go](https://github.com/wscherphof/essix/blob/master/app/routes/example/profile.go))
+and the loading of country and time zone data
+([data.go](https://github.com/wscherphof/essix/blob/master/app/routes/example/data.go))
 
 ### vendor
-
+The vendor directory is the place where the
+[govendor](https://github.com/kardianos/govendor) tool keeps track of the app's
+package dependencies. 
 
 ## Details
 
