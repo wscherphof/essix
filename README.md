@@ -130,7 +130,7 @@ anyway. `$ essix cert` can generate officially trusted certificates as well.
 [version control](https://guides.github.com/introduction/getting-your-project-on-github)
 & get creative.
 
-Run `$ essix help` for some more elaborate [usage examples]((#essix-command)).
+Run `$ essix help` for some more elaborate [usage examples](#essix-command).
 
 
 ## Prerequisites
