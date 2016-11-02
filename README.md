@@ -256,10 +256,10 @@ Entry point for the service to initialise and run the app.
 ### messages
 Package defining messages and translations. Add custom messages (like
 [example.go](https://github.com/wscherphof/essix/blob/master/app/messages/example.go)),
-and/or copy files from the
-[essix repo](https://github.com/wscherphof/essix/tree/master/messages) to
-customise default messages, or add translations for other languages (also
-consider a pull request then).
+and/or copy any of the
+[default files](https://github.com/wscherphof/essix/tree/master/messages) to
+customise translations, or add translations for other languages (pull requests
+welcome).
 
 ### model
 Package defining business model data entities. The
@@ -272,8 +272,8 @@ defines a Profile entity, showing how to:
 
 ### resources
 Directory with resource files for the app, that gets added to the service image,
-after merging with the default resources from the
-[essix repo](https://github.com/wscherphof/essix/tree/master/resources).
+after merging with the
+[default resources](https://github.com/wscherphof/essix/tree/master/resources).
 #### accounts
 Let's Encrypt account data, resulting from `essix cert`
 #### certificates
