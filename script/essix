@@ -85,7 +85,7 @@ usage ()
     echo "      Adds an Amsterdam based worker node to swarm www."
     echo "  \$ export DIGITALOCEAN_REGION=\"sgp1\""
     echo "  \$ $(basename $0) nodes -w 1 -d digitalocean -F create www"
-    echo "      Adds an Singapore based worker node to swarm www."
+    echo "      Adds a Singapore based worker node to swarm www."
 	echo
     echo "  \$ $(basename $0) r create dev"
     echo "      Creates a RethinkDB cluster on swarm dev, and opens the cluster's"

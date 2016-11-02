@@ -223,7 +223,7 @@ Examples:
       Adds an Amsterdam based worker node to swarm www.
   $ export DIGITALOCEAN_REGION="sgp1"
   $ essix nodes -w 1 -d digitalocean -F create www
-      Adds an Singapore based worker node to swarm www.
+      Adds a Singapore based worker node to swarm www.
 
   $ essix r create dev
       Creates a RethinkDB cluster on swarm dev, and opens the cluster's
