@@ -258,8 +258,9 @@ r.db('essix').table('config').get('email').update({
   SmtpServer: 'smtp.gmail.com'
 }
 ```
-Replace the values with what's appropriate for your account, then run the
-command. To get the app server to read the new config, restart it:
+![RethinkDB Essix email configuration](https://wscherphof.files.wordpress.com/2016/11/rethinkdb-essix-email-configuration.png)
+Replace the values with what's appropriate for your account, then click the
+Run button. Restart the app server to read in the new config:
 ```
 $ docker-machine ssh dev-manager-1 docker service scale myapp=0
 myapp scaled to 0
