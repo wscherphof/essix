@@ -7,7 +7,7 @@ import (
 	"github.com/wscherphof/secure"
 )
 
-var router = secure.Router
+var router = secure.Router()
 
 func Init() {
 	return

@@ -6,26 +6,13 @@ import (
 	"strings"
 )
 
-type baseType struct {
-	w    http.ResponseWriter
-	r    *http.Request
-	data map[string]interface{}
-}
-
-func (b *baseType) Set(key string, value interface{}) {
-	b.data[key] = value
-}
-
-func newBaseType(w http.ResponseWriter, r *http.Request) *baseType {
-	return &baseType{w, r, make(map[string]interface{})}
-}
-
 type PRGType struct {
-	*baseType
+	*BaseType
 }
 
 // Run redirects to path/method, including set values.
-func (t *PRGType) Run() {
+func (t *PRGType) Run(opt_status ...int) {
+	t.data["_status"] = t.status(opt_status...)
 	path := t.r.URL.Path
 	path += "/" + strings.ToLower(t.r.Method)
 	path += "?"
@@ -61,19 +48,17 @@ and
 		}
 	}
 
-Works with POST, as well as with PUT, and DELETE.
+Works with POST, as well as with PUT, PATCH, and DELETE.
 */
-func PRG(w http.ResponseWriter, r *http.Request, dir, base string, inner ...string) (prg *PRGType) {
-	switch r.Method {
-	case "GET":
+func PRG(w http.ResponseWriter, r *http.Request, dir, base string, opt_inner ...string) (prg *PRGType) {
+	prg = &PRGType{&BaseType{w, r, dir, base, opt_inner, nil}}
+	if r.Method == "GET" {
 		values := r.URL.Query()
 		data := make(map[string]interface{}, len(values)+2)
 		for key := range values {
 			data[key] = r.FormValue(key)
 		}
-		Run(w, r, dir, base, opt(inner...), data)
-	case "PUT", "POST", "DELETE":
-		prg = &PRGType{newBaseType(w, r)}
+		response(w, r, dir, base, prg.inner(), data, data["_status"].(int))
 	}
 	return
 }

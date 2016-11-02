@@ -6,8 +6,12 @@ import (
 )
 
 // Handle returns a Handle executing a template
-func Handle(dir, base, inner string, data ...map[string]interface{}) httprouter.Handle {
+func Handle(dir, base, inner string, opt_data ...map[string]interface{}) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-		Run(w, r, dir, base, inner, data...)
+		var data map[string]interface{}
+		if len(opt_data) == 1 {
+			data = opt_data[0]
+		}
+		response(w, r, dir, base, inner, data)
 	}
 }

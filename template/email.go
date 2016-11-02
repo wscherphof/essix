@@ -6,10 +6,15 @@ import (
 	"net/http"
 )
 
-type EmailType GetType
+type EmailType struct {
+	*BaseType
+}
 
+/*
+Run sends the formatted email.
+*/
 func (t *EmailType) Run(recipient, subject string) (err error, message string) {
-	body := Write(t.r, t.dir, t.base, t.inner, t.data)
+	body := String(t.r, t.dir, t.base, t.inner(), t.data)
 	if err = email.Send(
 		msg.Translator(t.r).Get(subject),
 		body,
@@ -20,11 +25,10 @@ func (t *EmailType) Run(recipient, subject string) (err error, message string) {
 	return
 }
 
-func Email(r *http.Request, dir, base string, inner ...string) *EmailType {
-	return &EmailType{
-		baseType: newBaseType(nil, r),
-		dir:      dir,
-		base:     base,
-		inner:    opt(inner...),
-	}
+/*
+Email sets the template to use for an email. Call Set() on the result to add
+data to the template's pipeline. Call Run() to send the email.
+*/
+func Email(r *http.Request, dir, base string, opt_inner ...string) *EmailType {
+	return &EmailType{&BaseType{nil, r, dir, base, opt_inner, nil}}
 }

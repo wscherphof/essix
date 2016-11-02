@@ -28,22 +28,44 @@ import (
 const location = "/resources/templates"
 
 /*
-Run loads and executes a template, writing the output to w.
+String loads and executes a template, returning the output.
 
 dir is a directory (one deep) under /resources/templates
 
-base in the template name (filename without extension) in dir
+base is the template name (filename without extension) in dir
 
 inner is the inner template name (without extension) in dir
 
 Both base and inner may include paths relative to dir.
+
+data is the pipeline data to pass to the template
 */
-func Run(w io.Writer, r *http.Request, dir, base, inner string, opt_data ...map[string]interface{}) {
+func String(r *http.Request, dir, base, inner string, opt_data ...map[string]interface{}) string {
 	var data map[string]interface{}
 	if len(opt_data) == 1 {
 		data = opt_data[0]
-	} else {
-		data = make(map[string]interface{}, 1)
+	}
+	var b bytes.Buffer
+	run(&b, r, dir, base, inner, data)
+	return string(b.Bytes())
+}
+
+func response(w http.ResponseWriter, r *http.Request, dir, base, inner string, data map[string]interface{}, opt_status ...int) {
+	status := http.StatusOK
+	if len(opt_status) == 1 {
+		status = opt_status[0]
+	}
+	if w.Header().Get("Content-Type") == "" {
+		// Set the Content-Type to prevent CompressHandler from doing so after our WriteHeader()
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	}
+	w.WriteHeader(status)
+	run(w, r, dir, base, inner, data)
+}
+
+func run(w io.Writer, r *http.Request, dir, base, inner string, data map[string]interface{}) {
+	if data == nil {
+		data = make(map[string]interface{}, 2)
 	}
 	translator := msg.Translator(r)
 	data["msg"] = translator
@@ -67,11 +89,4 @@ func Run(w io.Writer, r *http.Request, dir, base, inner string, opt_data ...map[
 	} else if err := template.Execute(w, data); err != nil {
 		log.Panicln("ERROR: template.Execute:", err)
 	}
-}
-
-// Write loads and executes a template, returning the output.
-func Write(r *http.Request, dir, base, inner string, data ...map[string]interface{}) string {
-	var b bytes.Buffer
-	Run(&b, r, dir, base, inner, data...)
-	return string(b.Bytes())
 }

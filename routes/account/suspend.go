@@ -36,7 +36,7 @@ func SuspendForm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	if cancel == "true" {
 		account.ClearSuspendToken(token)
 		cookie.Update(w, r, account)
-		template.Run(w, r, "suspend", "Suspend-cancel", "")
+		template.GET(w, r, "suspend", "Suspend-cancel", "").Run()
 	} else {
 		t.Set("email", account.Email)
 		t.Set("suspendtoken", account.SuspendToken)
