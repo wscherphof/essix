@@ -46,7 +46,8 @@ from the [Entity](https://godoc.org/github.com/wscherphof/entity) base type,
 which manages their storage in a [RethinkDB](https://www.rethinkdb.com/)
 cluster.
 - Server and user errors are communicated through a customisable
-_error template_.
+[error](https://godoc.org/github.com/wscherphof/essix/template#Error)
+[template](https://github.com/wscherphof/essix/blob/master/resources/templates/template/Error.ace).
 - The [Post/Redirect/Get](https://en.wikipedia.org/wiki/Post/Redirect/Get)
 pattern is a
 [first class citizen](https://godoc.org/github.com/wscherphof/essix/template#PRG).
