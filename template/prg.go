@@ -48,7 +48,7 @@ and
 		}
 	}
 
-Works with POST, as well as with PUT, and DELETE.
+Works with POST, as well as with PUT, PATCH, and DELETE.
 */
 func PRG(w http.ResponseWriter, r *http.Request, dir, base string, opt_inner ...string) (prg *PRGType) {
 	prg = &PRGType{&BaseType{w, r, dir, base, opt_inner, nil}}
