@@ -243,6 +243,51 @@ Examples:
       on dev, with the given DOMAIN environment variable set.
 ```
 
+## App directory and Profile example
+
+The `essix init` command renders this directory structure:
+
+![Essix init directory structure](https://wscherphof.files.wordpress.com/2016/11/essix-init-dir.png)
+
+### main.go
+Entry point for the service to initialise and run the app.
+
+### messages
+Package defining messages and translations. Add custom messages (like
+[example.go](https://github.com/wscherphof/essix/blob/master/app/messages/example.go)),
+and/or copy files from the
+[essix repo](https://github.com/wscherphof/essix/tree/master/messages) to
+customise default messages, or add translations for other languages (also
+consider a pull request then).
+
+### model
+Package defining business model data entities. The
+[example](https://github.com/wscherphof/essix/blob/master/app/model/example.go)
+defines a Profile entity, showing how to:
+
+- Define the type, embedding the entity Base type
+- Register the type as a data entity
+- Construct an instance of the type
+
+### resources
+Directory with resource files for the app, that gets added to the service image,
+after merging with the default resources from the
+[essix repo](https://github.com/wscherphof/essix/tree/master/resources).
+#### accounts
+Let's Encrypt account data, resulting from `essix cert`
+#### certificates
+Certificate files resulting from `essix cert`
+#### data
+Any data files the app needs. The Profile
+[example](https://github.com/wscherphof/essix/tree/master/app/resources/data/example)
+includes a list of contries, and a list of time zones.
+#### templates
+
+### routes
+
+### vendor
+
+
 ## Details
 
 ### Email configuration
