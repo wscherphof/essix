@@ -215,10 +215,15 @@ Examples:
       nodes. Adds hostname dev.appsite.com to /etc/hosts, resolving to the
       manager node's ip address.
 
+  $ export DIGITALOCEAN_ACCESS_TOKEN="94dt7972b863497630s73012n10237xr1273trz92t1"
   $ essix nodes -m 1 -d digitalocean -F create www
-      Creates a one-node swarm www on DigitalOcean, and enables a firewall on it.
+      Creates one-node swarm www on DigitalOcean, with a firewall enabled.
+  $ export DIGITALOCEAN_REGION="ams3"
   $ essix nodes -w 1 -d digitalocean -F create www
-      Adds a worker node (with firewall) to swarm www on DigitalOcean.
+      Adds an Amsterdam based worker node to swarm www.
+  $ export DIGITALOCEAN_REGION="sgp1"
+  $ essix nodes -w 1 -d digitalocean -F create www
+      Adds an Singapore based worker node to swarm www.
 
   $ essix r create dev
       Creates a RethinkDB cluster on swarm dev, and opens the cluster's

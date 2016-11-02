@@ -77,10 +77,15 @@ usage ()
     echo "      nodes. Adds hostname dev.appsite.com to /etc/hosts, resolving to the"
     echo "      manager node's ip address."
 	echo
+    echo "  \$ export DIGITALOCEAN_ACCESS_TOKEN=\"94dt7972b863497630s73012n10237xr1273trz92t1\""
     echo "  \$ $(basename $0) nodes -m 1 -d digitalocean -F create www"
-    echo "      Creates a one-node swarm www on DigitalOcean, and enables a firewall on it."
+    echo "      Creates one-node swarm www on DigitalOcean, with a firewall enabled."
+    echo "  \$ export DIGITALOCEAN_REGION=\"ams3\""
     echo "  \$ $(basename $0) nodes -w 1 -d digitalocean -F create www"
-    echo "      Adds a worker node (with firewall) to swarm www on DigitalOcean."
+    echo "      Adds an Amsterdam based worker node to swarm www."
+    echo "  \$ export DIGITALOCEAN_REGION=\"sgp1\""
+    echo "  \$ $(basename $0) nodes -w 1 -d digitalocean -F create www"
+    echo "      Adds an Singapore based worker node to swarm www."
 	echo
     echo "  \$ $(basename $0) r create dev"
     echo "      Creates a RethinkDB cluster on swarm dev, and opens the cluster's"
