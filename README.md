@@ -124,7 +124,8 @@ create dev`
 `$ essix -e DOMAIN=dev.appsite.com build you 0.1 dev`
 1. Point your browser to https://dev.appsite.com/. It'll complain about not
 trusting your self-signed certificate, but you can instruct it to accept it
-anyway. `$ essix cert` can generate officially trusted certificates as well.
+anyway. `$ essix cert` can generate officially
+[trusted certificates](#trusted-certificates) as well.
 1. [Configure](#email-configuration) the server's email account details.
 1. Put your app (`$GOPATH/src/github.com/you/yourapp`) under
 [version control](https://guides.github.com/introduction/getting-your-project-on-github)
@@ -311,6 +312,11 @@ The vendor directory is the place where the
 package dependencies. 
 
 ## Details
+
+### Trusted certificates
+For how to prepare for generating trusted certificates with `essix cert`, see
+the
+[blogpost](https://wscherphof.wordpress.com/2016/11/03/an-easy-recipe-for-lets-encrypt/).
 
 ### Email configuration
 The [email](https://godoc.org/github.com/wscherphof/essix/email) function needs
