@@ -1,7 +1,11 @@
-# Essix
+![logo](https://wscherphof.files.wordpress.com/2016/11/essix-logo.png)
+
 Essix runs an essential simple secure stable scalable stateless server.
 
-`$ go get -u github.com/wscherphof/essix`
+# Install
+```
+$ go get -u github.com/wscherphof/essix
+```
 
 The `essix` [command](#essix-command) manages Essix apps, their server
 certificates (TLS/HTTPS), their backend databases (RethinkDB), and their
@@ -17,11 +21,11 @@ can be done.
 
 [![GoDoc](https://godoc.org/github.com/wscherphof/essix?status.svg)](https://godoc.org/github.com/wscherphof/essix)
 
-## Features
+# Features
 Essix basically provides _just what you need_ for running a reliable web
 application.
 
-### Dev
+## Dev
 Essix cuts out the cruft, and facilitates building directly on the excellent
 standards that created the web.
 
@@ -59,7 +63,7 @@ emails are queued automatically to send later.
 [messages](https://godoc.org/github.com/wscherphof/msg) with keys and
 accompanying translations. Custom messages may override core messages.
 
-### Ops
+## Ops
 Essix creates computing environments from scratch in a snap, scales
 transparently from a local laptop to a multi-continent cloud, and only knows how
 to run in fault tolerant mode.
@@ -82,7 +86,7 @@ client-side in a cookie), meaning each replica is the same as any of the others,
 every request can be handled by any of the replicas, and if one fails, the
 others continue to serve.
 
-### Security
+## Security
 All communication between client and server is encrypted through
 [TLS](https://en.wikipedia.org/wiki/Transport_Layer_Security) (https). User
 session tokens are stored as a
@@ -109,7 +113,7 @@ e.g. `router.PUT("/session", ratelimit.Handle(account.LogIn))`
 the app (80 redirects to 443), 2376, 2377, 7946, and 4789 for Docker Swarm Mode,
 and 22 for `ssh`. An ssh tunnel provides access to the RethinkDB admin site.
 
-## Quickstart
+# Quickstart
 
 1. Verify the [Prerequisites](#prerequisites).
 1. Install Essix: `$ go get -u github.com/wscherphof/essix`
@@ -133,8 +137,7 @@ anyway. `$ essix cert` can generate officially
 
 Run `$ essix help` for some more elaborate [usage examples](#essix-command).
 
-
-## Prerequisites
+# Prerequisites
 
 1. Essix apps are built in the [Go language](https://golang.org/doc/install).
 1. Do create a Go working directory & set the `$GOPATH`
@@ -154,7 +157,7 @@ After installing Essix with `$ go get -u github.com/wscherphof/essix`, the
 `essix` command relies on the `$GOPATH/src/github.com/wscherphof/essix` directory;
 leave it untouched.
 
-## Essix command
+# Essix command
 ```
 Usage:
 
@@ -245,16 +248,16 @@ Examples:
       on dev, with the given DOMAIN environment variable set.
 ```
 
-## App directory and Profile example
+# App directory and Profile example
 
 The `essix init` command renders this directory structure:
 
 ![Essix init directory structure](https://wscherphof.files.wordpress.com/2016/11/essix-init-dir1.png)
 
-### main.go
+## main.go
 Entry point for the service to initialise and run the app.
 
-### messages
+## messages
 Package defining messages and translations. Add custom messages (like
 [example.go](https://github.com/wscherphof/essix/blob/master/app/messages/example.go)),
 and/or copy any of the
@@ -262,7 +265,7 @@ and/or copy any of the
 customise translations, or add translations for other languages (pull requests
 welcome).
 
-### model
+## model
 Package defining business model data entities. The
 [example](https://github.com/wscherphof/essix/blob/master/app/model/example.go)
 defines a Profile entity, showing how to:
@@ -271,23 +274,23 @@ defines a Profile entity, showing how to:
 - Register the type as a data entity
 - Construct an instance of the type
 
-### resources
+## resources
 Directory with resource files for the app, that gets added to the service image,
 after merging with the
 [default resources](https://github.com/wscherphof/essix/tree/master/resources).
-#### accounts
+### accounts
 Let's Encrypt account data, resulting from `essix cert`
-#### certificates
+### certificates
 Certificate files resulting from `essix cert`
-#### data
+### data
 Any data files the app needs. The Profile
 [example](https://github.com/wscherphof/essix/tree/master/app/resources/data/example)
 includes a list of contries, and a list of time zones.
-#### static
+### static
 Any static files to serve. The example just relies on the
 [defaults](https://github.com/wscherphof/essix/tree/master/resources/static)
 merged in on `essix build`.
-#### templates
+### templates
 The [Ace](https://github.com/yosssi/ace) templates for HTML documents.
 [example](https://github.com/wscherphof/essix/tree/master/app/resources/templates/example)
 contains the example Profile form template, and
@@ -296,7 +299,7 @@ contains a customised version of the
 [default](https://github.com/wscherphof/essix/tree/master/resources/templates/essix)
 home page content.
 
-### routes
+## routes
 Package defining request routes and their handlers.
 [example.go](https://github.com/wscherphof/essix/blob/master/app/routes/example.go)
 defines the Profile example routes, and the
@@ -306,19 +309,19 @@ contains their handlers
 and the loading of country and time zone data
 ([data.go](https://github.com/wscherphof/essix/blob/master/app/routes/example/data.go))
 
-### vendor
+## vendor
 The vendor directory is the place where the
 [govendor](https://github.com/kardianos/govendor) tool keeps track of the app's
 package dependencies. 
 
-## Details
+# Details
 
-### Trusted certificates
+## Trusted certificates
 For how to prepare for generating trusted certificates with `essix cert`, see
 the
 [blogpost](https://wscherphof.wordpress.com/2016/11/03/an-easy-recipe-for-lets-encrypt/).
 
-### Email configuration
+## Email configuration
 The [email](https://godoc.org/github.com/wscherphof/essix/email) function needs
 email server & account details configured in the database. `$ essix r dev`
 brings up the administrator site of the RethinkDB cluster (assuming you target
