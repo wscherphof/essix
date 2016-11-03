@@ -1,4 +1,4 @@
-<img src="https://wscherphof.files.wordpress.com/2016/11/essix-logo.png" alt="logo" height="7em" />
+<img src="https://wscherphof.files.wordpress.com/2016/11/essix-logo.png" alt="logo" height="100px" />
 
 Essix runs an essential simple secure stable scalable stateless server.
 
