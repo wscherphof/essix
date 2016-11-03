@@ -107,8 +107,8 @@ e.g. `router.PUT("/account/email", secure.Handle(account.ChangeEmail))`
 - Specific request routes can be declaratively
 [rate limited](https://godoc.org/github.com/wscherphof/essix/ratelimit#Handle)
 (obsoleting the need for
-[captchas](https://wscherphof.wordpress.com/2015/06/22/to-capthca-or-not-to-captcha/)
-) e.g. `router.PUT("/session", ratelimit.Handle(account.LogIn))`
+[captchas](https://wscherphof.wordpress.com/2015/06/22/to-capthca-or-not-to-captcha/))
+e.g. `router.PUT("/session", ratelimit.Handle(account.LogIn))`
 - A _firewall_ is included for cloud nodes, opening only ports 80, and 443 for
 the app (80 redirects to 443), 2376, 2377, 7946, and 4789 for Docker Swarm Mode,
 and 22 for `ssh`. An ssh tunnel provides access to the RethinkDB admin site.
