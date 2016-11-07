@@ -15,8 +15,10 @@ type email struct {
 }
 
 func initEmail(address string) *email {
+	address = strings.ToLower(address)
+	address = strings.TrimSpace(address)
 	return &email{Base: &entity.Base{
-		ID: strings.ToLower(address),
+		ID: address,
 	}}
 }
 
@@ -29,7 +31,7 @@ func (a *Account) CreateEmailToken(newEmail string) (err error, conflict bool) {
 	email := initEmail(newEmail)
 	if err, empty = email.Read(email); err != nil {
 		if empty {
-			a.NewEmail = newEmail
+			a.NewEmail = email.ID
 			a.EmailToken = util.NewToken()
 			err = a.Update(a)
 		}

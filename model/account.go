@@ -90,12 +90,13 @@ func (a *Account) Refresh() (current bool) {
 /*
 GetAccount returns the stored Account with the given id and/or email address.
 */
-func GetAccount(id string, email ...string) (account *Account, err error, conflict bool) {
+func GetAccount(id string, address ...string) (account *Account, err error, conflict bool) {
 	var empty bool
 	account = initAccount(id)
-	if len(email) == 1 && id == "" {
+	if len(address) == 1 && id == "" {
 		index := entity.Index(account, "Email")
-		err, empty = index.Read(email[0], account)
+		email := initEmail(address[0])
+		err, empty = index.Read(email.ID, account)
 	} else {
 		err, empty = account.Read(account)
 	}
