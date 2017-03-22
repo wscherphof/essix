@@ -153,6 +153,7 @@ elif [ "$COMMAND" = "start" ]; then
 	finish 0
 elif [ "$COMMAND" = "rm" ]; then
 	if [ ! "$FORCE" ]; then
+		exec < /dev/tty
 		read -p "Type Y to remove ALL nodes in swarm '${ENV}'... " answer
 		if [ "$answer" != "Y" ]; then
 			finish 0

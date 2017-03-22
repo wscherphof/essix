@@ -93,17 +93,17 @@
 			"revisionTime": "2016-10-17T09:29:37Z"
 		},
 		{
-			"checksumSHA1": "HIIyMKaIutWwCBg9QegDlb1+LXM=",
+			"checksumSHA1": "fRkx4f+dd0I5KIcnzrLudJOoM3s=",
 			"path": "github.com/wscherphof/rethinkswarmmode",
-			"revision": "3ed9ead3396cf26944ca532ee0d117b4f82544d1",
-			"revisionTime": "2016-10-19T21:26:46Z",
+			"revision": "566f2258b405356517a362409bc7f4eb1415aeb1",
+			"revisionTime": "2017-03-21T21:32:33Z",
 			"tree": true
 		},
 		{
 			"checksumSHA1": "be6i+TLgyTFmJg7Z2aMb+5bhfWU=",
 			"path": "github.com/wscherphof/secure",
-			"revision": "dc3cad21a57f340c1f2ea583a5651eb958433ecd",
-			"revisionTime": "2016-10-21T21:29:41Z"
+			"revision": "aa56d4fdc473a3286a996aaac707382b6a32483e",
+			"revisionTime": "2016-10-26T13:25:56Z"
 		},
 		{
 			"checksumSHA1": "U4bWGZ3c9p8FHrgU5l4l5i7A6bo=",
