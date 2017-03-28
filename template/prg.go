@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"strconv"
 )
 
 type PRGType struct {
@@ -12,7 +13,9 @@ type PRGType struct {
 
 // Run redirects to path/method, including set values.
 func (t *PRGType) Run(opt_status ...int) {
-	t.data["_status"] = t.status(opt_status...)
+	if len(opt_status) == 1 {
+		t.Set("_status", strconv.Itoa(opt_status[0]))
+	}
 	path := t.r.URL.Path
 	path += "/" + strings.ToLower(t.r.Method)
 	path += "?"
@@ -51,14 +54,23 @@ and
 Works with POST, as well as with PUT, PATCH, and DELETE.
 */
 func PRG(w http.ResponseWriter, r *http.Request, dir, base string, opt_inner ...string) (prg *PRGType) {
-	prg = &PRGType{&BaseType{w, r, dir, base, opt_inner, nil}}
 	if r.Method == "GET" {
+		inner := ""
+		if len(opt_inner) == 1 {
+			inner = opt_inner[0]
+		}
 		values := r.URL.Query()
 		data := make(map[string]interface{}, len(values)+2)
 		for key := range values {
 			data[key] = r.FormValue(key)
 		}
-		response(w, r, dir, base, prg.inner(), data, data["_status"].(int))
+		status := http.StatusOK
+		if _status := r.FormValue("_status"); _status != "" {
+			status, _ = strconv.Atoi(_status)
+		}
+		response(w, r, dir, base, inner, data, status)
+	} else {
+		prg = &PRGType{&BaseType{w, r, dir, base, opt_inner, nil}}
 	}
 	return
 }

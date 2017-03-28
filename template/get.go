@@ -10,7 +10,11 @@ type GetType struct {
 
 // Run executes the template, passing in the set data values.
 func (t *GetType) Run(opt_status ...int) {
-	response(t.w, t.r, t.dir, t.base, t.inner(), t.data, t.status(opt_status...))
+	status := http.StatusOK
+	if len(opt_status) == 1 {
+		status = opt_status[0]
+	}
+	response(t.w, t.r, t.dir, t.base, t.inner(), t.data, status)
 }
 
 /*

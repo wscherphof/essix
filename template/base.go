@@ -29,10 +29,3 @@ func (b *BaseType) inner() string {
 	}
 	return ""
 }
-
-func (b *BaseType) status(opt_status ...int) int {
-	if len(opt_status) == 1 {
-		return opt_status[0]
-	}
-	return http.StatusOK
-}
