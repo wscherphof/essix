@@ -27,12 +27,6 @@
 			"revisionTime": "2016-08-17T18:46:32Z"
 		},
 		{
-			"checksumSHA1": "6/9VW/AyJyjRXLu+nbhqGYvOO2k=",
-			"path": "github.com/gorilla/handlers",
-			"revision": "a5775781a543af3c6b9f5baf10995e4d14168950",
-			"revisionTime": "2016-08-16T18:47:29Z"
-		},
-		{
 			"checksumSHA1": "veX5bpYOBjZZWMyWxXxys8EH9d8=",
 			"path": "github.com/gorilla/securecookie",
 			"revision": "fa5329f913702981df43dcb2a380bac429c810b5",
@@ -79,6 +73,12 @@
 			"path": "github.com/wscherphof/env",
 			"revision": "766b6de9922293be43d344413f1fd26ad93e8e2d",
 			"revisionTime": "2016-10-14T08:50:24Z"
+		},
+		{
+			"checksumSHA1": "dR3T4j4mgXzuvmAChw+GZlry598=",
+			"path": "github.com/wscherphof/handlers",
+			"revision": "13d73096a474cac93275c679c7b8a2dc17ddba82",
+			"revisionTime": "2017-02-24T19:39:55Z"
 		},
 		{
 			"checksumSHA1": "ZjIxVifXaZ3qavHhYAvIQRFx+dY=",

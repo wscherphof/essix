@@ -4,7 +4,7 @@ Package server runs the Essix server.
 package server
 
 import (
-	"github.com/gorilla/handlers"
+	"github.com/wscherphof/handlers"
 	"github.com/wscherphof/env"
 	"github.com/wscherphof/essix/messages"
 	"github.com/wscherphof/essix/routes"
@@ -51,12 +51,14 @@ func Run() {
 	log.Println("INFO: starting secure application server for " + domain)
 	// Use the domain's proper certificates
 	log.Fatal(http.ListenAndServeTLS(":443", "/resources/certificates/"+domain+".crt", "/resources/certificates/"+domain+".key",
-		// Support PUT & DELTE through POST forms
-		handlers.HTTPMethodOverrideHandler(
-			// Zip responses
-			handlers.CompressHandler(
-				// Log request info in Apache Combined Log Format
-				handlers.CombinedLoggingHandler(os.Stdout,
-					// Use our routes
-					router)))))
+		// Trim form value whitespace
+		handlers.FormValueTrimHandler(
+			// Support PUT, PATCH, and DELTE through POST forms
+			handlers.HTTPMethodOverrideHandler(
+				// Zip responses
+				handlers.CompressHandler(
+					// Log request info in Apache Combined Log Format
+					handlers.CombinedLoggingHandler(os.Stdout,
+						// Use our routes
+						router))))))
 }

@@ -18,6 +18,24 @@ import (
 	"unicode/utf8"
 )
 
+// FormValueTrimHandler wraps and returns a http.Handler which trims
+// leading & trailing whitespace from all the request's form values.
+func FormValueTrimHandler(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		method := r.Method
+		if method == "PATCH" || method == "PUT" || method == "POST" || method == "DELETE" {
+			_ = r.FormValue("") // makes r.Form available by calling r.ParseMultipartForm
+			for k, values := range r.Form { // map[string][]string
+				for i, v := range values {
+			        trimmed := strings.TrimSpace(v)
+			        r.Form[k][i] = trimmed
+			    }
+			}
+		}
+		h.ServeHTTP(w, r)
+	})
+}
+
 // MethodHandler is an http.Handler that dispatches to a handler whose key in the
 // MethodHandler's map matches the name of the HTTP request's method, eg: GET
 //
@@ -94,7 +112,7 @@ func makeLogger(w http.ResponseWriter) loggingResponseWriter {
 	return logger
 }
 
-type loggingResponseWriter interface {
+type commonLoggingResponseWriter interface {
 	http.ResponseWriter
 	http.Flusher
 	Status() int
