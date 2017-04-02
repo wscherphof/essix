@@ -26,6 +26,17 @@ to the message key, get prepended with "X-".
 
 Messages and Translators are stored in memory. Translators are cached on their
 Accept-Language header value.
+
+Messages can also be used as multi-language text fields in data records:
+	type Entity struct {
+		Label msg.MessageType
+	}
+	entity := &Entity{Label: msg.New()}
+	entity.Label.Set("en", "entity")
+	entity.Label.Set("nl", "entiteit")
+	...
+	t := msg.Translator(r)
+	label := t.Select(entity.Label)
 */
 package msg
 
@@ -49,6 +60,13 @@ func init() {
 MessageType hold the translations for a message.
 */
 type MessageType map[string]string
+
+/*
+New initialises a new MessageType.
+*/
+func New() MessageType {
+	return make(MessageType, NumLang)
+}
 
 /*
 Set stores the translation of the message for the given language. Any old
@@ -75,7 +93,7 @@ func Key(key string) (message MessageType) {
 	if m, ok := messageStore[key]; ok {
 		message = m
 	} else {
-		message = make(MessageType, NumLang)
+		message = New()
 		messageStore[key] = message
 	}
 	return
@@ -134,23 +152,31 @@ func Translator(r *http.Request) *TranslatorType {
 }
 
 /*
-Get returns the translation for a message.
+Get returns the translation for the message with the given key.
 */
 func (t *TranslatorType) Get(key string) (translation string) {
 	if key == "" {
 		return ""
 	}
+	message := messageStore[key]
+	return t.Select(message, key)
+}
+
+/*
+Select returns the translation for a message.
+*/
+func (t *TranslatorType) Select(m MessageType, opt_default ...string) (translation string) {
 	for _, language := range t.languages {
-		if translation = translate(key, language); translation != "" {
+		if translation = translate(m, language); translation != "" {
 			return
 		}
 	}
-	if translation = translate(key, defaultLanguage); translation != "" {
+	if translation = translate(m, defaultLanguage); translation != "" {
 		if !production {
 			translation = "D-" + translation
 		}
-	} else {
-		translation = key
+	} else if len(opt_default) == 1 {
+		translation = opt_default[0]
 		if !production {
 			translation = "X-" + translation
 		}
@@ -158,12 +184,12 @@ func (t *TranslatorType) Get(key string) (translation string) {
 	return
 }
 
-func translate(key string, language *languageType) (translation string) {
-	if val, ok := messageStore[key][language.Full]; ok {
+func translate(message MessageType, language *languageType) (translation string) {
+	if val, ok := message[language.Full]; ok {
 		translation = val
-	} else if val, ok := messageStore[key][language.Main]; ok {
+	} else if val, ok := message[language.Main]; ok {
 		translation = val
-	} else if val, ok := messageStore[key][language.Sub]; ok {
+	} else if val, ok := message[language.Sub]; ok {
 		translation = val
 	}
 	return
