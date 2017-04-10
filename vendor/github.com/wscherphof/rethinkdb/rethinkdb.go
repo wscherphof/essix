@@ -81,6 +81,11 @@ func GetIndex(table, index string, value, result interface{}) error {
 	return one(cursor, err, result)
 }
 
+func CountIndex(table, index string, value, result interface{}) error {
+	cursor, err := r.DB(DB).Table(table).GetAllByIndex(index, value).Count().Run(Session)
+	return one(cursor, err, result)
+}
+
 func One(table string, result interface{}) error {
 	cursor, err := r.DB(DB).Table(table).Run(Session)
 	return one(cursor, err, result)
@@ -126,6 +131,17 @@ func Between(table, index string, low interface{}, includeLow bool, high interfa
 		low = r.MaxVal
 	}
 	term := r.DB(DB).Table(table).Between(low, high, optArgs)
+	return Term{Term: &term}
+}
+
+func Skip(table, index string, n int, opt_direction ...string) Term {
+	orderByOpts := r.OrderByOpts{
+		Index:  index, // "asc"
+	}
+	if len(opt_direction) == 1 && opt_direction[0] == "desc" {
+		orderByOpts.Index = r.Desc(index)
+	}
+	term := r.DB(DB).Table(table).OrderBy(orderByOpts).Skip(n)
 	return Term{Term: &term}
 }
 

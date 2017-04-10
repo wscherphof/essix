@@ -42,13 +42,22 @@ type client struct {
 	Requests requests
 }
 
+func initClient(opt_id ...string) (c *client) {
+	c = &client{Base: &entity.Base{}}
+	if len(opt_id) == 1 {
+		c.ID = opt_id[0]
+	}
+	return
+}
+
 func init() {
-	entity.Register(&client{}).Index("Clear")
+	c := initClient()
+	entity.Register(c).Index("Clear")
 	go func() {
 		for {
 			time.Sleep(clearInterval)
 			limit := time.Now().Unix()
-			index := entity.Index(&client{}, "Clear")
+			index := c.Index(c, "Clear")
 			selection := index.Between(nil, true, limit, true)
 			if deleted, err := selection.Delete(); err != nil {
 				log.Printf("WARNING: rate limit clearing failed: %v", err)
@@ -60,7 +69,7 @@ func init() {
 }
 
 func getClient(ip string) (c *client) {
-	c = &client{Base: &entity.Base{ID: ip}}
+	c = initClient(ip)
 	if err, empty := c.Read(c); err != nil {
 		if empty {
 			c.Requests = make(requests, 20)

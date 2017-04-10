@@ -94,7 +94,7 @@ func GetAccount(id string, address ...string) (account *Account, err error, conf
 	var empty bool
 	account = initAccount(id)
 	if len(address) == 1 && id == "" {
-		index := entity.Index(account, "Email")
+		index := account.Index(account, "Email")
 		email := initEmail(address[0])
 		err, empty = index.Read(email.ID, account)
 	} else {
