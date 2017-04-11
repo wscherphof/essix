@@ -285,16 +285,13 @@ Count counts the records from the database, with the given value for this
 index's column.
 It sets empty to true, if the error is that a record with that value doesn't
 exist.
-	var num *int
-	if err, empty := busFooIndex.Count(1, num); err == nil {
+	var num int
+	if err := busFooIndex.Count(1, &num); err == nil {
 		// doSomethingWith(num)
 	}
 */
-func (i *IndexType) Count(value, result interface{}) (err error, empty bool) {
-	if err = db.CountIndex(i.table, i.column, value, result); err == db.ErrEmptyResult {
-		err, empty = ErrEmptyResult, true
-	}
-	return
+func (i *IndexType) Count(value, result interface{}) error {
+	return db.CountIndex(i.table, i.column, value, result)
 }
 
 /*
