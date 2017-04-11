@@ -40,11 +40,11 @@ func enQueue(subject, message string, recipients ...string) (err error) {
 }
 
 func processQueue() {
-	if cursor, err := entity.ReadAll(&job{}); err != nil {
+	j := initJob()
+	if cursor, err := j.ReadAll(j); err != nil {
 		log.Println("ERROR: reading email queue:", err)
 	} else {
 		defer cursor.Close()
-		j := initJob()
 		for cursor.Next(j) {
 			processJob(j)
 		}

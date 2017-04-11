@@ -198,9 +198,9 @@ func (b *Base) Read(result interface{}) (err error, empty bool) {
 ReadAll returns a
 [gorethink *Cursor](https://godoc.org/github.com/dancannon/gorethink#Cursor),
 holding all records of the given type.
-	if cursor, err := entity.ReadAll(&Bus{}); err == nil {
+	bus := initBus()
+	if cursor, err := bus.ReadAll(bus); err == nil {
 		defer cursor.Close()
-		bus := initBus()
 		for cursor.Next(bus) {
 			// doSomethingWith(bus)
 		}
@@ -209,7 +209,7 @@ holding all records of the given type.
 		}
 	}
 */
-func ReadAll(record interface{}) (*db.Cursor, error) {
+func (b *Base) ReadAll(record interface{}) (*db.Cursor, error) {
 	return db.All(tbl(record))
 }
 
