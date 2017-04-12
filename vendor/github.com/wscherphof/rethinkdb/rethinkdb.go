@@ -1,7 +1,7 @@
 package rethinkdb
 
 import (
-	r "gopkg.in/dancannon/gorethink.v2"
+	r "gopkg.in/gorethink/gorethink.v3"
 	"strings"
 )
 
@@ -21,7 +21,11 @@ type Term struct {
 
 func Connect(db, address string) (err error) {
 	DB = db
-	if Session, err = r.Connect(r.ConnectOpts{Address: address}); err != nil {
+	if Session, err = r.Connect(r.ConnectOpts{
+		Address: address,
+		InitialCap: 10,
+		MaxOpen: 20,
+	}); err != nil {
 		return
 	}
 	if _, err = r.DBCreate(DB).RunWrite(Session); err != nil {
