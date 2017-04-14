@@ -35,7 +35,7 @@ while getopts "m:w:d:H:fFh" opt; do
         m  ) MANAGERS="$OPTARG";;
         w  ) WORKERS="$OPTARG";;
         d  ) DRIVER="$OPTARG";;
-        H  ) HOSTNAME="$OPTARG";;
+        H  ) HOSTNAMEARG="$OPTARG";;
         f  ) FORCE="y";;
         F  ) FIREWALL="$(mktemp)";;
         h  ) usage; exit;;
@@ -190,12 +190,12 @@ else
 			new=$(expr $next + $i)
 			if [ "${type}" = "manager" -a "$new" = "1" ]; then
 				create $type $new
-				if [ "$HOSTNAME" ]; then
+				if [ "$HOSTNAMEARG" ]; then
 					echo "* Root password possibly requested to edit /etc/hosts..."
-					if [ "$(grep "${HOSTNAME}" /etc/hosts)" = "" ]; then
-						echo "${MANAGER_IP} ${HOSTNAME}" | sudo tee -a /etc/hosts >/dev/null
+					if [ "$(grep "${HOSTNAMEARG}" /etc/hosts)" = "" ]; then
+						echo "${MANAGER_IP} ${HOSTNAMEARG}" | sudo tee -a /etc/hosts >/dev/null
 					else
-						sudo sed -i.bak "s/.*${HOSTNAME}/${MANAGER_IP} ${HOSTNAME}/" /etc/hosts
+						sudo sed -i.bak "s/.*${HOSTNAMEARG}/${MANAGER_IP} ${HOSTNAMEARG}/" /etc/hosts
 					fi
 				fi
 			else

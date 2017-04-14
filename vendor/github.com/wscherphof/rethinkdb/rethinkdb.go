@@ -2,6 +2,7 @@ package rethinkdb
 
 import (
 	r "gopkg.in/gorethink/gorethink.v3"
+	"github.com/wscherphof/env"
 	"strings"
 )
 
@@ -23,8 +24,8 @@ func Connect(db, address string) (err error) {
 	DB = db
 	if Session, err = r.Connect(r.ConnectOpts{
 		Address: address,
-		InitialCap: 10,
-		MaxOpen: 20,
+		InitialCap: env.GetInt("DB_POOL_INITIAL", 100),
+		MaxOpen: env.GetInt("DB_POOL_MAX", 100),
 	}); err != nil {
 		return
 	}
@@ -37,7 +38,13 @@ func Connect(db, address string) (err error) {
 }
 
 func tableCreate(table string, opts ...r.TableCreateOpts) (r.WriteResponse, error) {
-	return r.DB(DB).TableCreate(table, opts...).RunWrite(Session)
+	opt := r.TableCreateOpts{}
+	if len(opts) == 1 {
+		opt = opts[0]
+	}
+	opt.Shards = env.GetInt("DB_SHARDS", 1)
+	opt.Replicas = env.GetInt("DB_REPLICAS", 1)
+	return r.DB(DB).TableCreate(table, opt).RunWrite(Session)
 }
 
 func TableCreate(table string) (r.WriteResponse, error) {

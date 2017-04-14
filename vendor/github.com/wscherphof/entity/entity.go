@@ -134,10 +134,11 @@ func (t *TableType) Index(column string) *TableType {
 	return t
 }
 
-var typeReplacer = strings.NewReplacer("*", "", ".", "_")
+var typeReplacer = strings.NewReplacer(".", "_", "[", "", "]", "", "*", "", "0", "", "1", "", "2", "", "3", "", "4", "", "5", "", "6", "", "7", "", "8", "", "9", "")
 
 func getType(record interface{}) string {
-	tpe := fmt.Sprintf("%T", record)
+	test := record
+	tpe := fmt.Sprintf("%T", test)
 	return typeReplacer.Replace(tpe)
 }
 

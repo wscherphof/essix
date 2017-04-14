@@ -69,10 +69,10 @@
 			"revisionTime": "2016-10-06T14:10:24Z"
 		},
 		{
-			"checksumSHA1": "bKKpMxl+pJDs0hDpwLmS29163fo=",
+			"checksumSHA1": "aeU6m+HdXtZdxY69C7MeoSDBTQ0=",
 			"path": "github.com/wscherphof/entity",
-			"revision": "8764af2cfb386dfdda2a4c2c0a9bd63413666485",
-			"revisionTime": "2017-04-11T20:39:24Z"
+			"revision": "60fb0550484c7cda8554829a07e2c35a1be3e7db",
+			"revisionTime": "2017-04-14T21:56:56Z"
 		},
 		{
 			"checksumSHA1": "QlYuFD+iOr7Asvb/KOT9PrFGczE=",
@@ -93,23 +93,23 @@
 			"revisionTime": "2017-04-02T21:02:38Z"
 		},
 		{
-			"checksumSHA1": "Ef2LM+tcfe7so5GDDnFkLl5ruTs=",
+			"checksumSHA1": "SpCbtKUUVKRFQ50sau7Xq//GAAs=",
 			"path": "github.com/wscherphof/rethinkdb",
-			"revision": "4d0f12d6b1aa4418c8b07a6624daa49c6d3ed074",
-			"revisionTime": "2017-04-10T17:39:43Z"
+			"revision": "90f6ee68e8b818a37f461234f99383ce4ec56e8a",
+			"revisionTime": "2017-04-14T15:05:31Z"
 		},
 		{
-			"checksumSHA1": "fRkx4f+dd0I5KIcnzrLudJOoM3s=",
+			"checksumSHA1": "3bIOH2GNGxyXJnz19URAYcPGC0w=",
 			"path": "github.com/wscherphof/rethinkswarmmode",
-			"revision": "566f2258b405356517a362409bc7f4eb1415aeb1",
-			"revisionTime": "2017-03-21T21:32:33Z",
+			"revision": "bb22626661c8a277128e95f0177a225f094c4513",
+			"revisionTime": "2017-04-14T21:56:01Z",
 			"tree": true
 		},
 		{
-			"checksumSHA1": "be6i+TLgyTFmJg7Z2aMb+5bhfWU=",
+			"checksumSHA1": "XYgZBgjMXDYQrAmaPIOZ78hGV6w=",
 			"path": "github.com/wscherphof/secure",
-			"revision": "aa56d4fdc473a3286a996aaac707382b6a32483e",
-			"revisionTime": "2016-10-26T13:25:56Z"
+			"revision": "0eec0cf4354a2b22759b9d2ace721944eaa8faf4",
+			"revisionTime": "2017-04-14T14:55:17Z"
 		},
 		{
 			"checksumSHA1": "U4bWGZ3c9p8FHrgU5l4l5i7A6bo=",

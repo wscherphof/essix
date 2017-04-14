@@ -81,32 +81,52 @@ and DELETE handles.
 */
 const FormValueName = "_formtoken"
 
+func errorMessage(w http.ResponseWriter, this, that *FormToken, referer *url.URL) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(http.StatusBadRequest)
+	w.Write([]byte(`<!DOCTYPE html>
+		<html>
+			<head>
+				<meta charset="utf-8">
+			</head>
+			<body>
+				<h2>Form token validation failed</h2>
+				<table>
+					<tr>
+						<th></th>
+						<th>IP</th>
+						<th>Path</th>
+					</tr>
+					<tr>
+						<th>this</th>
+						<td>` + this.IP + `</td>
+						<td>` + this.Path + `</td>
+					</tr>
+					<tr>
+						<th>that</th>
+						<td>` + that.IP + `</td>
+						<td>` + that.Path + `</td>
+					</tr>
+				</table>
+				<a id="location" href="` + referer.Path + `">Back</a>
+			</body>
+		</html>
+	`))
+}
+
 func formTokenHandle(handle httprouter.Handle) httprouter.Handle {
 	return clearHandle(func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		this, that := NewFormToken(r), new(FormToken)
+		referer, _ := url.Parse(r.Referer())
 		if err := that.Parse(r.FormValue(FormValueName)); err != nil {
-			log.Printf("WARNING: %s %s %s", err, this.IP, this.Path)
-		} else {
-			referer, _ := url.Parse(r.Referer())
+			log.Printf("WARNING: Error parsing form token: %s %s %s", err, this.IP, this.Path)
+			errorMessage(w, this, that, referer)
+		} else if that.IP != this.IP || (that.Path != this.Path && that.Path != referer.Path) {
 			// Timestamp not considered, since key rotation will outdate old tokens automatically
-			if that.IP != this.IP || (that.Path != this.Path && that.Path != referer.Path) {
-				log.Printf("WARNING: Form token invalid %s %s", this.IP, this.Path)
-				w.Header().Set("Content-Type", "text/html; charset=utf-8")
-				w.WriteHeader(http.StatusBadRequest)
-				w.Write([]byte(`<!DOCTYPE html>
-					<html>
-						<head>
-							<meta charset="utf-8">
-						</head>
-						<body>
-							<h2>Form token validation failed</h2>
-							<a id="location" href="` + referer.Path + `">Back</a>
-						</body>
-					</html>
-				`))
-			} else {
-				handle(w, r, ps)
-			}
+			log.Printf("WARNING: Form token invalid %s %s", this.IP, this.Path)
+			errorMessage(w, this, that, referer)
+		} else {
+			handle(w, r, ps)
 		}
 	})
 }
