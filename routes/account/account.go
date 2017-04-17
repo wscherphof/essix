@@ -31,11 +31,9 @@ func NewAccount(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		r.FormValue("pwd2"),
 	); err != nil {
 		template.Error(w, r, err, conflict)
-	} else if err, message := activateEmail(r, account); err != nil {
-		template.Error(w, r, err, false)
 	} else {
+		activateEmail(r, account)
 		t.Set("id", account.ID)
-		t.Set("message", message)
 		t.Run()
 	}
 }

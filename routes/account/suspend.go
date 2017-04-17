@@ -19,13 +19,9 @@ func SuspendToken(w http.ResponseWriter, r *http.Request, ps httprouter.Params) 
 	} else {
 		email := template.Email(r, "suspend", "SuspendToken-email", "lang")
 		email.Set("link", "https://"+r.Host+"/account/suspend?token="+account.SuspendToken)
-		if err, message := email.Run(account.Email, "Suspend account"); err != nil {
-			template.Error(w, r, err, false)
-		} else {
-			cookie.Update(w, r, account)
-			t.Set("message", message)
-			t.Run()
-		}
+		email.Run(account.Email, "Suspend account")
+		cookie.Update(w, r, account)
+		t.Run()
 	}
 }
 

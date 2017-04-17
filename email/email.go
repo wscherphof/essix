@@ -66,11 +66,10 @@ func init() {
 }
 
 /*
-Send sends an eamil message, or enqueues it if it couldn't be sent at once.
+SendSync sends an eamil message, or enqueues it if it couldn't be sent at once.
 */
-func Send(subject, message string, recipients ...string) (err error) {
+func SendSync(subject, message string, recipients ...string) (err error) {
 	if e := send(subject, message, recipients...); e != nil {
-		log.Println("INFO: error sending email, enqueueing...", e)
 		err = ErrNotSentImmediately
 		if e := enQueue(subject, message, recipients...); e != nil {
 			err = e
@@ -79,11 +78,28 @@ func Send(subject, message string, recipients ...string) (err error) {
 	return
 }
 
-func send(subject, message string, recipients ...string) error {
+/*
+Send sends an eamil message asynchronously, or enqueues it if it couldn't be
+sent at once.
+*/
+func Send(subject, message string, recipients ...string) {
+	go func() {
+		if err := send(subject, message, recipients...); err != nil {
+			if err := enQueue(subject, message, recipients...); err != nil {
+				log.Println("ERROR: enqueueing email failed", err)
+			}
+		}
+	}()
+}
+
+func send(subject, message string, recipients ...string) (err error) {
 	mail := email.NewEmail()
 	mail.From = from
 	mail.To = recipients
 	mail.Subject = subject
 	mail.HTML = []byte(message)
-	return mail.SendWithTLS(endpoint, auth, tlsConfig)
+	if err := mail.SendWithTLS(endpoint, auth, tlsConfig); err != nil {
+		log.Println("WARNING: sending email failed", err)
+	}
+	return
 }

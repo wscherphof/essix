@@ -13,16 +13,13 @@ type EmailType struct {
 /*
 Run sends the formatted email.
 */
-func (t *EmailType) Run(recipient, subject string) (err error, message string) {
+func (t *EmailType) Run(recipient, subject string) {
 	body := String(t.r, t.dir, t.base, t.inner(), t.data)
-	if err = email.Send(
+	email.Send(
 		msg.Translator(t.r).Get(subject),
 		body,
 		recipient,
-	); err == email.ErrNotSentImmediately {
-		err, message = nil, err.Error()
-	}
-	return
+	)
 }
 
 /*

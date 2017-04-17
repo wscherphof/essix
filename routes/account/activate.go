@@ -38,17 +38,15 @@ func ActivateToken(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 		template.Error(w, r, err, conflict)
 	} else if account.IsActive() {
 		template.Error(w, r, model.ErrAlreadyActivated, true)
-	} else if err, message := activateEmail(r, account); err != nil {
-		template.Error(w, r, err, false)
 	} else {
+		activateEmail(r, account)
 		t.Set("id", account.ID)
-		t.Set("message", message)
 		t.Run()
 	}
 }
 
-func activateEmail(r *http.Request, account *model.Account) (error, string) {
+func activateEmail(r *http.Request, account *model.Account) {
 	email := template.Email(r, "activate", "ActivateToken-email", "lang")
 	email.Set("link", "https://"+r.Host+"/account/activate?token="+account.ActivateToken+"&id="+account.ID)
-	return email.Run(account.Email, "Activate account")
+	email.Run(account.Email, "Activate account")
 }

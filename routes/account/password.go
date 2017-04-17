@@ -29,12 +29,8 @@ func PasswordToken(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
 		link += "&id=" + account.ID
 		link += "&expires=" + util.URLEncodeString(expires)
 		email.Set("link", link)
-		if err, message := email.Run(account.Email, "Reset password"); err != nil {
-			template.Error(w, r, err, false)
-		} else {
-			t.Set("message", message)
-			t.Run()
-		}
+		email.Run(account.Email, "Reset password")
+		t.Run()
 	}
 }
 

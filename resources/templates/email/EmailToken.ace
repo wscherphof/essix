@@ -3,6 +3,5 @@ body
   main
     .p..
       {{.msg.Get "Email token successful"}}
-      {{.msg.Get .message}}
     .p
       a href=/ {{.msg.Get "Take me home"}}
