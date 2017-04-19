@@ -125,11 +125,10 @@ Later, call Base.Index() for an IndexType value:
 	busFooIndex := bus.Index(bus, "Foo")
 	busBarIndex := bus.Index(bus, "Bar")
 */
-func (t *TableType) Index(column string) *TableType {
-	if _, err := db.IndexCreate(t.name, column); err != nil {
-		if t.new {
-			log.Println("ERROR: failed to create index:", t.name, column, err)
-		}
+func (t *TableType) Index(name string, column ...string) *TableType {
+	response, err := db.IndexCreate(t.name, name, column...)
+	if t.new && response.Created != 1 {
+		log.Println("ERROR: failed to create index:", t.name, name, column, err)
 	}
 	return t
 }
@@ -248,7 +247,7 @@ An IndexType provides index operations.
 */
 type IndexType struct {
 	table  string
-	column string
+	name string
 }
 
 /*
@@ -259,8 +258,8 @@ indexes by calling Index() on the result of Register()
 	bus := initBus()
 	busFooIndex := bus.Index(bus, "Foo")
 */
-func (b *Base) Index(record interface{}, column string) *IndexType {
-	return &IndexType{tbl(record), column}
+func (b *Base) Index(record interface{}, name string) *IndexType {
+	return &IndexType{tbl(record), name}
 }
 
 /*
@@ -273,8 +272,8 @@ exist.
 		// doSomethingWith(bus)
 	}
 */
-func (i *IndexType) Read(value, result interface{}) (err error, empty bool) {
-	if err = db.GetIndex(i.table, i.column, value, result); err == db.ErrEmptyResult {
+func (i *IndexType) Read(result interface{}, values ...interface{}) (err error, empty bool) {
+	if err = db.GetIndex(i.table, i.name, result, values...); err == db.ErrEmptyResult {
 		err, empty = ErrEmptyResult, true
 	}
 	return
@@ -290,8 +289,8 @@ exist.
 		// doSomethingWith(num)
 	}
 */
-func (i *IndexType) Count(value, result interface{}) error {
-	return db.CountIndex(i.table, i.column, value, result)
+func (i *IndexType) Count(result interface{}, values ...interface{}) error {
+	return db.CountIndex(i.table, i.name, result, values...)
 }
 
 /*
@@ -302,7 +301,7 @@ Pass nil for low to use its minimum value. Pass nil for high to use its maximum
 value.
 */
 func (i *IndexType) Between(low interface{}, includeLow bool, high interface{}, includeHigh bool) Term {
-	return Term(db.Between(i.table, i.column, low, includeLow, high, includeHigh))
+	return Term(db.Between(i.table, i.name, low, includeLow, high, includeHigh))
 }
 
 /*
@@ -311,7 +310,7 @@ Direction "asc" (default) cuts off the first n records;
 Direction "desc" cuts off the last n records.
 */
 func (i *IndexType) Skip(n int, opt_direction ...string) Term {
-	return Term(db.Skip(i.table, i.column, n, opt_direction...))
+	return Term(db.Skip(i.table, i.name, n, opt_direction...))
 }
 
 /*

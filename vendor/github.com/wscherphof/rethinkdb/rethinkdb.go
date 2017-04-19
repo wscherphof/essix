@@ -57,8 +57,20 @@ func TableCreatePK(table, pk string) (r.WriteResponse, error) {
 	})
 }
 
-func IndexCreate(table, field string) (r.WriteResponse, error) {
-	return r.DB(DB).Table(table).IndexCreate(field).RunWrite(Session)
+func IndexCreate(table, name string, opt_fields ...string) (resp r.WriteResponse, err error) {
+	num := len(opt_fields)
+	if num == 0 {
+		resp, err = r.DB(DB).Table(table).IndexCreate(name).RunWrite(Session)
+	} else {
+		resp, err = r.DB(DB).Table(table).IndexCreateFunc(name, func (row r.Term) interface{} {
+			values := make([]interface{}, num, num)
+			for i, field := range opt_fields {
+				values[i] = row.Field(field)
+			}
+			return values
+		}).RunWrite(Session)
+	}
+	return
 }
 
 func insert(table string, record interface{}, opts ...r.InsertOpts) (response r.WriteResponse, err error, conflict bool) {
@@ -87,13 +99,18 @@ func Get(table, key string, result interface{}) error {
 	return one(cursor, err, result)
 }
 
-func GetIndex(table, index string, value, result interface{}) error {
-	cursor, err := r.DB(DB).Table(table).GetAllByIndex(index, value).Run(Session)
+func GetIndex(table, index string, result interface{}, values ...interface{}) error {
+	cursor, err := r.DB(DB).Table(table).GetAllByIndex(index, values...).Run(Session)
 	return one(cursor, err, result)
 }
 
-func CountIndex(table, index string, value, result interface{}) error {
-	cursor, err := r.DB(DB).Table(table).GetAllByIndex(index, value).Count().Run(Session)
+func CountIndex(table, index string, result interface{}, values ...interface{}) error {
+	num := len(values)
+	keys := make([]interface{}, num, num)
+	for i, v := range values {
+		keys[i] = v
+	}
+	cursor, err := r.DB(DB).Table(table).GetAllByIndex(index, keys).Count().Run(Session)
 	return one(cursor, err, result)
 }
 
