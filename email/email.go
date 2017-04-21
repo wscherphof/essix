@@ -36,6 +36,7 @@ var (
 	conf      = &config{
 		Base: &entity.Base{
 			ID: "email",
+			Table: "config",
 		},
 		EmailAddress: "essix@gmail.com",
 		PWD:          "",
@@ -46,7 +47,7 @@ var (
 )
 
 func init() {
-	entity.Register(conf, "config")
+	entity.Register(conf)
 	if err, _ := conf.Read(conf); err != nil {
 		log.Println("WARNING: email.init() error reading config:", err)
 		if err := conf.Update(conf); err != nil {

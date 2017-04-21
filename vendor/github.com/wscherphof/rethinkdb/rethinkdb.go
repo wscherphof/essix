@@ -110,6 +110,8 @@ func CountIndex(table, index string, result interface{}, values ...interface{}) 
 	for i, v := range values {
 		keys[i] = v
 	}
+	// Though GetAllByIndex is defined to accept keys as ...interface{}, it
+	// really only works with an explicit []interface{}
 	cursor, err := r.DB(DB).Table(table).GetAllByIndex(index, keys).Count().Run(Session)
 	return one(cursor, err, result)
 }

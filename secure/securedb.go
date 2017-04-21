@@ -20,7 +20,7 @@ func (s *secureDB) Fetch(dst *secure.Config) (err error) {
 		if empty {
 			log.Println("WARNING: SecureDB.Fetch():", err)
 		} else {
-			log.Println("ERROR: SecureDB.Fetch():", err)
+			log.Panicln("ERROR: SecureDB.Fetch():", err)
 		}
 	} else {
 		*dst = *s.Config
@@ -34,7 +34,7 @@ Upsert implements github.com/wscherphof/secure.SecureDB.
 func (s *secureDB) Upsert(src *secure.Config) (err error) {
 	s.Config = src
 	if err = s.Update(s); err != nil {
-		log.Println("ERROR: SecureDB.Upsert():", err)
+		log.Panicln("ERROR: SecureDB.Upsert():", err)
 	}
 	return
 }

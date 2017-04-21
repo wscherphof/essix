@@ -18,7 +18,7 @@ type job struct {
 }
 
 func init() {
-	entity.Register(&job{})
+	entity.Register(initJob())
 	go func() {
 		for {
 			processQueue()

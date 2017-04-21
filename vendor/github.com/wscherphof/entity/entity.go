@@ -75,33 +75,30 @@ func init() {
 	}
 }
 
-var tables = make(map[string]string, 100)
+type entity interface {
+	table(record interface{}) string
+}
 
 /*
 Register manages which database table to use for which type.
-If the table argument is omitted, it derives the table name from the type name
-of the record argument.
+The table to use is derived from the type name of the entity argument. This can
+be overruled by setting the Table field of the entity's Base field.
 If the table to use is not present in the database, it creates the table.
 If creating the table fails, it logs the error, and panics.
 
 Call Index() on the result to ensure a secondary index for a field.
 Call Index() on the result of Index() for another index on the same table.
 */
-func Register(record interface{}, table ...string) (ret *TableType) {
-	tpe := getType(record)
-	tbl := tpe
-	if len(table) == 1 {
-		tbl = table[0]
-	}
-	tables[tpe] = tbl
-	ret = &TableType{name: tbl}
-	if _, err := db.TableCreate(tbl); err != nil {
-		if !strings.HasPrefix(err.Error(), "gorethink: Table `"+DB+"."+tbl+"` already exists") {
-			log.Panicln("ERROR: failed to create table:", tbl, err)
+func Register(e entity) (ret *TableType) {
+	table := e.table(e)
+	ret = &TableType{name: table}
+	if _, err := db.TableCreate(table); err != nil {
+		if !strings.HasPrefix(err.Error(), "gorethink: Table `"+DB+"."+table+"` already exists") {
+			log.Panicln("ERROR: failed to create table:", table, err)
 		}
 	} else {
 		ret.new = true
-		log.Println("INFO: table created:", tbl)
+		log.Println("INFO: table created:", table)
 	}
 	return
 }
@@ -133,13 +130,6 @@ func (t *TableType) Index(name string, column ...string) *TableType {
 	return t
 }
 
-var typeReplacer = strings.NewReplacer(".", "_", "[", "", "]", "", "*", "", "0", "", "1", "", "2", "", "3", "", "4", "", "5", "", "6", "", "7", "", "8", "", "9", "")
-
-func getType(record interface{}) string {
-	tpe := fmt.Sprintf("%T", record)
-	return typeReplacer.Replace(tpe)
-}
-
 /*
 Base is the base type to embed in business objects.
 */
@@ -154,11 +144,20 @@ type Base struct {
 
 	// Modified holds the time when the record was last modified in the database.
 	Modified time.Time
+
+	// Table overrides the table to use for this business object. Leave empty to
+	// have it derived from the object's type name.
+	Table string `gorethink:",omitempty"`
 }
 
-func tbl(record interface{}) string {
-	tpe := getType(record)
-	return tables[tpe]
+var typeReplacer = strings.NewReplacer(".", "_", "[", "", "]", "", "*", "", "0", "", "1", "", "2", "", "3", "", "4", "", "5", "", "6", "", "7", "", "8", "", "9", "")
+
+func (b *Base) table(record interface{}) string {
+	if b.Table == "" {
+		T := fmt.Sprintf("%T", record)
+		b.Table = typeReplacer.Replace(T)
+	}
+	return b.Table
 }
 
 /*
@@ -170,7 +169,7 @@ If a record with the same ID already exists, conflict is set to true.
 func (b *Base) Create(record interface{}) (err error, conflict bool) {
 	b.Created = time.Now()
 	b.Modified = b.Created
-	if response, e, c := db.Insert(tbl(record), record); c {
+	if response, e, c := db.Insert(b.table(record), record); c {
 		err, conflict = ErrDuplicatePrimaryKey, true
 	} else if e != nil {
 		err = e
@@ -187,7 +186,7 @@ It sets empty to true, if the error is that a record with that ID doesn't exist.
 	err, empty := bus.Read(bus)
 */
 func (b *Base) Read(result interface{}) (err error, empty bool) {
-	if err = db.Get(tbl(result), b.ID, result); err == db.ErrEmptyResult {
+	if err = db.Get(b.table(result), b.ID, result); err == db.ErrEmptyResult {
 		err, empty = ErrEmptyResult, true
 	}
 	return
@@ -209,7 +208,7 @@ holding all records of the given type.
 	}
 */
 func (b *Base) ReadAll(record interface{}) (*db.Cursor, error) {
-	return db.All(tbl(record))
+	return db.All(b.table(record))
 }
 
 /*
@@ -224,7 +223,7 @@ func (b *Base) Update(record interface{}) (err error) {
 		b.Created = time.Now()
 	}
 	b.Modified = time.Now()
-	if response, e := db.InsertUpdate(tbl(record), record); e != nil {
+	if response, e := db.InsertUpdate(b.table(record), record); e != nil {
 		err = e
 	} else if b.ID == "" {
 		b.ID = response.GeneratedKeys[0]
@@ -238,7 +237,7 @@ Delete deletes a record from the database, using its ID.
 	err := bus.Delete(bus)
 */
 func (b *Base) Delete(record interface{}) (err error) {
-	_, err = db.Delete(tbl(record), b.ID)
+	_, err = db.Delete(b.table(record), b.ID)
 	return
 }
 
@@ -259,7 +258,7 @@ indexes by calling Index() on the result of Register()
 	busFooIndex := bus.Index(bus, "Foo")
 */
 func (b *Base) Index(record interface{}, name string) *IndexType {
-	return &IndexType{tbl(record), name}
+	return &IndexType{b.table(record), name}
 }
 
 /*

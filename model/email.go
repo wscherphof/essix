@@ -7,7 +7,7 @@ import (
 )
 
 func init() {
-	entity.Register(&email{})
+	entity.Register(initEmail(""))
 }
 
 type email struct {

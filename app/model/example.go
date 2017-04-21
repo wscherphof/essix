@@ -13,7 +13,7 @@ type Profile struct {
 }
 
 func init() {
-	entity.Register(&Profile{})
+	entity.Register(InitProfile(""))
 }
 
 func InitProfile(account string) (profile *Profile) {

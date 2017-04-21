@@ -15,12 +15,11 @@ import (
 )
 
 func init() {
-	var db = &secureDB{
-		Base: &entity.Base{
-			ID: "secure",
-		},
-	}
-	entity.Register(db, "config")
+	db := &secureDB{Base: &entity.Base{
+		ID: "secure",
+		Table: "config",
+	}}
+	entity.Register(db)
 	secure.Configure(
 		model.Account{},
 		db,

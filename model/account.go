@@ -32,7 +32,7 @@ type Account struct {
 }
 
 func init() {
-	entity.Register(&Account{}).Index("Email")
+	entity.Register(initAccount()).Index("Email")
 }
 
 func initAccount(id ...string) (account *Account) {
