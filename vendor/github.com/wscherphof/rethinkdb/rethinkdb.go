@@ -70,6 +70,7 @@ func IndexCreate(table, name string, opt_fields ...string) (resp r.WriteResponse
 			return values
 		}).RunWrite(Session)
 	}
+	r.DB(DB).Table(table).IndexWait(name)
 	return
 }
 

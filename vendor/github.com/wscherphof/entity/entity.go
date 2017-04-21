@@ -173,7 +173,7 @@ func (b *Base) Create(record interface{}) (err error, conflict bool) {
 		err, conflict = ErrDuplicatePrimaryKey, true
 	} else if e != nil {
 		err = e
-	} else if b.ID == "" {
+	} else if len(response.GeneratedKeys) == 1 {
 		b.ID = response.GeneratedKeys[0]
 	}
 	return
