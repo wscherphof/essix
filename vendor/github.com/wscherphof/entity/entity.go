@@ -16,7 +16,7 @@ a business object type:
 	}
 
 Register the business object before using its entity methods:
-	entity.Register(&Bus{})
+	entity.Register(initBus())
 
 Do initialise the embbedded Base:
 	func initBus(opt_id string) *Bus {
@@ -113,9 +113,9 @@ type TableType struct {
 
 /*
 Index ensures a secondary database index on the given column.
-	entity.Register(&Bus{}).Index("Foo")
+	entity.Register(initBus()).Index("Foo")
 or
-	entity.Register(&Bus{}).Index("Foo").Index("Bar")
+	entity.Register(initBus()).Index("Foo").Index("Bar")
 
 Later, call Base.Index() for an IndexType value:
 	bus := initBus()
@@ -252,7 +252,7 @@ type IndexType struct {
 /*
 Index returns the IndexType for the given record's table & column. Create
 indexes by calling Index() on the result of Register()
-	entity.Register(&Bus{}).Index("Foo")
+	entity.Register(initBus()).Index("Foo")
 	...
 	bus := initBus()
 	busFooIndex := bus.Index(bus, "Foo")
