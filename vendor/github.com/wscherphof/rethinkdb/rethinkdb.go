@@ -106,13 +106,17 @@ func GetIndex(table, index string, result interface{}, values ...interface{}) er
 }
 
 func CountIndex(table, index string, result interface{}, values ...interface{}) error {
-	num := len(values)
-	keys := make([]interface{}, num, num)
-	for i, v := range values {
-		keys[i] = v
+	var keys interface{}
+	if num := len(values); num == 1 {
+		keys = values[0]
+	} else {
+		// Compound index. Though GetAllByIndex is defined to accept keys as
+		/// ...interface{}, it really only works with an explicit []interface{}
+		keys := make([]interface{}, num, num)
+		for i, v := range values {
+			keys[i] = v
+		}
 	}
-	// Though GetAllByIndex is defined to accept keys as ...interface{}, it
-	// really only works with an explicit []interface{}
 	cursor, err := r.DB(DB).Table(table).GetAllByIndex(index, keys).Count().Run(Session)
 	return one(cursor, err, result)
 }
