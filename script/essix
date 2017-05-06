@@ -241,7 +241,8 @@ build)
 	postcss -v >/dev/null
 	if [ $? -eq 0 ]; then
 		echo "* autoprefixing..."
-		find ./.merge/resources/static/styles -name "*.css" -exec postcss {} --use autoprefixer --replace \;
+		find ./.merge/resources/static/styles -name "*.css" \
+		-exec postcss {} --use autoprefixer --replace \;
 	fi
 
 	force ${build} \
