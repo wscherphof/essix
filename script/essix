@@ -238,6 +238,12 @@ build)
 	force cp -rf ${essix}/resources/ ./.merge/resources/
 	force cp -rf ./resources/ ./.merge/resources/
 
+	postcss -v >/dev/null
+	if [ $? -eq 0 ]; then
+		echo "* autoprefixing..."
+		find ./.merge/resources/static/styles -name "*.css" -exec postcss {} --use autoprefixer --replace \;
+	fi
+
 	force ${build} \
 	-e DB_NAME=essix -e DB_ADDRESS=db1 \
 	-e ZONEINFO=/resources/data/zoneinfo.zip \
