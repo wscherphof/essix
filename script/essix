@@ -241,8 +241,10 @@ build)
 	postcss -v >/dev/null
 	if [ $? -eq 0 ]; then
 		echo "* autoprefixing..."
-		find ./.merge/resources/static/styles -name "*.css" \
-		-exec postcss {} --use autoprefixer --replace \;
+		find ./.merge/resources/static/styles -name "*.css" -print0 | xargs -0  \
+		postcss --use autoprefixer --replace
+	else
+		echo "- consider installing CSS autoprefixer through `npm install --global postcss-cli autoprefixer`"
 	fi
 
 	force ${build} \
