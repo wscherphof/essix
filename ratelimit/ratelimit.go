@@ -83,7 +83,7 @@ func getClient(ip string) (c *client) {
 /*
 ratelimit.Handle returns a httprouter.Handle that denies a request if it's
 repeated from the same client within the given number of seconds, or handles it,
-and resets the timw window.
+and resets the time window. Passing 0 seconds bypasses the rate limit.
 
 Default limit is read from the RATELIMIT environment variable. The default value
 for RATELIMIT is 60 seconds.
@@ -92,6 +92,9 @@ func Handle(handle httprouter.Handle, opt_seconds ...int) httprouter.Handle {
 	seconds := defaultLimit
 	if len(opt_seconds) == 1 {
 		seconds = opt_seconds[0]
+	}
+	if seconds == 0 {
+		return handle
 	}
 	window := time.Duration(seconds) * time.Second
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
