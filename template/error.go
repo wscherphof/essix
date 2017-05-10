@@ -29,7 +29,7 @@ Any data is passed to the tail template.
 */
 func ErrorTail(w http.ResponseWriter, r *http.Request, err error, conflict bool, dir, tail string, opt_data ...map[string]interface{}) {
 	var data map[string]interface{}
-	if len(data) == 1 {
+	if len(opt_data) == 1 {
 		data = opt_data[0]
 	}
 	errorTemplate(w, r, err, conflict, data, dir, tail)
