@@ -118,12 +118,13 @@ func (l *languageType) parse(s string) {
 	return
 }
 
-func (l *languageType) test(f func(lang string) (ok bool)) {
+func (l *languageType) test(f func(lang string) (ok bool)) (ok bool) {
 	for _, lang := range [3]string{l.Full, l.Main, l.Sub} {
 		if f(lang) {
-			return
+			return true
 		}
 	}
+	return false
 }
 
 /*
@@ -182,9 +183,16 @@ func (t *TranslatorType) Get(key string) (translation string) {
 /*
 Select returns the translation for a message.
 */
-func (t *TranslatorType) Select(m MessageType, opt_default ...string) (translation string) {
+func (t *TranslatorType) Select(message MessageType, opt_default ...string) (translation string) {
+	translate := func (lang string) (ok bool) {
+		translation, ok = message[lang]
+		return
+	}
 	for _, language := range t.languages {
-		if translation = translate(m, language); translation != "" {
+		if language.test(translate) {
+			if !production && language == defaultLanguage {
+				translation = "D-" + translation
+			}
 			return
 		}
 	}
@@ -193,17 +201,6 @@ func (t *TranslatorType) Select(m MessageType, opt_default ...string) (translati
 		if !production {
 			translation = "X-" + translation
 		}
-	}
-	return
-}
-
-func translate(message MessageType, language *languageType) (translation string) {
-	language.test(func(lang string) (ok bool){
-		translation, ok = message[lang]
-		return
-	})
-	if !production && language == defaultLanguage {
-		translation = "D-" + translation
 	}
 	return
 }
