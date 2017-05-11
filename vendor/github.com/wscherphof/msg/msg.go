@@ -118,7 +118,13 @@ func (l *languageType) parse(s string) {
 	return
 }
 
-var translatorCache = make(map[string]*TranslatorType, 100)
+func (l *languageType) test(f func(lang string) (ok bool)) {
+	for _, lang := range [3]string{l.Full, l.Main, l.Sub} {
+		if f(lang) {
+			return
+		}
+	}
+}
 
 /*
 TranslatorType knows about translations for the user's accepted languages.
@@ -128,27 +134,38 @@ type TranslatorType struct {
 	files     map[string]string
 }
 
+var translatorCache = make(map[string]*TranslatorType, 100)
+
 /*
 Translator returns a (cached) TranslatorType.
 */
-func Translator(r *http.Request) *TranslatorType {
+func Translator(r *http.Request) (t *TranslatorType) {
 	acceptLanguage := strings.ToLower(r.Header.Get("Accept-Language"))
 	if cached, ok := translatorCache[acceptLanguage]; ok {
 		return cached
 	}
-	langStrings := strings.Split(acceptLanguage, ",")
-	t := &TranslatorType{
-		languages: make([]*languageType, len(langStrings)),
-		files:     make(map[string]string, 20),
-	}
-	for i, v := range langStrings {
-		langString := strings.Split(v, ";")[0] // cut the q parameter
-		lang := &languageType{}
-		lang.parse(langString)
-		t.languages[i] = lang
+	if acceptLanguage == "" {
+		t = &TranslatorType{
+			languages: make([]*languageType, 1),
+			files:     make(map[string]string, 20),
+		}
+		t.languages[0] = defaultLanguage
+	} else {
+		langStrings := strings.Split(acceptLanguage, ",")
+		t = &TranslatorType{
+			languages: make([]*languageType, len(langStrings) + 1),
+			files:     make(map[string]string, 20),
+		}
+		for i, v := range langStrings {
+			langString := strings.Split(v, ";")[0] // cut the q parameter
+			lang := &languageType{}
+			lang.parse(langString)
+			t.languages[i] = lang
+		}
+		t.languages[len(langStrings)] = defaultLanguage
 	}
 	translatorCache[acceptLanguage] = t
-	return t
+	return
 }
 
 /*
@@ -171,11 +188,7 @@ func (t *TranslatorType) Select(m MessageType, opt_default ...string) (translati
 			return
 		}
 	}
-	if translation = translate(m, defaultLanguage); translation != "" {
-		if !production {
-			translation = "D-" + translation
-		}
-	} else if len(opt_default) == 1 {
+	if len(opt_default) == 1 {
 		translation = opt_default[0]
 		if !production {
 			translation = "X-" + translation
@@ -185,12 +198,12 @@ func (t *TranslatorType) Select(m MessageType, opt_default ...string) (translati
 }
 
 func translate(message MessageType, language *languageType) (translation string) {
-	if val, ok := message[language.Full]; ok {
-		translation = val
-	} else if val, ok := message[language.Main]; ok {
-		translation = val
-	} else if val, ok := message[language.Sub]; ok {
-		translation = val
+	language.test(func(lang string) (ok bool){
+		translation, ok = message[lang]
+		return
+	})
+	if !production && language == defaultLanguage {
+		translation = "D-" + translation
 	}
 	return
 }
@@ -207,44 +220,38 @@ returns
 	"HomePage-en", nil
 if the file "/resources/templates/home/HomePage-en.tpl" exists.
 */
-func (t *TranslatorType) File(location, dir, base string, extension ...string) (inner string, err error) {
-	ext := ".ace"
-	if len(extension) == 1 {
-		ext = extension[0]
+func (t *TranslatorType) File(location, dir, base string, opt_extension ...string) (inner string, err error) {
+	extension := ".ace"
+	if len(opt_extension) == 1 {
+		extension = opt_extension[0]
 	}
 	template := location + "/" + dir + "/" + base
 	if cached, ok := t.files[template]; ok {
 		return cached, nil
 	}
+	var lang string
 	for _, language := range t.languages {
-		if lang, e := exists(template, ext, language); e == nil {
+		if lang, err = exists(template, extension, language); err == nil {
 			inner = base + "-" + lang
 			t.files[template] = inner
 			return
 		}
 	}
-	if lang, e := exists(template, ext, defaultLanguage); e != nil {
-		err = e
-	} else {
-		inner = base + "-" + lang
-		t.files[template] = inner
-	}
 	return
 }
 
 func exists(template, extension string, language *languageType) (lang string, err error) {
-	if lang, err = stat(template, extension, language.Full); err != nil {
-		if lang, err = stat(template, extension, language.Main); err != nil {
-			lang, err = stat(template, extension, language.Sub)
+	language.test(func(l string) (ok bool){
+		if err = stat(template, extension, l); err == nil {
+			lang, ok = l, true
 		}
-	}
+		return
+	})
 	return
 }
 
-func stat(template, extension, searchLang string) (lang string, err error) {
-	path := template + "-" + searchLang + extension
-	if _, err = os.Stat(path); err == nil {
-		lang = searchLang
-	}
+func stat(template, extension, lang string) (err error) {
+	path := template + "-" + lang + extension
+	_, err = os.Stat(path)
 	return
 }

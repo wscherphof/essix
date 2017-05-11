@@ -71,8 +71,8 @@
 		{
 			"checksumSHA1": "uhKROKGUhxUoGwrvLbhKQB0aBH0=",
 			"path": "github.com/wscherphof/entity",
-			"revision": "b4b60e9d06f0a28281d473209277b95afbff782d",
-			"revisionTime": "2017-04-21T21:19:34Z"
+			"revision": "8c4e4a6e5a71fd16bb17770ef771c50eb69764b9",
+			"revisionTime": "2017-04-21T22:09:39Z"
 		},
 		{
 			"checksumSHA1": "QlYuFD+iOr7Asvb/KOT9PrFGczE=",
@@ -87,7 +87,7 @@
 			"revisionTime": "2017-03-29T08:47:07Z"
 		},
 		{
-			"checksumSHA1": "z/smnFoB/kJPetV8XTxj0kYQ5x0=",
+			"checksumSHA1": "cROR/DQyb40zZIUwrTLI3umaOqw=",
 			"path": "github.com/wscherphof/msg",
 			"revision": "c9359bf787b5b9c405d75e93aced39b5842c4dc9",
 			"revisionTime": "2017-04-02T21:02:38Z"
@@ -95,8 +95,8 @@
 		{
 			"checksumSHA1": "x+i4j16TtBTZ99SwfZfA3ku7bsw=",
 			"path": "github.com/wscherphof/rethinkdb",
-			"revision": "a97ca493132851cc1ba8b7ebe5fe8f0434e0a63f",
-			"revisionTime": "2017-04-21T07:00:09Z"
+			"revision": "0a315c0a1accf0d4fe92ba0f6332accac34c8d54",
+			"revisionTime": "2017-04-21T22:09:22Z"
 		},
 		{
 			"checksumSHA1": "3bIOH2GNGxyXJnz19URAYcPGC0w=",
