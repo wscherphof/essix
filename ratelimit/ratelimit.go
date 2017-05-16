@@ -93,9 +93,6 @@ func Handle(handle httprouter.Handle, opt_seconds ...int) httprouter.Handle {
 	if len(opt_seconds) == 1 {
 		seconds = opt_seconds[0]
 	}
-	if seconds == 0 {
-		return handle
-	}
 	window := time.Duration(seconds) * time.Second
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		this, that := secure.NewFormToken(r), new(secure.FormToken)
@@ -111,10 +108,10 @@ func Handle(handle httprouter.Handle, opt_seconds ...int) httprouter.Handle {
 		} else if that.Path != this.Path {
 			template.Error(w, r, ErrInvalidRequest, true)
 			log.Printf("SUSPICIOUS: rate limit token invalid path: %v, token path %v, expected %v", this.IP, that.Path, this.Path)
-		} else if c := getClient(this.IP); c.Requests[this.Path].After(that.Timestamp) {
+		} else if c := getClient(this.IP); seconds > 0 && c.Requests[this.Path].After(that.Timestamp) {
 			template.Error(w, r, ErrInvalidRequest, true)
 			log.Printf("SUSPICIOUS: rate limit token reuse: %v %v, token %v, previous request %v", this.IP, this.Path, that.Timestamp, c.Requests[this.Path])
-		} else if c.Requests[this.Path].After(time.Now().Add(-window)) {
+		} else if seconds > 0 && c.Requests[this.Path].After(time.Now().Add(-window)) {
 			template.ErrorTail(w, r, ErrTooManyRequests, true, "ratelimit", "TooManyRequests-error-tail", map[string]interface{}{
 				"window": window,
 			})
