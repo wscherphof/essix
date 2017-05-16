@@ -56,10 +56,10 @@ ${DOCKER} service ps $NAME &>/dev/null
 if [ "$?" = "0" ]; then
     for env in "${ENVS[@]}"; do
         echo "* setting env ${env}..."
-        ${DOCKER} service update --env-add ${env} ${NAME}
+        ${DOCKER} service update --detach=false --env-add ${env} ${NAME}
     done
     echo "* updating image to ${TAG}..."
-	${DOCKER} service update --image ${TAG} ${NAME}
+	${DOCKER} service update --detach=false --image ${TAG} ${NAME}
     echo "* scaling..."
 	${DOCKER} service scale ${NAME}=${REPLICAS}
 else
@@ -75,7 +75,7 @@ else
         ENVIRONMENT="${ENVIRONMENT} -e ${env}"
     done
     echo "* starting service..."
-	${DOCKER} service create --mount src=appdata,dst=/appdata --name ${NAME} --replicas ${REPLICAS} ${ENVIRONMENT} --network ${NETWORK} ${PUBLISH} ${TAG}
+	${DOCKER} service create --detach=false --mount src=appdata,dst=/appdata --name ${NAME} --replicas ${REPLICAS} ${ENVIRONMENT} --network ${NETWORK} ${PUBLISH} ${TAG}
 fi
 
 if [ "${TUNNELS[@]}" ]; then

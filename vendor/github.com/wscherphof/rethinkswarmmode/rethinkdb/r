@@ -83,10 +83,10 @@ do
 	${DOCKER} volume create --name db${i}data
 	echo "* creating db${i}..."
 	if [ "$i" = "0" ]; then
-		${DOCKER} service create --name db0 --network dbnet --mount src=db0data,dst=/data --publish 8080:8080 rethinkdb
+		${DOCKER} service create --detach=true --name db0 --network dbnet --mount src=db0data,dst=/data --publish 8080:8080 rethinkdb
 		sleep 10
 	else
-		${DOCKER} service create --name db${i} --network dbnet --mount src=db${i}data,dst=/data --mode global rethinkdb rethinkdb --join db0 --bind all
+		${DOCKER} service create --detach=true --name db${i} --network dbnet --mount src=db${i}data,dst=/data --mode global rethinkdb rethinkdb --join db0 --bind all
 	fi
 done
 
