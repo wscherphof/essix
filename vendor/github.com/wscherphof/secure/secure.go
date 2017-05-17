@@ -94,6 +94,18 @@ type Config struct {
 
 	// FormTokenTimeStamp is when the latest form token key pair was generated.
 	FormTokenTimeStamp time.Time
+
+	Locked bool
+}
+
+func (c *Config) lock() error {
+	c.Locked = true
+	return db.Upsert(c)
+}
+
+func (c *Config) unlock() error {
+	c.Locked = false
+	return db.Upsert(c)
 }
 
 var config = &Config{
@@ -166,7 +178,10 @@ type DB interface {
 // validation timestamp > config.SyncInterval
 type ValidateCookie func(src interface{}) (dst interface{}, valid bool)
 
-var validate ValidateCookie
+var (
+	db DB
+	validate ValidateCookie
+	)
 
 // Configure configures the package and must be called once before calling any
 // other function in this package.
@@ -176,14 +191,14 @@ var validate ValidateCookie
 // It's needed to get its type registered with the serialisation package used
 // (encoding/gob).
 //
-// 'db' is the implementation of the DB interface to sync the configuration
+// 'dbImpl' is the implementation of the DB interface to sync the configuration
 // and rotate the keys.
 //
 // 'validate' is the function that regularly verifies the cookie data.
 //
 // 'optionalConfig' is the Config instance to start with. If omitted, the config
 // from the db or the default config is used.
-func Configure(record interface{}, db DB, validateFunc ValidateCookie, optionalConfig ...*Config) {
+func Configure(record interface{}, dbImpl DB, validateFunc ValidateCookie, optionalConfig ...*Config) {
 	gob.Register(record)
 	gob.Register(time.Now())
 	if len(optionalConfig) > 0 {
@@ -213,26 +228,32 @@ func Configure(record interface{}, db DB, validateFunc ValidateCookie, optionalC
 			config.FormTokenTimeStamp = opt.FormTokenTimeStamp
 		}
 	}
+	db = dbImpl
 	setKeys()
 	go func() {
 		for {
-			sync(db)
+			sync()
 			time.Sleep(config.SyncInterval)
 		}
 	}()
 	validate = validateFunc
 }
 
-func sync(db DB) {
+func sync() {
 	dbConfig := new(Config)
 	if err := db.Fetch(dbConfig); err != nil {
 		// Upload current (default) config to DB if there wasn't any
 		db.Upsert(config)
 	} else {
+		for dbConfig.Locked {
+			time.Sleep(50 * time.Millisecond)
+			db.Fetch(dbConfig)
+		}
 		// Replace current config with the one from DB
 		config = dbConfig
 		// Rotate keys if timed out
 		if time.Now().Sub(config.CookieTimeStamp) > config.CookieTimeOut {
+			config.lock()
 			rotateConfig := new(Config)
 			*rotateConfig = *config
 			rotateConfig.CookieKeyPairs = [][]byte{
@@ -242,13 +263,15 @@ func sync(db DB) {
 				config.CookieKeyPairs[1],
 			}
 			rotateConfig.CookieTimeStamp = time.Now()
-			if err := db.Upsert(rotateConfig); err != nil {
+			if err := db.Upsert(rotateConfig); err == nil {
 				config = rotateConfig
+				config.unlock()
 				log.Println("INFO: Security keys rotated")
 			}
 		}
-		// Rotate RequestToken keys if timed out
+		// Rotate FormToken keys if timed out
 		if time.Now().Sub(config.FormTokenTimeStamp) > config.SyncInterval {
+			config.lock()
 			rotateConfig := new(Config)
 			*rotateConfig = *config
 			rotateConfig.FormTokenKeyPairs = [][]byte{
@@ -258,9 +281,10 @@ func sync(db DB) {
 				config.FormTokenKeyPairs[1],
 			}
 			rotateConfig.FormTokenTimeStamp = time.Now()
-			if err := db.Upsert(rotateConfig); err != nil {
+			if err := db.Upsert(rotateConfig); err == nil {
 				config = rotateConfig
-				log.Println("INFO: RequestToken keys rotated")
+				config.unlock()
+				log.Println("INFO: FormToken keys rotated")
 			}
 		}
 		setKeys()
