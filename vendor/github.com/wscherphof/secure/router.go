@@ -8,6 +8,15 @@ import (
 	"net/url"
 )
 
+/*
+A SecureRouter is a secured httprouter.
+PUT, POST, PATCH, and DELETE handles check for a valid FormToken encrypted token
+string in the request's "_formtoken" FormValue.
+*/
+type SecureRouter struct {
+	*httprouter.Router
+}
+
 var router *SecureRouter
 
 /*
@@ -20,37 +29,28 @@ func Router() *SecureRouter {
 	return router
 }
 
-/*
-A SecureRouter is a secured httprouter.
-PUT, POST, PATCH, and DELETE handles check for a valid FormToken encrypted token
-string in the request's "_formtoken" FormValue.
-*/
-type SecureRouter struct {
-	*httprouter.Router
-}
-
 // PUT registers a handler for a PUT request to the given path.
 // The handler is only run if the request carries a valid form token.
 func (r *SecureRouter) PUT(path string, handle httprouter.Handle) {
-	r.Handle("PUT", path, formTokenHandle(handle))
+	r.Handle("PUT", path, clearHandle(formTokenHandle(handle)))
 }
 
 // POST registers a handler for a POST request to the given path.
 // The handler is only run if the request carries a valid form token.
 func (r *SecureRouter) POST(path string, handle httprouter.Handle) {
-	r.Handle("POST", path, formTokenHandle(handle))
+	r.Handle("POST", path, clearHandle(formTokenHandle(handle)))
 }
 
 // PATCH registers a handler for a PATCH request to the given path.
 // The handler is only run if the request carries a valid form token.
 func (r *SecureRouter) PATCH(path string, handle httprouter.Handle) {
-	r.Handle("PATCH", path, formTokenHandle(handle))
+	r.Handle("PATCH", path, clearHandle(formTokenHandle(handle)))
 }
 
 // DELETE registers a handler for a DELETE request to the given path.
 // The handler is only run if the request carries a valid form token.
 func (r *SecureRouter) DELETE(path string, handle httprouter.Handle) {
-	r.Handle("DELETE", path, formTokenHandle(handle))
+	r.Handle("DELETE", path, clearHandle(formTokenHandle(handle)))
 }
 
 // GET registers a handler for a GET request to the given path.
@@ -115,7 +115,7 @@ func errorMessage(w http.ResponseWriter, this, that *FormToken, referer *url.URL
 }
 
 func formTokenHandle(handle httprouter.Handle) httprouter.Handle {
-	return clearHandle(func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		this, that := NewFormToken(r), new(FormToken)
 		referer, _ := url.Parse(r.Referer())
 		if err := that.Parse(r.FormValue(FormValueName)); err != nil {
@@ -128,7 +128,7 @@ func formTokenHandle(handle httprouter.Handle) httprouter.Handle {
 		} else {
 			handle(w, r, ps)
 		}
-	})
+	}
 }
 
 /*
@@ -149,7 +149,7 @@ func Handle(handle httprouter.Handle) httprouter.Handle {
 }
 
 /*
-secure.IfHandle calls the one Hanlde function for logged-in clients, and the
+secure.IfHandle calls the one Handle function for logged-in clients, and the
 other for logged-out clients.
 */
 func IfHandle(authenticatedHandle httprouter.Handle, unauthenticatedHandle httprouter.Handle) httprouter.Handle {

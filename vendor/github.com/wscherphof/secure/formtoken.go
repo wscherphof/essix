@@ -59,7 +59,7 @@ Parse populates the data fields from an encrypted token string.
 */
 func (f *FormToken) Parse(s string) (err error) {
 	if err = securecookie.DecodeMulti(formTokenName, s, f, formTokenCodecs...); err != nil {
-		for i, e := range (err.(securecookie.MultiError)) {
+		for i, e := range err.(securecookie.MultiError) {
 			log.Printf("WARNING: FormToken.Parse: error %d %v", i, e)
 		}
 	}

@@ -179,9 +179,9 @@ type DB interface {
 type ValidateCookie func(src interface{}) (dst interface{}, valid bool)
 
 var (
-	db DB
+	db       DB
 	validate ValidateCookie
-	)
+)
 
 // Configure configures the package and must be called once before calling any
 // other function in this package.
@@ -245,7 +245,8 @@ func sync() {
 		// Upload current (default) config to DB if there wasn't any
 		db.Upsert(config)
 	} else {
-		for dbConfig.Locked {
+		for i := 1; dbConfig.Locked; i++ {
+			log.Printf("DEBUG: secure config locked %d", i)
 			time.Sleep(50 * time.Millisecond)
 			db.Fetch(dbConfig)
 		}
