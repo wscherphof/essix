@@ -84,10 +84,10 @@ loop ()
 
 create ()
 {
-	type="$1"
-	number="$2"
-	node="${ENV}-${type}-${number}"
-	if [ "${type}-${number}" != "manager-1" ]; then
+	create_type="$1"
+	create_number="$2"
+	node="${ENV}-${create_type}-${create_number}"
+	if [ "${create_type}-${create_number}" != "manager-1" ]; then
 		status=$(docker-machine status ${ENV}-manager-1 2>/dev/null)
 		if [ "$?" != "0" ]; then
 			echo "* create at least 1 manager"
@@ -100,23 +100,23 @@ create ()
 	docker-machine create --driver $DRIVER $node
 	if [ "$?" != "0" ]; then
 		echo "* $node create failed"
-		if [ "${type}-${number}" = "manager-1" ]; then
+		if [ "${create_type}-${create_number}" = "manager-1" ]; then
 			finish 1
 		else
 			return 1
 		fi
 	fi
 	MANAGER_IP="$(docker-machine ip ${ENV}-manager-1)"
-	if [ "$type" = "manager" ]; then
-		if [ "$number" = "1" ]; then
+	if [ "$create_type" = "manager" ]; then
+		if [ "$create_number" = "1" ]; then
 			docker-machine ssh ${ENV}-manager-1 sudo docker swarm init --advertise-addr $MANAGER_IP
 		else	
 			TOKEN="$(docker-machine ssh ${ENV}-manager-1 sudo docker swarm join-token --quiet manager)"
-			docker-machine ssh ${ENV}-manager-$number sudo docker swarm join --token $TOKEN $MANAGER_IP:2377
+			docker-machine ssh ${ENV}-manager-$create_number sudo docker swarm join --token $TOKEN $MANAGER_IP:2377
 		fi
 	else
 		TOKEN="$(docker-machine ssh ${ENV}-manager-1 sudo docker swarm join-token --quiet worker)"
-		docker-machine ssh ${ENV}-worker-$number sudo docker swarm join --token $TOKEN $MANAGER_IP:2377
+		docker-machine ssh ${ENV}-worker-$create_number sudo docker swarm join --token $TOKEN $MANAGER_IP:2377
 	fi
 	if [ "$FIREWALL" ]; then
 		dir="$(docker-machine ssh $node pwd)"
@@ -189,7 +189,7 @@ else
 		do
 			new=$(expr $next + $i)
 			if [ "${type}" = "manager" -a "$new" = "1" ]; then
-				create $type $new
+				create manager 1
 				if [ "$HOSTNAMEARG" ]; then
 					echo "* Root password possibly requested to edit /etc/hosts..."
 					if [ "$(grep "${HOSTNAMEARG}" /etc/hosts)" = "" ]; then
