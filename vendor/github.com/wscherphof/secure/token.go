@@ -78,14 +78,14 @@ const formTokenName = "4f3a0292-59c5-488a-b3fb-6e503c929331"
 String returns the encrypted token string.
 */
 func (f *FormToken) String() string {
-	return config.Token.encode(formTokenName, f)
+	return tokenKeys.encode(formTokenName, f)
 }
 
 /*
 Parse populates the data fields from an encrypted token string.
 */
 func (f *FormToken) Parse(s string) error {
-	return config.Token.decode(formTokenName, s, f)
+	return tokenKeys.decode(formTokenName, s, f)
 }
 
 func ip(r *http.Request) string {

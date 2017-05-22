@@ -63,29 +63,21 @@ func (k *Keys) stale() bool {
 	return time.Since(k.Start) >= k.TimeOut
 }
 
-func (k *Keys) rotate() (ret *Keys) {
-	ret = &Keys{
-		KeyPairs: [][]byte{
-			k.KeyPairs[4],
-			k.KeyPairs[5],
-			k.KeyPairs[0],
-			k.KeyPairs[1],
-			securecookie.GenerateRandomKey(authKeyLen),
-			securecookie.GenerateRandomKey(encrKeyLen),
-		},
-		TimeOut: k.TimeOut,
-		Start:   time.Now(),
+func (k *Keys) rotate() {
+	k.KeyPairs = [][]byte{
+		k.KeyPairs[4],
+		k.KeyPairs[5],
+		k.KeyPairs[0],
+		k.KeyPairs[1],
+		securecookie.GenerateRandomKey(authKeyLen),
+		securecookie.GenerateRandomKey(encrKeyLen),
 	}
-	return ret
+	k.Start = time.Now()
 }
 
 func (k *Keys) freshen() {
 	if k.stale() {
-		// Immediately stop encoding with the stale key, and start using the
-		// commonly known next key as the current one for this time window.
-		*k = *k.rotate()
-		// Parallelly update the DB to establish a new commonly known next key
-		// before the next time window starts.
+		k.rotate()
 		go sync()
 	}
 }
@@ -99,9 +91,6 @@ type Config struct {
 
 	// Token manages token cryptography.
 	Token *Token
-
-	// Locked prevents interfering updates when syncing.
-	Locked bool
 }
 
 // DB is the interface to implement for syncing the configuration parameters.
@@ -120,35 +109,6 @@ type DB interface {
 	Upsert(src *Config) error
 }
 
-func (c *Config) wait() {
-	for c.Locked {
-		time.Sleep(50 * time.Millisecond)
-		if err := db.Fetch(c); err != nil {
-			log.Println("WARNING: secure config wait: fetch failed:", err)
-		}
-	}
-}
-
-func (c *Config) lock() {
-	if !c.Locked {
-		c.Locked = true
-		if err := db.Upsert(c); err != nil {
-			c.Locked = false
-			log.Panicln("ERROR: secure config lock failed:", err)
-		}
-	}
-}
-
-func (c *Config) unlock() {
-	if c.Locked {
-		c.Locked = false
-		if err := db.Upsert(c); err != nil {
-			c.Locked = true
-			log.Panicln("ERROR: secure config unlock failed:", err)
-		}
-	}
-}
-
 func sync() {
 	dbConfig := new(Config)
 	if err := db.Fetch(dbConfig); err != nil {
@@ -160,26 +120,27 @@ func sync() {
 		// Replace current config with the one from DB
 		config = dbConfig
 		// Rotate keys if timed out
-		config.wait()
+		rotate := false
 		if config.Session.stale() {
+			rotate = true
+			config.Session.rotate()
 			log.Println("INFO: secure DB: rotating session keys...")
-			config.lock()
-			config.Session.Keys = config.Session.rotate()
 		}
 		if config.Token.stale() {
+			rotate = true
+			config.Token.rotate()
 			log.Println("INFO: secure DB: rotating token keys...")
-			config.lock()
-			config.Token.Keys = config.Token.rotate()
 		}
-		if config.Locked {
+		if rotate {
 			if err := db.Upsert(config); err != nil {
 				log.Panicln("ERROR: secure DB: key rotatation failed:", err)
 			} else {
 				log.Println("INFO: secure DB: keys rotated")
 			}
-			config.unlock()
 		}
 	}
+	tokenKeys = config.Token
+	sessionKeys = config.Session
 }
 
 // ValidateCookie is the type of the function passed to Configure(), that gets called
@@ -236,6 +197,8 @@ var (
 			},
 		},
 	}
+	tokenKeys   *Token
+	sessionKeys *Session
 )
 
 // Configure configures the package and must be called once before calling any
@@ -263,19 +226,19 @@ func Configure(record interface{}, dbImpl DB, validateFunc ValidateCookie, opt_c
 	}
 	sync()
 	go func() {
-		time.Sleep(config.Session.TimeOut / 2)
+		time.Sleep(sessionKeys.TimeOut / 2)
 		for {
 			sync()
 			// will the timeout get reread each iteration, to cater for updates?
-			time.Sleep(config.Session.TimeOut)
+			time.Sleep(sessionKeys.TimeOut)
 		}
 	}()
 	go func() {
-		time.Sleep(config.Token.TimeOut / 2)
+		time.Sleep(tokenKeys.TimeOut / 2)
 		for {
 			sync()
 			// will the timeout get reread each iteration, to cater for updates?
-			time.Sleep(config.Token.TimeOut)
+			time.Sleep(tokenKeys.TimeOut)
 		}
 	}()
 }
