@@ -20,7 +20,7 @@ A Session value is stored in the Config to manage session cryptography.
 */
 type Session struct {
 
-	// Keys holds the rotating key data.
+	// Keys encapsulates the rotating key data & functionality.
 	*Keys
 
 	// LogInPath is the URL where Authentication() redirects to; a log in form
@@ -41,11 +41,11 @@ type Session struct {
 }
 
 func (s *Session) getCookie(r *http.Request) (session *sessions.Session) {
-	s.Keys.freshen()
+	s.freshen()
 	if s.store == nil {
-		s.store = sessions.NewCookieStore(s.Keys.KeyPairs...)
+		s.store = sessions.NewCookieStore(s.KeyPairs...)
 		s.store.Options = &sessions.Options{
-			MaxAge: int(s.Keys.TimeOut / time.Second),
+			MaxAge: int(s.TimeOut / time.Second),
 			Secure: true,
 			Path:   "/",
 		}

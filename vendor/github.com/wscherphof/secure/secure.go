@@ -193,7 +193,7 @@ var (
 					securecookie.GenerateRandomKey(encrKeyLen),
 				},
 				Start:   time.Now(),
-				TimeOut: 5 * time.Minute,
+				TimeOut: 15 * time.Minute,
 			},
 		},
 	}

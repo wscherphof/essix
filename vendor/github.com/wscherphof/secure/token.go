@@ -14,7 +14,7 @@ A Token value is stored in the Config to manage token cryptography.
 */
 type Token struct {
 
-	// Keys holds the rotating key data.
+	// Keys encapsulates the rotating key data & functionality.
 	*Keys
 
 	_codecs []securecookie.Codec
@@ -22,13 +22,13 @@ type Token struct {
 
 func (t *Token) codecs() []securecookie.Codec {
 	if len(t._codecs) == 0 {
-		t._codecs = securecookie.CodecsFromPairs(t.Keys.KeyPairs...)
+		t._codecs = securecookie.CodecsFromPairs(t.KeyPairs...)
 	}
 	return t._codecs
 }
 
 func (t *Token) encode(name string, value interface{}) (s string) {
-	t.Keys.freshen()
+	t.freshen()
 	var err error
 	if s, err = securecookie.EncodeMulti(name, value, t.codecs()...); err != nil {
 		log.Panicln("ERROR: encoding form token failed", err)
