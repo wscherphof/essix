@@ -27,7 +27,6 @@ import (
 	"encoding/gob"
 	"errors"
 	"github.com/gorilla/securecookie"
-	"github.com/gorilla/sessions"
 	"log"
 	"time"
 )
@@ -47,101 +46,62 @@ const (
 	encrKeyLen = 32
 )
 
-const (
-	tokenName      = "authtoken"
-	recordField    = "ddf77ee1-6a23-4980-8edc-ff4139e98f22"
-	createdField   = "45595a0b-7756-428e-bae0-5f7ded324e92"
-	validatedField = "fe6f1315-9aa1-4083-89a0-dcb6c198654b"
-	returnField    = "eb8cacdd-d65f-441e-a63d-e4da69c2badc"
-)
+// Keys manages rotating cryptographic keys.
+type Keys struct {
+
+	// KeyPairs holds 3 key pairs: current, previous, and next.
+	KeyPairs [][]byte
+
+	// Start is when the current key pair became current.
+	Start time.Time
+
+	// TimeOut is how much time Start the key pairs should be rotated.
+	TimeOut time.Duration
+}
+
+func (k *Keys) stale() bool {
+	return time.Since(k.Start) >= k.TimeOut
+}
+
+func (k *Keys) rotate() (ret *Keys) {
+	ret = &Keys{
+		KeyPairs: [][]byte{
+			k.KeyPairs[4],
+			k.KeyPairs[5],
+			k.KeyPairs[0],
+			k.KeyPairs[1],
+			securecookie.GenerateRandomKey(authKeyLen),
+			securecookie.GenerateRandomKey(encrKeyLen),
+		},
+		TimeOut: k.TimeOut,
+		Start:   time.Now(),
+	}
+	return ret
+}
+
+func (k *Keys) freshen() {
+	if k.stale() {
+		// Immediately stop encoding with the stale key, and start using the
+		// commonly known next key as the current one for this time window.
+		*k = *k.rotate()
+		// Parallelly update the DB to establish a new commonly known next key
+		// before the next time window starts.
+		go sync()
+	}
+}
 
 // Config holds the package's configuration parameters.
 // Can be synced with an external database, through the DB interface.
 type Config struct {
 
-	// LogInPath is the URL where Authentication() redirects to; a log in form
-	// should be served here.
-	// Default value is "/session".
-	LogInPath string
+	// Session manages session cryptography.
+	Session *Session
 
-	// LogOutPath is the URL where LogOut() redirects to.
-	// Default value is "/".
-	LogOutPath string
+	// Token manages token cryptography.
+	Token *Token
 
-	// CookieTimeOut is when a cookie expires (time after LogIn())
-	// Default value is 6 * 30 days.
-	CookieTimeOut time.Duration
-
-	// SyncInterval is how often the configuration is synced with an external
-	// database. SyncInterval also determines whether it's time to have the
-	// cookie data checked by the ValidateCookie function.
-	// Default value is 5 minutes.
-	SyncInterval time.Duration
-
-	// CookieKeyPairs are 4 32-long byte arrays (two pairs of an authentication key
-	// and an encryption key); the 2nd pair is used for key rotation.
-	// Default value is newly generated keys.
-	// Keys get rotated on the first sync cycle after a CookieTimeOut interval -
-	// new cookies use the new keys; existing cookies continue to use the old
-	// keys.
-	CookieKeyPairs [][]byte
-
-	// CookieTimeStamp is when the latest cookie key pair was generated.
-	CookieTimeStamp time.Time
-
-	// FormTokenKeyPairs are the rotating key pairs for the form tokens.
-	FormTokenKeyPairs [][]byte
-
-	// FormTokenTimeStamp is when the latest form token key pair was generated.
-	FormTokenTimeStamp time.Time
-
+	// Locked prevents interfering updates when syncing.
 	Locked bool
-}
-
-func (c *Config) lock() error {
-	c.Locked = true
-	return db.Upsert(c)
-}
-
-func (c *Config) unlock() error {
-	c.Locked = false
-	return db.Upsert(c)
-}
-
-var config = &Config{
-	LogInPath:     "/session",
-	LogOutPath:    "/",
-	CookieTimeOut: 6 * 30 * 24 * time.Hour,
-	SyncInterval:  5 * time.Minute,
-	CookieKeyPairs: [][]byte{
-		securecookie.GenerateRandomKey(authKeyLen),
-		securecookie.GenerateRandomKey(encrKeyLen),
-		securecookie.GenerateRandomKey(authKeyLen),
-		securecookie.GenerateRandomKey(encrKeyLen),
-	},
-	CookieTimeStamp: time.Now(),
-	FormTokenKeyPairs: [][]byte{
-		securecookie.GenerateRandomKey(authKeyLen),
-		securecookie.GenerateRandomKey(encrKeyLen),
-		securecookie.GenerateRandomKey(authKeyLen),
-		securecookie.GenerateRandomKey(encrKeyLen),
-	},
-	FormTokenTimeStamp: time.Now(),
-}
-
-var (
-	store           *sessions.CookieStore
-	formTokenCodecs []securecookie.Codec
-)
-
-func setKeys() {
-	store = sessions.NewCookieStore(config.CookieKeyPairs...)
-	store.Options = &sessions.Options{
-		MaxAge: int(config.CookieTimeOut / time.Second),
-		Secure: true,
-		Path:   "/",
-	}
-	formTokenCodecs = securecookie.CodecsFromPairs(config.FormTokenKeyPairs...)
 }
 
 // DB is the interface to implement for syncing the configuration parameters.
@@ -158,6 +118,68 @@ type DB interface {
 	// on Configure(). Upsert updates the CookieKeyPairs and CookieTimeStamp values on key
 	// rotation time.
 	Upsert(src *Config) error
+}
+
+func (c *Config) wait() {
+	for c.Locked {
+		time.Sleep(50 * time.Millisecond)
+		if err := db.Fetch(c); err != nil {
+			log.Println("WARNING: secure config wait: fetch failed:", err)
+		}
+	}
+}
+
+func (c *Config) lock() {
+	if !c.Locked {
+		c.Locked = true
+		if err := db.Upsert(c); err != nil {
+			c.Locked = false
+			log.Panicln("ERROR: secure config lock failed:", err)
+		}
+	}
+}
+
+func (c *Config) unlock() {
+	if c.Locked {
+		c.Locked = false
+		if err := db.Upsert(c); err != nil {
+			c.Locked = true
+			log.Panicln("ERROR: secure config unlock failed:", err)
+		}
+	}
+}
+
+func sync() {
+	dbConfig := new(Config)
+	if err := db.Fetch(dbConfig); err != nil {
+		// Upload current (default) config to DB if there wasn't any
+		if err := db.Upsert(config); err != nil {
+			log.Panicln("ERROR: secure DB: saving default config failed:", err)
+		}
+	} else {
+		// Replace current config with the one from DB
+		config = dbConfig
+		// Rotate keys if timed out
+		config.wait()
+		if config.Session.stale() {
+			log.Println("INFO: secure DB: rotating session keys...")
+			config.lock()
+			config.Session.Keys = config.Session.rotate()
+		}
+		if config.Token.stale() {
+			log.Println("INFO: secure DB: rotating token keys...")
+			config.lock()
+			config.Token.Keys = config.Token.rotate()
+		}
+		if config.Locked {
+			if err := db.Upsert(config); err != nil {
+				log.Panicln("ERROR: secure DB: key rotatation failed:", err)
+			} else {
+				log.Println("INFO: secure DB: keys rotated")
+			}
+			config.unlock()
+		}
+	}
 }
 
 // ValidateCookie is the type of the function passed to Configure(), that gets called
@@ -181,6 +203,39 @@ type ValidateCookie func(src interface{}) (dst interface{}, valid bool)
 var (
 	db       DB
 	validate ValidateCookie
+	config   = &Config{
+		Session: &Session{
+			Keys: &Keys{
+				KeyPairs: [][]byte{
+					securecookie.GenerateRandomKey(authKeyLen),
+					securecookie.GenerateRandomKey(encrKeyLen),
+					securecookie.GenerateRandomKey(authKeyLen),
+					securecookie.GenerateRandomKey(encrKeyLen),
+					securecookie.GenerateRandomKey(authKeyLen),
+					securecookie.GenerateRandomKey(encrKeyLen),
+				},
+				Start:   time.Now(),
+				TimeOut: 6 * 30 * 24 * time.Hour,
+			},
+			LogInPath:       "/session",
+			LogOutPath:      "/",
+			ValidateTimeOut: 5 * time.Minute,
+		},
+		Token: &Token{
+			Keys: &Keys{
+				KeyPairs: [][]byte{
+					securecookie.GenerateRandomKey(authKeyLen),
+					securecookie.GenerateRandomKey(encrKeyLen),
+					securecookie.GenerateRandomKey(authKeyLen),
+					securecookie.GenerateRandomKey(encrKeyLen),
+					securecookie.GenerateRandomKey(authKeyLen),
+					securecookie.GenerateRandomKey(encrKeyLen),
+				},
+				Start:   time.Now(),
+				TimeOut: 5 * time.Minute,
+			},
+		},
+	}
 )
 
 // Configure configures the package and must be called once before calling any
@@ -196,98 +251,31 @@ var (
 //
 // 'validate' is the function that regularly verifies the cookie data.
 //
-// 'optionalConfig' is the Config instance to start with. If omitted, the config
-// from the db or the default config is used.
-func Configure(record interface{}, dbImpl DB, validateFunc ValidateCookie, optionalConfig ...*Config) {
+// 'opt_config' is the Config instance to start with. If omitted, the config
+// from the db is used, or else the default config.
+func Configure(record interface{}, dbImpl DB, validateFunc ValidateCookie, opt_config ...*Config) {
 	gob.Register(record)
 	gob.Register(time.Now())
-	if len(optionalConfig) > 0 {
-		opt := optionalConfig[0]
-		if len(opt.LogInPath) > 0 {
-			config.LogInPath = opt.LogInPath
-		}
-		if len(opt.LogOutPath) > 0 {
-			config.LogOutPath = opt.LogOutPath
-		}
-		if opt.CookieTimeOut > 0 {
-			config.CookieTimeOut = opt.CookieTimeOut
-		}
-		if opt.SyncInterval > 0 {
-			config.SyncInterval = opt.SyncInterval
-		}
-		if len(opt.CookieKeyPairs) == 4 {
-			config.CookieKeyPairs = opt.CookieKeyPairs
-		}
-		if !opt.CookieTimeStamp.IsZero() {
-			config.CookieTimeStamp = opt.CookieTimeStamp
-		}
-		if len(opt.FormTokenKeyPairs) == 4 {
-			config.FormTokenKeyPairs = opt.FormTokenKeyPairs
-		}
-		if !opt.FormTokenTimeStamp.IsZero() {
-			config.FormTokenTimeStamp = opt.FormTokenTimeStamp
-		}
-	}
 	db = dbImpl
-	setKeys()
+	validate = validateFunc
+	if len(opt_config) == 1 {
+		config = opt_config[0]
+	}
+	sync()
 	go func() {
+		time.Sleep(config.Session.TimeOut / 2)
 		for {
 			sync()
-			time.Sleep(config.SyncInterval)
+			// will the timeout get reread each iteration, to cater for updates?
+			time.Sleep(config.Session.TimeOut)
 		}
 	}()
-	validate = validateFunc
-}
-
-func sync() {
-	dbConfig := new(Config)
-	if err := db.Fetch(dbConfig); err != nil {
-		// Upload current (default) config to DB if there wasn't any
-		db.Upsert(config)
-	} else {
-		for i := 1; dbConfig.Locked; i++ {
-			log.Printf("DEBUG: secure config locked %d", i)
-			time.Sleep(50 * time.Millisecond)
-			db.Fetch(dbConfig)
+	go func() {
+		time.Sleep(config.Token.TimeOut / 2)
+		for {
+			sync()
+			// will the timeout get reread each iteration, to cater for updates?
+			time.Sleep(config.Token.TimeOut)
 		}
-		// Replace current config with the one from DB
-		config = dbConfig
-		// Rotate keys if timed out
-		if time.Now().Sub(config.CookieTimeStamp) > config.CookieTimeOut {
-			config.lock()
-			rotateConfig := new(Config)
-			*rotateConfig = *config
-			rotateConfig.CookieKeyPairs = [][]byte{
-				securecookie.GenerateRandomKey(authKeyLen),
-				securecookie.GenerateRandomKey(encrKeyLen),
-				config.CookieKeyPairs[0],
-				config.CookieKeyPairs[1],
-			}
-			rotateConfig.CookieTimeStamp = time.Now()
-			if err := db.Upsert(rotateConfig); err == nil {
-				config = rotateConfig
-				config.unlock()
-				log.Println("INFO: Security keys rotated")
-			}
-		}
-		// Rotate FormToken keys if timed out
-		if time.Now().Sub(config.FormTokenTimeStamp) > config.SyncInterval {
-			config.lock()
-			rotateConfig := new(Config)
-			*rotateConfig = *config
-			rotateConfig.FormTokenKeyPairs = [][]byte{
-				securecookie.GenerateRandomKey(authKeyLen),
-				securecookie.GenerateRandomKey(encrKeyLen),
-				config.FormTokenKeyPairs[0],
-				config.FormTokenKeyPairs[1],
-			}
-			rotateConfig.FormTokenTimeStamp = time.Now()
-			if err := db.Upsert(rotateConfig); err == nil {
-				config = rotateConfig
-				config.unlock()
-				log.Println("INFO: FormToken keys rotated")
-			}
-		}
-		setKeys()
-	}
+	}()
 }

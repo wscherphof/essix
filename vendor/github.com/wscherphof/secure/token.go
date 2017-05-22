@@ -10,6 +10,37 @@ import (
 )
 
 /*
+A Token value is stored in the Config to manage token cryptography.
+*/
+type Token struct {
+
+	// Keys holds the rotating key data.
+	*Keys
+
+	_codecs []securecookie.Codec
+}
+
+func (t *Token) codecs() []securecookie.Codec {
+	if len(t._codecs) == 0 {
+		t._codecs = securecookie.CodecsFromPairs(t.Keys.KeyPairs...)
+	}
+	return t._codecs
+}
+
+func (t *Token) encode(name string, value interface{}) (s string) {
+	t.Keys.freshen()
+	var err error
+	if s, err = securecookie.EncodeMulti(name, value, t.codecs()...); err != nil {
+		log.Panicln("ERROR: encoding form token failed", err)
+	}
+	return
+}
+
+func (t *Token) decode(name string, value string, dst interface{}) error {
+	return securecookie.DecodeMulti(name, value, dst, t.codecs()...)
+}
+
+/*
 A FormToken is a secured identification of a request, suitable for protection
 against cross site request forgery.
 */
@@ -46,24 +77,15 @@ const formTokenName = "4f3a0292-59c5-488a-b3fb-6e503c929331"
 /*
 String returns the encrypted token string.
 */
-func (f *FormToken) String() (s string) {
-	var err error
-	if s, err = securecookie.EncodeMulti(formTokenName, f, formTokenCodecs...); err != nil {
-		log.Panicln("ERROR: encoding form token failed", err)
-	}
-	return
+func (f *FormToken) String() string {
+	return config.Token.encode(formTokenName, f)
 }
 
 /*
 Parse populates the data fields from an encrypted token string.
 */
-func (f *FormToken) Parse(s string) (err error) {
-	if err = securecookie.DecodeMulti(formTokenName, s, f, formTokenCodecs...); err != nil {
-		for i, e := range err.(securecookie.MultiError) {
-			log.Printf("WARNING: FormToken.Parse: error %d %v", i, e)
-		}
-	}
-	return
+func (f *FormToken) Parse(s string) error {
+	return config.Token.decode(formTokenName, s, f)
 }
 
 func ip(r *http.Request) string {

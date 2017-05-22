@@ -7,13 +7,55 @@ import (
 	"time"
 )
 
-func getCookie(r *http.Request) (session *sessions.Session) {
-	session, _ = store.Get(r, tokenName)
+const (
+	sessionCookie  = "session"
+	recordField    = "ddf77ee1-6a23-4980-8edc-ff4139e98f22"
+	createdField   = "45595a0b-7756-428e-bae0-5f7ded324e92"
+	validatedField = "fe6f1315-9aa1-4083-89a0-dcb6c198654b"
+	returnField    = "eb8cacdd-d65f-441e-a63d-e4da69c2badc"
+)
+
+/*
+A Session value is stored in the Config to manage session cryptography.
+*/
+type Session struct {
+
+	// Keys holds the rotating key data.
+	*Keys
+
+	// LogInPath is the URL where Authentication() redirects to; a log in form
+	// should be served here.
+	// Default value is "/session".
+	LogInPath string
+
+	// LogOutPath is the URL where LogOut() redirects to.
+	// Default value is "/".
+	LogOutPath string
+
+	// ValidateTimeOut determines whether it's time to have the
+	// cookie data checked by the ValidateCookie function.
+	// Default value is 5 minutes.
+	ValidateTimeOut time.Duration
+
+	store *sessions.CookieStore
+}
+
+func (s *Session) getCookie(r *http.Request) (session *sessions.Session) {
+	s.Keys.freshen()
+	if s.store == nil {
+		s.store = sessions.NewCookieStore(s.Keys.KeyPairs...)
+		s.store.Options = &sessions.Options{
+			MaxAge: int(s.Keys.TimeOut / time.Second),
+			Secure: true,
+			Path:   "/",
+		}
+	}
+	session, _ = s.store.Get(r, sessionCookie)
 	return
 }
 
 func create(w http.ResponseWriter, r *http.Request, record interface{}, redirect bool) (err error) {
-	session := getCookie(r)
+	session := config.Session.getCookie(r)
 	if session.Values[createdField] == nil {
 		session.Values[createdField] = time.Now()
 	}
@@ -26,7 +68,7 @@ func create(w http.ResponseWriter, r *http.Request, record interface{}, redirect
 	} else if redirect {
 		path := session.Values[returnField]
 		if path == nil {
-			path = config.LogOutPath
+			path = config.Session.LogOutPath
 		}
 		http.Redirect(w, r, path.(string), http.StatusSeeOther)
 	}
@@ -50,14 +92,14 @@ func Update(w http.ResponseWriter, r *http.Request, record interface{}) (err err
 func sessionCurrent(session *sessions.Session) (current bool) {
 	if created := session.Values[createdField]; created == nil {
 	} else {
-		current = time.Since(created.(time.Time)) < config.CookieTimeOut
+		current = time.Since(created.(time.Time)) < config.Session.TimeOut
 	}
 	return
 }
 
 func accountCurrent(session *sessions.Session, w http.ResponseWriter, r *http.Request) (current bool) {
 	if validated := session.Values[validatedField]; validated == nil {
-	} else if cur := time.Since(validated.(time.Time)) < config.SyncInterval; cur {
+	} else if cur := time.Since(validated.(time.Time)) < config.Session.ValidateTimeOut; cur {
 		current = true
 	} else if record, cur := validate(session.Values[recordField]); cur {
 		session.Values[recordField] = record
@@ -77,7 +119,7 @@ func authenticate(w http.ResponseWriter, r *http.Request, optional ...bool) (aut
 	if len(optional) > 0 {
 		enforce = !optional[0]
 	}
-	session := getCookie(r)
+	session := config.Session.getCookie(r)
 	if !session.IsNew && sessionCurrent(session) && accountCurrent(session, w, r) {
 		context.Set(r, authKey, session.Values[recordField])
 		authenticated = true
@@ -91,11 +133,11 @@ func authenticate(w http.ResponseWriter, r *http.Request, optional ...bool) (aut
 			<html>
 				<head>
 					<meta charset="utf-8">
-					<meta http-equiv="refresh" content="0; url=` + config.LogInPath + `">
+					<meta http-equiv="refresh" content="0; url=` + config.Session.LogInPath + `">
 				</head>
 				<body>
 					<h2>Forbidden</h2>
-					<a id="location" href="` + config.LogInPath + `">Log in</a>
+					<a id="location" href="` + config.Session.LogInPath + `">Log in</a>
 				</body>
 			</html>
 		`))
@@ -113,7 +155,7 @@ func Authentication(r *http.Request) interface{} {
 }
 
 func clearCookie(r *http.Request) (session *sessions.Session) {
-	session = getCookie(r)
+	session = config.Session.getCookie(r)
 	delete(session.Values, recordField)
 	delete(session.Values, createdField)
 	delete(session.Values, validatedField)
@@ -129,6 +171,6 @@ func LogOut(w http.ResponseWriter, r *http.Request, redirect bool) {
 	}
 	_ = session.Save(r, w)
 	if redirect {
-		http.Redirect(w, r, config.LogOutPath, http.StatusSeeOther)
+		http.Redirect(w, r, config.Session.LogOutPath, http.StatusSeeOther)
 	}
 }
