@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 
 usage ()
 {
@@ -68,17 +69,21 @@ finish ()
 	exit $1
 }
 
+machines=""
 loop ()
 {
 	command="$1"
-	action="$2"
 	for type in worker manager
 	do
 		for (( i=1; ; i++ ))
 		do
-			docker-machine status ${ENV}-${type}-${i} &>/dev/null
+			machine="${ENV}-${type}-${i}"
+			docker-machine status $machine &>/dev/null
 			if [ "$?" = "0" ]; then
-				docker-machine $command ${ENV}-${type}-${i} ${action} &
+				if [ "$command" ]; then
+					docker-machine $command $machine $ACTION &
+				fi
+				machines="$machines $machine"
 			else
 				break
 			fi
@@ -146,7 +151,6 @@ cat 2>/dev/null 1> "${FIREWALL}" << EOF
 	sudo ufw allow 2377/tcp # docker swarm mode
 	sudo ufw allow 7946     # docker overlay network
 	sudo ufw allow 4789/udp # vxlan
-	sudo ufw allow 4444     # PerfMon Server Agent
 	sudo ufw --force enable
 EOF
 
@@ -157,7 +161,11 @@ elif [ "$COMMAND" = "start" ]; then
 	loop "start"
 	finish 0
 elif [ "$COMMAND" = "ssh" ]; then
-	loop "ssh" "$ACTION"
+	loop "ssh"
+	finish 0
+elif [ "$COMMAND" = "machines" ]; then
+	loop
+	echo $machines
 	finish 0
 elif [ "$COMMAND" = "rm" ]; then
 	if [ ! "$FORCE" ]; then
