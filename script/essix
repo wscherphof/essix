@@ -43,6 +43,12 @@ usage ()
     echo "    -e key=value ...  environment variables"
     echo "    -r replicas       number of replicas to run (default=1)"
 	echo
+	echo "$(basename $0) perfmon COMMAND SWARM"
+	echo "  Manage the PerfMon Server Agent on a swarm."
+	echo "  Commands:"
+    echo "    start  start the agent on each of the swarm's nodes"
+    echo "    stop   stop the agent on each of the swarm's nodes"
+	echo
 	echo "$(basename $0) help"
 	echo "  Display this message."
 	echo
@@ -265,6 +271,21 @@ run)
 	app
 	if [ "$TAG" -a "$SWARM" ]; then
 		run
+	else
+		usage; exit 1
+	fi
+;;
+
+perfmon)
+	command=$REPO
+	swarm=$TAG
+	if [ ! "$command" -o ! "$swarm" ]; then
+		usage; exit 1
+	fi
+	if [ "$command" == "start" ]; then
+		${nodes} ssh $swarm "docker run --rm -detach --publish 4444:4444 --name perfmon wscherphof/perfmon:2.2.1"
+	elif [ "$command" == "stop" ]; then
+		${nodes} ssh $swarm "docker kill perfmon"
 	else
 		usage; exit 1
 	fi
