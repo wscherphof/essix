@@ -8,11 +8,11 @@ usage ()
 	echo "Manage Apache JMeter Load tests."
 	echo
 	echo "Prerequitites:"
-	echo "  For master"
+	echo "  For run"
 	echo "    - JMeter 3.2 installed: http://jmeter.apache.org/"
 	echo "    - Environment variable JMETER_HOME set (default: ~/apache-jmeter-3.2)"
 	echo "    - Test plan saved in JMX file"
-	echo "  For slave & perfmon"
+	echo "  For server & perfmon"
 	echo "    - Docker & Docker Machine installed: https://docs.docker.com/machine/"
 	echo
 	echo "Commands:"
