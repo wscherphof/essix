@@ -1,5 +1,4 @@
 #!/bin/bash
-set -x
 
 usage ()
 {
@@ -17,7 +16,7 @@ usage ()
 	echo "    - Docker & Docker Machine installed: https://docs.docker.com/machine/"
 	echo
 	echo "Commands:"
-	echo "  master"
+	echo "  run"
 	echo "    Run the given test in non-gui mode, locally or remote, generating"
 	echo "    a dashboard report."
 	echo "    Args:"
@@ -31,7 +30,7 @@ usage ()
 	echo "                       If unset, test is run locally."
 	echo "      -d dir           Base directory for test results."
 	echo "                       Default: ./jmeter-test"
-	echo "  slave"
+	echo "  server"
 	echo "    Manage remote JMeter slaves (servers)"
 	echo "    Args:"
 	echo "      - Action:  either start or stop"
@@ -79,7 +78,7 @@ force ()
 
 case "${COMMAND}" in
 
-master)
+run)
 	JMX="${2}"
 	if [ ! $JMX ]; then
 		usage; exit 1
@@ -99,11 +98,12 @@ master)
 		D="-D "java.rmi.server.hostname=${IP}""
 	fi
 
+	echo "* starting test..."
 	exec ${JMETER_HOME}/bin/jmeter -n -t ${JMX} ${D} \
 	-l ${DIR}/result.jtl -e -o ${DIR}/dashboard ${R}
 ;;
 
-slave)
+server)
 	action=$2
 	machine=$3
 	if [ ! $action -o ! $machine ]; then

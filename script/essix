@@ -279,7 +279,7 @@ run)
 
 jmeter)
 	command=$2
-	if [ "$command" = "slave" -o "$command" = "perfmon" ]; then
+	if [ "$command" = "server" -o "$command" = "perfmon" ]; then
 		action=$3
 		swarm=$4
 		if [ ! ${action} -o ! ${swarm} ]; then
@@ -289,7 +289,7 @@ jmeter)
 		for machine in ${machines[@]}; do
 			${jmeter} ${command} ${action} ${machine}
 		done
-	elif [ "$command" = "master" ]; then
+	elif [ "$command" = "run" ]; then
 		jmx=$3
 		swarm=$4
 		if [ ! ${jmx} ]; then
@@ -306,7 +306,7 @@ jmeter)
 		if [ ${R} ]; then
 			R="-R ${R}"
 		fi
-		${jmeter} ${R} master ${jmx}
+		${jmeter} ${R} ${command} ${jmx}
 	else
 		usage; exit 1
 	fi
