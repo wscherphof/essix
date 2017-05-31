@@ -287,8 +287,9 @@ jmeter)
 		fi
 		machines=$(${nodes} machines ${swarm})
 		for machine in ${machines[@]}; do
-			${jmeter} ${command} ${action} ${machine}
+			${jmeter} ${command} ${action} ${machine} &
 		done
+		wait
 	elif [ "$command" = "run" ]; then
 		jmx=$3
 		swarm=$4
