@@ -140,6 +140,7 @@ build="${swarmmode}/go/build"
 nodes="${swarmmode}/nodes"
 r="${swarmmode}/rethinkdb/r"
 app="${swarmmode}/app"
+jmeter="${essix}/vendor/github.com/wscherphof/jmeter/jmeter"
 
 run ()
 {
@@ -276,39 +277,36 @@ run)
 	fi
 ;;
 
-perfmon)
-	command=$REPO
-	swarm=$TAG
-	if [ ! "$command" -o ! "$swarm" ]; then
-		usage; exit 1
-	fi
-	if [ "$command" == "start" ]; then
-		${nodes} ssh $swarm "docker run --rm --detach --publish 4444:4444 --name perfmon wscherphof/perfmon:2.2.1"
-		${nodes} ssh $swarm "sudo ufw allow 4444 && sudo ufw reload" 2>/dev/null
-	elif [ "$command" == "stop" ]; then
-		${nodes} ssh $swarm "docker kill perfmon"
-		${nodes} ssh $swarm "sudo ufw deny 4444 && sudo ufw reload" 2>/dev/null
-	else
-		usage; exit 1
-	fi
-;;
-
 jmeter)
-	command=$REPO
-	swarm=$TAG
-	if [ ! "$command" -o ! "$swarm" ]; then
-		usage; exit 1
-	fi
-	if [ "$command" == "start" ]; then
-		machines=$(${nodes} machines $swarm)
+	command=$2
+	if [ "$command" = "slave" -o "$command" = "perfmon" ]; then
+		action=$3
+		swarm=$4
+		if [ ! ${action} -o ! ${swarm} ]; then
+			usage; exit 1
+		fi
+		machines=$(${nodes} machines ${swarm})
 		for machine in ${machines[@]}; do
-			ip=$(docker-machine ip $machine)
-			docker-machine ssh $machine docker run --rm --detach --publish 1099:1099 --name jmeter --env IP=$ip wscherphof/jmeter:3.2
-			docker-machine ssh $machine "sudo ufw allow 1099 && sudo ufw reload" 2>/dev/null
+			${jmeter} ${command} ${action} ${machine}
 		done
-	elif [ "$command" == "stop" ]; then
-		${nodes} ssh $swarm "docker kill jmeter"
-		${nodes} ssh $swarm "sudo ufw deny 1099 && sudo ufw reload" 2>/dev/null
+	elif [ "$command" = "master" ]; then
+		jmx=$3
+		swarm=$4
+		if [ ! ${jmx} ]; then
+			usage; exit 1
+		fi
+		remote_hosts=""
+		if [ ${swarm} ]; then
+			machines=$(${nodes} machines ${swarm})
+			for machine in ${machines[@]}; do
+				remote_hosts="${remote_hosts},$(docker-machine ip ${machine})"
+			done
+		fi
+		R=${remote_hosts}
+		if [ ${R} ]; then
+			R="-R ${R}"
+		fi
+		${jmeter} ${R} master ${jmx}
 	else
 		usage; exit 1
 	fi

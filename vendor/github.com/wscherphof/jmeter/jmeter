@@ -1,0 +1,151 @@
+#!/bin/bash
+set -x
+
+usage ()
+{
+	echo
+	echo "Usage: $(basename $0) [OPTIONS] COMMAND ARGS"
+	echo
+	echo "Manage Apache JMeter Load tests."
+	echo
+	echo "Prerequitites:"
+	echo "  For master"
+	echo "    - JMeter 3.2 installed: http://jmeter.apache.org/"
+	echo "    - Environment variable JMETER_HOME set (default: ~/apache-jmeter-3.2)"
+	echo "    - Test plan saved in JMX file"
+	echo "  For slave & perfmon"
+	echo "    - Docker & Docker Machine installed: https://docs.docker.com/machine/"
+	echo
+	echo "Commands:"
+	echo "  master"
+	echo "    Run the given test in non-gui mode, locally or remote, generating"
+	echo "    a dashboard report."
+	echo "    Args:"
+	echo "      - Path to the JMX test plan file."
+	echo "    Options:"
+	echo "      -i ip_address    IP address to use for the master (client)"
+	echo "                       Environment variable IP works as well."
+	echo "                       If unset, Java picks one."
+	echo "      -R remote_hosts  List of slave hosts to use for distributed testing"
+	echo "                       Environment variable REMOTE_HOSTS works as well."
+	echo "                       If unset, test is run locally."
+	echo "      -d dir           Base directory for test results."
+	echo "                       Default: ./jmeter-test"
+	echo "  slave"
+	echo "    Manage remote JMeter slaves (servers)"
+	echo "    Args:"
+	echo "      - Action:  either start or stop"
+	echo "      - Machine: the targeted docker-machine"
+	echo "  perfmon"
+	echo "    Manage the PerfMon Server Agent on application servers."
+	echo "    Args:"
+	echo "      - Action:  either start or stop"
+	echo "      - Machine: the targeted docker-machine"
+	echo "  help"
+	echo "    Display this message."
+	echo
+}
+
+while getopts "i:R:d:h" opt; do
+    case $opt in
+        i  ) IP="$OPTARG";;
+        R  ) REMOTE_HOSTS="$OPTARG";;
+        d  ) DIR="$OPTARG";;
+        h  ) usage; exit;;
+        \? ) echo "Unknown option: -$OPTARG" >&2; exit 1;;
+        :  ) echo "Missing option argument for -$OPTARG" >&2; exit 1;;
+        *  ) echo "Unimplemented option: -$OPTARG" >&2; exit 1;;
+    esac
+done
+shift $((OPTIND -1))
+
+JMETER_HOME="${JMETER_HOME-~/apache-jmeter-3.2}"
+
+COMMAND="$1"
+if [ "$COMMAND" = "help" -o "$COMMAND" = "--help" ]; then
+	usage; exit 0
+elif [ ! $COMMAND -o ! $2 ]; then
+	usage; exit 1
+fi
+
+force ()
+{
+	$*
+	code=$?
+	if [ "$code" != "0" ]; then
+		exit $code
+	fi
+}
+
+case "${COMMAND}" in
+
+master)
+	JMX="${2}"
+	if [ ! $JMX ]; then
+		usage; exit 1
+	fi
+
+	DIR="${DIR-./jmeter-test}"
+	DIR="${DIR}/$(date "+%Y-%m-%d/%H.%M.%S")"
+	force mkdir -p ${DIR}
+
+	R="${REMOTE_HOSTS}"
+	if [ ${R} ]; then
+		R="-R ${R}"
+	fi
+
+	D="${IP}"
+	if [ ${D} ]; then
+		D="-D "java.rmi.server.hostname=${IP}""
+	fi
+
+	exec ${JMETER_HOME}/bin/jmeter -n -t ${JMX} ${D} \
+	-l ${DIR}/result.jtl -e -o ${DIR}/dashboard ${R}
+;;
+
+slave)
+	action=$2
+	machine=$3
+	if [ ! $action -o ! $machine ]; then
+		usage; exit 1
+	fi
+	run="docker-machine ssh $machine"
+	if [ "$action" = "start" ]; then
+		ip=$(docker-machine ip $machine)
+		$run "sudo ufw allow 1099 && sudo ufw reload" 2>/dev/null
+		$run docker run --rm --detach --publish 1099:1099 --name jmeter --env IP=$ip wscherphof/jmeter:3.2
+	elif [ "$action" = "stop" ]; then
+		$run docker kill jmeter
+		$run "sudo ufw deny 1099 && sudo ufw reload" 2>/dev/null
+	else
+		usage; exit 1
+	fi
+;;
+
+perfmon)
+	action=$2
+	machine=$3
+	if [ ! $action -o ! $machine ]; then
+		usage; exit 1
+	fi
+	run="docker-machine ssh $machine"
+	if [ "$action" = "start" ]; then
+		$run "sudo ufw allow 4444 && sudo ufw reload" 2>/dev/null
+		$run docker run --rm --detach --publish 4444:4444 --name perfmon wscherphof/perfmon:2.2.1
+	elif [ "$action" = "stop" ]; then
+		$run docker kill perfmon
+		$run "sudo ufw deny 4444 && sudo ufw reload" 2>/dev/null
+	else
+		usage; exit 1
+	fi
+;;
+
+help)
+	usage; exit 0
+;;
+
+*)
+	usage; exit 1
+;;
+
+esac
