@@ -3,45 +3,43 @@
 usage ()
 {
 	echo
-	echo "Usage: $(basename $0) [OPTIONS] COMMAND ARGS"
+	echo "Manage Apache JMeter (distributed) load tests."
 	echo
-	echo "Manage Apache JMeter Load tests."
+	echo "Usage:"
 	echo
-	echo "Prerequitites:"
-	echo "  For run"
+	echo "$(basename $0) [OPTONS] run JMX"
+	echo "  Run the given test in non-gui mode, locally or remote, generating"
+	echo "  a dashboard report."
+	echo "  Prerequitites:"
 	echo "    - JMeter 3.2 installed: http://jmeter.apache.org/"
 	echo "    - Environment variable JMETER_HOME set (default: ~/apache-jmeter-3.2)"
-	echo "    - Test plan saved in JMX file"
-	echo "  For server & perfmon"
-	echo "    - Docker & Docker Machine installed: https://docs.docker.com/machine/"
+	echo "  JMX is the path to a JMeter test plan definition .jmx file."
+	echo "  Options:"
+	echo "    -i ip_address    IP address to use for the master (client)"
+	echo "                     Environment variable IP works as well."
+	echo "                     If unset, Java picks one."
+	echo "    -R remote_hosts  List of slave hosts to use for distributed testing."
+	echo "                     Environment variable REMOTE_HOSTS works as well."
+	echo "                     If unset, test is run locally."
+	echo "    -d dir           Base directory for test results."
+	echo "                     Default: ./jmeter-test"
 	echo
-	echo "Commands:"
-	echo "  run"
-	echo "    Run the given test in non-gui mode, locally or remote, generating"
-	echo "    a dashboard report."
-	echo "    Args:"
-	echo "      - Path to the JMX test plan file."
-	echo "    Options:"
-	echo "      -i ip_address    IP address to use for the master (client)"
-	echo "                       Environment variable IP works as well."
-	echo "                       If unset, Java picks one."
-	echo "      -R remote_hosts  List of slave hosts to use for distributed testing"
-	echo "                       Environment variable REMOTE_HOSTS works as well."
-	echo "                       If unset, test is run locally."
-	echo "      -d dir           Base directory for test results."
-	echo "                       Default: ./jmeter-test"
-	echo "  server"
-	echo "    Manage remote JMeter slaves (servers)"
-	echo "    Args:"
-	echo "      - Action:  either start or stop"
-	echo "      - Machine: the targeted docker-machine"
-	echo "  perfmon"
-	echo "    Manage the PerfMon Server Agent on application servers."
-	echo "    Args:"
-	echo "      - Action:  either start or stop"
-	echo "      - Machine: the targeted docker-machine"
-	echo "  help"
-	echo "    Display this message."
+	echo "$(basename $0) server ACTION MACHINE"
+	echo "  Manage remote JMeter slaves (servers)"
+	echo "  Prerequitites:"
+	echo "    - Docker & Docker Machine installed: https://docs.docker.com/machine/"
+	echo "  ACTION is either start, stop, or restart."
+	echo "  MACHINE is the targeted docker-machine."
+	echo
+	echo "$(basename $0) perfmon ACTION MACHINE"
+	echo "  Manage the PerfMon Server Agent on application servers."
+	echo "  Prerequitites:"
+	echo "    - Docker & Docker Machine installed: https://docs.docker.com/machine/"
+	echo "  ACTION is either start, stop, or restart."
+	echo "  MACHINE is the targeted docker-machine."
+	echo
+	echo "$(basename $0) help"
+	echo "  Display this message."
 	echo
 }
 
@@ -103,25 +101,6 @@ run)
 	-l ${DIR}/result.jtl -e -o ${DIR}/dashboard ${R}
 ;;
 
-server)
-	action=$2
-	machine=$3
-	if [ ! $action -o ! $machine ]; then
-		usage; exit 1
-	fi
-	run="docker-machine ssh $machine"
-	if [ "$action" = "start" ]; then
-		ip=$(docker-machine ip $machine)
-		$run "sudo ufw allow 1099 && sudo ufw reload" 2>/dev/null
-		$run docker run --rm --detach --publish 1099:1099 --name jmeter --env IP=$ip wscherphof/jmeter:3.2
-	elif [ "$action" = "stop" ]; then
-		$run docker kill jmeter
-		$run "sudo ufw deny 1099 && sudo ufw reload" 2>/dev/null
-	else
-		usage; exit 1
-	fi
-;;
-
 perfmon)
 	action=$2
 	machine=$3
@@ -129,14 +108,45 @@ perfmon)
 		usage; exit 1
 	fi
 	run="docker-machine ssh $machine"
+	start="$run docker run --rm --detach --publish 4444:4444 --name perfmon wscherphof/perfmon:2.2.1"
+	stop="$run docker kill perfmon"
 	if [ "$action" = "start" ]; then
 		$run "sudo ufw allow 4444 && sudo ufw reload" 2>/dev/null
-		$run docker run --rm --detach --publish 4444:4444 --name perfmon wscherphof/perfmon:2.2.1
+		$start
 	elif [ "$action" = "stop" ]; then
-		$run docker kill perfmon
+		$stop
 		$run "sudo ufw deny 4444 && sudo ufw reload" 2>/dev/null
+	elif [ "$action" = "restart" ]; then
+		$stop
+		$start
 	else
 		usage; exit 1
+	fi
+;;
+
+server)
+	action=$2
+	machine=$3
+	if [ ! $action -o ! $machine ]; then
+		usage; exit 1
+	fi
+	run="docker-machine ssh $machine"
+	stop="$run docker kill jmeter"
+	if [ "$action" = "stop" ]; then
+		$stop
+		$run "sudo ufw deny 1099 && sudo ufw reload" 2>/dev/null
+	else
+		ip=$(docker-machine ip $machine)
+		start="$run docker run --rm --detach --publish 1099:1099 --name jmeter --env IP=$ip wscherphof/jmeter:3.2"
+		if [ "$action" = "restart" ]; then
+			$stop
+			$start
+		elif [ "$action" = "start" ]; then
+			$run "sudo ufw allow 1099 && sudo ufw reload" 2>/dev/null
+			$start
+		else
+			usage; exit 1
+		fi
 	fi
 ;;
 

@@ -87,10 +87,10 @@
 			"revisionTime": "2017-03-29T08:47:07Z"
 		},
 		{
-			"checksumSHA1": "uXQkEcnhxC0QarUz4nbQ6xy3eIQ=",
+			"checksumSHA1": "P5mIuAc7wjVV5m4YIfF7mlUWzz4=",
 			"path": "github.com/wscherphof/jmeter",
-			"revision": "42f3469b6ede01e422fa47537539f792a1a770b9",
-			"revisionTime": "2017-05-31T12:50:29Z",
+			"revision": "b0ba5886921da13320eb3fa8686851c31ba1fc2a",
+			"revisionTime": "2017-05-31T20:32:29Z",
 			"tree": true
 		},
 		{

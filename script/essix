@@ -43,11 +43,25 @@ usage ()
     echo "    -e key=value ...  environment variables"
     echo "    -r replicas       number of replicas to run (default=1)"
 	echo
-	echo "$(basename $0) perfmon COMMAND SWARM"
-	echo "  Manage the PerfMon Server Agent on a swarm."
-	echo "  Commands:"
-    echo "    start  start the agent on each of the swarm's nodes"
-    echo "    stop   stop the agent on each of the swarm's nodes"
+	echo "$(basename $0) jmeter run JMX [SWARM]"
+	echo "  Run Apache JMeter (distributed) load tests, generating a dashboard"
+	echo "  report under ./jmeter-test."
+	echo "  JMX is the path to the JMeter test plan definition .jmx file."
+	echo "  Without SWARM,"
+	echo "    the test is run locally."
+	echo "  With SWARM,"
+	echo "    the test is run distributed across the remote JMeter servers"
+	echo "    (\"slaves\") on each of the swarm's nodes."
+	echo "    Optionally set the IP environment variable to specify the IP"
+	echo "    address at which the slaves can reach the local \"master\" JMeter."
+	echo
+	echo "$(basename $0) jmeter server ACTION SWARM"
+	echo "  Provision the swarm's nodes with a remote JMeter \"slave\" server."
+	echo "  ACTION is either start, stop, or restart."
+	echo
+	echo "$(basename $0) jmeter perfmon ACTION SWARM"
+	echo "  Provision the swarm's nodes with the PerfMon Server Agent."
+	echo "  ACTION is either start, stop or restart."
 	echo
 	echo "$(basename $0) help"
 	echo "  Display this message."
@@ -109,6 +123,14 @@ usage ()
     echo "  \$ $(basename $0) -e DOMAIN=dev.appsite.com build essix 0.3 dev"
     echo "      Builds image essix/APP:0.3 on swarm dev's nodes, and runs the service"
     echo "      on dev, with the given DOMAIN environment variable set."
+	echo
+    echo "  \$ $(basename $0) nodes -m 3 create load"
+    echo "  \$ $(basename $0) jmeter server start load"
+    echo "      Creates and provisions a swarm of remote JMeter servers."
+    echo "  \$ $(basename $0) jmeter perfmon start dev"
+    echo "      Installs the PerfMon Server Agent on swarm dev's nodes."
+    echo "  \$ $(basename $0) jmeter run test_plan.jmx load"
+    echo "      Runs a distributed load test."
 	echo
 }
 
