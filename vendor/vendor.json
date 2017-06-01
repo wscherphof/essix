@@ -87,10 +87,10 @@
 			"revisionTime": "2017-03-29T08:47:07Z"
 		},
 		{
-			"checksumSHA1": "P5mIuAc7wjVV5m4YIfF7mlUWzz4=",
+			"checksumSHA1": "SZJYXsHTgswtbFlam5Thm8DerzY=",
 			"path": "github.com/wscherphof/jmeter",
-			"revision": "b0ba5886921da13320eb3fa8686851c31ba1fc2a",
-			"revisionTime": "2017-05-31T20:32:29Z",
+			"revision": "537be90e3a0f396e3af44bd7ad80b6e5a7acb827",
+			"revisionTime": "2017-05-31T21:06:35Z",
 			"tree": true
 		},
 		{
@@ -106,7 +106,7 @@
 			"revisionTime": "2017-04-21T22:09:22Z"
 		},
 		{
-			"checksumSHA1": "wB+v6bdwQv3US9lDOqAHEvG2qC0=",
+			"checksumSHA1": "2kRnN6mZf8xhWeQ2ulSvzmTOuMI=",
 			"path": "github.com/wscherphof/rethinkswarmmode",
 			"revision": "59752aef95f2c723ec2c317a9dd91d78182ef63a",
 			"revisionTime": "2017-05-29T20:27:37Z",

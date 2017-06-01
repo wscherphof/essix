@@ -53,7 +53,8 @@ WORKERS="${WORKERS-0}"
 DRIVER="${DRIVER-virtualbox}"
 COMMAND="$1"
 ENV="$2"
-ACTION="$3"
+shift 2
+ACTION="$*"
 
 if [ "$COMMAND" = "help" -o "$COMMAND" = "--help" ]; then
 	usage; exit 0
