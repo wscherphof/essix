@@ -43,17 +43,13 @@ usage ()
     echo "    -e key=value ...  environment variables"
     echo "    -r replicas       number of replicas to run (default=1)"
 	echo
-	echo "$(basename $0) jmeter run JMX [SWARM]"
-	echo "  Run Apache JMeter (distributed) load tests, generating a dashboard"
-	echo "  report under ./jmeter-test."
+	echo "$(basename $0) jmeter run JMX SWARM"
+	echo "  Run Apache JMeter load tests, generating a dashboard report under"
+	echo "  ./jmeter-test."
 	echo "  JMX is the path to the JMeter test plan definition .jmx file."
-	echo "  Without SWARM,"
-	echo "    the test is run locally."
-	echo "  With SWARM,"
-	echo "    the test is run distributed across the remote JMeter servers"
-	echo "    (\"slaves\") on each of the swarm's nodes."
-	echo "    Optionally set the IP environment variable to specify the IP"
-	echo "    address at which the slaves can reach the local \"master\" JMeter."
+	echo "  The test is run distributed across the remote JMeter servers"
+	echo "  on each of the swarm's nodes."
+	echo "  Use `$(basename $0) jmeter server start SWARM` to create the remote servers."
 	echo
 	echo "$(basename $0) jmeter server ACTION SWARM"
 	echo "  Provision the swarm's nodes with a remote JMeter \"slave\" server."
@@ -301,35 +297,17 @@ run)
 
 jmeter)
 	command=$2
+	swarm=$4
+	if [ ! ${swarm} ]; then
+		usage; exit 1
+	fi
+	machines=$(${nodes} machines ${swarm})
 	if [ "$command" = "server" -o "$command" = "perfmon" ]; then
 		action=$3
-		swarm=$4
-		if [ ! ${action} -o ! ${swarm} ]; then
-			usage; exit 1
-		fi
-		machines=$(${nodes} machines ${swarm})
-		for machine in ${machines[@]}; do
-			${jmeter} ${command} ${action} ${machine} &
-		done
-		wait
+		${jmeter} ${command} ${action} ${machines}
 	elif [ "$command" = "run" ]; then
 		jmx=$3
-		swarm=$4
-		if [ ! ${jmx} ]; then
-			usage; exit 1
-		fi
-		remote_hosts=""
-		if [ ${swarm} ]; then
-			machines=$(${nodes} machines ${swarm})
-			for machine in ${machines[@]}; do
-				remote_hosts="${remote_hosts},$(docker-machine ip ${machine})"
-			done
-		fi
-		R=${remote_hosts}
-		if [ ${R} ]; then
-			R="-R ${R}"
-		fi
-		${jmeter} ${R} ${command} ${jmx}
+		${jmeter} ${command} ${jmx} "${swarm}-manager-1" ${machines}
 	else
 		usage; exit 1
 	fi

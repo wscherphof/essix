@@ -5,149 +5,155 @@ usage ()
 	echo
 	echo "Manage Apache JMeter (distributed) load tests."
 	echo
+	echo "Prerequitites:"
+	echo "  - Docker & Docker Machine installed: https://docs.docker.com/machine/"
+	echo "  - A test plan definition .jmx file created with JMeter 3.2: http://jmeter.apache.org/"
+	echo
 	echo "Usage:"
 	echo
-	echo "$(basename $0) [OPTONS] run JMX"
+	echo "$(basename $0) run JMX MACHINE [REMOTE_MACHINE...]"
 	echo "  Run the given test in non-gui mode, locally or remote, generating"
 	echo "  a dashboard report."
-	echo "  Prerequitites:"
-	echo "    - JMeter 3.2 installed: http://jmeter.apache.org/"
-	echo "    - Environment variable JMETER_HOME set (default: ~/apache-jmeter-3.2)"
-	echo "  JMX is the path to a JMeter test plan definition .jmx file."
-	echo "  Options:"
-	echo "    -i ip_address    IP address to use for the master (client)"
-	echo "                     Environment variable IP works as well."
-	echo "                     If unset, Java picks one."
-	echo "    -R remote_hosts  List of slave hosts to use for distributed testing."
-	echo "                     Environment variable REMOTE_HOSTS works as well."
-	echo "                     If unset, test is run locally."
-	echo "    -d dir           Base directory for test results."
-	echo "                     Default: ./jmeter-test"
+	echo "  JMX                Path to the .jmx file."
+	echo "  MACHINE            The docker-machine that should run the test."
+	echo "  REMOTE_MACHINE...  Any number of names of docker-machines with remote"
+	echo "                     slave servers to use for distributed testing."
+	echo "                     If unset, the test is run locally."
 	echo
-	echo "$(basename $0) server ACTION MACHINE"
-	echo "  Manage remote JMeter slaves (servers)"
-	echo "  Prerequitites:"
-	echo "    - Docker & Docker Machine installed: https://docs.docker.com/machine/"
-	echo "  ACTION is either start, stop, or restart."
-	echo "  MACHINE is the targeted docker-machine."
+	echo "$(basename $0) server ACTION MACHINE[...]"
+	echo "  Manage remote JMeter slave servers."
+	echo "  ACTION   Either start, stop, or restart."
+	echo "  MACHINE  One or more targeted docker-machines."
 	echo
-	echo "$(basename $0) perfmon ACTION MACHINE"
+	echo "$(basename $0) perfmon ACTION MACHINE[...]"
 	echo "  Manage the PerfMon Server Agent on application servers."
-	echo "  Prerequitites:"
-	echo "    - Docker & Docker Machine installed: https://docs.docker.com/machine/"
-	echo "  ACTION is either start, stop, or restart."
-	echo "  MACHINE is the targeted docker-machine."
+	echo "  ACTION   Either start, stop, or restart."
+	echo "  MACHINE  One or more targeted docker-machines."
 	echo
 	echo "$(basename $0) help"
 	echo "  Display this message."
 	echo
 }
 
-while getopts "i:R:d:h" opt; do
-    case $opt in
-        i  ) IP="$OPTARG";;
-        R  ) REMOTE_HOSTS="$OPTARG";;
-        d  ) DIR="$OPTARG";;
-        h  ) usage; exit;;
-        \? ) echo "Unknown option: -$OPTARG" >&2; exit 1;;
-        :  ) echo "Missing option argument for -$OPTARG" >&2; exit 1;;
-        *  ) echo "Unimplemented option: -$OPTARG" >&2; exit 1;;
-    esac
-done
-shift $((OPTIND -1))
-
-JMETER_HOME="${JMETER_HOME-~/apache-jmeter-3.2}"
-
-COMMAND="$1"
-if [ "$COMMAND" = "help" -o "$COMMAND" = "--help" ]; then
-	usage; exit 0
-elif [ ! $COMMAND -o ! $2 ]; then
-	usage; exit 1
-fi
-
-force ()
+absolute ()
 {
-	$*
-	code=$?
-	if [ "$code" != "0" ]; then
-		exit $code
-	fi
+	base=$(basename $1)
+	dir=$(dirname $1)
+	dir=$(cd $dir ; pwd)
+	echo "$dir/$base"
 }
 
-case "${COMMAND}" in
+parallel ()
+{
+	COMMAND="$1"
+	ACTION="$2"
+	shift 2
+	MACHINES="$*"
+	for machine in ${MACHINES}; do
+		${COMMAND} ${ACTION} ${machine} &
+	done
+	wait
+}
 
-run)
-	JMX="${2}"
-	if [ ! $JMX ]; then
-		usage; exit 1
-	fi
+report ()
+{
+	action="$1"
+	machine="$2"
+	echo "${machine} - $(${action})"
+}
 
-	DIR="${DIR-./jmeter-test}"
-	DIR="${DIR}/$(date "+%Y-%m-%d/%H.%M.%S")"
-	force mkdir -p ${DIR}
-
-	R="${REMOTE_HOSTS}"
-	if [ ${R} ]; then
-		R="-R ${R}"
-	fi
-
-	D="${IP}"
-	if [ ${D} ]; then
-		D="-D "java.rmi.server.hostname=${IP}""
-	fi
-
-	echo "* starting test..."
-	exec ${JMETER_HOME}/bin/jmeter -n -t ${JMX} ${D} \
-	-l ${DIR}/result.jtl -e -o ${DIR}/dashboard ${R}
-;;
-
-perfmon)
-	action=$2
-	machine=$3
-	if [ ! $action -o ! $machine ]; then
-		usage; exit 1
-	fi
-	run="docker-machine ssh $machine"
+perfmon ()
+{
+	action="$1"
+	machine="$2"
+	run="docker-machine ssh ${machine}"
 	start="$run docker run --rm --detach --publish 4444:4444 --name perfmon wscherphof/perfmon:2.2.1"
 	stop="$run docker kill perfmon"
 	if [ "$action" = "start" ]; then
 		$run "sudo ufw allow 4444 && sudo ufw reload" 2>/dev/null
-		$start
+		report "$start" "$machine"
 	elif [ "$action" = "stop" ]; then
-		$stop
+		report "$stop" "$machine"
 		$run "sudo ufw deny 4444 && sudo ufw reload" 2>/dev/null
 	elif [ "$action" = "restart" ]; then
-		$stop
-		$start
+		report "$stop" "$machine"
+		report "$start" "$machine"
 	else
 		usage; exit 1
 	fi
-;;
+}
 
-server)
-	action=$2
-	machine=$3
-	if [ ! $action -o ! $machine ]; then
-		usage; exit 1
-	fi
-	run="docker-machine ssh $machine"
-	stop="$run docker kill jmeter"
+server ()
+{
+	action="$1"
+	machine="$2"
+	run="docker-machine ssh ${machine}"
+	stop="$run docker kill slave"
 	if [ "$action" = "stop" ]; then
-		$stop
+		report "$stop" "$machine"
 		$run "sudo ufw deny 1099 && sudo ufw reload" 2>/dev/null
 	else
-		ip=$(docker-machine ip $machine)
-		start="$run docker run --rm --detach --publish 1099:1099 --name jmeter --env IP=$ip wscherphof/jmeter:3.2"
+		ip=$(docker-machine ip ${machine})
+		start="$run docker run --rm --detach --publish 1099:1099 --name slave --env IP=$ip wscherphof/jmeter:3.2"
 		if [ "$action" = "restart" ]; then
-			$stop
-			$start
+		report "$stop" "$machine"
+		report "$start" "$machine"
 		elif [ "$action" = "start" ]; then
 			$run "sudo ufw allow 1099 && sudo ufw reload" 2>/dev/null
-			$start
+		report "$start" "$machine"
 		else
 			usage; exit 1
 		fi
 	fi
+}
+
+case "$1" in
+
+run)
+	JMX="$2"
+	MACHINE="$3"
+	docker-machine scp $(absolute ${JMX}) ${MACHINE}:jmx >/dev/null
+
+	IP=$(docker-machine ip ${MACHINE})
+
+	shift 3
+	REMOTE_MACHINES="$*"
+	REMOTE_HOSTS=""
+	for server in ${REMOTE_MACHINES}; do
+		REMOTE_HOSTS="$(docker-machine ip ${server}) ${REMOTE_HOSTS}"
+	done
+
+	echo "* starting test..."
+	run="docker-machine ssh ${MACHINE}"
+	$run "sudo ufw allow 60000 && sudo ufw reload" 2>/dev/null
+	$run docker run --rm --name master \
+		--env IP=${IP} \
+		--volume /home/docker/jmx:/jmx \
+		--volume /home/docker/results:/results \
+		--publish 60000:60000 \
+		wscherphof/jmeter:3.2 \
+		master ${REMOTE_HOSTS}
+
+	code="$?"
+
+	DIR="./jmeter-test/$(date "+%Y-%m-%d/%H.%M.%S")"
+	mkdir -p ${DIR}
+
+	docker-machine scp -r ${MACHINE}:results $(absolute ${DIR}) >/dev/null
+	if [ "$code" = "0" ]; then
+		echo "* results saved in ${DIR}"
+	else
+		echo "* logs saved in ${DIR}"
+		exit ${code}
+	fi
+;;
+
+perfmon)
+	parallel $*
+;;
+
+server)
+	parallel $*
 ;;
 
 help)
