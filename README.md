@@ -80,6 +80,9 @@ swarm's nodes.
 [Docker](https://www.docker.com/) image for it.
 - `$ essix run` creates a service on the swarm that runs any number of
 _replicas_ of the app's image.
+- `$ essix jmeter` runs
+[distributed load tests](http://jmeter.apache.org/usermanual/remote-test.html)
+and spins up any number of remote servers to share in the generated load.
 - The app server is
 [stateless](http://whatisrest.com/rest_constraints/stateless_profile)
 (resource data is kept in the database cluster, and user session data is kept
@@ -200,6 +203,26 @@ essix [OPTIONS] run REPO TAG SWARM
     -e key=value ...  environment variables
     -r replicas       number of replicas to run (default=1)
 
+essix jmeter run JMX APP_SWARM LOAD_SWARM
+  Run Apache JMeter load tests, generating a dashboard report under
+  ./jmeter-test.
+  JMX         The path to the JMeter test plan definition .jmx file.
+  APP_SWARM   The swarm running the app under test.
+              Its nodes' IP addresses are set as environment variables
+              NODE_0, NODE_1, ..., NODE_x
+  LOAD_SWARM  The swarm that will run the test, distributing the
+              generated load across its remote JMeter servers.
+  Use `essix jmeter server start LOAD_SWARM` to create the remote servers.
+  Use `essix jmeter perfmon start APP_SWARM` to install the PerfMon Server Agent.
+
+essix jmeter server ACTION SWARM
+  Provision the swarm's nodes with a remote JMeter "slave" server.
+  ACTION  Either start, stop, or restart.
+
+essix jmeter perfmon ACTION SWARM
+  Provision the swarm's nodes with the PerfMon Server Agent.
+  ACTION  Either start, stop or restart.
+
 essix help
   Display this message.
 
@@ -247,6 +270,14 @@ Examples:
   $ essix -e DOMAIN=dev.appsite.com build essix 0.3 dev
       Builds image essix/APP:0.3 on swarm dev's nodes, and runs the service
       on dev, with the given DOMAIN environment variable set.
+
+  $ essix nodes -m 3 create load
+  $ essix jmeter server start load
+      Creates and provisions a swarm of remote JMeter servers.
+  $ essix jmeter perfmon start dev
+      Installs the PerfMon Server Agent on swarm dev's nodes.
+  $ essix jmeter run test_plan.jmx dev load
+      Runs a distributed load test on the load swarm, targeting the dev swarm.
 ```
 
 # App directory and Profile example
