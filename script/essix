@@ -48,6 +48,8 @@ usage ()
 	echo "  ./jmeter-test."
 	echo "  JMX         The path to the JMeter test plan definition .jmx file."
 	echo "  APP_SWARM   The swarm running the app under test."
+	echo "              Its nodes' IP addresses are set as environment variables"
+	echo "              NODE_0, NODE_1, ..., NODE_x"
 	echo "  LOAD_SWARM  The swarm that will run the test, distributing the"
 	echo "              generated load across its remote JMeter servers."
 	echo "  Use `$(basename $0) jmeter server start LOAD_SWARM` to create the remote servers."
