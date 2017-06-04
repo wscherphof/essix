@@ -4,22 +4,23 @@ Manage Apache JMeter (distributed) load tests with Docker.
 
 In other words: JMeter [MTA](https://blog.docker.com/2017/04/modernizing-traditional-apps-with-docker/)'d :-)
 
-<pre>
-
+```
 Prerequitites:
   - Docker & Docker Machine installed: https://docs.docker.com/machine/
   - A test plan definition .jmx file created with JMeter 3.2: http://jmeter.apache.org/
 
 Usage:
 
-jmeter run JMX MACHINE [REMOTE_MACHINE...]
+jmeter [OPTIONS] run JMX MACHINE [REMOTE_MACHINE...]
   Run the given test in non-gui mode, locally or remote, generating
   a dashboard report.
-  JMX                Path to the .jmx file.
-  MACHINE            The docker-machine that should run the test.
-  REMOTE_MACHINE...  Any number of names of docker-machines with remote
-                     slave servers to use for distributed testing.
-                     If unset, the test is run locally.
+  JMX                 Path to the .jmx file.
+  MACHINE             The docker-machine that should run the test.
+  REMOTE_MACHINE...   Any number of names of docker-machines with remote
+                      slave servers to use for distributed testing.
+                      If unset, the test is run locally.
+  Options:
+    -e key=value ...  environment variables
 
 jmeter server ACTION MACHINE[...]
   Manage remote JMeter slave servers.
@@ -33,7 +34,5 @@ jmeter perfmon ACTION MACHINE[...]
 
 jmeter help
   Display this message.
-
-</pre>
-
+```
 

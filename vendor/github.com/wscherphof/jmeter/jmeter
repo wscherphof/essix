@@ -11,14 +11,16 @@ usage ()
 	echo
 	echo "Usage:"
 	echo
-	echo "$(basename $0) run JMX MACHINE [REMOTE_MACHINE...]"
+	echo "$(basename $0) [OPTIONS] run JMX MACHINE [REMOTE_MACHINE...]"
 	echo "  Run the given test in non-gui mode, locally or remote, generating"
 	echo "  a dashboard report."
-	echo "  JMX                Path to the .jmx file."
-	echo "  MACHINE            The docker-machine that should run the test."
-	echo "  REMOTE_MACHINE...  Any number of names of docker-machines with remote"
-	echo "                     slave servers to use for distributed testing."
-	echo "                     If unset, the test is run locally."
+	echo "  JMX                 Path to the .jmx file."
+	echo "  MACHINE             The docker-machine that should run the test."
+	echo "  REMOTE_MACHINE...   Any number of names of docker-machines with remote"
+	echo "                      slave servers to use for distributed testing."
+	echo "                      If unset, the test is run locally."
+	echo "  Options:"
+    echo "    -e key=value ...  environment variables"
 	echo
 	echo "$(basename $0) server ACTION MACHINE[...]"
 	echo "  Manage remote JMeter slave servers."
