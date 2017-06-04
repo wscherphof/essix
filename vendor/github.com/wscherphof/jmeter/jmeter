@@ -35,6 +35,17 @@ usage ()
 	echo
 }
 
+while getopts "e:h" opt; do
+    case $opt in
+        e  ) ENVS+=("$OPTARG");;
+        h  ) usage; exit;;
+        \? ) echo "Unknown option: -$OPTARG" >&2; exit 1;;
+        :  ) echo "Missing option argument for -$OPTARG" >&2; exit 1;;
+        *  ) echo "Unimplemented option: -$OPTARG" >&2; exit 1;;
+    esac
+done
+shift $((OPTIND -1))
+
 absolute ()
 {
 	base=$(basename $1)
@@ -114,20 +125,24 @@ run)
 	MACHINE="$3"
 	docker-machine scp $(absolute ${JMX}) ${MACHINE}:jmx >/dev/null
 
-	IP=$(docker-machine ip ${MACHINE})
+    environment="--env IP=$(docker-machine ip ${MACHINE})"
+    for env in "${ENVS[@]}"; do
+        environment="${environment} --env ${env}"
+    done
 
 	shift 3
 	REMOTE_MACHINES="$*"
 	REMOTE_HOSTS=""
 	for server in ${REMOTE_MACHINES}; do
-		REMOTE_HOSTS="$(docker-machine ip ${server}) ${REMOTE_HOSTS}"
+		ip=$(docker-machine ip ${server})
+		REMOTE_HOSTS="${ip} ${REMOTE_HOSTS}"
 	done
 
 	echo "* starting test..."
 	run="docker-machine ssh ${MACHINE}"
 	$run "sudo ufw allow 60000 && sudo ufw reload" 2>/dev/null
 	$run docker run --rm --name master \
-		--env IP=${IP} \
+		${environment} \
 		--volume /home/docker/jmx:/jmx \
 		--volume /home/docker/results:/results \
 		--publish 60000:60000 \

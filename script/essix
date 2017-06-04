@@ -43,21 +43,23 @@ usage ()
     echo "    -e key=value ...  environment variables"
     echo "    -r replicas       number of replicas to run (default=1)"
 	echo
-	echo "$(basename $0) jmeter run JMX SWARM"
+	echo "$(basename $0) jmeter run JMX APP_SWARM LOAD_SWARM"
 	echo "  Run Apache JMeter load tests, generating a dashboard report under"
 	echo "  ./jmeter-test."
-	echo "  JMX is the path to the JMeter test plan definition .jmx file."
-	echo "  The test is run distributed across the remote JMeter servers"
-	echo "  on each of the swarm's nodes."
-	echo "  Use `$(basename $0) jmeter server start SWARM` to create the remote servers."
+	echo "  JMX         The path to the JMeter test plan definition .jmx file."
+	echo "  APP_SWARM   The swarm running the app under test."
+	echo "  LOAD_SWARM  The swarm that will run the test, distributing the"
+	echo "              generated load across its remote JMeter servers."
+	echo "  Use `$(basename $0) jmeter server start LOAD_SWARM` to create the remote servers."
+	echo "  Use `$(basename $0) jmeter perfmon start APP_SWARM` to install the PerfMon Server Agent."
 	echo
 	echo "$(basename $0) jmeter server ACTION SWARM"
 	echo "  Provision the swarm's nodes with a remote JMeter \"slave\" server."
-	echo "  ACTION is either start, stop, or restart."
+	echo "  ACTION  Either start, stop, or restart."
 	echo
 	echo "$(basename $0) jmeter perfmon ACTION SWARM"
 	echo "  Provision the swarm's nodes with the PerfMon Server Agent."
-	echo "  ACTION is either start, stop or restart."
+	echo "  ACTION  Either start, stop or restart."
 	echo
 	echo "$(basename $0) help"
 	echo "  Display this message."
@@ -125,8 +127,8 @@ usage ()
     echo "      Creates and provisions a swarm of remote JMeter servers."
     echo "  \$ $(basename $0) jmeter perfmon start dev"
     echo "      Installs the PerfMon Server Agent on swarm dev's nodes."
-    echo "  \$ $(basename $0) jmeter run test_plan.jmx load"
-    echo "      Runs a distributed load test."
+    echo "  \$ $(basename $0) jmeter run test_plan.jmx dev load"
+    echo "      Runs a distributed load test of dev, using load."
 	echo
 }
 
@@ -297,17 +299,26 @@ run)
 
 jmeter)
 	command=$2
-	swarm=$4
-	if [ ! ${swarm} ]; then
-		usage; exit 1
-	fi
-	machines=$(${nodes} machines ${swarm})
 	if [ "$command" = "server" -o "$command" = "perfmon" ]; then
 		action=$3
+		swarm=$4
+		machines=$(${nodes} machines ${swarm})
 		${jmeter} ${command} ${action} ${machines}
 	elif [ "$command" = "run" ]; then
 		jmx=$3
-		${jmeter} ${command} ${jmx} "${swarm}-manager-1" ${machines}
+		app_swarm=$4
+		load_swarm=$5
+
+		environment=""
+		app_machines=($(${nodes} machines ${app_swarm}))
+		for i in "${!app_machines[@]}"; do
+			machine="${app_machines[$i]}"
+			env="NODE_$i=$(docker-machine ip ${machine})"
+	        environment="${environment} -e ${env}"
+		done		
+
+		load_machines=$(${nodes} machines ${load_swarm})
+		${jmeter} ${environment} ${command} ${jmx} "${load_swarm}-manager-1" ${load_machines}
 	else
 		usage; exit 1
 	fi
