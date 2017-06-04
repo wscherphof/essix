@@ -52,8 +52,8 @@ usage ()
 	echo "              NODE_0, NODE_1, ..., NODE_x"
 	echo "  LOAD_SWARM  The swarm that will run the test, distributing the"
 	echo "              generated load across its remote JMeter servers."
-	echo "  Use `$(basename $0) jmeter server start LOAD_SWARM` to create the remote servers."
-	echo "  Use `$(basename $0) jmeter perfmon start APP_SWARM` to install the PerfMon Server Agent."
+	echo "  Use \`$(basename $0) jmeter server start LOAD_SWARM\` to create the remote servers."
+	echo "  Use \`$(basename $0) jmeter perfmon start APP_SWARM\` to install the PerfMon Server Agent."
 	echo
 	echo "$(basename $0) jmeter server ACTION SWARM"
 	echo "  Provision the swarm's nodes with a remote JMeter \"slave\" server."
@@ -130,7 +130,7 @@ usage ()
     echo "  \$ $(basename $0) jmeter perfmon start dev"
     echo "      Installs the PerfMon Server Agent on swarm dev's nodes."
     echo "  \$ $(basename $0) jmeter run test_plan.jmx dev load"
-    echo "      Runs a distributed load test of dev, using load."
+    echo "      Runs a distributed load test on the load swarm, targeting the dev swarm."
 	echo
 }
 
