@@ -72,7 +72,7 @@ report ()
 {
 	action="$1"
 	machine="$2"
-	echo "${machine} - $(${action})"
+	echo "(${machine}) $(${action})"
 }
 
 perfmon ()
@@ -127,11 +127,6 @@ run)
 	MACHINE="$3"
 	docker-machine scp $(absolute ${JMX}) ${MACHINE}:jmx >/dev/null
 
-    environment="--env IP=$(docker-machine ip ${MACHINE})"
-    for env in "${ENVS[@]}"; do
-        environment="${environment} --env ${env}"
-    done
-
 	shift 3
 	REMOTE_MACHINES="$*"
 	REMOTE_HOSTS=""
@@ -139,6 +134,11 @@ run)
 		ip=$(docker-machine ip ${server})
 		REMOTE_HOSTS="${ip} ${REMOTE_HOSTS}"
 	done
+
+    environment="--env IP=$(docker-machine ip ${MACHINE})"
+    for env in "${ENVS[@]}"; do
+        environment="${environment} --env ${env}"
+    done
 
 	echo "* starting test..."
 	run="docker-machine ssh ${MACHINE}"
