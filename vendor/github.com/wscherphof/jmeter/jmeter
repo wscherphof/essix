@@ -37,9 +37,9 @@ usage ()
 	echo
 }
 
-while getopts "e:h" opt; do
+while getopts "p:h" opt; do
     case $opt in
-        e  ) ENVS+=("$OPTARG");;
+        p  ) PROPERTIES+=("$OPTARG");;
         h  ) usage; exit;;
         \? ) echo "Unknown option: -$OPTARG" >&2; exit 1;;
         :  ) echo "Missing option argument for -$OPTARG" >&2; exit 1;;
@@ -47,14 +47,6 @@ while getopts "e:h" opt; do
     esac
 done
 shift $((OPTIND -1))
-
-absolute ()
-{
-	base=$(basename $1)
-	dir=$(dirname $1)
-	dir=$(cd $dir ; pwd)
-	echo "$dir/$base"
-}
 
 parallel ()
 {
@@ -125,8 +117,6 @@ case "$1" in
 run)
 	JMX="$2"
 	MACHINE="$3"
-	docker-machine scp $(absolute ${JMX}) ${MACHINE}:jmx 1>/dev/null
-
 	shift 3
 	REMOTE_MACHINES="$*"
 	REMOTE_HOSTS=""
@@ -134,25 +124,24 @@ run)
 		ip=$(docker-machine ip ${server})
 		REMOTE_HOSTS="${ip} ${REMOTE_HOSTS}"
 	done
-
-    environment="--env IP=$(docker-machine ip ${MACHINE})"
-    for env in "${ENVS[@]}"; do
-        environment="${environment} --env ${env}"
-    done
-
+	props=""
+	for p in "${PROPERTIES[@]}"; do
+        props="${props} -p ${p}"
+	done		
 	echo "* starting test..."
+	docker-machine scp ${JMX} ${MACHINE}:jmx 1>/dev/null
 	run="docker-machine ssh ${MACHINE}"
 	home="$($run pwd)"
 	$run "sudo ufw allow 60000 && sudo ufw reload" &>/dev/null
 	$run docker run --rm --name master \
-		${environment} \
+		--env IP=$(docker-machine ip ${MACHINE}) \
 		--volume ${home}/jmx:/jmx \
 		--volume ${home}/results:/results \
 		--publish 60000:60000 \
 		wscherphof/jmeter:3.2 \
+		${props} \
 		master ${REMOTE_HOSTS}
 	code="$?"
-
 	echo "* fetching results..."
 	dst="./jmeter-test/$(date "+%Y-%m-%d/%H.%M.%S")"
 	mkdir -p ${dst}
