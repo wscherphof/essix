@@ -310,7 +310,7 @@ jmeter)
 		jmx=$3
 		app_swarm=$4
 		load_swarm=$5
-
+		echo "* preparing..."
 		environment=""
 		app_machines=($(${nodes} machines ${app_swarm}))
 		for i in "${!app_machines[@]}"; do
@@ -318,7 +318,6 @@ jmeter)
 			env="NODE_$i=$(docker-machine ip ${machine})"
 	        environment="${environment} -e ${env}"
 		done		
-
 		load_machines=$(${nodes} machines ${load_swarm})
 		${jmeter} ${environment} ${command} ${jmx} "${load_swarm}-manager-1" ${load_machines}
 	else

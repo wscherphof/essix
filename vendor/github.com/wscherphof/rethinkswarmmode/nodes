@@ -129,7 +129,7 @@ create ()
 	fi
 	if [ "$FIREWALL" ]; then
 		dir="$(docker-machine ssh $node pwd)"
-		docker-machine scp ${FIREWALL} ${node}:${dir}/firewall
+		docker-machine scp ${FIREWALL} ${node}:${dir}/firewall 1>/dev/null
 		docker-machine ssh $node . ./firewall
 	fi
 	docker-machine restart $node
