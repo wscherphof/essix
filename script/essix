@@ -315,11 +315,16 @@ jmeter)
 		app_machines=($(${nodes} machines ${app_swarm}))
 		for i in "${!app_machines[@]}"; do
 			machine="${app_machines[$i]}"
-			p="NODE_$i=$(docker-machine ip ${machine})"
+			p="APP_$i=$(docker-machine ip ${machine})"
 	        properties="${properties} -p ${p}"
-		done		
-		load_machines=$(${nodes} machines ${load_swarm})
-		${jmeter} ${properties} ${command} ${jmx} "${load_swarm}-manager-1" ${load_machines}
+		done
+		load_machines=($(${nodes} machines ${load_swarm}))
+		for i in "${!load_machines[@]}"; do
+			machine="${load_machines[$i]}"
+			p="LOAD_$i=$(docker-machine ip ${machine})"
+	        properties="${properties} -p ${p}"
+		done
+		${jmeter} ${properties} ${command} ${jmx} "${load_swarm}-manager-1" ${load_machines[@]}
 	else
 		usage; exit 1
 	fi
