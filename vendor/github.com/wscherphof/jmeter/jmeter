@@ -20,7 +20,8 @@ usage ()
 	echo "                      slave servers to use for distributed testing."
 	echo "                      If unset, the test is run locally."
 	echo "  Options:"
-    echo "    -e key=value ...  environment variables"
+    echo "    -p key=value ...  Properties; set both locally, on the controller"
+    echo "                      client, as globally, on the slave servers."
 	echo
 	echo "$(basename $0) server ACTION MACHINE[...]"
 	echo "  Manage remote JMeter slave servers."

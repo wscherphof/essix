@@ -43,17 +43,18 @@ usage ()
     echo "    -e key=value ...  environment variables"
     echo "    -r replicas       number of replicas to run (default=1)"
 	echo
-	echo "$(basename $0) jmeter run JMX APP_SWARM LOAD_SWARM"
+	echo "$(basename $0) jmeter run JMX APP_SWARM MASTER_SWARM SLAVE_SWARM"
 	echo "  Run Apache JMeter load tests, generating a dashboard report under"
 	echo "  ./jmeter-test."
-	echo "  JMX         The path to the JMeter test plan definition .jmx file."
-	echo "  APP_SWARM   The swarm running the app under test."
-	echo "              Its nodes' IP addresses are set as environment variables"
-	echo "              NODE_0, NODE_1, ..., NODE_x"
-	echo "  LOAD_SWARM  The swarm that will run the test, distributing the"
-	echo "              generated load across its remote JMeter servers."
-	echo "  Use \`$(basename $0) jmeter server start LOAD_SWARM\` to create the remote servers."
-	echo "  Use \`$(basename $0) jmeter perfmon start APP_SWARM\` to install the PerfMon Server Agent."
+	echo "  JMX           The path to the JMeter test plan definition .jmx file."
+	echo "  APP_SWARM     The swarm running the app under test."
+	echo "  MASTER_SWARM  The swarm with the machine to run the test controller."
+	echo "  SLAVE_SWARM   The swarm that will run the test, distributing the"
+	echo "                generated load across its remote JMeter servers."
+	echo "  Use \`$(basename $0) jmeter server start SWARM\` to create the remote servers."
+	echo "  Use \`$(basename $0) jmeter perfmon start SWARM\` to install the PerfMon Server Agent."
+	echo "  The nodes' IP addresses are set as environment variables MASTER &"
+	echo "  APP_0, APP_1, ..., APP_n & SLAVE_0, SLAVE_1, ..., SLAVE_n"
 	echo
 	echo "$(basename $0) jmeter server ACTION SWARM"
 	echo "  Provision the swarm's nodes with a remote JMeter \"slave\" server."
@@ -124,13 +125,16 @@ usage ()
     echo "      Builds image essix/APP:0.3 on swarm dev's nodes, and runs the service"
     echo "      on dev, with the given DOMAIN environment variable set."
 	echo
-    echo "  \$ $(basename $0) nodes -m 3 create load"
-    echo "  \$ $(basename $0) jmeter server start load"
+    echo "  \$ $(basename $0) nodes -m 3 create slave"
+    echo "  \$ $(basename $0) jmeter server start slave"
     echo "      Creates and provisions a swarm of remote JMeter servers."
     echo "  \$ $(basename $0) jmeter perfmon start dev"
     echo "      Installs the PerfMon Server Agent on swarm dev's nodes."
-    echo "  \$ $(basename $0) jmeter run test_plan.jmx dev load"
-    echo "      Runs a distributed load test on the load swarm, targeting the dev swarm."
+    echo "  \$ $(basename $0) nodes -m 1 create master"
+    echo "      Creates a machine to run the JMeter test controller."
+    echo "  \$ $(basename $0) jmeter run test_plan.jmx dev master slave"
+    echo "      Starts a test, targeting the dev swarm, controlled by the master"
+    echo "      machine, distributing the load over the slave swarm."
 	echo
 }
 
@@ -309,22 +313,24 @@ jmeter)
 	elif [ "$command" = "run" ]; then
 		jmx=$3
 		app_swarm=$4
-		load_swarm=$5
+		master_swarm=$5
+		slave_swarm=$6
 		echo "* preparing..."
-		properties=""
+		master_machine="${master_swarm}-manager-1"
+		properties="-p MASTER=$(docker-machine ip ${master_machine})"
 		app_machines=($(${nodes} machines ${app_swarm}))
 		for i in "${!app_machines[@]}"; do
 			machine="${app_machines[$i]}"
 			p="APP_$i=$(docker-machine ip ${machine})"
 	        properties="${properties} -p ${p}"
 		done
-		load_machines=($(${nodes} machines ${load_swarm}))
-		for i in "${!load_machines[@]}"; do
-			machine="${load_machines[$i]}"
-			p="LOAD_$i=$(docker-machine ip ${machine})"
+		slave_machines=($(${nodes} machines ${slave_swarm}))
+		for i in "${!slave_machines[@]}"; do
+			machine="${slave_machines[$i]}"
+			p="SLAVE_$i=$(docker-machine ip ${machine})"
 	        properties="${properties} -p ${p}"
 		done
-		${jmeter} ${properties} ${command} ${jmx} "${load_swarm}-manager-1" ${load_machines[@]}
+		${jmeter} ${properties} ${command} ${jmx} ${master_machine} ${slave_machines[@]}
 	else
 		usage; exit 1
 	fi

@@ -20,7 +20,8 @@ jmeter [OPTIONS] run JMX MACHINE [REMOTE_MACHINE...]
                       slave servers to use for distributed testing.
                       If unset, the test is run locally.
   Options:
-    -e key=value ...  environment variables
+    -p key=value ...  Properties; set both locally, on the controller
+                      client, as globally, on the slave servers.
 
 jmeter server ACTION MACHINE[...]
   Manage remote JMeter slave servers.
