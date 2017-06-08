@@ -25,12 +25,12 @@ jmeter [OPTIONS] run JMX MACHINE [REMOTE_MACHINE...]
 
 jmeter server ACTION MACHINE[...]
   Manage remote JMeter slave servers.
-  ACTION   Either start, stop, or restart.
+  ACTION   Either start or stop.
   MACHINE  One or more targeted docker-machines.
 
 jmeter perfmon ACTION MACHINE[...]
   Manage the PerfMon Server Agent on application servers.
-  ACTION   Either start, stop, or restart.
+  ACTION   Either start or stop.
   MACHINE  One or more targeted docker-machines.
 
 jmeter help

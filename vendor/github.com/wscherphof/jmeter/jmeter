@@ -25,12 +25,12 @@ usage ()
 	echo
 	echo "$(basename $0) server ACTION MACHINE[...]"
 	echo "  Manage remote JMeter slave servers."
-	echo "  ACTION   Either start, stop, or restart."
+	echo "  ACTION   Either start or stop."
 	echo "  MACHINE  One or more targeted docker-machines."
 	echo
 	echo "$(basename $0) perfmon ACTION MACHINE[...]"
 	echo "  Manage the PerfMon Server Agent on application servers."
-	echo "  ACTION   Either start, stop, or restart."
+	echo "  ACTION   Either start or stop."
 	echo "  MACHINE  One or more targeted docker-machines."
 	echo
 	echo "$(basename $0) help"
@@ -61,55 +61,67 @@ parallel ()
 	wait
 }
 
-report ()
+server ()
 {
 	action="$1"
 	machine="$2"
-	echo "(${machine}) $(${action})"
+	run="docker-machine ssh ${machine}"
+	$run "docker start slave" &>/dev/null
+	test_err="$?"
+	if [ "$action" = "start" ]; then
+		if [ "$test_err" = "0" ]; then
+			echo "(${machine}) already running"
+		else
+			$run "sudo ufw allow 1099 && sudo ufw reload" &>/dev/null
+			ip=$(docker-machine ip ${machine})
+			start="$run docker run --rm --detach --publish 1099:1099 --name slave --env IP=$ip wscherphof/jmeter:3.2"
+			echo "(${machine}) $(${start})"
+		fi
+	elif [ "$action" = "stop" ]; then
+		if [ "$test_err" != "0" ]; then
+			echo "(${machine}) not running"
+		else
+			stop="$run docker kill slave"
+			echo "(${machine}) $(${stop})"
+			$run "sudo ufw deny 1099 && sudo ufw reload" &>/dev/null
+		fi
+	else
+		usage; exit 1
+	fi
 }
 
 perfmon ()
 {
 	action="$1"
 	machine="$2"
+	perfmon_version="2.2.1"
 	run="docker-machine ssh ${machine}"
-	start="$run docker run --rm --detach --publish 4444:4444 --name perfmon wscherphof/perfmon:2.2.1"
-	stop="$run docker kill perfmon"
+	$run "sudo ls ServerAgent-${perfmon_version}" &>/dev/null
+	if [ "$?" != "0" ]; then
+		echo "(${machine}) installing..."
+		home="$($run pwd)"
+		$run docker run --rm --name perfmon --volume ${home}:/dst wscherphof/perfmon:${perfmon_version}
+	fi
+	$run "echo test | telnet localhost 4444" &>/dev/null
+	test_err="$?"
 	if [ "$action" = "start" ]; then
-		$run "sudo ufw allow 4444 && sudo ufw reload" &>/dev/null
-		report "$start" "$machine"
+		if [ "$test_err" = "0" ]; then
+			echo "(${machine}) already running"
+		else
+			$run "sudo ufw allow 4444 && sudo ufw reload" &>/dev/null
+			$run "sudo ServerAgent-${perfmon_version}/startAgent.sh --sysinfo >perfmon.log &"
+			echo "(${machine}) started"
+		fi
 	elif [ "$action" = "stop" ]; then
-		report "$stop" "$machine"
-		$run "sudo ufw deny 4444 && sudo ufw reload" &>/dev/null
-	elif [ "$action" = "restart" ]; then
-		report "$stop" "$machine"
-		report "$start" "$machine"
+		if [ "$test_err" != "0" ]; then
+			echo "(${machine}) not running"
+		else
+			$run "echo shutdown | telnet localhost 4444"
+			$run "sudo ufw deny 4444 && sudo ufw reload" &>/dev/null
+			echo "(${machine}) stopped"
+		fi
 	else
 		usage; exit 1
-	fi
-}
-
-server ()
-{
-	action="$1"
-	machine="$2"
-	run="docker-machine ssh ${machine}"
-	stop="$run docker kill slave"
-	if [ "$action" = "stop" ]; then
-		report "$stop" "$machine"
-		$run "sudo ufw deny 1099 && sudo ufw reload" &>/dev/null
-	else
-		ip=$(docker-machine ip ${machine})
-		start="$run docker run --rm --detach --publish 1099:1099 --name slave --env IP=$ip wscherphof/jmeter:3.2"
-		if [ "$action" = "restart" ]; then
-		report "$stop" "$machine"
-		report "$start" "$machine"
-		elif [ "$action" = "start" ]; then
-			$run "sudo ufw allow 1099 && sudo ufw reload" &>/dev/null
-		report "$start" "$machine"
-		else
-			usage; exit 1
-		fi
 	fi
 }
 
@@ -161,11 +173,11 @@ run)
 	fi
 ;;
 
-perfmon)
+server)
 	parallel $*
 ;;
 
-server)
+perfmon)
 	parallel $*
 ;;
 
