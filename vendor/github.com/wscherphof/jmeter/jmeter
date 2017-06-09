@@ -25,12 +25,12 @@ usage ()
 	echo
 	echo "$(basename $0) server ACTION MACHINE[...]"
 	echo "  Manage remote JMeter slave servers."
-	echo "  ACTION   Either start or stop."
+	echo "  ACTION   Either start, stop, or restart."
 	echo "  MACHINE  One or more targeted docker-machines."
 	echo
 	echo "$(basename $0) perfmon ACTION MACHINE[...]"
 	echo "  Manage the PerfMon Server Agent on application servers."
-	echo "  ACTION   Either start or stop."
+	echo "  ACTION   Either start, stop, or restart."
 	echo "  MACHINE  One or more targeted docker-machines."
 	echo
 	echo "$(basename $0) help"
@@ -85,6 +85,9 @@ server ()
 			echo "(${machine}) $(${stop})"
 			$run "sudo ufw deny 1099 && sudo ufw reload" &>/dev/null
 		fi
+	elif [ "$action" = "restart" ]; then
+		$0 server stop ${machine}
+		$0 server start ${machine}
 	else
 		usage; exit 1
 	fi
@@ -110,7 +113,7 @@ perfmon ()
 		else
 			$run "sudo ufw allow 4444 && sudo ufw reload" &>/dev/null
 			$run "sudo ServerAgent-${perfmon_version}/startAgent.sh --sysinfo >perfmon.log &"
-			echo "(${machine}) started"
+			echo "(${machine}) PerfMon Server Agent started"
 		fi
 	elif [ "$action" = "stop" ]; then
 		if [ "$test_err" != "0" ]; then
@@ -118,8 +121,11 @@ perfmon ()
 		else
 			$run "echo shutdown | telnet localhost 4444"
 			$run "sudo ufw deny 4444 && sudo ufw reload" &>/dev/null
-			echo "(${machine}) stopped"
+			echo "(${machine}) PerfMon Server Agent stopped"
 		fi
+	elif [ "$action" = "restart" ]; then
+		$0 perfmon stop ${machine}
+		$0 perfmon start ${machine}
 	else
 		usage; exit 1
 	fi
