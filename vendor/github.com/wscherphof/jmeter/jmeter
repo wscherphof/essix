@@ -105,7 +105,7 @@ perfmon ()
 		home="$($run pwd)"
 		$run docker run --rm --name perfmon --volume ${home}:/dst wscherphof/perfmon:${perfmon_version}
 	fi
-	$run "echo test | telnet localhost 4444" &>/dev/null
+	$run "nc -z localhost 4444" &>/dev/null
 	test_err="$?"
 	if [ "$action" = "start" ]; then
 		if [ "$test_err" = "0" ]; then
@@ -119,7 +119,7 @@ perfmon ()
 		if [ "$test_err" != "0" ]; then
 			echo "(${machine}) not running"
 		else
-			$run "echo shutdown | telnet localhost 4444"
+			$run "{ echo shutdown; sleep 1; } | telnet localhost 4444" &>/dev/null
 			$run "sudo ufw deny 4444 && sudo ufw reload" &>/dev/null
 			echo "(${machine}) PerfMon Server Agent stopped"
 		fi
