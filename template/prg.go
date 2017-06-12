@@ -3,8 +3,8 @@ package template
 import (
 	"net/http"
 	"net/url"
-	"strings"
 	"strconv"
+	"strings"
 )
 
 type PRGType struct {

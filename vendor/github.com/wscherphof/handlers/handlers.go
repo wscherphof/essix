@@ -24,12 +24,12 @@ func FormValueTrimHandler(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		method := r.Method
 		if method == "PATCH" || method == "PUT" || method == "POST" || method == "DELETE" {
-			_ = r.FormValue("") // makes r.Form available by calling r.ParseMultipartForm
+			_ = r.FormValue("")             // makes r.Form available by calling r.ParseMultipartForm
 			for k, values := range r.Form { // map[string][]string
 				for i, v := range values {
-			        trimmed := strings.TrimSpace(v)
-			        r.Form[k][i] = trimmed
-			    }
+					trimmed := strings.TrimSpace(v)
+					r.Form[k][i] = trimmed
+				}
 			}
 		}
 		h.ServeHTTP(w, r)

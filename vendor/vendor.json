@@ -51,12 +51,6 @@
 			"revisionTime": "2016-01-25T11:53:50Z"
 		},
 		{
-			"checksumSHA1": "Fs9Xiy7Ilfyd68NRfn6j88etvgI=",
-			"path": "github.com/jordan-wright/email",
-			"revision": "fd703108daeb23d77c124d12978e9b6c4f28f034",
-			"revisionTime": "2016-04-03T17:25:29Z"
-		},
-		{
 			"checksumSHA1": "Drsz3oT4NmM2tVQCRk+occxVvPA=",
 			"path": "github.com/julienschmidt/httprouter",
 			"revision": "d8ff598a019f2c7bad0980917a588193cf26666e",
@@ -69,7 +63,13 @@
 			"revisionTime": "2016-10-06T14:10:24Z"
 		},
 		{
-			"checksumSHA1": "uhKROKGUhxUoGwrvLbhKQB0aBH0=",
+			"checksumSHA1": "RGw07QxlFDGdfEcyi3DHiP/+65w=",
+			"path": "github.com/wscherphof/email",
+			"revision": "09f803b133a9229292871a003eb1a5b077fb32b2",
+			"revisionTime": "2017-03-12T05:55:09Z"
+		},
+		{
+			"checksumSHA1": "cyUXlCmJxxbdz6DoRl4tYc9jv3k=",
 			"path": "github.com/wscherphof/entity",
 			"revision": "8c4e4a6e5a71fd16bb17770ef771c50eb69764b9",
 			"revisionTime": "2017-04-21T22:09:39Z"
@@ -81,7 +81,7 @@
 			"revisionTime": "2016-10-14T08:50:24Z"
 		},
 		{
-			"checksumSHA1": "dR3T4j4mgXzuvmAChw+GZlry598=",
+			"checksumSHA1": "CspZRbXfXSsggWrAIMqVlBZfWzU=",
 			"path": "github.com/wscherphof/handlers",
 			"revision": "c4765fdb16f44a5236a43e9b35bb300480d1a308",
 			"revisionTime": "2017-03-29T08:47:07Z"
@@ -89,18 +89,18 @@
 		{
 			"checksumSHA1": "asCh3Y7cYzl2lEvvR3FVMI77kvQ=",
 			"path": "github.com/wscherphof/jmeter",
-			"revision": "b3dd28577ab86cb64541167a94b49ce9f9645009",
-			"revisionTime": "2017-06-09T20:37:52Z",
+			"revision": "08623827614c4a53496252ce8652e5cf9cf33651",
+			"revisionTime": "2017-06-10T22:44:11Z",
 			"tree": true
 		},
 		{
-			"checksumSHA1": "tTQna2RoSmyR/jbBn51Jd7f3kIk=",
+			"checksumSHA1": "pFbkDhKqwP50JiS9nsNBoeL60Do=",
 			"path": "github.com/wscherphof/msg",
 			"revision": "9fd5978e512bf6f3429cc6ea10a1049268cf9464",
 			"revisionTime": "2017-05-11T18:50:48Z"
 		},
 		{
-			"checksumSHA1": "x+i4j16TtBTZ99SwfZfA3ku7bsw=",
+			"checksumSHA1": "pX0IiSxmA1m1iUphOR84k/aHb0k=",
 			"path": "github.com/wscherphof/rethinkdb",
 			"revision": "0a315c0a1accf0d4fe92ba0f6332accac34c8d54",
 			"revisionTime": "2017-04-21T22:09:22Z"

@@ -245,8 +245,8 @@ func (b *Base) Delete(record interface{}) (err error) {
 An IndexType provides index operations.
 */
 type IndexType struct {
-	table  string
-	name string
+	table string
+	name  string
 }
 
 /*

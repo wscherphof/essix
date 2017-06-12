@@ -154,7 +154,7 @@ func Translator(r *http.Request) (t *TranslatorType) {
 	} else {
 		langStrings := strings.Split(acceptLanguage, ",")
 		t = &TranslatorType{
-			languages: make([]*languageType, len(langStrings) + 1),
+			languages: make([]*languageType, len(langStrings)+1),
 			files:     make(map[string]string, 20),
 		}
 		for i, v := range langStrings {
@@ -184,7 +184,7 @@ func (t *TranslatorType) Get(key string) (translation string) {
 Select returns the translation for a message.
 */
 func (t *TranslatorType) Select(message MessageType, opt_default ...string) (translation string) {
-	translate := func (lang string) (ok bool) {
+	translate := func(lang string) (ok bool) {
 		translation, ok = message[lang]
 		return
 	}
@@ -238,7 +238,7 @@ func (t *TranslatorType) File(location, dir, base string, opt_extension ...strin
 }
 
 func exists(template, extension string, language *languageType) (lang string, err error) {
-	language.test(func(l string) (ok bool){
+	language.test(func(l string) (ok bool) {
 		if err = stat(template, extension, l); err == nil {
 			lang, ok = l, true
 		}

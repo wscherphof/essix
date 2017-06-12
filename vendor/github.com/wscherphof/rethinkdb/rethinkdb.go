@@ -1,8 +1,8 @@
 package rethinkdb
 
 import (
-	r "gopkg.in/gorethink/gorethink.v3"
 	"github.com/wscherphof/env"
+	r "gopkg.in/gorethink/gorethink.v3"
 	"strings"
 )
 
@@ -23,9 +23,9 @@ type Term struct {
 func Connect(db, address string) (err error) {
 	DB = db
 	if Session, err = r.Connect(r.ConnectOpts{
-		Address: address,
+		Address:    address,
 		InitialCap: env.GetInt("DB_POOL_INITIAL", 100),
-		MaxOpen: env.GetInt("DB_POOL_MAX", 100),
+		MaxOpen:    env.GetInt("DB_POOL_MAX", 100),
 	}); err != nil {
 		return
 	}
@@ -62,7 +62,7 @@ func IndexCreate(table, name string, opt_fields ...string) (resp r.WriteResponse
 	if num == 0 {
 		resp, err = r.DB(DB).Table(table).IndexCreate(name).RunWrite(Session)
 	} else {
-		resp, err = r.DB(DB).Table(table).IndexCreateFunc(name, func (row r.Term) interface{} {
+		resp, err = r.DB(DB).Table(table).IndexCreateFunc(name, func(row r.Term) interface{} {
 			values := make([]interface{}, num, num)
 			for i, field := range opt_fields {
 				values[i] = row.Field(field)
@@ -171,7 +171,7 @@ func Between(table, index string, low interface{}, includeLow bool, high interfa
 
 func Skip(table, index string, n int, opt_direction ...string) Term {
 	orderByOpts := r.OrderByOpts{
-		Index:  index, // "asc"
+		Index: index, // "asc"
 	}
 	if len(opt_direction) == 1 && opt_direction[0] == "desc" {
 		orderByOpts.Index = r.Desc(index)

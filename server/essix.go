@@ -4,10 +4,10 @@ Package server runs the Essix server.
 package server
 
 import (
-	"github.com/wscherphof/handlers"
 	"github.com/wscherphof/env"
 	"github.com/wscherphof/essix/messages"
 	"github.com/wscherphof/essix/routes"
+	"github.com/wscherphof/handlers"
 	"github.com/wscherphof/secure"
 	"log"
 	"net/http"

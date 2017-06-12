@@ -16,7 +16,7 @@ import (
 
 func init() {
 	db := &secureDB{Base: &entity.Base{
-		ID: "secure",
+		ID:    "secure",
 		Table: "config",
 	}}
 	entity.Register(db)

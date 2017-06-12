@@ -43,14 +43,14 @@ usage ()
     echo "    -e key=value ...  environment variables"
     echo "    -r replicas       number of replicas to run (default=1)"
 	echo
-	echo "$(basename $0) jmeter run JMX APP_SWARM MASTER_SWARM SLAVE_SWARM"
+	echo "$(basename $0) jmeter run JMX APP_SWARM MASTER_SWARM [SLAVE_SWARM]"
 	echo "  Run Apache JMeter load tests, generating a dashboard report under"
 	echo "  ./jmeter-test."
 	echo "  JMX           The path to the JMeter test plan definition .jmx file."
 	echo "  APP_SWARM     The swarm running the app under test."
 	echo "  MASTER_SWARM  The swarm with the machine to run the test controller."
-	echo "  SLAVE_SWARM   The swarm that will run the test, distributing the"
-	echo "                generated load across its remote JMeter servers."
+	echo "  SLAVE_SWARM   The swarm that runs remote JMeter servers to generate"
+	echo "                a distributed load."
 	echo "  Use \`$(basename $0) jmeter server start SWARM\` to create the remote servers."
 	echo "  Use \`$(basename $0) jmeter perfmon start SWARM\` to install the PerfMon Server Agent."
 	echo "  The nodes' IP addresses are set as environment variables MASTER &"
@@ -324,12 +324,14 @@ jmeter)
 			p="APP_$i=$(docker-machine ip ${machine})"
 	        properties="${properties} -p ${p}"
 		done
-		slave_machines=($(${nodes} machines ${slave_swarm}))
-		for i in "${!slave_machines[@]}"; do
-			machine="${slave_machines[$i]}"
-			p="SLAVE_$i=$(docker-machine ip ${machine})"
-	        properties="${properties} -p ${p}"
-		done
+		if [ "$slave_swarm" ]; then
+			slave_machines=($(${nodes} machines ${slave_swarm}))
+			for i in "${!slave_machines[@]}"; do
+				machine="${slave_machines[$i]}"
+				p="SLAVE_$i=$(docker-machine ip ${machine})"
+		        properties="${properties} -p ${p}"
+			done
+		fi
 		${jmeter} ${properties} ${command} ${jmx} ${master_machine} ${slave_machines[@]}
 	else
 		usage; exit 1
