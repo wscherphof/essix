@@ -11,38 +11,43 @@ them.
 package email
 
 import (
-	"crypto/tls"
 	"errors"
-	"github.com/jordan-wright/email"
 	"github.com/wscherphof/certs"
+	"github.com/wscherphof/email"
 	"github.com/wscherphof/entity"
 	"log"
 	"net/smtp"
+	"time"
+)
+
+const (
+	poolSize    = 10
+	sendTimeout = 5 * time.Second
 )
 
 type config struct {
 	*entity.Base
 	EmailAddress string
+	UserName     string
 	PWD          string
 	SmtpServer   string
 	PortNumber   string
 }
 
 var (
-	from      string
-	endpoint  string
-	auth      smtp.Auth
-	tlsConfig *tls.Config
-	conf      = &config{
+	from string
+	conf = &config{
 		Base: &entity.Base{
-			ID: "email",
+			ID:    "email",
 			Table: "config",
 		},
 		EmailAddress: "essix@gmail.com",
+		UserName:     "essix@gmail.com",
 		PWD:          "",
 		SmtpServer:   "smtp.gmail.com",
 		PortNumber:   "587",
 	}
+	pool                  *email.Pool
 	ErrNotSentImmediately = errors.New("ErrNotSentImmediately")
 )
 
@@ -55,14 +60,17 @@ func init() {
 		} else {
 			log.Println("WARNING: email.init() stored a sample email config in DB as a template to fill manually.")
 			log.Println("INFO: After updating the email config in the database, restart the server to read it in.")
-			log.Println("INFO: r.db('essix').table('config').get('email').update({EmailAddress: 'essix@gmail.com', PWD: 'xxx', PortNumber: '587', SmtpServer: 'smtp.gmail.com'})")
+			log.Println("INFO: r.db('essix').table('config').get('email').update({EmailAddress: 'essix@gmail.com', UserName: 'essix@gmail.com', PWD: 'xxx', PortNumber: '587', SmtpServer: 'smtp.gmail.com'})")
 			log.Println("INFO: (note that in gmail, you need to turn on 'Allow Less Secure Apps to Access Account' through https://myaccount.google.com/u/1/security)")
 		}
 	} else {
 		from = conf.EmailAddress
-		endpoint = conf.SmtpServer + ":" + conf.PortNumber
-		auth = smtp.PlainAuth("", conf.EmailAddress, conf.PWD, conf.SmtpServer)
-		tlsConfig = certs.NewConfig(conf.SmtpServer)
+		endpoint := conf.SmtpServer + ":" + conf.PortNumber
+		auth := smtp.PlainAuth("", conf.UserName, conf.PWD, conf.SmtpServer)
+		tlsConfig := certs.NewConfig(conf.SmtpServer)
+		if pool, err = email.NewPool(endpoint, poolSize, auth, tlsConfig); err != nil {
+			log.Panicln("ERROR: failed creating email connection pool", err)
+		}
 	}
 }
 
@@ -99,7 +107,7 @@ func send(subject, message string, recipients ...string) (err error) {
 	mail.To = recipients
 	mail.Subject = subject
 	mail.HTML = []byte(message)
-	if err := mail.SendWithTLS(endpoint, auth, tlsConfig); err != nil {
+	if err := pool.Send(mail, sendTimeout); err != nil {
 		log.Println("WARNING: sending email failed", err)
 	}
 	return
