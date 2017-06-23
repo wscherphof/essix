@@ -41,11 +41,6 @@ var (
 			ID:    "email",
 			Table: "config",
 		},
-		EmailAddress: "essix@gmail.com",
-		UserName:     "essix@gmail.com",
-		PWD:          "",
-		SmtpServer:   "smtp.gmail.com",
-		PortNumber:   "587",
 	}
 	pool                  *email.Pool
 	ErrNotSentImmediately = errors.New("ErrNotSentImmediately")
@@ -60,7 +55,7 @@ func init() {
 		} else {
 			log.Println("WARNING: email.init() stored a sample email config in DB as a template to fill manually.")
 			log.Println("INFO: After updating the email config in the database, restart the server to read it in.")
-			log.Println("INFO: r.db('essix').table('config').get('email').update({EmailAddress: 'essix@gmail.com', UserName: 'essix@gmail.com', PWD: 'xxx', PortNumber: '587', SmtpServer: 'smtp.gmail.com'})")
+			log.Println("INFO: r.db('essix').table('config').get('email').update({EmailAddress: 'xxx', UserName: 'xxx', PWD: 'xxx', PortNumber: 'xxx', SmtpServer: 'xxx'})")
 			log.Println("INFO: (note that in gmail, you need to turn on 'Allow Less Secure Apps to Access Account' through https://myaccount.google.com/u/1/security)")
 		}
 	} else {
@@ -88,7 +83,7 @@ func SendSync(subject, message string, recipients ...string) (err error) {
 }
 
 /*
-Send sends an eamil message asynchronously, or enqueues it if it couldn't be
+Send sends an email message asynchronously, or enqueues it if it couldn't be
 sent at once.
 */
 func Send(subject, message string, recipients ...string) {
